@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# p6_set_up_label_dirs_n_infos
+# p2_select_label_kinds_n_print.py
 import json
 import os
 import shutil
@@ -11,6 +11,7 @@ import py_menus as p
 
 def proc_2_context():
     print('~~~ Context p6 set up label dirs n infos ~~~')
+    g.display_dirs('.')
 
 
 context_func_d = {
@@ -60,6 +61,22 @@ options_l = []
 
 
 def create():
+    create_or_update()
+
+
+def update():
+    create_or_update(False)
+
+
+def delete():
+    pass
+
+
+def create_or_update(default = True):
+    global already_selected_l
+    global options_l
+    global p7_specific_indics_d_of_d
+
     drs = g.read_dirs(g.p1_contract_dir)
     if not drs:
         create_label_dirs(g.standard_labels_l)
@@ -68,46 +85,47 @@ def create():
     # g.p2_labels_info_d['p6_label_l'] = g.read_dirs(g.p1_contract_dir)
 
     # create canonical p6_lbl_dir and p6_lbl_sel
-    """
     for dr in drs:
+        os.chdir(g.p1_contract_dir + '/' + dr)
         g.p6_lbl_sel = dr
         g.p6_lbl_dir = os.path.join(g.p1_contract_dir, g.p6_lbl_sel)
         # g.write_in_mem_n_on_disk()
         if g.chdir_n_p7_read():
             already_selected_l = g.p7_label_info_d['selected_indicators']
 
+        if default and not already_selected_l:
+            already_selected_l = ["03.Prod_spec", "pack", "total_qty"]
+
         # create selected indicators set
-        with open(os.path.join(g.p1_contract_dir, g.p2_labels_info_d['p6_extract_specifics'])) as fj:
-            p7_specific_indics_d_of_d = json.load(fj)
-        options_l = list(next(iter(p7_specific_indics_d_of_d.values())))
-
-        # function factory: defining what each label function should be doing
-        def make_f(indic):
-            def func():
-                already_selected_l.append(indic)
-                m.menu = menu
-                m.menus = menus
-
-            func.__name__ = indic  # as function is not read before being called for execution
-            return func
-
-        functions_d = {}
-        for option in options_l:
-            functions_d[option] = make_f(option)
-
-        def back():
-            m.menu = menu
-            m.menus = menus
-
-        assert back == back  # unless Lint would report back is not used
-
-        m.menu = 'Select label to add'
-        m.menus = {m.menu: {}}
-        for i in range(len(options_l)):
-            if options_l[i] not in already_selected_l:
-                m.menus[m.menu][f'{i}'] = functions_d[options_l[i]]
-        m.menus[m.menu]['m'] = eval('back')
-        m.run(p7_display_selected_indicators)  # argument to give context for decision
+        if not default:
+            proc_2_context()
+            with open(os.path.join(g.p1_contract_dir, g.p2_labels_info_d['p6_extract_specifics'])) as fj:
+                p7_specific_indics_d_of_d = json.load(fj)
+            options_l = list(next(iter(p7_specific_indics_d_of_d.values())))
+            # select from options_l and put in already_selected_l
+            while True:
+                print(f'~~~ already selected ~~~\n{already_selected_l}\n~~~~~~')
+                not_yet_l = []
+                for o in options_l:
+                    if o not in already_selected_l:
+                        not_yet_l.append(o)
+                for i in range(len(not_yet_l)):
+                    print(str(i) + ' ' + not_yet_l[i])
+                print('~~~')
+                s = input('Enter nr of indicator to add, \'b\' to return : ')
+                if s == 'b':
+                    os.system('clear')
+                    break
+                else:
+                    try:
+                        s_i = int(s)
+                        if s_i in range(len(not_yet_l)):
+                            already_selected_l.append(not_yet_l[s_i])
+                            # break
+                        else:
+                            print('Integer, but not an option, try again')
+                    except ValueError:
+                        print('That\'s not an integer, try again')
 
         g.p7_label_info_d['selected_indicators'] = already_selected_l
 
@@ -115,7 +133,12 @@ def create():
             json.dump(g.p7_label_info_d, f, ensure_ascii = False)
 
         make_mako()
-            """
+
+
+def display():
+    print('~~~')
+    g.display_dirs(g.p1_contract_dir)
+    print('~~~')
 
 
 def make_mako():
@@ -142,27 +165,11 @@ def make_mako():
             mako_input += ', ' + prod
             for k in indc_by_prod[prod].keys():
                 mako_input += ', ' + str(indc_by_prod[prod][k])
-                mako_input += '\n'
-                idx += 1
+            mako_input += '\n'
+            idx += 1
 
         with open('mako_input.csv', 'w') as f:
             f.write(mako_input)
-
-
-def display():
-    dirs = read_dirs()
-    print('~~~')
-    for dr in dirs:
-        print(dr)
-    print('~~~')
-
-
-def update():
-    select_existing_o_non_existing_menu_for_exec_help_function(create_exec_function, False)
-
-
-def delete():
-    select_existing_o_non_existing_menu_for_exec_help_function(delete_exec_function, True)
 
 
 # def select_a_new_label_group_n_save():
@@ -173,7 +180,13 @@ def create_selected_indicators_set():
 
 
 def p7_display_selected_indicators():
-    with open(os.path.join('..', 'p4_' + g.p1_contract_nr + '_indics_from_contract_l.json')) as f:
+    """
+    os.chdir(g.p1_contract_dir)
+    if g.chdir_n_p7_read():
+        already_selected_l = g.p7_label_info_d['selected_indicators']
+    """
+
+    with open(os.path.join(g.p1_contract_dir, 'p4_' + g.p1_contract_nr + '_indics_from_contract_l.json')) as f:
         p7_indics_from_contract_l = json.load(f)
     indic_val_d = {}
     for option in options_l:
@@ -191,22 +204,6 @@ def p7_display_selected_indicators():
     # m.display_context_in_most_cases()
 
 
-def create_exec_function():
-    if not os.path.exists(g.p6_lbl_dir):
-        os.mkdir(g.p6_lbl_dir, mode = 0o700)
-    # and transfer the label_templates there
-    if not os.path.exists(os.path.join(g.p6_lbl_dir, 'label_template_header.svg')):
-        shutil.copy(os.path.join(g.p1_root_dir + '/common/1.Outer_box_外箱', 'label_template_header.svg'),
-                    g.p6_lbl_dir)
-    if not os.path.exists(os.path.join(g.p6_lbl_dir, 'label_template_body.svg')):
-        shutil.copy(os.path.join(g.p1_root_dir + '/common/1.Outer_box_外箱', 'label_template_body.svg'),
-                    g.p6_lbl_dir)
-
-
-def delete_exec_function():
-    if os.path.isdir(g.p6_lbl_dir):
-        shutil.rmtree(g.p6_lbl_dir)
-
 
 def chdir_exec_function():
     if os.path.isdir(g.p6_lbl_dir):
@@ -214,76 +211,9 @@ def chdir_exec_function():
     print(f'Now in {os.getcwd()} ')
 
 
-def read_dirs():
-    (root, dirs, files) = next(os.walk(g.p1_contract_dir))
-    dirs.sort()
-    return dirs
-
-
 def cd_to_selected_dir():
     chdir_exec_function()
     # select_existing_o_non_existing_menu_for_exec_help_function(chdir_exec_function, True)
-
-
-def select_existing_o_non_existing_menu_for_exec_help_function(exec_function, in_o_out):
-    assert in_o_out == in_o_out
-    assert exec_function == exec_function
-    pass
-    """
-    label_groups = ['1.Outer_box_外箱',
-                    '2.Inner_box_内盒',
-                    '3.Inside_box_中箱',
-                    '4.Prod_packaging_产品包装',
-                    '5.Plastic_bag_塑料袋',
-                    '6.Prod_sticker_产品上不干胶',
-                    ]
-
-    # function factory
-    # defining what each label function should be doing
-    def make_f(group):  # positional argument has no number
-        def func():
-            group_dir = ''
-            for n_group in label_groups:
-                if group in n_group:
-                    group_dir = n_group
-            g.p6_lbl_dir = os.path.join(g.p1_contract_dir, group_dir)
-            exec_function()
-            m.menu = menu
-            m.menus = menus
-
-        func.__name__ = group  # as function is not read before being called for execution
-
-        return func
-
-    functions_d = {}
-    for label_group in label_groups:
-        functions_d[label_group[2:]] = make_f(label_group[2:])
-
-    def back():
-        m.menu = menu
-        m.menus = menus
-
-    assert back == back
-
-    m.menu = 'Select label to add'
-    m.menus = {m.menu: {}}
-    for label_group in label_groups:
-        dir_l = read_dirs()
-        if label_group in dir_l if in_o_out else label_group not in dir_l:
-            m.menus[m.menu][label_group[0]] = functions_d[label_group[2:]]
-    m.menus[m.menu]['m'] = eval('back')
-    # a particular case of run to present the current situation in p6: listing existing / non existing directories
-    # m.run(p6_display_existing_non_existing_dirs)
-    """
-
-
-def p6_display_existing_non_existing_dirs():
-    display()
-
-    selected_lbl = g.p6_lbl_dir[g.p6_lbl_dir.rfind('/'):]
-    current_dir_fp = os.getcwd()
-    current_dir_lcl = current_dir_fp[current_dir_fp.rfind('/'):]
-    print(f'Selected label: {selected_lbl}, currently in {current_dir_lcl}')
 
 
 def create_label_dirs(drs_l):

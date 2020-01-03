@@ -42,9 +42,7 @@ def p1_read():
                     p1_full_path_source_file_xls = p1_program_info_d['p1_full_path_source_file_xls']
                     p1_contract_dir = p1_root_dir + f'/data/{p1_contract_nr}'
                     if not os.path.exists(p1_contract_dir) or not os.path.exists(p1_full_path_source_file_xls):
-                        pass
-                        # with p1.Controller(p1.View()):
-                        #    pass
+                        return False
                     return True
         else:
             print(f'File {p1_program_info_f} not found or missing content')  # code later will p1.Controller(p.View())
@@ -128,7 +126,8 @@ def display_p2_labels_info_d():
 
 
 def display_p2_labels_info_f():
-    global p2_labels_info_f
+    # global p2_labels_info_f
+    # p2_labels_info_f = os.path.join(p1_contract_dir, 'p2_' + p1_contract_nr + '_labels-info.json')
     if p2_labels_info_f:
         if os.path.isfile(p2_labels_info_f):
             print('~~~ Reading labels-info.json file contents ~~~')

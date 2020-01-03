@@ -303,6 +303,7 @@ def display():
     print('~~~display~~~')
     p.mod_lev_1_menu = p.menu
     p.menu = 'display'
+    g.chdir_n_p2_read()
 
 
 def update():
@@ -341,7 +342,8 @@ def update():
 
 
 def delete():  # todo: still display directory in list just after it has been deleted, and bomb when del selected
-    print('~~~ deleting populated directories ~~~')
+    print('~~~ deleting non-empty directories ~~~')
+    os.chdir(g.p1_root_dir + '/data/')
     drs = g.read_dirs('.')
     for i in range(len(drs)):
         print(i, drs[i])
@@ -527,60 +529,6 @@ def chdir_exec_function():
     if os.path.isdir(g.p6_lbl_dir):
         os.chdir(g.p6_lbl_dir)
     print(f'Now in {os.getcwd()} ')
-
-
-"""
-def read_dirs():
-    (root, dirs, files) = next(os.walk(g.p1_contract_dir))
-    dirs.sort()
-    return dirs
-    
-
-def select_existing_o_non_existing_menu_for_exec_help_function( exec_function, in_o_out):
-    label_groups = ['1.Outer_box_外箱',
-                    '2.Inner_box_内盒',
-                    '3.Inside_box_中箱',
-                    '4.Prod_packaging_产品包装',
-                    '5.Plastic_bag_塑料袋',
-                    '6.Prod_sticker_产品上不干胶',
-                    ]
-
-    # function factory
-    # defining what each label function should be doing
-    def make_f(group):  # positional argument has no number
-        def func():
-            group_dir = ''
-            for n_group in label_groups:
-                if group in n_group:
-                    group_dir = n_group
-            g.p6_lbl_dir = os.path.join(g.p1_contract_dir, group_dir)
-            exec_function()
-            m.menu = menu
-            m.menus = menus
-
-        func.__name__ = group  # as function is not read before being called for execution
-        return func
-
-    functions_d = {}
-    for label_group in label_groups:
-        functions_d[label_group[2:]] = make_f(label_group[2:])
-
-    def back():
-        m.menu = menu
-        m.menus = menus
-
-    assert back == back
-
-    m.menu = 'Select label to add'
-    m.menus = {m.menu: {}}
-    for label_group in label_groups:
-        dir_l = g.read_dirs(g.p1_contract_dir)
-        if label_group in dir_l if in_o_out else label_group not in dir_l:
-            m.menus[m.menu][label_group[0]] = functions_d[label_group[2:]]
-    m.menus[m.menu]['m'] = eval('back')
-    # a particular case of run to present the current situation in p6: listing existing / non existing directories
-    m.run(p6_display_existing_non_existing_dirs)
-"""
 
 
 def p6_display_existing_non_existing_dirs():
