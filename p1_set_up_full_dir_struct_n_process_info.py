@@ -16,32 +16,18 @@ import u_global_values as g
 import py_menus as p
 
 
-def view_too_many_ext_files_in_directory(xls_file_l, ext):
-    print(f"\n{len(xls_file_l)} {ext} files are present, that's too many, exiting\n")
-
-
-def view_filename_prefix_inconsistent_with_contract_nr(cntrct_nr, prfx):
-    print(f'\nIncorrect! The file in {cntrct_nr} starts with {prfx}\n')
-
-
-def view_file_not_in_directory():
-    print(f'\nThe xls file corresponding to {g.p1_contract_nr} contract is not present, exiting\n')
-
-
-def view_a_prefix_could_not_be_read_from_filename_ext():
-    print('A prefix could not be display from filename ext')
-
-
 def report_selected_file_is_not_xls(filename):
     print(f'\nSelected file {filename} extension is not \'.xls\'\n')
 
 
 def p_context():
     print('~~~ Context for p1 set up dir struct n contract xls select n chdir ~~~')
+    g.display_dirs('.')
 
 
 def display_1_context():
     print('~~~ Context for p1 display ~~~')
+    g.display_dirs('.')
 
 
 context_func_d = {
@@ -85,6 +71,8 @@ def init():
         p.main_menus = p.menus
     p.context_func_d = {**p.context_func_d, **context_func_d}
 
+    os.chdir('./data/')
+
 
 # If the data directory does not exist, create it
 data_dir = os.path.join(g.p1_root_dir, 'data')
@@ -98,6 +86,7 @@ p5_all_products_to_be_processed_set = set()
 p6_common_indics_l = []
 p6_specific_indics_d_of_d = {}
 indicators_csv = os.path.join(g.p1_root_dir + '/common', 'indicators.csv')
+
 
 # rel_path_contract_json_f = ''  # will be initialized when p1_contract_nr is set
 
@@ -251,7 +240,7 @@ def create():
         for row in p4_indics_from_contract_l:
             # for index, row in c_df.iterrows():  # index is not used
             if (row['info_kind'], row['what'], row['where'], row['info']) \
-                                        not in p5_prods_w_same_key_set.keys():
+                            not in p5_prods_w_same_key_set.keys():
                 p5_prods_w_same_key_set[(row['info_kind'], row['what'], row['where'], row['info'])] = set()
             p5_prods_w_same_key_set[(row['info_kind'], row['what'], row['where'], row['info'])].add(
                 row['prod_nr'])
@@ -352,8 +341,35 @@ def update():
 
 
 def delete():  # todo: still display directory in list just after it has been deleted, and bomb when del selected
-    g.select_dir_to_be_deleted(g.p1_root_dir + '/data/')
-    g.display_dirs(g.p1_contract_dir)
+    print('~~~ deleting populated directories ~~~')
+    drs = g.read_dirs('.')
+    for i in range(len(drs)):
+        print(i, drs[i])
+    print('~~~')
+    while True:
+        s = input('Enter nr of directory to delete, \'b\' to return : ')
+        if s == 'b':
+            os.system('clear')
+            # p.back()
+            break
+        else:
+            try:
+                s_i = int(s)
+                if s_i in range(len(drs)):
+                    if drs[int(s)] == g.p1_contract_nr:
+                        print(
+                            '!!! Erasing current directory\n'
+                            'will also delete program-info.json\n'
+                            'and start from zero!!!'
+                        )
+                        os.remove(os.path.join(g.p1_root_dir, 'program-info.json'))
+                        del g.p1_program_info_d
+                    shutil.rmtree('./' + drs[int(s)])
+                    break
+                else:
+                    print('Integer, but not an option, try again')
+            except ValueError:
+                print('That\'s not an integer, try again')
 
 
 def check_sole_cntrct_ext_file_w_o_wo_prefix_is_in_dir(g_dir, ext, check_prefix = True):
@@ -574,6 +590,22 @@ def p6_display_existing_non_existing_dirs():
     current_dir_fp = os.getcwd()
     current_dir_lcl = current_dir_fp[current_dir_fp.rfind('/'):]
     print(f'Selected label: {selected_lbl}, currently in {current_dir_lcl}')
+
+
+def view_too_many_ext_files_in_directory(xls_file_l, ext):
+    print(f"\n{len(xls_file_l)} {ext} files are present, that's too many, exiting\n")
+
+
+def view_filename_prefix_inconsistent_with_contract_nr(cntrct_nr, prfx):
+    print(f'\nIncorrect! The file in {cntrct_nr} starts with {prfx}\n')
+
+
+def view_file_not_in_directory():
+    print(f'\nThe xls file corresponding to {g.p1_contract_nr} contract is not present, exiting\n')
+
+
+def view_a_prefix_could_not_be_read_from_filename_ext():
+    print('A prefix could not be display from filename ext')
 
 
 def main():

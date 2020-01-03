@@ -237,15 +237,14 @@ def display_dirs(walk_dir = None):
     if not walk_dir:
         walk_dir = p1_contract_dir
     if p1_contract_dir:
+        current_dir_fp = os.getcwd()
+        current_dir_lcl = current_dir_fp[current_dir_fp.rfind('/'):]
+        print(f'Currently in {current_dir_lcl}')
         drs = read_dirs(walk_dir)
-        print('~~~')
         for dr in drs:
             print(dr)
         print('~~~')
 
-        current_dir_fp = os.getcwd()
-        current_dir_lcl = current_dir_fp[current_dir_fp.rfind('/'):]
-        print(f'Currently in {current_dir_lcl}')
 
 
 def read_dirs(walk_dir):
@@ -253,6 +252,7 @@ def read_dirs(walk_dir):
 
     (root, dirs, files) = next(os.walk(walk_dir))
     dirs.sort()
+    dirs[:] = [d for d in dirs if d[0] not in ['.', '_']]
     return dirs
 
 

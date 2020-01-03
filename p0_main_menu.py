@@ -2,10 +2,14 @@
 
 import py_menus as p
 import p1_set_up_full_dir_struct_n_process_info as p1
+import p2_select_label_kinds_n_print as p2
 import u_maintain_set_of_indicators_regex_to_be_searched as i
+import u_global_values as g
+
 
 def main_menu_context():
-    print('\nContext after running main\n')
+    print('Context when running main')
+    g.display_dirs('.')
 
 
 context_func_d = {
@@ -21,6 +25,7 @@ def init():
     p.menus = {
         p.menu: {
             '1': p1_set_up_full_dir_struct_n_process_info,
+            '2': p2_select_label_kinds_n_print,
             'u': u_maintain_set_of_indicators_RegEx_to_be_searched,
             'q': p.normal_exit,
         },
@@ -33,6 +38,9 @@ def init():
 
 def p1_set_up_full_dir_struct_n_process_info():
     p1.init()
+
+def p2_select_label_kinds_n_print():
+    p2.init()
 
 def u_maintain_set_of_indicators_RegEx_to_be_searched():
     i.init()
