@@ -4,19 +4,96 @@ import json
 import os
 import shutil
 
+import p0_main_menu as p0
 import p1_select_contract as p1
 import u_global_values as g
 import u_menus as p
 
+lbl_lst = None  # list of labels  # Todo: not used at this point
+
+standard_labels_l = [
+    '1.Outer_box_外箱',
+    '6.Prod_sticker_产品上不干胶',
+]
+
+
+def read_dirs(walk_dir):
+
+    if walk_dir:
+        (root, dirs, files) = next(os.walk(walk_dir))
+        if dirs:
+            dirs.sort()
+            dirs[:] = [d for d in dirs if d[0] not in ['.', '_']]
+            return dirs
+    return None
+
+
+def display_dirs(walk_dir=None):
+
+    if not walk_dir:
+        walk_dir = p1.p1_contract_dir
+    if p1.p1_contract_dir:
+        current_dir_fp = os.getcwd()
+        current_dir_lcl = current_dir_fp[current_dir_fp.rfind('/'):]
+        print(f'Currently in {current_dir_lcl}')
+        drs = read_dirs(walk_dir)
+        for dr in drs:
+            print(dr)
+        print('~~~')
+
 
 def proc_2_context():
     print('~~~ Context p6 set up label dirs n infos ~~~')
-    g.display_dirs('.')
+    display_dirs('.')
 
 
 context_func_d = {
     'p6_set_up_label_dirs_n_infos': proc_2_context,
 }
+
+
+def p1_read():
+    """
+    if not p1_read():
+        # with p1.Controller(p1.View()):
+        pass
+    os.chdir(p1.p1_contract_dir)
+    """
+
+    if p1.p2_labels_info_d:
+        return True
+    else:
+        p1_labels_info_f = os.path.join(p1.p1_contract_dir, 'p2_' + p1.p1_contract_nr + '_labels-info.json')
+        if os.path.isfile(p1_labels_info_f):
+            with open(p1_labels_info_f) as f:
+                p1_labels_info_d = json.load(f)
+                if p1_labels_info_d:
+                    if 'p1_contract_json' in p1.p2_labels_info_d.keys():
+                        return True
+        else:
+            print(f'File {p1_labels_info_f} not found or missing content')
+        return False
+
+
+def p3_read():
+    p1_read()
+    # check which one
+    p1.p1_read()
+
+    p1.p1_labels_info_f = os.path.join(p1.p1_contract_dir, 'p2_' + p1.p1_contract_nr + '_labels-info.json')
+    if os.path.isfile(p1.p2_labels_info_f):
+        with open(p1.p2_labels_info_f) as f:
+            p1_labels_info_d = json.load(f)
+            if p1_labels_info_d:
+                if 'p4_all_products_to_be_processed_set' in p1.p2_labels_info_d.keys() \
+                        and p1_labels_info_d['p5_all_products_to_be_processed_set'] \
+                        and 'p5_extract_specifics' in p1.p2_labels_info_d.keys() \
+                        and p1_labels_info_d['p6_extract_specifics']:
+                    p1.p4_all_products_to_be_processed_set = p1.p2_labels_info_d['p5_all_products_to_be_processed_set']
+                return True
+    else:
+        print(f'File {p1.p2_labels_info_f} not found or missing content')
+    return False
 
 
 def init():
@@ -30,8 +107,6 @@ def init():
             '2': display,
             '3': update,
             '4': delete,
-            '5': g.display_p2_labels_info_d,
-            '6': g.display_p2_labels_info_f,
             '7': create_selected_indicators_set,
             '8': p7_display_selected_indicators,
             '9': cd_to_selected_dir,
@@ -45,14 +120,15 @@ def init():
     p.context_func_d = {**p.context_func_d, **context_func_d}
 
     # make sure p1 infrastructure is in place
-    # if not g.p1_read():
+    # if not p1._read():
     #     p1.Controller(p1.View())
 
-    if not g.chdir_n_p2_read():
+    """
+    if not p1.p2_read():
         p1.init()
         p1.create()
-
-    os.chdir(g.p1_contract_dir)
+    """
+    os.chdir(p1.p1_contract_dir)
 
 
 already_selected_l = []
@@ -72,23 +148,23 @@ def delete():
     pass
 
 
-def create_or_update(default = True):
+def create_or_update(default=True):
     global already_selected_l
     global options_l
     global p7_specific_indics_d_of_d
 
-    drs = g.read_dirs(g.p1_contract_dir)
+    drs = read_dirs(p1.p1_contract_dir)
     if not drs:
-        create_label_dirs(g.standard_labels_l)
+        create_label_dirs(standard_labels_l)
     # documenting in memory but not on disk, so as to keep the option of editing out of program
-    # then p2_labels_info_d and p2_labels_info_f will look different
-    # g.p2_labels_info_d['p6_label_l'] = g.read_dirs(g.p1_contract_dir)
+    # then p1.p2_labels_info_d and p1.p2_labels_info_f will look different
+    # p1.p2_labels_info_d['p6_label_l'] = g.read_dirs(p1.p1_contract_dir)
 
     # create canonical p6_lbl_dir and p6_lbl_sel
     for dr in drs:
-        os.chdir(g.p1_contract_dir + '/' + dr)
+        os.chdir(p1.p1_contract_dir + '/' + dr)
         g.p6_lbl_sel = dr
-        g.p6_lbl_dir = os.path.join(g.p1_contract_dir, g.p6_lbl_sel)
+        g.p6_lbl_dir = os.path.join(p1.p1_contract_dir, g.p6_lbl_sel)
         # g.write_in_mem_n_on_disk()
         if g.chdir_n_p7_read():
             already_selected_l = g.p7_label_info_d['selected_indicators']
@@ -99,7 +175,7 @@ def create_or_update(default = True):
         # create selected indicators set
         if not default:
             proc_2_context()
-            with open(os.path.join(g.p1_contract_dir, g.p2_labels_info_d['p6_extract_specifics'])) as fj:
+            with open(os.path.join(p1.p1_contract_dir, p1.p2_labels_info_d['p6_extract_specifics'])) as fj:
                 p7_specific_indics_d_of_d = json.load(fj)
             options_l = list(next(iter(p7_specific_indics_d_of_d.values())))
             # select from options_l and put in already_selected_l
@@ -130,21 +206,24 @@ def create_or_update(default = True):
         g.p7_label_info_d['selected_indicators'] = already_selected_l
 
         with open(g.p7_label_info_f, 'w') as f:
-            json.dump(g.p7_label_info_d, f, ensure_ascii = False)
+            json.dump(g.p7_label_info_d, f, ensure_ascii=False)
 
         make_mako()
 
 
 def display():
+    pass  # to do make a display for p2
+    """
     print('~~~')
-    g.display_dirs(g.p1_contract_dir)
+    g.display_dirs(p1.p1_contract_dir)
     print('~~~')
+        """
 
 
 def make_mako():
     # writing the input file for Mako
     mako_input = ''
-    with open(os.path.join('..', 'p4_' + g.p1_contract_nr + '_indics_from_contract_l.json')) as f:
+    with open(os.path.join('..', 'p4_' + p1.p1_contract_nr + '_indics_from_contract_l.json')) as f:
         p7_indcs_from_contract_l = json.load(f)  # todo: replace by mem pointer if it exists
     if already_selected_l:
         # building the header
@@ -181,12 +260,12 @@ def create_selected_indicators_set():
 
 def p7_display_selected_indicators():
     """
-    os.chdir(g.p1_contract_dir)
+    os.chdir(p1.p1_contract_dir)
     if g.chdir_n_p7_read():
         already_selected_l = g.p7_label_info_d['selected_indicators']
     """
 
-    with open(os.path.join(g.p1_contract_dir, 'p4_' + g.p1_contract_nr + '_indics_from_contract_l.json')) as f:
+    with open(os.path.join(p1.p1_contract_dir, 'p4_' + p1.p1_contract_nr + '_indics_from_contract_l.json')) as f:
         p7_indics_from_contract_l = json.load(f)
     indic_val_d = {}
     for option in options_l:
@@ -204,7 +283,6 @@ def p7_display_selected_indicators():
     # m.display_context_in_most_cases()
 
 
-
 def chdir_exec_function():
     if os.path.isdir(g.p6_lbl_dir):
         os.chdir(g.p6_lbl_dir)
@@ -219,15 +297,15 @@ def cd_to_selected_dir():
 def create_label_dirs(drs_l):
     # if directories do not exist, create them
     for dr in drs_l:
-        p6_lbl_dir = os.path.join(g.p1_contract_dir, dr)
+        p6_lbl_dir = os.path.join(p1.p1_contract_dir, dr)
         if not os.path.exists(p6_lbl_dir):
-            os.mkdir(p6_lbl_dir, mode = 0o700)
+            os.mkdir(p6_lbl_dir, mode=0o700)
         # and transfer the label_templates there
         if not os.path.exists(os.path.join(p6_lbl_dir, 'label_template_header.svg')):
-            shutil.copy(os.path.join(g.p1_root_dir + '/common/1.Outer_box_外箱',
+            shutil.copy(os.path.join(p0.p0_root_dir + '/common/1.Outer_box_外箱',
                                      'label_template_header.svg'), p6_lbl_dir)
         if not os.path.exists(os.path.join(p6_lbl_dir, 'label_template_body.svg')):
-            shutil.copy(os.path.join(g.p1_root_dir + '/common/1.Outer_box_外箱',
+            shutil.copy(os.path.join(p0.p0_root_dir + '/common/1.Outer_box_外箱',
                                      'label_template_body.svg'), p6_lbl_dir)
 
         # create canonical p6_lbl_dir and p6_lbl_sel
@@ -236,11 +314,11 @@ def create_label_dirs(drs_l):
 
 def write_in_mem_n_on_disk(p6_lbl_dir):
     # document the info in A1234-567_labels-info.json file
-    g.p2_labels_info_d['p6_lbl_dir'] = p6_lbl_dir
+    p1.p2_labels_info_d['p6_lbl_dir'] = p6_lbl_dir
     _, p6_lbl_sel = os.path.split(p6_lbl_dir)
-    g.p2_labels_info_d['p6_lbl_sel'] = p6_lbl_sel
-    with open(g.p2_labels_info_f, 'w') as fi:
-        json.dump(g.p2_labels_info_d, fi, ensure_ascii = False)
+    p1.p2_labels_info_d['p6_lbl_sel'] = p6_lbl_sel
+    with open(p1.p2_labels_info_f, 'w') as fi:
+        json.dump(p1.p2_labels_info_d, fi, ensure_ascii=False)
 
 
 def main():
