@@ -5,8 +5,8 @@ import subprocess
 
 import pandas as pd
 
-import u_global_values as g
-import py_menus as p
+import p0_main_menu as p0
+import u_menus as p
 
 
 def p_context():
@@ -14,12 +14,12 @@ def p_context():
 
 
 context_func_d = {
-    'u_maintain_set_of_indicators_RegEx_to_be_searched': p_context,
+    'u_maintain_set_of_indicators_regex_to_be_searched': p_context,
 }
 
 
 def init():
-    p.menu = 'u_maintain_set_of_indicators_RegEx_to_be_searched'  # required to display on main_menu
+    p.menu = 'u_maintain_set_of_indicators_regex_to_be_searched'  # required to display on main_menu
     p.mod_lev_1_menu = p.menu
     if not p.main_menu:
         p.main_menu = p.menu
@@ -36,11 +36,11 @@ def init():
     p.context_func_d = {**p.context_func_d, **context_func_d}
 
 
-indicators_csv = os.path.join(g.p1_root_dir + '/common', 'indicators.csv')
+indicators_csv = os.path.join(p0.p0_root_dir + '/common', 'indicators.csv')
 
 
 def read():
-    return pd.read_csv(indicators_csv, quoting = csv.QUOTE_NONE)
+    return pd.read_csv(indicators_csv, quoting=csv.QUOTE_NONE)
 
 
 def update():

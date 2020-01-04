@@ -1,15 +1,19 @@
 #!/usr/bin/env python3
+import os
 
-import py_menus as p
-import p1_set_up_full_dir_struct_n_process_info as p1
-import p2_select_label_kinds_n_print as p2
+p0_root_dir = os.path.dirname(os.path.abspath(__file__))  # root directory where the program is located
+
+import p1_select_contract as p1
+import p2_select_labels as p2  # todo move variables so that they don't call p2
 import u_maintain_set_of_indicators_regex_to_be_searched as i
-import u_global_values as g
+import u_menus as p
 
 
 def main_menu_context():
-    print('Context when running main')
-    g.display_dirs('.')
+    print(f'p1 selected contract: {p1.p1_contract_nr}')
+    print(f'p2 selected labels: {p1.read_dirs(p1.p1_contract_dir)}')
+    print(f'p3 selected distinctive fields: {p2.already_selected_l}')
+    print('~~~\nMain menu:')
 
 
 context_func_d = {
@@ -18,15 +22,16 @@ context_func_d = {
 
 
 def init():
+    # menus
     p.menu = 'main_menu'
     p.mod_lev_1_menu = p.menu
     if not p.main_menu:
         p.main_menu = p.menu
     p.menus = {
         p.menu: {
-            '1': p1_set_up_full_dir_struct_n_process_info,
-            '2': p2_select_label_kinds_n_print,
-            'u': u_maintain_set_of_indicators_RegEx_to_be_searched,
+            '1': p1_select_contract,
+            '2': p2_select_labels,
+            'u': u_maintain_set_of_indicators_regex_to_be_searched,
             'q': p.normal_exit,
         },
     }
@@ -35,14 +40,26 @@ def init():
         p.main_menus = p.menus
     p.context_func_d = {**p.context_func_d, **context_func_d}
 
+    # reading repository
+    # If the data directory does not exist, create it
+    data_dir = os.path.join(p0_root_dir, 'data')
+    if not os.path.exists(data_dir):
+        os.mkdir(data_dir, mode=0o700)
 
-def p1_set_up_full_dir_struct_n_process_info():
+
+def p1_select_contract():
     p1.init()
 
-def p2_select_label_kinds_n_print():
+
+def p2_select_labels():
     p2.init()
 
-def u_maintain_set_of_indicators_RegEx_to_be_searched():
+
+def p3_select_fields():
+    pass
+
+
+def u_maintain_set_of_indicators_regex_to_be_searched():
     i.init()
 
 

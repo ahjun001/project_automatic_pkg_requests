@@ -5,64 +5,6 @@ import os
 import pprint
 import shutil
 
-# import py_menus as p
-# import u_menus as m
-
-p1_root_dir = os.path.dirname(os.path.abspath(__file__))  # root directory where the program is located
-# directory containing information on last run and progress in building the label set
-p1_program_info_d = {}
-p1_program_info_f = None
-p1_initial_xls_contract_file = None
-p1_full_path_source_file_xls = None  # full path of source xls file
-p1_contract_nr = None  # prefix of the contract xls source file
-p1_contract_dir = None  # directory where a copy of the xls contract file and contract extracted data is
-# local path to labels-info.json file
-p2_labels_info_d = {}
-p2_labels_info_f = None
-
-
-def p1_read():
-    global p1_program_info_f
-    global p1_program_info_d
-    global p1_contract_nr
-    global p1_full_path_source_file_xls
-    global p1_contract_dir
-
-    if p1_program_info_d:
-        if p1_program_info_d['p1_contract_nr']:
-            if p1_program_info_d['p1_full_path_source_file_xls']:
-                return True
-    else:
-        p1_program_info_f = os.path.join(p1_root_dir, 'program-info.json')
-        if os.path.isfile(p1_program_info_f):
-            with open(p1_program_info_f) as f:
-                p1_program_info_d = json.load(f)
-                if p1_program_info_d:
-                    p1_contract_nr = p1_program_info_d['p1_contract_nr']
-                    p1_full_path_source_file_xls = p1_program_info_d['p1_full_path_source_file_xls']
-                    p1_contract_dir = p1_root_dir + f'/data/{p1_contract_nr}'
-                    if not os.path.exists(p1_contract_dir) or not os.path.exists(p1_full_path_source_file_xls):
-                        return False
-                    return True
-        else:
-            print(f'File {p1_program_info_f} not found or missing content')  # code later will p1.Controller(p.View())
-        return False
-
-
-def display_p1_program_info_d():
-    global p1_program_info_d
-    print('~~~ Reading program-info global value ~~~')
-    pprint.pprint(p1_program_info_d)
-    print('~~~ Finished reading program-info global value ~~~')
-
-
-def display_p1_program_info_f():
-    global p1_program_info_f
-    print('~~~ Reading program-info.json file contents ~~~')
-    with open(p1_program_info_f) as f:
-        pprint.pprint(f.read())
-    print('~~~ File program-info.json closed ~~~')
-
 
 def chdir_n_p2_read():
     global p1_contract_nr
@@ -116,27 +58,6 @@ def chdir_n_p4_read():
     else:
         print(f'File {p2_labels_info_f} not found or missing content')
     return False
-
-
-def display_p2_labels_info_d():
-    global p2_labels_info_d
-    print('~~~ Reading labels-info global value ~~~')
-    pprint.pprint(p2_labels_info_d)
-    print('~~~ Finished reading labels-info global value ~~~')
-
-
-def display_p2_labels_info_f():
-    # global p2_labels_info_f
-    # p2_labels_info_f = os.path.join(p1_contract_dir, 'p2_' + p1_contract_nr + '_labels-info.json')
-    if p2_labels_info_f:
-        if os.path.isfile(p2_labels_info_f):
-            print('~~~ Reading labels-info.json file contents ~~~')
-            with open(p2_labels_info_f) as f:
-                # print(f.read())
-                pprint.pprint(f.read())
-            print('~~~ File labels-info.json closed ~~~')
-    else:
-        print(f'\nFile {p2_labels_info_f} not built yet\n')
 
 
 p5_all_products_to_be_processed_set = None
@@ -229,30 +150,6 @@ def select_dir_to_be_deleted(walk_dir):
     return
         """
 
-
-def display_dirs(walk_dir = None):
-    global p1_contract_dir
-
-    if not walk_dir:
-        walk_dir = p1_contract_dir
-    if p1_contract_dir:
-        current_dir_fp = os.getcwd()
-        current_dir_lcl = current_dir_fp[current_dir_fp.rfind('/'):]
-        print(f'Currently in {current_dir_lcl}')
-        drs = read_dirs(walk_dir)
-        for dr in drs:
-            print(dr)
-        print('~~~')
-
-
-
-def read_dirs(walk_dir):
-    global p1_contract_dir
-
-    (root, dirs, files) = next(os.walk(walk_dir))
-    dirs.sort()
-    dirs[:] = [d for d in dirs if d[0] not in ['.', '_']]
-    return dirs
 
 
 standard_labels_l = [

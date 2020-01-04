@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
-# p2_select_label_kinds_n_print.py
+# p2_select_labels.py
 import json
 import os
 import shutil
 
-import p1_set_up_full_dir_struct_n_process_info as p1
+import p1_select_contract as p1
 import u_global_values as g
-import py_menus as p
+import u_menus as p
 
 
 def proc_2_context():

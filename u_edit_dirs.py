@@ -2,7 +2,7 @@
 import os
 import shutil
 
-import py_menus as p
+import u_menus as p
 
 label_groups = ['1.Outer_box_外箱',
                 '2.Inner_box_内盒',
