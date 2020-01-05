@@ -26,9 +26,19 @@ def p0_set_global_variables():
     global p1_contract_nr
     global p1_full_path_source_file_xls
     global p1_contract_dir
-    p1_contract_nr = p1_program_info_d['p1_contract_nr']
-    p1_full_path_source_file_xls = p1_program_info_d['p1_full_path_source_file_xls']
-    p1_contract_dir = p0_root_dir + f'/data/{p1_contract_nr}'
+    global p1_program_info_d
+    global p1_program_info_f
+
+    p1_program_info_f = os.path.join(p0_root_dir, 'program-info.json')
+    if pathlib.Path(p1_program_info_f).exists():
+        # then load the info it contains in p1_program_info_d dictionary
+        with open(p1_program_info_f) as f:
+            p1_program_info_d = json.load(f)
+        # check if p1_program_info_d['p1_contract_nr'] helps point to a valid file,
+        if p1_program_info_d:
+            p1_contract_nr = p1_program_info_d['p1_contract_nr']
+            p1_full_path_source_file_xls = p1_program_info_d['p1_full_path_source_file_xls']
+            p1_contract_dir = p0_root_dir + f'/data/{p1_contract_nr}'
 
 
 # local path to labels-info.json file
@@ -56,6 +66,7 @@ def p1_read_from_disk_n_set_global_var_if_necessary(key):
     global p1_labels_info_d
     global p1_labels_info_f
     if not p1_labels_info_d:
+        p1_labels_info_f = 'p1_' + p1_contract_nr + '_labels-info.json'
         with open(p1_labels_info_f) as fi:
             p1_labels_info_d = json.load(fi)
         return p1_labels_info_d[key]
@@ -73,6 +84,7 @@ def p_context():
 def display_1_context():
     display_dirs(p0_root_dir + '/data/')
     print('~~~ Select contract / Display ~~~')
+    p0_set_global_variables()
 
 
 context_func_d = {
@@ -101,13 +113,13 @@ def init():
             'q': p.normal_exit,
         },
         'display_sub_processes_output': {
-            '6': after_running_p1_only_display_p4_search_reg_ex_l,
-            '9': display_p1_all_products_to_be_processed_set,
-            '7': display_p1b_indics_from_contract_l,
-            '10': display_p1d_common_indics_l,
-            '11': display_p6_specific_indics_d_of_d,
-            '12': display_p1_labels_info_d,
-            '13': display_p1_labels_info_f,
+            '1': after_running_p1_only_display_p4_search_reg_ex_l,
+            '2': display_p1_all_products_to_be_processed_set,
+            '3': display_p1b_indics_from_contract_l,
+            '4': display_p1d_common_indics_l,
+            '5': display_p6_specific_indics_d_of_d,
+            '6': display_p1_labels_info_d,
+            '7': display_p1_labels_info_f,
             'b': p.back,
             'q': p.normal_exit,
         }
@@ -138,7 +150,6 @@ def auto_create():
     global p1_labels_info_f
 
     # checking if a program-info.json file exists in the root directory
-    # if program-info.json exists
     if pathlib.Path(p1_program_info_f).exists():
         # then load the info it contains in p1_program_info_d dictionary
         with open(p1_program_info_f) as f:
@@ -591,6 +602,7 @@ def display_p1_all_products_to_be_processed_set():
     global p1_labels_info_f
     global p1_all_products_to_be_processed_set
     if not p1_labels_info_d:
+        p1_labels_info_f = os.path.join(p1_contract_dir, 'p1_' + p1_contract_nr + '_labels-info.json')
         with open(p1_labels_info_f) as fi:
             p1_labels_info_d = json.load(fi)
     p1_all_products_to_be_processed_set = p1_labels_info_d['p1_all_products_to_be_processed_set']
