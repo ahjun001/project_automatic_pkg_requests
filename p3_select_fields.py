@@ -8,7 +8,7 @@ import u_menus as m
 p0_root_dir = os.path.dirname(os.path.abspath(__file__))  # root directory where the program is located
 
 class Controller:
-    def __init__(self):  # use to be (self, p6_specific_indics_d_of_d)
+    def __init__(self):  # use to be (self, p1e_specific_indics_d_of_d)
         """
             if no information is in the global variable dictionary then load it from disk
             """
