@@ -5,8 +5,9 @@ import subprocess
 
 import pandas as pd
 
-import p0_main_menu as p0
 import u_menus as p
+
+p0_root_dir = os.path.dirname(os.path.abspath(__file__))  # root directory where the program is located
 
 
 def p_context():
@@ -19,7 +20,8 @@ context_func_d = {
 
 
 def init():
-    p.menu = 'u_maintain_set_of_indicators_regex_to_be_searched'  # required to display on main_menu
+    p.menu = 'u_maintain_set_of_indicators_regex_to_be_searched'  # required to display_sub_processes_output on
+    # main_menu
     p.mod_lev_1_menu = p.menu
     if not p.main_menu:
         p.main_menu = p.menu
@@ -36,7 +38,7 @@ def init():
     p.context_func_d = {**p.context_func_d, **context_func_d}
 
 
-indicators_csv = os.path.join(p0.p0_root_dir + '/common', 'indicators.csv')
+indicators_csv = os.path.join(p0_root_dir + '/common', 'indicators.csv')
 
 
 def read():

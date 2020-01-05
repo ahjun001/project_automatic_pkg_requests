@@ -5,6 +5,7 @@ import os
 import u_global_values as g
 import u_menus as m
 
+p0_root_dir = os.path.dirname(os.path.abspath(__file__))  # root directory where the program is located
 
 class Controller:
     def __init__(self):  # use to be (self, p6_specific_indics_d_of_d)
@@ -122,7 +123,7 @@ class Controller:
 def main():
     """ Driver """
     c = Controller()
-    m.run(c.p7_display_selected_indicators())
+    m.run()
 
 
 if __name__ == '__main__':

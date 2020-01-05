@@ -4,11 +4,11 @@ import json
 import os
 import shutil
 
-import p0_main_menu as p0
 import p1_select_contract as p1
 import u_global_values as g
 import u_menus as p
 
+p0_root_dir = os.path.dirname(os.path.abspath(__file__))  # root directory where the program is located
 lbl_lst = None  # list of labels  # Todo: not used at this point
 
 standard_labels_l = [
@@ -54,7 +54,7 @@ context_func_d = {
 
 def p1_read():
     """
-    if not p1_read():
+    if not read():
         # with p1.Controller(p1.View()):
         pass
     os.chdir(p1.p1_contract_dir)
@@ -78,7 +78,7 @@ def p1_read():
 def p3_read():
     p1_read()
     # check which one
-    p1.p1_read()
+    p1.read()
 
     p1.p1_labels_info_f = os.path.join(p1.p1_contract_dir, 'p2_' + p1.p1_contract_nr + '_labels-info.json')
     if os.path.isfile(p1.p2_labels_info_f):
@@ -126,7 +126,7 @@ def init():
     """
     if not p1.p2_read():
         p1.init()
-        p1.create()
+        p1.auto_create()
     """
     os.chdir(p1.p1_contract_dir)
 
@@ -160,7 +160,7 @@ def create_or_update(default=True):
     # then p1.p2_labels_info_d and p1.p2_labels_info_f will look different
     # p1.p2_labels_info_d['p6_label_l'] = g.read_dirs(p1.p1_contract_dir)
 
-    # create canonical p6_lbl_dir and p6_lbl_sel
+    # auto_create canonical p6_lbl_dir and p6_lbl_sel
     for dr in drs:
         os.chdir(p1.p1_contract_dir + '/' + dr)
         g.p6_lbl_sel = dr
@@ -172,7 +172,7 @@ def create_or_update(default=True):
         if default and not already_selected_l:
             already_selected_l = ["03.Prod_spec", "pack", "total_qty"]
 
-        # create selected indicators set
+        # auto_create selected indicators set
         if not default:
             proc_2_context()
             with open(os.path.join(p1.p1_contract_dir, p1.p2_labels_info_d['p6_extract_specifics'])) as fj:
@@ -212,7 +212,7 @@ def create_or_update(default=True):
 
 
 def display():
-    pass  # to do make a display for p2
+    pass  # to do make a display_sub_processes_output for p2
     """
     print('~~~')
     g.display_dirs(p1.p1_contract_dir)
@@ -295,20 +295,20 @@ def cd_to_selected_dir():
 
 
 def create_label_dirs(drs_l):
-    # if directories do not exist, create them
+    # if directories do not exist, auto_create them
     for dr in drs_l:
         p6_lbl_dir = os.path.join(p1.p1_contract_dir, dr)
         if not os.path.exists(p6_lbl_dir):
             os.mkdir(p6_lbl_dir, mode=0o700)
         # and transfer the label_templates there
         if not os.path.exists(os.path.join(p6_lbl_dir, 'label_template_header.svg')):
-            shutil.copy(os.path.join(p0.p0_root_dir + '/common/1.Outer_box_外箱',
+            shutil.copy(os.path.join(p0_root_dir + '/common/1.Outer_box_外箱',
                                      'label_template_header.svg'), p6_lbl_dir)
         if not os.path.exists(os.path.join(p6_lbl_dir, 'label_template_body.svg')):
-            shutil.copy(os.path.join(p0.p0_root_dir + '/common/1.Outer_box_外箱',
+            shutil.copy(os.path.join(p0_root_dir + '/common/1.Outer_box_外箱',
                                      'label_template_body.svg'), p6_lbl_dir)
 
-        # create canonical p6_lbl_dir and p6_lbl_sel
+        # auto_create canonical p6_lbl_dir and p6_lbl_sel
         write_in_mem_n_on_disk(dr)
 
 

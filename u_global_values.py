@@ -3,10 +3,8 @@
 import json
 import os
 import pprint
-import shutil
 
-
-
+p0_root_dir = os.path.dirname(os.path.abspath(__file__))  # root directory where the program is located
 p5_all_products_to_be_processed_set = None
 
 p6_lbl_dir = None  # currently working label directory
@@ -43,7 +41,7 @@ def chdir_n_p7_read():
     global p7_label_info_f
     global p7_label_info_d
 
-    p4_read()
+    # p4_read()
     #    p6_lbl_dir = p2_labels_info_d['p6_lbl_dir']
     #    p6_lbl_sel = p2_labels_info_d['p6_lbl_sel']
     os.chdir(p6_lbl_dir)
@@ -55,8 +53,6 @@ def chdir_n_p7_read():
             if p7_label_info_d:
                 return True
     return False
-
-
 
 
 header_height = 7

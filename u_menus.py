@@ -50,7 +50,7 @@ def run():
         print()
         menus_context_func()
         print()
-        # display menu with data from menus dict
+        # display_sub_processes_output menu with data from menus dict
         for k, v in menus.get(menu).items():
             # for each menu entry: key to execute, function to be executed (name should be explicit)
             print(f'{k}. {v.__name__}')

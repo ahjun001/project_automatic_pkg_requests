@@ -4,6 +4,8 @@ import shutil
 
 import u_menus as p
 
+p0_root_dir = os.path.dirname(os.path.abspath(__file__))  # root directory where the program is located
+
 label_groups = ['1.Outer_box_外箱',
                 '2.Inner_box_内盒',
                 '3.Inside_box_中箱',
@@ -45,7 +47,7 @@ def init():
         p.main_menu = p.menu
     p.menus = {
         p.menu: {
-            '1': create,
+            '1': auto_create,
             '1a': create_from_a_list,
             '2': display,
             '3': update,
@@ -61,12 +63,12 @@ def init():
     p.context_func_d = {**p.context_func_d, **context_func_d}
 
 
-def create():
+def auto_create():
     edit_dirs_context()
-    print('~~~create~~~')
+    print('~~~auto_create~~~')
     name = input('Enter new directory name: ')
     if os.path.exists(os.path.join('.', name)):
-        print(f'mkdir: cannot create directory {name}: File exists')
+        print(f'mkdir: cannot auto_create directory {name}: File exists')
     else:
         os.makedirs(name)
 
@@ -100,7 +102,7 @@ def create_from_a_list():
 
 
 def display():
-    print('~~~display~~~')
+    print('~~~display_sub_processes_output~~~')
     edit_dirs_context()
     print('~~~')
 
