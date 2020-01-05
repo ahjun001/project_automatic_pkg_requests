@@ -47,7 +47,7 @@ p1_labels_info_f = ''
 
 p1_search_reg_ex_l = []
 p1b_indics_from_contract_l = []
-p1_prods_w_same_key_set = {}  # make a dictionary key= info, value = sets of prods with that key
+p1c_prods_w_same_key_set = {}  # make a dictionary key= info, value = sets of prods with that key
 p1_all_products_to_be_processed_set = set()
 p1d_common_indics_l = []
 p1e_specific_indics_d_of_d = {}
@@ -55,18 +55,13 @@ indicators_csv = os.path.join(p0_root_dir + '/common', 'indicators.csv')
 
 
 def p1_read_from_disk_n_set_global_var_if_necessary(key):
-    """
-    "p1a_contract_json": "p1a_A906202-006-contract.json",
-    "p1b_indics_from_contract_l": "p1b_A906202-006_indics_from_contract_l.json",
-    "p1c_all_relevant_data": "p1c_A906202-006_all_relevant_data.txt",
-    "p5_all_products_to_be_processed_set": [ "MS01001", "MS01022", "MS01037", "MS01038", "MS01039", "MS01040" ],
-    "p1d_extract_common": "p1d_A906202-006_extract_common.json",
-    "p1e_extract_specifics": "p1e_A906202-006_extract_specifics.json"
-    """
     global p1_labels_info_d
     global p1_labels_info_f
+    global p1_contract_dir
+    global p1_contract_nr
+
     if not p1_labels_info_d:
-        p1_labels_info_f = 'p1_' + p1_contract_nr + '_labels-info.json'
+        p1_labels_info_f = os.path.join(p1_contract_dir, 'p1_' + p1_contract_nr + '_labels-info.json')
         with open(p1_labels_info_f) as fi:
             p1_labels_info_d = json.load(fi)
         return p1_labels_info_d[key]
@@ -116,10 +111,9 @@ def init():
             '1': after_running_p1_only_display_p4_search_reg_ex_l,
             '2': display_p1_all_products_to_be_processed_set,
             '3': display_p1b_indics_from_contract_l,
-            '4': display_p1d_common_indics_l,
-            '5': display_p6_specific_indics_d_of_d,
-            '6': display_p1_labels_info_d,
-            '7': display_p1_labels_info_f,
+            '4': display_p1b_indics_from_contract_l,
+            '5': display_p1d_common_indics_l,
+            '6': display_p1e_specific_indics_d_of_d,
             'b': p.back,
             'q': p.normal_exit,
         }
@@ -294,32 +288,32 @@ def auto_create():
         with open(file_indics, 'w') as f:
             json.dump(p1b_indics_from_contract_l, f, ensure_ascii=False)
 
-        # p1_prods_w_same_key_set = {}  # make a dictionary key= info, value = sets of prods with that key
+        # p1c_prods_w_same_key_set = {}  # make a dictionary key= info, value = sets of prods with that key
         for row in p1b_indics_from_contract_l:
             # for index, row in c_df.iterrows():  # index is not used
             if (row['info_kind'], row['what'], row['where'], row['info']) \
-                    not in p1_prods_w_same_key_set.keys():
-                p1_prods_w_same_key_set[(row['info_kind'], row['what'], row['where'], row['info'])] = set()
-            p1_prods_w_same_key_set[(row['info_kind'], row['what'], row['where'], row['info'])].add(
+                    not in p1c_prods_w_same_key_set.keys():
+                p1c_prods_w_same_key_set[(row['info_kind'], row['what'], row['where'], row['info'])] = set()
+            p1c_prods_w_same_key_set[(row['info_kind'], row['what'], row['where'], row['info'])].add(
                 row['prod_nr'])
 
             # document in all_relevant_data_json
-    p5_file_out_f = 'p1c_' + p1_contract_nr + '_all_relevant_data.txt'
-    with open(p5_file_out_f, 'w') as f4:
-        # json.dump(p1_prods_w_same_key_set, f4, ensure_ascii = False) won't work
-        # f4.write(p1_prods_w_same_key_set.__str__()) doesn't look pretty
-        pprint.PrettyPrinter(indent=2, stream=f4).pprint(p1_prods_w_same_key_set)
+    p1c_file_out_f = 'p1c_' + p1_contract_nr + '_all_relevant_data.txt'
+    with open(p1c_file_out_f, 'w') as f1c:
+        # json.dump(p1c_prods_w_same_key_set, f1c, ensure_ascii = False) won't work
+        # f1c.write(p1c_prods_w_same_key_set.__str__()) doesn't look pretty
+        pprint.PrettyPrinter(indent=2, stream=f1c).pprint(p1c_prods_w_same_key_set)
 
-    document_in_labels_info_json('p1c_all_relevant_data', p5_file_out_f)
+    document_in_labels_info_json('p1c_all_relevant_data', p1c_file_out_f)
 
-    # p5_build_set_of_all_products_to_be_processed
+    # p1c_build_set_of_all_products_to_be_processed
     for prod in contract_json_d['l_i']:
         p1_all_products_to_be_processed_set.add(prod["01.TST_prod_#-需方产品编号"])
     document_in_labels_info_json('p1_all_products_to_be_processed_set',
                                  sorted(list(p1_all_products_to_be_processed_set)))
 
     # p6_split_between p6_common_indics and p6_specific_indics
-    for k, v in p1_prods_w_same_key_set.items():
+    for k, v in p1c_prods_w_same_key_set.items():
         # indic is not a  packing quantity and is common to all products
         if k[0] != 'pack_qty' and v == p1_all_products_to_be_processed_set:
             if k[3]:  # todo: check why this sometimes not happens
@@ -592,30 +586,47 @@ def after_running_p1_only_display_p4_search_reg_ex_l():
     pprint.pprint(p1_search_reg_ex_l)
 
 
-def display_p1b_indics_from_contract_l():
-    p1_read_from_disk_n_set_global_var_if_necessary('p1b_indics_from_contract_l')
-    pprint.pprint(p1b_indics_from_contract_l)
-
-
 def display_p1_all_products_to_be_processed_set():
     global p1_labels_info_d
     global p1_labels_info_f
     global p1_all_products_to_be_processed_set
     if not p1_labels_info_d:
         p1_labels_info_f = os.path.join(p1_contract_dir, 'p1_' + p1_contract_nr + '_labels-info.json')
-        with open(p1_labels_info_f) as fi:
-            p1_labels_info_d = json.load(fi)
+        with open(p1_labels_info_f) as f1:
+            p1_labels_info_d = json.load(f1)
     p1_all_products_to_be_processed_set = p1_labels_info_d['p1_all_products_to_be_processed_set']
     pprint.pprint(p1_all_products_to_be_processed_set)
 
 
+def display_p1b_indics_from_contract_l():
+    global p1b_indics_from_contract_l
+    filename = p1_read_from_disk_n_set_global_var_if_necessary('p1b_indics_from_contract_l')
+    with open(os.path.join(p1_contract_dir, filename)) as f1b:
+        p1b_indics_from_contract_l = json.load(f1b)
+    pprint.pprint(p1b_indics_from_contract_l)
+
+
+def display_p1c_all_relevant_data():
+    global p1c_prods_w_same_key_set
+    filename = p1_read_from_disk_n_set_global_var_if_necessary('p1c_all_relevant_data')
+    with open(os.path.join(p1_contract_dir, filename)) as f1c:
+        p1c_prods_w_same_key_set = f1c.read()
+    print(p1c_prods_w_same_key_set)
+
+
 def display_p1d_common_indics_l():
-    p1_read_from_disk_n_set_global_var_if_necessary('p1d_extract_common')
+    global p1d_common_indics_l
+    filename = p1_read_from_disk_n_set_global_var_if_necessary('p1d_extract_common')
+    with open(os.path.join(p1_contract_dir, filename)) as f1d:
+        p1d_common_indics_l = json.load(f1d)
     pprint.pprint(p1d_common_indics_l)
 
 
-def display_p6_specific_indics_d_of_d():
-    p1_read_from_disk_n_set_global_var_if_necessary('p1e_extract_specifics')
+def display_p1e_specific_indics_d_of_d():
+    global p1e_specific_indics_d_of_d
+    filename = p1_read_from_disk_n_set_global_var_if_necessary('p1e_extract_specifics')
+    with open(os.path.join(p1_contract_dir, filename)) as f1e:
+        p1e_specific_indics_d_of_d = json.load(f1e)
     pprint.pprint(p1e_specific_indics_d_of_d)
 
 
