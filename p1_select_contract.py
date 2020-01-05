@@ -22,7 +22,7 @@ p1_full_path_source_file_xls = ''  # full path of source xls file
 p1_contract_dir = ''  # directory where a copy of the xls contract file and contract extracted data is
 
 
-def p0_set_global_variables():
+def p0_load_program_info_d():
     global p1_contract_nr
     global p1_full_path_source_file_xls
     global p1_contract_dir
@@ -54,32 +54,36 @@ p1e_specific_indics_d_of_d = {}
 indicators_csv = os.path.join(p0_root_dir + '/common', 'indicators.csv')
 
 
-def p1_read_from_disk_n_set_global_var_if_necessary(key):
+def p1_load_p1_labels_info_d():
     global p1_labels_info_d
     global p1_labels_info_f
     global p1_contract_dir
     global p1_contract_nr
 
+    p0_load_program_info_d()
     if not p1_labels_info_d:
         p1_labels_info_f = os.path.join(p1_contract_dir, 'p1_' + p1_contract_nr + '_labels-info.json')
         with open(p1_labels_info_f) as fi:
             p1_labels_info_d = json.load(fi)
-        return p1_labels_info_d[key]
-
-
-def report_selected_file_is_not_xls(filename):
-    print(f'\nSelected file {filename} extension is not \'.xls\'\n')
+        return p1_labels_info_d
 
 
 def p_context():
+    p0_load_program_info_d()
+    if os.path.isdir(p1_contract_dir):
+        os.chdir(p1_contract_dir)
     display_dirs(p0_root_dir + '/data/')
-    print('~~~ Select contract: ')
+
+    print('~~~ Now processing contract #: ', p1_contract_nr)
+    print('~~~ Select action: ')
 
 
 def display_1_context():
+    p0_load_program_info_d()
+    if os.path.isdir(p1_contract_dir):
+        os.chdir(p1_contract_dir)
     display_dirs(p0_root_dir + '/data/')
     print('~~~ Select contract / Display ~~~')
-    p0_set_global_variables()
 
 
 context_func_d = {
@@ -97,10 +101,10 @@ def init():
         p.main_menu = p.menu
     p.menus = {
         p.menu: {
-            '1': auto_create,
-            '2': read_n_display,
-            '3': update_or_select_new_contract,
-            '4': delete,
+            '1': process_default_contract,
+            '2': load_n_display_output_overview,
+            '3': select_new_contract,
+            '4': delete_all_data_on_selected_contract,
             '7': display_sub_processes_output,
             '8': display_p1_program_info_d,
             '9': display_p1_program_info_f,
@@ -111,7 +115,7 @@ def init():
             '1': after_running_p1_only_display_p4_search_reg_ex_l,
             '2': display_p1_all_products_to_be_processed_set,
             '3': display_p1b_indics_from_contract_l,
-            '4': display_p1b_indics_from_contract_l,
+            '4': display_p1c_all_relevant_data,
             '5': display_p1d_common_indics_l,
             '6': display_p1e_specific_indics_d_of_d,
             'b': p.back,
@@ -123,7 +127,7 @@ def init():
         p.main_menus = p.menus
     p.context_func_d = {**p.context_func_d, **context_func_d}
 
-    # If the data directory does not exist, auto_create it
+    # If the data directory does not exist, process_default_contract it
     data_dir = os.path.join(p0_root_dir, 'data')
     if not os.path.exists(data_dir):
         os.mkdir(data_dir, mode=0o700)
@@ -133,7 +137,7 @@ def init():
     p1_program_info_f = os.path.join(p0_root_dir, 'program-info.json')
 
 
-def auto_create():
+def process_default_contract():
     global p1_contract_nr
     global p1_contract_dir
     global p1_full_path_source_file_xls
@@ -142,6 +146,19 @@ def auto_create():
     global p1_initial_xls_contract_file
     global p1_labels_info_d
     global p1_labels_info_f
+    global p1_search_reg_ex_l
+    global p1b_indics_from_contract_l
+    global p1c_prods_w_same_key_set
+    global p1_all_products_to_be_processed_set
+    global p1d_common_indics_l
+    global p1e_specific_indics_d_of_d
+    # reset to zero if these had been loaded from disk before
+    p1_search_reg_ex_l = []
+    p1b_indics_from_contract_l = []
+    p1c_prods_w_same_key_set = {}
+    p1_all_products_to_be_processed_set = set()
+    p1d_common_indics_l = []
+    p1e_specific_indics_d_of_d = {}
 
     # checking if a program-info.json file exists in the root directory
     if pathlib.Path(p1_program_info_f).exists():
@@ -224,11 +241,11 @@ def auto_create():
         contract_json_d['l_i'].append(dict(tmp_dict))
         row += 3
 
-    with open(rel_path_contract_json_f, 'w') as fc:
+    with open(os.path.join(p1_contract_dir, rel_path_contract_json_f), 'w') as fc:
         json.dump(contract_json_d, fc, ensure_ascii=False)
     # document in A1234-456-info.json
     p1_labels_info_f = 'p1_' + p1_contract_nr + '_labels-info.json'
-    # auto_create a structure to store label information
+    # process_default_contract a structure to store label information
     p1_labels_info_d = {'p1a_contract_json': rel_path_contract_json_f}
     with open(p1_labels_info_f, 'w') as fi:
         json.dump(p1_labels_info_d, fi, ensure_ascii=False)
@@ -351,18 +368,19 @@ def auto_create():
     document_in_labels_info_json('p1e_extract_specifics', filename)
 
 
-def read_n_display():
-    read()
+def load_n_display_output_overview():
+    p1_load_p1_labels_info_d()
     display()
 
 
-def read():
+def read_program_info():
     """
     Process p1 has run successfully, returns a directory of global variables, either already in memory
     either resulting from a previous run, then saved and now re-loaded from disk
         """
     global p1_program_info_f
     global p1_program_info_d
+    global p1_contract_dir
 
     # info is already in memory, let's check its validity
     if p1_program_info_d:
@@ -381,7 +399,7 @@ def read():
         with open(p1_program_info_f) as f:
             p1_program_info_d = json.load(f)
             if p1_program_info_d:
-                p0_set_global_variables()
+                p0_load_program_info_d()
                 if not os.path.exists(p1_contract_dir) or not os.path.exists(p1_full_path_source_file_xls):
                     return None
                 return p1_program_info_d
@@ -389,7 +407,14 @@ def read():
 
 
 def display():
-    pass
+    if p1_labels_info_d:
+        display_p1_labels_info_d()
+        return
+    elif p1_labels_info_f:
+        print('trying to read_program_info from disk:')
+        display_p1_program_info_f()
+    else:
+        print('p1 has not run or data cannot be loaded from disk:')
 
 
 def display_sub_processes_output():
@@ -398,7 +423,7 @@ def display_sub_processes_output():
     p.menu = 'display_sub_processes_output'
 
 
-def update_or_select_new_contract():
+def select_new_contract():
     global p1_contract_nr
     global p1_contract_dir
     global p1_full_path_source_file_xls
@@ -435,18 +460,22 @@ def update_or_select_new_contract():
         document_in_program_info_json()
     else:
         report_selected_file_is_not_xls(filename)
-    auto_create()
+    process_default_contract()
 
 
-def delete():  # todo: still display_sub_processes_output directory in list just after it has been deleted,
-    # and bomb when del selected
+def delete_all_data_on_selected_contract():
+    global p1_program_info_d
+    global p1_contract_nr
+    global p0_root_dir
     print('~~~ deleting non-empty directories ~~~')
-    drs = read_dirs('.')
+    drs = read_dirs(p0_root_dir + '/data/')
+    if not drs:
+        return
     for i in range(len(drs)):
         print(i, drs[i])
     print('~~~')
     while True:
-        s = input('Enter nr of directory to delete, \'b\' to return : ')
+        s = input('Enter nr of directory to delete_all_data_on_selected_contract, \'b\' to return : ')
         if s == 'b':
             os.system('clear')
             # p.back()
@@ -458,12 +487,13 @@ def delete():  # todo: still display_sub_processes_output directory in list just
                     if drs[int(s)] == p1_contract_nr:
                         print(
                             '!!! Erasing current directory\n'
-                            'will also delete program-info.json\n'
-                            'and start from zero!!!'
+                            'this will also delete_all_data_on_selected_contract program-info.json\n'
+                            'and start as if repository is empty !!!'
                         )
                         os.remove(os.path.join(p0_root_dir, 'program-info.json'))
-                        del p1_program_info_d
-                    shutil.rmtree('./' + drs[int(s)])
+                        p1_program_info_d = {}
+                        p1_contract_nr = ''
+                    shutil.rmtree(p0_root_dir + '/data/' + drs[int(s)])
                     break
                 else:
                     print('Integer, but not an option, try again')
@@ -539,13 +569,13 @@ def build_program_info_d_from_root_xls_file_or_ask_open_file():
         p0_root_dir, '.xls')
 
     if not p1_contract_nr or not p1_full_path_source_file_xls:
-        update_or_select_new_contract()
+        select_new_contract()
         return
     else:
 
         p1_contract_dir = os.path.join(p0_root_dir, 'data/', p1_contract_nr)
 
-        # If the directory does not exist yet, auto_create it
+        # If the directory does not exist yet, process_default_contract it
         if not os.path.exists(p1_contract_dir):
             try:
                 os.mkdir(p1_contract_dir, mode=0o700)
@@ -600,7 +630,10 @@ def display_p1_all_products_to_be_processed_set():
 
 def display_p1b_indics_from_contract_l():
     global p1b_indics_from_contract_l
-    filename = p1_read_from_disk_n_set_global_var_if_necessary('p1b_indics_from_contract_l')
+    global p1_labels_info_d
+    if not p1_labels_info_d:
+        p1_labels_info_d = p1_load_p1_labels_info_d()
+    filename = p1_labels_info_d['p1b_indics_from_contract_l']
     with open(os.path.join(p1_contract_dir, filename)) as f1b:
         p1b_indics_from_contract_l = json.load(f1b)
     pprint.pprint(p1b_indics_from_contract_l)
@@ -608,7 +641,10 @@ def display_p1b_indics_from_contract_l():
 
 def display_p1c_all_relevant_data():
     global p1c_prods_w_same_key_set
-    filename = p1_read_from_disk_n_set_global_var_if_necessary('p1c_all_relevant_data')
+    global p1_labels_info_d
+    if not p1_labels_info_d:
+        p1_labels_info_d = p1_load_p1_labels_info_d()
+    filename = p1_labels_info_d['p1c_all_relevant_data']
     with open(os.path.join(p1_contract_dir, filename)) as f1c:
         p1c_prods_w_same_key_set = f1c.read()
     print(p1c_prods_w_same_key_set)
@@ -616,7 +652,10 @@ def display_p1c_all_relevant_data():
 
 def display_p1d_common_indics_l():
     global p1d_common_indics_l
-    filename = p1_read_from_disk_n_set_global_var_if_necessary('p1d_extract_common')
+    global p1_labels_info_d
+    if not p1_labels_info_d:
+        p1_labels_info_d = p1_load_p1_labels_info_d()
+    filename = p1_labels_info_d['p1d_extract_common']
     with open(os.path.join(p1_contract_dir, filename)) as f1d:
         p1d_common_indics_l = json.load(f1d)
     pprint.pprint(p1d_common_indics_l)
@@ -624,7 +663,10 @@ def display_p1d_common_indics_l():
 
 def display_p1e_specific_indics_d_of_d():
     global p1e_specific_indics_d_of_d
-    filename = p1_read_from_disk_n_set_global_var_if_necessary('p1e_extract_specifics')
+    global p1_labels_info_d
+    if not p1_labels_info_d:
+        p1_labels_info_d = p1_load_p1_labels_info_d()
+    filename = p1_labels_info_d['p1e_extract_specifics']
     with open(os.path.join(p1_contract_dir, filename)) as f1e:
         p1e_specific_indics_d_of_d = json.load(f1e)
     pprint.pprint(p1e_specific_indics_d_of_d)
@@ -667,7 +709,7 @@ def display_p1_labels_info_f():
         if os.path.isfile(p1_labels_info_f):
             print('~~~ Reading labels-info.json file contents ~~~')
             with open(p1_labels_info_f) as f:
-                # print(f.read())
+                # print(f.read_program_info())
                 pprint.pprint(f.read())
             print('~~~ File labels-info.json closed ~~~')
     else:
@@ -699,6 +741,10 @@ def display_p1_program_info_f():
     with open(p1_program_info_f) as f:
         pprint.pprint(f.read())
     print('~~~ File program-info.json closed ~~~')
+
+
+def report_selected_file_is_not_xls(filename):
+    print(f'\nSelected file {filename} extension is not \'.xls\'\n')
 
 
 def display_dirs(walk_dir):

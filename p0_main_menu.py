@@ -39,7 +39,7 @@ def init():
         p.main_menus = p.menus
     p.context_func_d = {**p.context_func_d, **context_func_d}
 
-    # If the data directory does not exist, auto_create it
+    # If the data directory does not exist, process_default_contract it
     data_dir = os.path.join(p0_root_dir, 'data')
     if not os.path.exists(data_dir):
         os.mkdir(data_dir, mode=0o700)

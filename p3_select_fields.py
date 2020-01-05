@@ -48,7 +48,7 @@ class Controller:
                 m.menu = self.menu
                 m.menus = self.menus
 
-            func.__name__ = indic  # as function is not read before being called for execution
+            func.__name__ = indic  # as function is not read_program_info before being called for execution
             return func
 
         functions_d = {}

@@ -63,12 +63,12 @@ def init():
     p.context_func_d = {**p.context_func_d, **context_func_d}
 
 
-def auto_create():
+def process_default_contract():
     edit_dirs_context()
-    print('~~~auto_create~~~')
+    print('~~~process_default_contract~~~')
     name = input('Enter new directory name: ')
     if os.path.exists(os.path.join('.', name)):
-        print(f'mkdir: cannot auto_create directory {name}: File exists')
+        print(f'mkdir: cannot process_default_contract directory {name}: File exists')
     else:
         os.makedirs(name)
 
@@ -117,7 +117,7 @@ def delete():
     for i in range(len(drs)):
         print(i, drs[i])
     while True:
-        s = input('Enter nr of directory to delete, \'b\' to return : ')
+        s = input('Enter nr of directory to delete_all_data_on_selected_contract, \'b\' to return : ')
         if s == 'b':
             os.system('clear')
             # p.back()
