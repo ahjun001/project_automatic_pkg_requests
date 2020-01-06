@@ -3,7 +3,7 @@
 import os
 import shutil
 import p1_select_contract as p1
-import u_menus as p
+import p0_menus as p
 
 p0_root_dir = os.path.dirname(os.path.abspath(__file__))  # root directory where the program is located
 
@@ -33,7 +33,7 @@ def init():
             '2': load_n_display,
             '3': add_new_labels,
             '4': delete_existing_labels,
-            'm': p.back_to_main,
+            'p': p.back_to_main,
             'q': p.normal_exit,
         },
     }

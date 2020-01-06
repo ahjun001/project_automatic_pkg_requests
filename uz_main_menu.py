@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 import os
+import p0_menus as p
 import p1_select_contract as p1
-import p2_select_labels as p2  # todo move variables so that they don't call p2
+import p2_select_labels as p2
+import p3_select_specific_fields as p3
 import u_maintain_set_of_indicators_regex_to_be_searched as i
-import u_menus as p
 
 p0_root_dir = os.path.dirname(os.path.abspath(__file__))  # root directory where the program is located
 
@@ -11,7 +12,7 @@ p0_root_dir = os.path.dirname(os.path.abspath(__file__))  # root directory where
 def main_menu_context_func():
     print(f'p1 selected contract: {p1.p1_contract_nr if p1.p1_contract_nr else None}')
     print(f'p2 selected labels: {p1.read_dirs(p1.p1_contract_dir)}')
-    print(f'p3 selected distinctive fields: {p2.already_selected_l}')
+    print(f'p3 selected distinctive fields: {p3.already_selected_l}')
     print('>>> Main menu:')
 
 
@@ -55,7 +56,7 @@ def p2_select_labels():
 
 
 def p3_select_distinctive_fields():
-    pass
+    p3.init()
 
 
 def u_maintain_set_of_indicators_regex_to_be_searched():

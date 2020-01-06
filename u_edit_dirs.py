@@ -2,7 +2,7 @@
 import os
 import shutil
 
-import u_menus as p
+import p0_menus as p
 
 p0_root_dir = os.path.dirname(os.path.abspath(__file__))  # root directory where the program is located
 
@@ -38,13 +38,13 @@ def init():
         p.main_menu = p.menu
     p.menus = {
         p.menu: {
-            '1': auto_create,
+            '1': process_default_contract,
             '1a': create_from_a_list,
             '2': display,
             '3': update,
             '4': delete,
             'b': p.back,
-            'm': p.back_to_main,
+            'p': p.back_to_main,
             'q': p.normal_exit,
         },
     }
@@ -111,7 +111,6 @@ def delete():
         s = input('Enter nr of directory to delete_all_data_on_selected_contract, \'b\' to return : ')
         if s == 'b':
             os.system('clear')
-            # p.back()
             break
         else:
             try:

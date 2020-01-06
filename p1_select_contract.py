@@ -10,7 +10,7 @@ import shutil
 import sys
 from tkinter.filedialog import askopenfilename
 import xlrd
-import u_menus as p
+import p0_menus as p
 
 p0_root_dir = os.path.dirname(os.path.abspath(__file__))  # root directory where the program is located
 p1_contract_nr = ''  # prefix of the contract xls source file
@@ -49,7 +49,7 @@ p1_all_products_to_be_processed_set = set()
 p1b_indics_from_contract_l = []
 p1c_prods_w_same_key_set = {}  # make a dictionary key= info, value = sets of prods with that key
 p1d_common_indics_l = []
-p1e_specific_indics_d_of_d = {}
+p1e_specific_fields_d_of_d = {}
 
 
 def p1_load_p1_labels_info_d():
@@ -101,7 +101,7 @@ def init():
             '7': display_sub_processes_output,
             '8': display_p1_program_info_d,
             '9': display_p1_program_info_f,
-            'm': p.back_to_main,
+            'p': p.back_to_main,
             'q': p.normal_exit,
         },
         'display_sub_processes_output': {
@@ -143,14 +143,14 @@ def process_default_contract():
     global p1c_prods_w_same_key_set
     global p1_all_products_to_be_processed_set
     global p1d_common_indics_l
-    global p1e_specific_indics_d_of_d
+    global p1e_specific_fields_d_of_d
     # reset to zero if these had been loaded from disk before
     p1_search_reg_ex_l = []
     p1b_indics_from_contract_l = []
     p1c_prods_w_same_key_set = {}
     p1_all_products_to_be_processed_set = set()
     p1d_common_indics_l = []
-    p1e_specific_indics_d_of_d = {}
+    p1e_specific_fields_d_of_d = {}
 
     # checking if a program-info.json file exists in the root directory
     if pathlib.Path(p1_program_info_f).exists():
@@ -330,12 +330,12 @@ def process_default_contract():
                 p1d_common_indics_l.append(k)
         else:
             for prod in v:
-                if p1e_specific_indics_d_of_d.get(prod) is None:
-                    p1e_specific_indics_d_of_d[prod] = {}
-                p1e_specific_indics_d_of_d[prod][k[1]] = k[3]  # prod_n : 'what' = indic
+                if p1e_specific_fields_d_of_d.get(prod) is None:
+                    p1e_specific_fields_d_of_d[prod] = {}
+                p1e_specific_fields_d_of_d[prod][k[1]] = k[3]  # prod_n : 'what' = indic
 
     # Checking that numbers are coherent before storing or displaying
-    for k, v in p1e_specific_indics_d_of_d.items():
+    for k, v in p1e_specific_fields_d_of_d.items():
         # Checking that packing quantities info are coherent with total_quantity, if not: exit with a message
         if v['total_qty'] != int(v['parc']) * int(v['u_parc']):  # * int(float(v['pack'])):
             print(60 * '*' + '\nIncoherent quantities in xls contract in product: ' + k + '\n' + 60 * '*')
@@ -354,11 +354,11 @@ def process_default_contract():
 
     document_in_labels_info_json('p1d_extract_common', filename)
 
-    # indicators specific to one or more products, but not to all: print p1e_specific_indics_d_of_d
+    # indicators specific to one or more products, but not to all: print p1e_specific_fields_d_of_d
     filename = 'p1e_' + p1_contract_nr + '_extract_specifics.json'
     f = os.path.join(p1_contract_dir, filename)
     with open(f, 'w') as p1e_f:
-        json.dump(p1e_specific_indics_d_of_d, p1e_f, ensure_ascii=False)
+        json.dump(p1e_specific_fields_d_of_d, p1e_f, ensure_ascii=False)
 
     document_in_labels_info_json('p1e_extract_specifics', filename)
 
@@ -656,14 +656,14 @@ def display_p1d_common_indics_l():
 
 
 def display_p1e_specific_indics_d_of_d():
-    global p1e_specific_indics_d_of_d
+    global p1e_specific_fields_d_of_d
     global p1_labels_info_d
     if not p1_labels_info_d:
         p1_labels_info_d = p1_load_p1_labels_info_d()
     filename = p1_labels_info_d['p1e_extract_specifics']
     with open(os.path.join(p1_contract_dir, filename)) as f1e:
-        p1e_specific_indics_d_of_d = json.load(f1e)
-    pprint.pprint(p1e_specific_indics_d_of_d)
+        p1e_specific_fields_d_of_d = json.load(f1e)
+    pprint.pprint(p1e_specific_fields_d_of_d)
 
 
 def document_in_labels_info_json(key, filename):
@@ -712,18 +712,6 @@ def display_p1_labels_info_f():
         print(f'\nFile {p1_labels_info_f} not built yet\n')
 
 
-def read_dirs(walk_dir):
-    global p1_contract_dir
-
-    if walk_dir:
-        (root, dirs, files) = next(os.walk(walk_dir))
-        if dirs:
-            dirs.sort()
-            dirs[:] = [d for d in dirs if d[0] not in ['.', '_']]
-            return dirs
-    return None
-
-
 def display_p1_program_info_d():
     global p1_program_info_d
     print('~~~ Reading program-info global value ~~~')
@@ -741,6 +729,18 @@ def display_p1_program_info_f():
 
 def report_selected_file_is_not_xls(filename):
     print(f'\nSelected file {filename} extension is not \'.xls\'\n')
+
+
+def read_dirs(walk_dir):
+    global p1_contract_dir
+
+    if walk_dir:
+        (root, dirs, files) = next(os.walk(walk_dir))
+        if dirs:
+            dirs.sort()
+            dirs[:] = [d for d in dirs if d[0] not in ['.', '_']]
+            return dirs
+    return None
 
 
 def display_dirs(walk_dir):

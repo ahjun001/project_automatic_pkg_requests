@@ -5,7 +5,7 @@ import subprocess
 
 import pandas as pd
 
-import u_menus as p
+import p0_menus as p
 
 p0_root_dir = os.path.dirname(os.path.abspath(__file__))  # root directory where the program is located
 
@@ -28,7 +28,7 @@ def init():
     p.menus = {
         p.menu: {
             '3': update,
-            'm': p.back_to_main,
+            'p': p.back_to_main,
             'q': p.normal_exit,
         },
     }
