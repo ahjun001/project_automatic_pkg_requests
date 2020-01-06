@@ -8,15 +8,15 @@ import u_menus as p
 p0_root_dir = os.path.dirname(os.path.abspath(__file__))  # root directory where the program is located
 
 
-def main_menu_context():
-    print(f'p1 selected contract: {p1.p1_contract_nr}')
+def main_menu_context_func():
+    print(f'p1 selected contract: {p1.p1_contract_nr if p1.p1_contract_nr else None}')
     print(f'p2 selected labels: {p1.read_dirs(p1.p1_contract_dir)}')
     print(f'p3 selected distinctive fields: {p2.already_selected_l}')
-    print('~~~ Main menu:')
+    print('>>> Main menu:')
 
 
 context_func_d = {
-    'main_menu': main_menu_context,
+    'main_menu': main_menu_context_func,
 }
 
 
@@ -30,6 +30,7 @@ def init():
         p.menu: {
             '1': p1_select_contract,
             '2': p2_select_labels,
+            '3': p3_select_distinctive_fields,
             'u': u_maintain_set_of_indicators_regex_to_be_searched,
             'q': p.normal_exit,
         },
@@ -53,7 +54,7 @@ def p2_select_labels():
     p2.init()
 
 
-def p3_select_fields():
+def p3_select_distinctive_fields():
     pass
 
 

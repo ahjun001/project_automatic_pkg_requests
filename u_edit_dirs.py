@@ -6,15 +6,6 @@ import u_menus as p
 
 p0_root_dir = os.path.dirname(os.path.abspath(__file__))  # root directory where the program is located
 
-label_groups = ['1.Outer_box_外箱',
-                '2.Inner_box_内盒',
-                '3.Inside_box_中箱',
-                '4.Prod_packaging_产品包装',
-                '5.Plastic_bag_塑料袋',
-                '6.Prod_sticker_产品上不干胶',
-                ]
-
-
 def edit_dirs_context():
     """
     for _, drs, _ in os.walk('.'):

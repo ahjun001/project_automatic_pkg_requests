@@ -10,24 +10,23 @@ import shutil
 import sys
 from tkinter.filedialog import askopenfilename
 import xlrd
-
 import u_menus as p
 
 p0_root_dir = os.path.dirname(os.path.abspath(__file__))  # root directory where the program is located
-p1_program_info_d = {}
-p1_program_info_f = ''
-p1_initial_xls_contract_file = ''
 p1_contract_nr = ''  # prefix of the contract xls source file
+p1_program_info_f = ''
+p1_program_info_d = {}
+p1_initial_xls_contract_file = ''
 p1_full_path_source_file_xls = ''  # full path of source xls file
 p1_contract_dir = ''  # directory where a copy of the xls contract file and contract extracted data is
 
 
 def p0_load_program_info_d():
     global p1_contract_nr
+    global p1_program_info_f
+    global p1_program_info_d
     global p1_full_path_source_file_xls
     global p1_contract_dir
-    global p1_program_info_d
-    global p1_program_info_f
 
     p1_program_info_f = os.path.join(p0_root_dir, 'program-info.json')
     if pathlib.Path(p1_program_info_f).exists():
@@ -44,14 +43,13 @@ def p0_load_program_info_d():
 # local path to labels-info.json file
 p1_labels_info_d = {}
 p1_labels_info_f = ''
-
 p1_search_reg_ex_l = []
+indicators_csv = os.path.join(p0_root_dir + '/common', 'indicators.csv')
+p1_all_products_to_be_processed_set = set()
 p1b_indics_from_contract_l = []
 p1c_prods_w_same_key_set = {}  # make a dictionary key= info, value = sets of prods with that key
-p1_all_products_to_be_processed_set = set()
 p1d_common_indics_l = []
 p1e_specific_indics_d_of_d = {}
-indicators_csv = os.path.join(p0_root_dir + '/common', 'indicators.csv')
 
 
 def p1_load_p1_labels_info_d():
@@ -68,27 +66,22 @@ def p1_load_p1_labels_info_d():
         return p1_labels_info_d
 
 
-def p_context():
+def p1_select_contract_main_context_func():
     p0_load_program_info_d()
-    if os.path.isdir(p1_contract_dir):
-        os.chdir(p1_contract_dir)
     display_dirs(p0_root_dir + '/data/')
+    print('~~~ Now processing contract #: ', p1_contract_nr if p1_contract_nr else None)
+    print('>>> Select action: ')
 
-    print('~~~ Now processing contract #: ', p1_contract_nr)
-    print('~~~ Select action: ')
 
-
-def display_1_context():
+def p1_select_contract_display_context_func():
     p0_load_program_info_d()
-    if os.path.isdir(p1_contract_dir):
-        os.chdir(p1_contract_dir)
     display_dirs(p0_root_dir + '/data/')
     print('~~~ Select contract / Display ~~~')
 
 
 context_func_d = {
-    'select_contract': p_context,
-    'display_sub_processes_output': display_1_context,
+    'select_contract': p1_select_contract_main_context_func,
+    'display_sub_processes_output': p1_select_contract_display_context_func,
 }
 
 
@@ -102,7 +95,7 @@ def init():
     p.menus = {
         p.menu: {
             '1': process_default_contract,
-            '2': load_n_display_output_overview,
+            '2': display_or_load_output_overview,
             '3': select_new_contract,
             '4': delete_all_data_on_selected_contract,
             '7': display_sub_processes_output,
@@ -133,7 +126,6 @@ def init():
         os.mkdir(data_dir, mode=0o700)
 
     # initializing globals necessary for all functions
-    os.chdir(p0_root_dir + '/data/')
     p1_program_info_f = os.path.join(p0_root_dir, 'program-info.json')
 
 
@@ -172,7 +164,6 @@ def process_default_contract():
                 p1_contract_dir = p0_root_dir + f'/data/{p1_program_info_d["p1_contract_nr"]}'
                 if not os.path.isdir(p1_contract_dir):
                     os.mkdir(p1_contract_dir)
-                os.chdir(p1_contract_dir)
                 _, result = check_sole_cntrct_ext_file_w_o_wo_prefix_is_in_dir(p1_contract_dir, '.xls')
                 if result:
                     # create_a_new_label_kind all global variables accordingly
@@ -184,7 +175,6 @@ def process_default_contract():
                     if 'p1_initial_xls' in p1_program_info_d:
                         if not os.path.exists(p1_contract_dir):
                             os.mkdir(p1_contract_dir, mode=0o700)
-                            os.chdir(p1_contract_dir)
                         p1_initial_xls_contract_file = p1_program_info_d['p1_initial_xls']
                         shutil.copy(p1_initial_xls_contract_file, p1_contract_dir)
                         _, filename_ext = os.path.split(p1_initial_xls_contract_file)
@@ -247,7 +237,8 @@ def process_default_contract():
     p1_labels_info_f = 'p1_' + p1_contract_nr + '_labels-info.json'
     # process_default_contract a structure to store label information
     p1_labels_info_d = {'p1a_contract_json': rel_path_contract_json_f}
-    with open(p1_labels_info_f, 'w') as fi:
+    filename = os.path.join(p1_contract_dir, p1_labels_info_f)
+    with open(filename, 'w') as fi:
         json.dump(p1_labels_info_d, fi, ensure_ascii=False)
 
     # def create_2():
@@ -302,7 +293,8 @@ def process_default_contract():
         # register in file and object
         document_in_labels_info_json('p1b_indics_from_contract_l', file_indics)
 
-        with open(file_indics, 'w') as f:
+        f = os.path.join(p1_contract_dir, file_indics)
+        with open(f, 'w') as f:
             json.dump(p1b_indics_from_contract_l, f, ensure_ascii=False)
 
         # p1c_prods_w_same_key_set = {}  # make a dictionary key= info, value = sets of prods with that key
@@ -316,7 +308,8 @@ def process_default_contract():
 
             # document in all_relevant_data_json
     p1c_file_out_f = 'p1c_' + p1_contract_nr + '_all_relevant_data.txt'
-    with open(p1c_file_out_f, 'w') as f1c:
+    f = os.path.join(p1_contract_dir, p1c_file_out_f)
+    with open(f, 'w') as f1c:
         # json.dump(p1c_prods_w_same_key_set, f1c, ensure_ascii = False) won't work
         # f1c.write(p1c_prods_w_same_key_set.__str__()) doesn't look pretty
         pprint.PrettyPrinter(indent=2, stream=f1c).pprint(p1c_prods_w_same_key_set)
@@ -355,20 +348,22 @@ def process_default_contract():
 
     # indicators common to all products: write to file
     filename = 'p1d_' + p1_contract_nr + '_extract_common.json'
-    with open(filename, 'w') as c3a_f:
-        json.dump(p1d_common_indics_l, c3a_f, ensure_ascii=False)
+    f = os.path.join(p1_contract_dir, filename)
+    with open(f, 'w') as p1d_f:
+        json.dump(p1d_common_indics_l, p1d_f, ensure_ascii=False)
 
     document_in_labels_info_json('p1d_extract_common', filename)
 
     # indicators specific to one or more products, but not to all: print p1e_specific_indics_d_of_d
     filename = 'p1e_' + p1_contract_nr + '_extract_specifics.json'
-    with open(filename, 'w') as c3b_f:
-        json.dump(p1e_specific_indics_d_of_d, c3b_f, ensure_ascii=False)
+    f = os.path.join(p1_contract_dir, filename)
+    with open(f, 'w') as p1e_f:
+        json.dump(p1e_specific_indics_d_of_d, p1e_f, ensure_ascii=False)
 
     document_in_labels_info_json('p1e_extract_specifics', filename)
 
 
-def load_n_display_output_overview():
+def display_or_load_output_overview():
     p1_load_p1_labels_info_d()
     display()
 
@@ -431,7 +426,7 @@ def select_new_contract():
 
     (p1_contract_nr, p1_initial_xls_contract_file, p1_full_path_source_file_xls) = (None, None, None)
     # pick a new xls contract source file with the tkinter browser
-    print('Select a filename in graphic file browser -- check if window is hidden')
+    print('~~~ Select a filename in graphic file browser -- check if window is hidden')
     p1_initial_xls_contract_file = askopenfilename()
     if not p1_initial_xls_contract_file:
         return
@@ -486,9 +481,9 @@ def delete_all_data_on_selected_contract():
                 if s_i in range(len(drs)):
                     if drs[int(s)] == p1_contract_nr:
                         print(
-                            '!!! Erasing current directory\n'
-                            'this will also delete_all_data_on_selected_contract program-info.json\n'
-                            'and start as if repository is empty !!!'
+                            '\n\t!!! Erasing current directory\n'
+                            '\tthis will also delete_all_data_on_selected_contract program-info.json\n'
+                            '\tand start as if repository is empty !!!'
                         )
                         os.remove(os.path.join(p0_root_dir, 'program-info.json'))
                         p1_program_info_d = {}
@@ -674,8 +669,10 @@ def display_p1e_specific_indics_d_of_d():
 
 def document_in_labels_info_json(key, filename):
     global p1_labels_info_d
+    global p1_contract_dir
     p1_labels_info_d[key] = filename
-    with open(p1_labels_info_f, 'w') as fi:
+    f = os.path.join(p1_contract_dir, p1_labels_info_f)
+    with open(f, 'w') as fi:
         json.dump(p1_labels_info_d, fi, ensure_ascii=False)
 
 
@@ -737,10 +734,10 @@ def display_p1_program_info_d():
 
 def display_p1_program_info_f():
     global p1_program_info_f
-    print('~~~ Reading program-info.json file contents ~~~')
+    print('~~~ Reading program-info.json file contents')
     with open(p1_program_info_f) as f:
         pprint.pprint(f.read())
-    print('~~~ File program-info.json closed ~~~')
+    print('File program-info.json closed ~~~')
 
 
 def report_selected_file_is_not_xls(filename):
