@@ -473,7 +473,6 @@ def delete_all_data_on_selected_contract():
         s = input('Enter nr of directory to delete_all_data_on_selected_contract, \'b\' to return : ')
         if s == 'b':
             os.system('clear')
-            # p.back()
             break
         else:
             try:

@@ -329,6 +329,18 @@ def init_2():
     os.chdir(p1.p1_contract_dir)
 
 
+"""
+def write_in_mem_n_on_disk(p6_lbl_dir):
+    # document the info in A1234-567_labels-info.json file
+    p1.p1_labels_info_d['p3_lbl_dir'] = p6_lbl_dir
+    _, p6_lbl_sel = os.path.split(p6_lbl_dir)
+    p1.p1_labels_info_d['p3_lbl_sel'] = p6_lbl_sel
+    with open(p1.p1_labels_info_f, 'w') as fi:
+        json.dump(p1.p1_labels_info_d, fi, ensure_ascii = False)
+"""
+
+
+
 def main():
     """ Driver """
     c = Controller()
