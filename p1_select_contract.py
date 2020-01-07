@@ -315,7 +315,7 @@ def process_default_contract():
         for row in p1b_indics_from_contract_l:
             # for index, row in c_df.iterrows():  # index is not used
             if (row['info_kind'], row['what'], row['where'], row['info']) \
-                not in p1c_prods_w_same_key_set.keys():
+                                    not in p1c_prods_w_same_key_set.keys():
                 p1c_prods_w_same_key_set[(row['info_kind'], row['what'], row['where'], row['info'])] = set()
             p1c_prods_w_same_key_set[(row['info_kind'], row['what'], row['where'], row['info'])].add(
                 row['prod_nr'])
@@ -380,38 +380,6 @@ def process_default_contract():
 def display_or_load_output_overview():
     if p1_load_contract_info_d():
         display()
-
-
-# def read_program_info():
-#     """
-#     Process p1 has run successfully, returns a directory of global variables, either already in memory
-#     either resulting from a previous run, then saved and now re-loaded from disk
-#         """
-#     global p1_program_info_f
-#     global p1_program_info_d
-#     global p1_contract_dir
-#
-#     # info is already in memory, let's check its validity
-#     if p1_program_info_d:
-#         # a contract has been selected
-#         if p1_program_info_d['p1_contract_nr']:
-#             # if a contract file is already in the repository
-#             if p1_program_info_d['p1_full_path_source_file_xls']:
-#                 return p1_program_info_d
-#             # or if a contract file outside the repository has been selected, put it back and pursue
-#             elif p1_program_info_d['p1_full_path_source_file_xls']:
-#                 shutil.copy(p1_program_info_d['p1_full_path_source_file_xls'], p1_contract_dir)
-#                 return p1_program_info_d
-#     # info can be loaded from disk to populate global variables
-#     p1_program_info_f = os.path.join(p0_root_dir, 'program-info.json')
-#     if os.path.isfile(p1_program_info_f):
-#         with open(p1_program_info_f) as f:
-#             p1_program_info_d = json.load(f)
-#             if p0_load_program_info_d():
-#                 if not os.path.exists(p1_contract_dir) or not os.path.exists(p1_full_path_source_file_xls):
-#                     return None
-#                 return p1_program_info_d
-#     return None
 
 
 def display():
@@ -623,7 +591,7 @@ def after_running_p1_only_display_p4_search_reg_ex_l():
     pprint.pprint(p1_search_reg_ex_l)
 
 
-def display_p1_all_products_to_be_processed_set():
+def load_p1_all_products_to_be_processed_set():
     global p1_contract_info_d
     global p1_contract_info_f
     global p1_all_products_to_be_processed_set
@@ -632,10 +600,14 @@ def display_p1_all_products_to_be_processed_set():
         with open(p1_contract_info_f) as f1:
             p1_contract_info_d = json.load(f1)
     p1_all_products_to_be_processed_set = p1_contract_info_d['p1_all_products_to_be_processed_set']
-    pprint.pprint(p1_all_products_to_be_processed_set)
 
 
-def display_p1b_indics_from_contract_l():
+def display_p1_all_products_to_be_processed_set():
+    if load_p1_all_products_to_be_processed_set():
+        pprint.pprint(p1_all_products_to_be_processed_set)
+
+
+def load_p1b_indics_from_contract_l():
     global p1b_indics_from_contract_l
     global p1_contract_info_d
     if not p1_contract_info_d:
@@ -644,7 +616,12 @@ def display_p1b_indics_from_contract_l():
     filename = p1_contract_info_d['p1b_indics_from_contract_l']
     with open(os.path.join(p1_contract_dir, filename)) as f1b:
         p1b_indics_from_contract_l = json.load(f1b)
-    pprint.pprint(p1b_indics_from_contract_l)
+        return True
+
+
+def display_p1b_indics_from_contract_l():
+    if load_p1b_indics_from_contract_l():
+        pprint.pprint(p1b_indics_from_contract_l)
 
 
 def display_p1c_all_relevant_data():

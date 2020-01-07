@@ -20,6 +20,7 @@ p3_fields_info_f = None  # info on fields currently being edited
 
 def p3_select_specific_fields_context_func():
     print('~~~ Now processing contract #: ', p1.p1_contract_nr if p1.p1_contract_nr else None)
+    print('~~~ Now working on label: ', p3_fields_dir)
     print('~~~ Selecting specific fields for labels as follows:\n')
     p1.display_dirs(p1.p1_contract_dir)
     print('\n>>> Select action: ')
@@ -44,12 +45,14 @@ def init():
         menu: {
             '1': process_all_labels_with_default_specific_fields,
             '2': display_or_load_output_overview,
-            '3': select_a_label_and_add_fields,
-            '4': select_a_label_and_delete_fields,
-            '6': p1.display_p1_contract_info_d,
-            '7': p1.display_p1_contract_info_f,
-            '8': display_p3_fields_info_d,
-            '9': display_p3_fields_info_f,
+            '3': select_a_label,
+            '4': add_fields_to_selected_label,
+            '5': delete_fields_from_selected_label,
+            '6': select_a_label_and_delete_fields,
+            '7': p1.display_p1_contract_info_d,
+            '8': p1.display_p1_contract_info_f,
+            '9': display_p3_fields_info_d,
+            '10': display_p3_fields_info_f,
             '11': p3_load_fields_info_d,
             'p': p.back_to_main,
             'q': p.normal_exit,
@@ -80,7 +83,7 @@ def display_or_load_output_overview():
     pass
 
 
-def select_a_label_and_add_fields():
+def select_a_label():
     global p3_fields_dir
 
     # read existing labels
@@ -102,7 +105,7 @@ def select_a_label_and_add_fields():
                         os.system('clear')
                         p3_fields_dir = drs[s_i]
                         print(f'now ready to work on {p3_fields_dir}')
-                        create_or_update()
+                        add_fields()
                         break
                     else:
                         print('Integer, but not an option, try again')
@@ -159,70 +162,78 @@ def display_p3_fields_info_f():
         print(f'\nFile {p3_fields_info_f} not built yet\n')
 
 
-def create():
-    create_or_update()
-
-
-def update():
-    create_or_update(False)
-
-
-def create_or_update(default = True):
+def add_fields():
+    global p3_fields_info_f
+    global p3_fields_dir
     global already_selected_l
     global options_l
 
     if p3_load_fields_info_d():
         already_selected_l = p3_fields_info_d['selected_fields']
 
-    if default and not already_selected_l:
+    if not already_selected_l:
         already_selected_l = ["03.Prod_spec", "pack", "total_qty"]
 
-    # process default contract selected fields set
-    if not default:
-        p3_select_specific_fields_context_func()
-        with open(os.path.join(p1.p1_contract_dir, p3_fields_info_d['p3_extract_specifics'])) as fj:
-            p1.p1e_specific_fields_d_of_d = json.load(fj)
-        options_l = list(next(iter(p1.p1e_specific_fields_d_of_d.values())))
-        # select from options_l and put in already_selected_l
-        while True:
-            print(f'~~~ already selected ~~~\n{already_selected_l}\n~~~~~~')
-            not_yet_l = []
-            for o in options_l:
-                if o not in already_selected_l:
-                    not_yet_l.append(o)
-            for i in range(len(not_yet_l)):
-                print(str(i) + ' ' + not_yet_l[i])
-            print('~~~')
-            s = input('Enter nr of indicator to add, \'b\' to return : ')
-            if s == 'b':
-                os.system('clear')
-                break
-            else:
-                try:
-                    s_i = int(s)
-                    if s_i in range(len(not_yet_l)):
-                        already_selected_l.append(not_yet_l[s_i])
-                        # break
-                    else:
-                        print('Integer, but not an option, try again')
-                except ValueError:
-                    print('That\'s not an integer, try again')
+    p3_select_specific_fields_context_func()
+    with open(os.path.join(p1.p1_contract_dir, p3_fields_info_d['p3_extract_specifics'])) as fj:
+        p1.p1e_specific_fields_d_of_d = json.load(fj)
+    options_l = list(next(iter(p1.p1e_specific_fields_d_of_d.values())))
+    # select from options_l and put in already_selected_l
+    while True:
+        print(f'~~~ already selected ~~~\n{already_selected_l}\n~~~~~~')
+        not_yet_l = []
+        for o in options_l:
+            if o not in already_selected_l:
+                not_yet_l.append(o)
+        for i in range(len(not_yet_l)):
+            print(str(i) + ' ' + not_yet_l[i])
+        print('~~~')
+        s = input('Enter nr of indicator to add, \'b\' to return : ')
+        if s == 'b':
+            os.system('clear')
+            break
+        else:
+            try:
+                s_i = int(s)
+                if s_i in range(len(not_yet_l)):
+                    already_selected_l.append(not_yet_l[s_i])
+                    # break
+                else:
+                    print('Integer, but not an option, try again')
+            except ValueError:
+                print('That\'s not an integer, try again')
 
     p3_fields_info_d['selected_fields'] = already_selected_l
 
-    global p3_fields_info_f
     p3_fields_info_f = os.path.join(p1.p1_contract_dir + '/' + p3_fields_dir, 'label-info.json')
     with open(p3_fields_info_f, 'w') as f:
         json.dump(p3_fields_info_d, f, ensure_ascii = False)
 
-    make_mako()
+    make_mako(p3_fields_dir)
 
 
-def make_mako():
+def add_fields_to_selected_label():
+    pass
+
+
+def delete_fields_from_selected_label():
+    pass
+
+
+def update():
+    pass
+
+
+def make_mako(dr):
     # writing the input file for Mako
     mako_input = ''
-    with open(os.path.join(p1.p1_contract_dir, 'p1b_' + p1.p1_contract_nr + '_indics_from_contract_l.json')) as f:
-        p3_indcs_from_contract_l = json.load(f)  # todo: replace by mem pointer if it exists
+
+    # make sure global variables are set in all situations, outside the loop to do it once only
+    if not p1.p1b_indics_from_contract_l:
+        p1.load_p1b_indics_from_contract_l()
+    if not p1.p1_all_products_to_be_processed_set:
+        p1.load_p1_all_products_to_be_processed_set()
+
     if already_selected_l:
         # building the header
         mako_input += 'idx, prod_n'
@@ -233,7 +244,7 @@ def make_mako():
         indc_by_prod = {}
         for prod in p1.p1_all_products_to_be_processed_set:
             indc_by_prod[prod] = {}
-        for indc_c in p3_indcs_from_contract_l:  # loop over the big one once
+        for indc_c in p1.p1b_indics_from_contract_l:  # loop over the big one once
             if indc_c['what'] in already_selected_l:  # loop over the smaller more
                 indc_by_prod[indc_c['prod_nr']][indc_c['what']] = indc_c['info']
         idx = 0
@@ -245,7 +256,7 @@ def make_mako():
             mako_input += '\n'
             idx += 1
 
-        with open('mako_input.csv', 'w') as f:
+        with open(os.path.join(p1.p1_contract_dir + '/' + dr, 'mako_input.csv'), 'w') as f:
             f.write(mako_input)
 
 
