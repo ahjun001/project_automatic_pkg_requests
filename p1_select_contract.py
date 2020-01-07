@@ -132,7 +132,7 @@ def init():
             '3': display_p1b_indics_from_contract_l,
             '4': display_p1c_all_relevant_data,
             '5': display_p1d_common_indics_l,
-            '6': display_p1e_specific_indics_d_of_d,
+            '6': display_p1e_specific_fields_d_of_d,
             'b': p.back,
             'q': p.normal_exit,
         }
@@ -315,7 +315,7 @@ def process_default_contract():
         for row in p1b_indics_from_contract_l:
             # for index, row in c_df.iterrows():  # index is not used
             if (row['info_kind'], row['what'], row['where'], row['info']) \
-                                    not in p1c_prods_w_same_key_set.keys():
+                        not in p1c_prods_w_same_key_set.keys():
                 p1c_prods_w_same_key_set[(row['info_kind'], row['what'], row['where'], row['info'])] = set()
             p1c_prods_w_same_key_set[(row['info_kind'], row['what'], row['where'], row['info'])].add(
                 row['prod_nr'])
@@ -648,7 +648,7 @@ def display_p1d_common_indics_l():
     pprint.pprint(p1d_common_indics_l)
 
 
-def display_p1e_specific_indics_d_of_d():
+def load_p1e_specific_fields_d_of_d():
     global p1e_specific_fields_d_of_d
     global p1_contract_info_d
     if not p1_contract_info_d:
@@ -657,7 +657,11 @@ def display_p1e_specific_indics_d_of_d():
     filename = p1_contract_info_d['p1e_extract_specifics']
     with open(os.path.join(p1_contract_dir, filename)) as f1e:
         p1e_specific_fields_d_of_d = json.load(f1e)
-    pprint.pprint(p1e_specific_fields_d_of_d)
+
+
+def display_p1e_specific_fields_d_of_d():
+    if load_p1e_specific_fields_d_of_d():
+        pprint.pprint(p1e_specific_fields_d_of_d)
 
 
 def document_in_contract_info_json(key, filename):

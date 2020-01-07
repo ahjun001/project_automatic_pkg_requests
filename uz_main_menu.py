@@ -12,7 +12,7 @@ p0_root_dir = os.path.dirname(os.path.abspath(__file__))  # root directory where
 def main_menu_context_func():
     print(f'p1 selected contract: {p1.p1_contract_nr if p1.p1_contract_nr else None}')
     print(f'p2 selected labels: {p1.read_dirs(p1.p1_contract_dir)}')
-    print(f'p3 selected distinctive fields: {p3.already_selected_l}')
+    print(f'p3 selected distinctive fields: {p3.p3_already_selected_l}')
     print('>>> Main menu:')
 
 
