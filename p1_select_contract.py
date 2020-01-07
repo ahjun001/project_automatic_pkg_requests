@@ -60,6 +60,9 @@ def p1_load_p1_labels_info_d():
 
     p0_load_program_info_d()
     if not p1_labels_info_d:
+        if not p1_contract_dir or not p1_contract_nr:
+            init()
+            process_default_contract()
         p1_labels_info_f = os.path.join(p1_contract_dir, 'p1_' + p1_contract_nr + '_labels-info.json')
         with open(p1_labels_info_f) as fi:
             p1_labels_info_d = json.load(fi)
