@@ -23,6 +23,11 @@ context_func_d = {
 
 
 def init():
+    # make sure p1 has been run
+    if not p1.p1_load_contract_info_d():
+        print('p1 has not run successfully')
+
+    # initializing menus last, so that context functions display most recent information
     p.menu = 'p2_select_labels'
     p.mod_lev_1_menu = p.menu
     if not p.main_menu:
@@ -41,9 +46,6 @@ def init():
     if not p.main_menus:
         p.main_menus = p.menus
     p.context_func_d = {**p.context_func_d, **context_func_d}
-
-    # make sure p1 has been run
-    p1.p1_load_p1_labels_info_d()
 
 
 label_groups_l = [
@@ -66,8 +68,13 @@ def create_default_labels():
 
 
 def load_n_display():
-    p1.read_dirs(p1.p1_contract_dir)
-    p1.display_dirs(p1.p1_contract_dir)
+    p1.display_dirs(
+        p2_load_labels_info_l()
+    )
+
+
+def p2_load_labels_info_l():
+    return p1.read_dirs(p1.p1_contract_dir)
 
 
 def add_new_labels():

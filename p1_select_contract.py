@@ -22,6 +22,9 @@ p1_contract_dir = ''  # directory where a copy of the xls contract file and cont
 
 
 def p0_load_program_info_d():
+    """
+    Loads p1_contract_nr, p1_full_path_source_file_xls, and p1_contract_dir from program-info.json
+    """
     global p1_contract_nr
     global p1_program_info_f
     global p1_program_info_d
@@ -38,11 +41,12 @@ def p0_load_program_info_d():
             p1_contract_nr = p1_program_info_d['p1_contract_nr']
             p1_full_path_source_file_xls = p1_program_info_d['p1_full_path_source_file_xls']
             p1_contract_dir = p0_root_dir + f'/data/{p1_contract_nr}'
+            return True
 
 
-# local path to labels-info.json file
-p1_labels_info_d = {}
-p1_labels_info_f = ''
+# local path to contract-info.json file
+p1_contract_info_d = {}
+p1_contract_info_f = ''
 p1_search_reg_ex_l = []
 indicators_csv = os.path.join(p0_root_dir + '/common', 'indicators.csv')
 p1_all_products_to_be_processed_set = set()
@@ -52,34 +56,41 @@ p1d_common_indics_l = []
 p1e_specific_fields_d_of_d = {}
 
 
-def p1_load_p1_labels_info_d():
-    global p1_labels_info_d
-    global p1_labels_info_f
+def p1_load_contract_info_d():
+    """
+    Loads p1_contract_info_f into p1_contract_info_d, maybe resetting these values
+    Will run p1.init() and p1.process_default_contact() if necessary
+    """
+    global p1_contract_info_d
+    global p1_contract_info_f
     global p1_contract_dir
     global p1_contract_nr
 
-    p0_load_program_info_d()
-    if not p1_labels_info_d:
+    if not p0_load_program_info_d():
         if not p1_contract_dir or not p1_contract_nr:
             init()
             process_default_contract()
-        p1_labels_info_f = os.path.join(p1_contract_dir, 'p1_' + p1_contract_nr + '_labels-info.json')
-        with open(p1_labels_info_f) as fi:
-            p1_labels_info_d = json.load(fi)
-        return p1_labels_info_d
+    p1_contract_info_f = os.path.join(p1_contract_dir, 'p1_' + p1_contract_nr + '_contract-info.json')
+    with open(p1_contract_info_f) as fi:
+        p1_contract_info_d = json.load(fi)
+    return True
 
 
 def p1_select_contract_main_context_func():
-    p0_load_program_info_d()
-    display_dirs(p0_root_dir + '/data/')
-    print('~~~ Now processing contract #: ', p1_contract_nr if p1_contract_nr else None)
-    print('>>> Select action: ')
+    if p0_load_program_info_d():
+        display_dirs(p0_root_dir + '/data/')
+        print('~~~ Now processing contract #: ', p1_contract_nr if p1_contract_nr else None)
+        print('>>> Select action: ')
+    else:
+        print('File \'program-info.json\' could not be loaded')
 
 
 def p1_select_contract_display_context_func():
-    p0_load_program_info_d()
-    display_dirs(p0_root_dir + '/data/')
-    print('~~~ Select contract / Display ~~~')
+    if p0_load_program_info_d():
+        display_dirs(p0_root_dir + '/data/')
+        print('~~~ Select contract / Display ~~~')
+    else:
+        print('File \'program-info.json\' could not be loaded')
 
 
 context_func_d = {
@@ -90,7 +101,15 @@ context_func_d = {
 
 def init():
     global p1_program_info_f
-    # menus
+    # If the data directory does not exist, process_default_contract it
+    data_dir = os.path.join(p0_root_dir, 'data')
+    if not os.path.exists(data_dir):
+        os.mkdir(data_dir, mode = 0o700)
+
+    # initializing globals necessary for all functions
+    p1_program_info_f = os.path.join(p0_root_dir, 'program-info.json')
+
+    # initializing menus last, so that context functions display most recent information
     p.menu = 'select_contract'
     p.mod_lev_1_menu = p.menu
     if not p.main_menu:
@@ -123,14 +142,6 @@ def init():
         p.main_menus = p.menus
     p.context_func_d = {**p.context_func_d, **context_func_d}
 
-    # If the data directory does not exist, process_default_contract it
-    data_dir = os.path.join(p0_root_dir, 'data')
-    if not os.path.exists(data_dir):
-        os.mkdir(data_dir, mode=0o700)
-
-    # initializing globals necessary for all functions
-    p1_program_info_f = os.path.join(p0_root_dir, 'program-info.json')
-
 
 def process_default_contract():
     global p1_contract_nr
@@ -139,8 +150,8 @@ def process_default_contract():
     global p1_program_info_f
     global p1_program_info_d
     global p1_initial_xls_contract_file
-    global p1_labels_info_d
-    global p1_labels_info_f
+    global p1_contract_info_d
+    global p1_contract_info_f
     global p1_search_reg_ex_l
     global p1b_indics_from_contract_l
     global p1c_prods_w_same_key_set
@@ -177,7 +188,7 @@ def process_default_contract():
                     # if a valid initial file exists but is not uniquely copied in the repertory
                     if 'p1_initial_xls' in p1_program_info_d:
                         if not os.path.exists(p1_contract_dir):
-                            os.mkdir(p1_contract_dir, mode=0o700)
+                            os.mkdir(p1_contract_dir, mode = 0o700)
                         p1_initial_xls_contract_file = p1_program_info_d['p1_initial_xls']
                         shutil.copy(p1_initial_xls_contract_file, p1_contract_dir)
                         _, filename_ext = os.path.split(p1_initial_xls_contract_file)
@@ -235,14 +246,14 @@ def process_default_contract():
         row += 3
 
     with open(os.path.join(p1_contract_dir, rel_path_contract_json_f), 'w') as fc:
-        json.dump(contract_json_d, fc, ensure_ascii=False)
+        json.dump(contract_json_d, fc, ensure_ascii = False)
     # document in A1234-456-info.json
-    p1_labels_info_f = 'p1_' + p1_contract_nr + '_labels-info.json'
+    p1_contract_info_f = 'p1_' + p1_contract_nr + '_contract-info.json'
     # process_default_contract a structure to store label information
-    p1_labels_info_d = {'p1a_contract_json': rel_path_contract_json_f}
-    filename = os.path.join(p1_contract_dir, p1_labels_info_f)
+    p1_contract_info_d = {'p1a_contract_json': rel_path_contract_json_f}
+    filename = os.path.join(p1_contract_dir, p1_contract_info_f)
     with open(filename, 'w') as fi:
-        json.dump(p1_labels_info_d, fi, ensure_ascii=False)
+        json.dump(p1_contract_info_d, fi, ensure_ascii = False)
 
     # def create_2():
     # reading info from ./common/indicators.csv, which was kept in csv format to make human input easier
@@ -290,21 +301,21 @@ def process_default_contract():
                                 'prod_nr': prod["01.TST_prod_#-需方产品编号"],  # 1050205001#
                             }
                             p1b_indics_from_contract_l.append(tmp_dct)
-        p1b_indics_from_contract_l.sort(key=lambda item: item['prod_nr'])
+        p1b_indics_from_contract_l.sort(key = lambda item: item['prod_nr'])
         file_indics = 'p1b_' + p1_contract_nr + '_indics_from_contract_l.json'
 
         # register in file and object
-        document_in_labels_info_json('p1b_indics_from_contract_l', file_indics)
+        document_in_contract_info_json('p1b_indics_from_contract_l', file_indics)
 
         f = os.path.join(p1_contract_dir, file_indics)
         with open(f, 'w') as f:
-            json.dump(p1b_indics_from_contract_l, f, ensure_ascii=False)
+            json.dump(p1b_indics_from_contract_l, f, ensure_ascii = False)
 
         # p1c_prods_w_same_key_set = {}  # make a dictionary key= info, value = sets of prods with that key
         for row in p1b_indics_from_contract_l:
             # for index, row in c_df.iterrows():  # index is not used
             if (row['info_kind'], row['what'], row['where'], row['info']) \
-                    not in p1c_prods_w_same_key_set.keys():
+                not in p1c_prods_w_same_key_set.keys():
                 p1c_prods_w_same_key_set[(row['info_kind'], row['what'], row['where'], row['info'])] = set()
             p1c_prods_w_same_key_set[(row['info_kind'], row['what'], row['where'], row['info'])].add(
                 row['prod_nr'])
@@ -315,15 +326,15 @@ def process_default_contract():
     with open(f, 'w') as f1c:
         # json.dump(p1c_prods_w_same_key_set, f1c, ensure_ascii = False) won't work
         # f1c.write(p1c_prods_w_same_key_set.__str__()) doesn't look pretty
-        pprint.PrettyPrinter(indent=2, stream=f1c).pprint(p1c_prods_w_same_key_set)
+        pprint.PrettyPrinter(indent = 2, stream = f1c).pprint(p1c_prods_w_same_key_set)
 
-    document_in_labels_info_json('p1c_all_relevant_data', p1c_file_out_f)
+    document_in_contract_info_json('p1c_all_relevant_data', p1c_file_out_f)
 
     # p1c_build_set_of_all_products_to_be_processed
     for prod in contract_json_d['l_i']:
         p1_all_products_to_be_processed_set.add(prod["01.TST_prod_#-需方产品编号"])
-    document_in_labels_info_json('p1_all_products_to_be_processed_set',
-                                 sorted(list(p1_all_products_to_be_processed_set)))
+    document_in_contract_info_json('p1_all_products_to_be_processed_set',
+                                   sorted(list(p1_all_products_to_be_processed_set)))
 
     # p6_split_between p6_common_indics and p6_specific_indics
     for k, v in p1c_prods_w_same_key_set.items():
@@ -353,62 +364,61 @@ def process_default_contract():
     filename = 'p1d_' + p1_contract_nr + '_extract_common.json'
     f = os.path.join(p1_contract_dir, filename)
     with open(f, 'w') as p1d_f:
-        json.dump(p1d_common_indics_l, p1d_f, ensure_ascii=False)
+        json.dump(p1d_common_indics_l, p1d_f, ensure_ascii = False)
 
-    document_in_labels_info_json('p1d_extract_common', filename)
+    document_in_contract_info_json('p1d_extract_common', filename)
 
     # indicators specific to one or more products, but not to all: print p1e_specific_fields_d_of_d
     filename = 'p1e_' + p1_contract_nr + '_extract_specifics.json'
     f = os.path.join(p1_contract_dir, filename)
     with open(f, 'w') as p1e_f:
-        json.dump(p1e_specific_fields_d_of_d, p1e_f, ensure_ascii=False)
+        json.dump(p1e_specific_fields_d_of_d, p1e_f, ensure_ascii = False)
 
-    document_in_labels_info_json('p1e_extract_specifics', filename)
+    document_in_contract_info_json('p1e_extract_specifics', filename)
 
 
 def display_or_load_output_overview():
-    p1_load_p1_labels_info_d()
-    display()
+    if p1_load_contract_info_d():
+        display()
 
 
-def read_program_info():
-    """
-    Process p1 has run successfully, returns a directory of global variables, either already in memory
-    either resulting from a previous run, then saved and now re-loaded from disk
-        """
-    global p1_program_info_f
-    global p1_program_info_d
-    global p1_contract_dir
-
-    # info is already in memory, let's check its validity
-    if p1_program_info_d:
-        # a contract has been selected
-        if p1_program_info_d['p1_contract_nr']:
-            # if a contract file is already in the repository
-            if p1_program_info_d['p1_full_path_source_file_xls']:
-                return p1_program_info_d
-            # or if a contract file outside the repository has been selected, put it back and pursue
-            elif p1_program_info_d['p1_full_path_source_file_xls']:
-                shutil.copy(p1_program_info_d['p1_full_path_source_file_xls'], p1_contract_dir)
-                return p1_program_info_d
-    # info can be loaded from disk to populate global variables
-    p1_program_info_f = os.path.join(p0_root_dir, 'program-info.json')
-    if os.path.isfile(p1_program_info_f):
-        with open(p1_program_info_f) as f:
-            p1_program_info_d = json.load(f)
-            if p1_program_info_d:
-                p0_load_program_info_d()
-                if not os.path.exists(p1_contract_dir) or not os.path.exists(p1_full_path_source_file_xls):
-                    return None
-                return p1_program_info_d
-    return None
+# def read_program_info():
+#     """
+#     Process p1 has run successfully, returns a directory of global variables, either already in memory
+#     either resulting from a previous run, then saved and now re-loaded from disk
+#         """
+#     global p1_program_info_f
+#     global p1_program_info_d
+#     global p1_contract_dir
+#
+#     # info is already in memory, let's check its validity
+#     if p1_program_info_d:
+#         # a contract has been selected
+#         if p1_program_info_d['p1_contract_nr']:
+#             # if a contract file is already in the repository
+#             if p1_program_info_d['p1_full_path_source_file_xls']:
+#                 return p1_program_info_d
+#             # or if a contract file outside the repository has been selected, put it back and pursue
+#             elif p1_program_info_d['p1_full_path_source_file_xls']:
+#                 shutil.copy(p1_program_info_d['p1_full_path_source_file_xls'], p1_contract_dir)
+#                 return p1_program_info_d
+#     # info can be loaded from disk to populate global variables
+#     p1_program_info_f = os.path.join(p0_root_dir, 'program-info.json')
+#     if os.path.isfile(p1_program_info_f):
+#         with open(p1_program_info_f) as f:
+#             p1_program_info_d = json.load(f)
+#             if p0_load_program_info_d():
+#                 if not os.path.exists(p1_contract_dir) or not os.path.exists(p1_full_path_source_file_xls):
+#                     return None
+#                 return p1_program_info_d
+#     return None
 
 
 def display():
-    if p1_labels_info_d:
-        display_p1_labels_info_d()
+    if p1_contract_info_d:
+        display_p1_contract_info_d()
         return
-    elif p1_labels_info_f:
+    elif p1_contract_info_f:
         print('trying to read_program_info from disk:')
         display_p1_program_info_f()
     else:
@@ -446,7 +456,7 @@ def select_new_contract():
             p1_contract_dir = os.path.join(p0_root_dir + '/data/' + p1_contract_nr)
             p1_full_path_source_file_xls = os.path.join(p1_contract_dir, filename_ext)
             if not os.path.exists(p1_contract_dir):
-                os.mkdir(p1_contract_dir, mode=0o700)
+                os.mkdir(p1_contract_dir, mode = 0o700)
                 # do not overwrite an existing contract file
             if not os.path.exists(p1_full_path_source_file_xls):
                 shutil.copy(p1_initial_xls_contract_file, p1_contract_dir)
@@ -498,7 +508,7 @@ def delete_all_data_on_selected_contract():
                 print('That\'s not an integer, try again')
 
 
-def check_sole_cntrct_ext_file_w_o_wo_prefix_is_in_dir(g_dir, ext, check_prefix=True):
+def check_sole_cntrct_ext_file_w_o_wo_prefix_is_in_dir(g_dir, ext, check_prefix = True):
     """
         To check prefix, this requires that p1_contract_nr has been initialized
         """
@@ -508,8 +518,8 @@ def check_sole_cntrct_ext_file_w_o_wo_prefix_is_in_dir(g_dir, ext, check_prefix=
     global p1_program_info_f
     global p1_program_info_d
     global p1_initial_xls_contract_file
-    global p1_labels_info_d
-    global p1_labels_info_f
+    global p1_contract_info_d
+    global p1_contract_info_f
 
     # if the cntrct_nr directory os.path.exists
     c_nr_dir = pathlib.Path(g_dir)
@@ -575,7 +585,7 @@ def build_program_info_d_from_root_xls_file_or_ask_open_file():
         # If the directory does not exist yet, process_default_contract it
         if not os.path.exists(p1_contract_dir):
             try:
-                os.mkdir(p1_contract_dir, mode=0o700)
+                os.mkdir(p1_contract_dir, mode = 0o700)
             except OSError:
                 raise
 
@@ -606,7 +616,7 @@ def document_in_program_info_json():
     p1_program_info_d['p1_initial_xls'] = p1_initial_xls_contract_file
     p1_program_info_d['p1_full_path_source_file_xls'] = p1_full_path_source_file_xls
     with open(p1_program_info_f, 'w') as fw:
-        json.dump(p1_program_info_d, fw, ensure_ascii=False)
+        json.dump(p1_program_info_d, fw, ensure_ascii = False)
 
 
 def after_running_p1_only_display_p4_search_reg_ex_l():
@@ -614,23 +624,24 @@ def after_running_p1_only_display_p4_search_reg_ex_l():
 
 
 def display_p1_all_products_to_be_processed_set():
-    global p1_labels_info_d
-    global p1_labels_info_f
+    global p1_contract_info_d
+    global p1_contract_info_f
     global p1_all_products_to_be_processed_set
-    if not p1_labels_info_d:
-        p1_labels_info_f = os.path.join(p1_contract_dir, 'p1_' + p1_contract_nr + '_labels-info.json')
-        with open(p1_labels_info_f) as f1:
-            p1_labels_info_d = json.load(f1)
-    p1_all_products_to_be_processed_set = p1_labels_info_d['p1_all_products_to_be_processed_set']
+    if not p1_contract_info_d:
+        p1_contract_info_f = os.path.join(p1_contract_dir, 'p1_' + p1_contract_nr + '_contract-info.json')
+        with open(p1_contract_info_f) as f1:
+            p1_contract_info_d = json.load(f1)
+    p1_all_products_to_be_processed_set = p1_contract_info_d['p1_all_products_to_be_processed_set']
     pprint.pprint(p1_all_products_to_be_processed_set)
 
 
 def display_p1b_indics_from_contract_l():
     global p1b_indics_from_contract_l
-    global p1_labels_info_d
-    if not p1_labels_info_d:
-        p1_labels_info_d = p1_load_p1_labels_info_d()
-    filename = p1_labels_info_d['p1b_indics_from_contract_l']
+    global p1_contract_info_d
+    if not p1_contract_info_d:
+        if not p1_load_contract_info_d():
+            print('p1 has not run successfully')
+    filename = p1_contract_info_d['p1b_indics_from_contract_l']
     with open(os.path.join(p1_contract_dir, filename)) as f1b:
         p1b_indics_from_contract_l = json.load(f1b)
     pprint.pprint(p1b_indics_from_contract_l)
@@ -638,10 +649,11 @@ def display_p1b_indics_from_contract_l():
 
 def display_p1c_all_relevant_data():
     global p1c_prods_w_same_key_set
-    global p1_labels_info_d
-    if not p1_labels_info_d:
-        p1_labels_info_d = p1_load_p1_labels_info_d()
-    filename = p1_labels_info_d['p1c_all_relevant_data']
+    global p1_contract_info_d
+    if not p1_contract_info_d:
+        if not p1_load_contract_info_d():
+            print('p1 has not run successfully')
+    filename = p1_contract_info_d['p1c_all_relevant_data']
     with open(os.path.join(p1_contract_dir, filename)) as f1c:
         p1c_prods_w_same_key_set = f1c.read()
     print(p1c_prods_w_same_key_set)
@@ -649,10 +661,11 @@ def display_p1c_all_relevant_data():
 
 def display_p1d_common_indics_l():
     global p1d_common_indics_l
-    global p1_labels_info_d
-    if not p1_labels_info_d:
-        p1_labels_info_d = p1_load_p1_labels_info_d()
-    filename = p1_labels_info_d['p1d_extract_common']
+    global p1_contract_info_d
+    if not p1_contract_info_d:
+        if not p1_load_contract_info_d():
+            print('p1 has not run successfully')
+    filename = p1_contract_info_d['p1d_extract_common']
     with open(os.path.join(p1_contract_dir, filename)) as f1d:
         p1d_common_indics_l = json.load(f1d)
     pprint.pprint(p1d_common_indics_l)
@@ -660,22 +673,23 @@ def display_p1d_common_indics_l():
 
 def display_p1e_specific_indics_d_of_d():
     global p1e_specific_fields_d_of_d
-    global p1_labels_info_d
-    if not p1_labels_info_d:
-        p1_labels_info_d = p1_load_p1_labels_info_d()
-    filename = p1_labels_info_d['p1e_extract_specifics']
+    global p1_contract_info_d
+    if not p1_contract_info_d:
+        if not p1_load_contract_info_d():
+            print('p1 has not run successfully')
+    filename = p1_contract_info_d['p1e_extract_specifics']
     with open(os.path.join(p1_contract_dir, filename)) as f1e:
         p1e_specific_fields_d_of_d = json.load(f1e)
     pprint.pprint(p1e_specific_fields_d_of_d)
 
 
-def document_in_labels_info_json(key, filename):
-    global p1_labels_info_d
+def document_in_contract_info_json(key, filename):
+    global p1_contract_info_d
     global p1_contract_dir
-    p1_labels_info_d[key] = filename
-    f = os.path.join(p1_contract_dir, p1_labels_info_f)
+    p1_contract_info_d[key] = filename
+    f = os.path.join(p1_contract_dir, p1_contract_info_f)
     with open(f, 'w') as fi:
-        json.dump(p1_labels_info_d, fi, ensure_ascii=False)
+        json.dump(p1_contract_info_d, fi, ensure_ascii = False)
 
 
 def view_too_many_ext_files_in_directory(xls_file_l, ext):
@@ -694,25 +708,25 @@ def view_a_prefix_could_not_be_read_from_filename_ext():
     print('A prefix could not be display_sub_processes_output from filename ext')
 
 
-def display_p1_labels_info_d():
-    global p1_labels_info_d
-    print('~~~ Reading labels-info global value ~~~')
-    pprint.pprint(p1_labels_info_d)
-    print('~~~ Finished reading labels-info global value ~~~')
+def display_p1_contract_info_d():
+    global p1_contract_info_d
+    print('~~~ Reading contract-info global value ~~~')
+    pprint.pprint(p1_contract_info_d)
+    print('~~~ Finished reading contract-info global value ~~~')
 
 
-def display_p1_labels_info_f():
-    # global p1_labels_info_f
-    # p1_labels_info_f = os.path.join(p1_contract_dir, 'p1_' + p1_contract_nr + '_labels-info.json')
-    if p1_labels_info_f:
-        if os.path.isfile(p1_labels_info_f):
-            print('~~~ Reading labels-info.json file contents ~~~')
-            with open(p1_labels_info_f) as f:
+def display_p1_contract_info_f():
+    # global p1_contract_info_f
+    # p1_contract_info_f = os.path.join(p1_contract_dir, 'p1_' + p1_contract_nr + '_contract-info.json')
+    if p1_contract_info_f:
+        if os.path.isfile(p1_contract_info_f):
+            print('~~~ Reading contract-info.json file contents ~~~')
+            with open(p1_contract_info_f) as f:
                 # print(f.read_program_info())
                 pprint.pprint(f.read())
-            print('~~~ File labels-info.json closed ~~~')
+            print('~~~ File contract-info.json closed ~~~')
     else:
-        print(f'\nFile {p1_labels_info_f} not built yet\n')
+        print(f'\nFile {p1_contract_info_f} not built yet\n')
 
 
 def display_p1_program_info_d():
