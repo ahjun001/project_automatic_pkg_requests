@@ -13,6 +13,7 @@ p3_fields_dir = ''  # currently working fields directory
 p3_fields_sel = ''  # current label
 p3_fields_info_d = {}  # info on fields currently being edited
 p3_fields_info_f = None  # info on fields currently being edited
+p3_default_fields = ["03.Prod_spec", "total_qty", "pack", "u_parc"]
 header_height = 7
 page_view_box_w = 170
 page_view_box_h = 257
@@ -45,12 +46,7 @@ def init():
             '1': process_all_labels_with_default_specific_fields,
             '2': display_or_load_output_overview,
             '3': select_a_label,
-            '3a': add_fields,
-            '3b': del_fields,
-            '3c': process_mako,
-            '4': add_fields_to_selected_label,
-            '5': delete_fields_from_selected_label,
-            '6': select_a_label_and_delete_fields,
+            '4': display_specific_fields_for_all_products,
             '7': p1.display_p1_contract_info_d,
             '8': p1.display_p1_contract_info_f,
             '9': display_p3_fields_info_d,
@@ -65,7 +61,7 @@ def init():
     global p3_options_l
     p3_options_l = []
     global p3_already_selected_l
-    if load_p3_fields_info_d():
+    if p3_load_fields_info_d():
         p3_already_selected_l = p3_fields_info_d['selected_fields']
     else:
         p3_already_selected_l = []
@@ -78,7 +74,30 @@ def init():
 
 
 def process_all_labels_with_default_specific_fields():
-    pass
+    global p3_fields_dir
+    global p3_already_selected_l
+    global p3_fields_info_d
+    global p3_options_l
+    global p3_fields_info_f
+
+    # p3_select_specific_fields_context_func()
+    if not p1.p1e_specific_fields_d_of_d:
+        p1.load_p1e_specific_fields_d_of_d()
+    p3_options_l = list(next(iter(p1.p1e_specific_fields_d_of_d.values())))
+
+    # read existing labels
+    drs = p2.p2_load_labels_info_l()
+    if drs:
+        for p3_fields_dir in drs:
+            if p3_load_fields_info_d():
+                p3_already_selected_l = p3_fields_info_d['selected_fields']
+            for f in p3_default_fields:
+                if f in p3_options_l and f not in p3_already_selected_l:
+                    p3_already_selected_l.append(f)
+            p3_fields_info_f = os.path.join(p1.p1_contract_dir + '/' + p3_fields_dir, 'label-info.json')
+            with open(p3_fields_info_f, 'w') as f:
+                json.dump(p3_fields_info_d, f, ensure_ascii = False)
+            make_mako(p3_fields_dir)
 
 
 def display_or_load_output_overview():
@@ -128,15 +147,24 @@ def select_a_label():
                                 print(f'{s} is not an option, try again')
                         break
                     else:
-                        print('Integer, but not an option, try again')
+                        print('!\n! Integer, but not an option, try again\n!')
                 except ValueError:
-                    print('That\'s not an integer, try again')
+                    print('!\n! That\'s not an integer, try again\n!')
+
+        write_to_disk()
+        make_mako(p3_fields_dir)
     else:
         return
 
 
-def select_a_label_and_delete_fields():
-    pass
+def write_to_disk():
+    global p3_fields_info_f
+    global p3_fields_info_d
+
+    p3_fields_info_d['selected_fields'] = p3_already_selected_l
+    p3_fields_info_f = os.path.join(p1.p1_contract_dir + '/' + p3_fields_dir, 'label-info.json')
+    with open(p3_fields_info_f, 'w') as f:
+        json.dump(p3_fields_info_d, f, ensure_ascii = False)
 
 
 def p3_display_selected_fields():
@@ -157,10 +185,6 @@ def p3_display_selected_fields():
     print('Currently processing ', p3_fields_dir)
 
 
-def load_p3_fields_info_d():
-    pass
-
-
 def display_p3_fields_info_d():
     global p3_fields_info_d
     print('~~~ Reading label-info global value ~~~')
@@ -173,7 +197,7 @@ def display_p3_fields_info_f():
     global p3_fields_info_f
 
     if p3_fields_info_d:
-        if os.path.isfile(p3_fields_info_f):
+        if os.path.exists(p3_fields_info_f):
             print('~~~ Reading label-info.json file contents ~~~')
             with open(p3_fields_info_f) as f:
                 pprint.pprint(f.read())
@@ -216,15 +240,10 @@ def add_fields():
                     p3_already_selected_l.append(not_yet_l[s_i])
                     # break
                 else:
-                    print('Integer, but not an option, try again')
+                    print('!\n! Integer, but not an option, try again\n!')
             except ValueError:
-                print('That\'s not an integer, try again')
-
-    p3_fields_info_d['selected_fields'] = p3_already_selected_l
-
-    p3_fields_info_f = os.path.join(p1.p1_contract_dir + '/' + p3_fields_dir, 'label-info.json')
-    with open(p3_fields_info_f, 'w') as f:
-        json.dump(p3_fields_info_d, f, ensure_ascii = False)
+                print('!\n! That\'s not an integer, try again\n!')
+    write_to_disk()
 
 
 def del_fields():
@@ -248,34 +267,16 @@ def del_fields():
                     del p3_already_selected_l[s_i]
                     # break
                 else:
-                    print('Integer, but not an option, try again')
+                    print('!\n! Integer, but not an option, try again\n!')
             except ValueError:
-                print('That\'s not an integer, try again')
+                print('!\n! That\'s not an integer, try again\n!')
 
-    p3_fields_info_d['selected_fields'] = p3_already_selected_l
-
-    p3_fields_info_f = os.path.join(p1.p1_contract_dir + '/' + p3_fields_dir, 'label-info.json')
-    with open(p3_fields_info_f, 'w') as f:
-        json.dump(p3_fields_info_d, f, ensure_ascii = False)
-
-
-def add_fields_to_selected_label():
-    pass
-
-
-def delete_fields_from_selected_label():
-    pass
-
-
-def update():
-    pass
-
-
-def process_mako():
-    make_mako(p3_fields_dir)
+    write_to_disk()
 
 
 def make_mako(dr):
+    global p3_already_selected_l
+
     # writing the input file for Mako
     mako_input = ''
 
@@ -312,10 +313,16 @@ def make_mako(dr):
 
 
 def p3_load_fields_info_d():
+    """
+    if information is already in memory, do not reload it, returns True
+    else load from disk
+    """
     global p3_fields_info_f
     global p3_fields_info_d
     global p3_fields_dir
 
+    if p3_fields_info_d:
+        return True
     if p3_fields_dir:
         p3_fields_info_f = os.path.join(p1.p1_contract_dir + '/' + p3_fields_dir, 'label-info.json')
         if os.path.exists(p3_fields_info_f):
@@ -326,15 +333,35 @@ def p3_load_fields_info_d():
     return False
 
 
-"""
-def write_in_mem_n_on_disk(p3_fields_dir):
-    # document the info in A1234-567_fields-info.json file
-    p3_fields_info_d['p3_fields_dir'] = p3_fields_dir
-    _, p3_fields_sel = os.path.split(p3_fields_dir)
-    p3_fields_info_d['p3_fields_sel'] = p3_fields_sel
-    with open(p3_fields_info_f, 'w') as fi:
-        json.dump(p3_fields_info_d, fi, ensure_ascii = False)
-"""
+def display_specific_fields_for_all_products():
+    # writing for dsp_sf
+    dsp_s = ''
+
+    # make sure global variables are set in all situations, outside the loop to do it once only
+    if not p1.p1b_indics_from_contract_l:
+        p1.load_p1b_indics_from_contract_l()
+    if not p1.p1_all_products_to_be_processed_set:
+        p1.load_p1_all_products_to_be_processed_set()
+
+    # building the header
+    dsp_s += 'field'
+    for f in p1.p1_all_products_to_be_processed_set:
+        dsp_s += f'\t{f}'
+    dsp_s += '\n'
+    # building the body
+    prod_by_spec = {}
+    p1e_l = list(next(iter(p1.p1e_specific_fields_d_of_d.values())))
+    if not p1.p1e_specific_fields_d_of_d:
+        p1.load_p1e_specific_fields_d_of_d()
+    for spec in p1e_l:
+        prod_by_spec[spec] = {}
+    for d in p1.p1b_indics_from_contract_l:
+        if d['what'] in p1e_l:
+            prod_by_spec[d['what']][d['prod_nr']] = d['info']
+
+    pprint.pprint(dsp_s)
+    pprint.pprint(prod_by_spec)
+    pass
 
 
 def main():

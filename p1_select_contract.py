@@ -166,6 +166,7 @@ def process_default_contract():
     p1d_common_indics_l = []
     p1e_specific_fields_d_of_d = {}
 
+    p0_load_program_info_d()
     # checking if a program-info.json file exists in the root directory
     if pathlib.Path(p1_program_info_f).exists():
         # then load the info it contains in p1_program_info_d dictionary

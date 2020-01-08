@@ -48,7 +48,7 @@ def init():
     p.context_func_d = {**p.context_func_d, **context_func_d}
 
 
-label_groups_l = [
+p2_label_groups_l = [
     '1.Outer_box_外箱',
     '2.Inner_box_内盒',
     '3.Inside_box_中箱',
@@ -57,14 +57,14 @@ label_groups_l = [
     '6.Prod_sticker_产品上不干胶',
 ]
 
-standard_labels_l = [
+p2_default_labels_l = [
     '1.Outer_box_外箱',
     '6.Prod_sticker_产品上不干胶',
 ]
 
 
 def create_default_labels():
-    add_labels_from_list(standard_labels_l, ask_questions = False)
+    add_labels_from_list(p2_default_labels_l, ask_questions = False)
 
 
 def load_n_display():
@@ -78,7 +78,7 @@ def p2_load_labels_info_l():
 
 
 def add_new_labels():
-    add_labels_from_list(label_groups_l, ask_questions = True)
+    add_labels_from_list(p2_label_groups_l, ask_questions = True)
 
 
 def add_labels_from_list(list_l, ask_questions):

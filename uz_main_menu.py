@@ -29,9 +29,10 @@ def init():
         p.main_menu = p.menu
     p.menus = {
         p.menu: {
-            '1': p1_select_contract,
-            '2': p2_select_labels,
-            '3': p3_select_distinctive_fields,
+            '1': run_all_with_default_values,
+            '2': p1_select_contract,
+            '3': p2_select_labels,
+            '4': p3_select_distinctive_fields,
             'u': u_maintain_set_of_indicators_regex_to_be_searched,
             'q': p.normal_exit,
         },
@@ -45,6 +46,12 @@ def init():
     data_dir = os.path.join(p0_root_dir, 'data')
     if not os.path.exists(data_dir):
         os.mkdir(data_dir, mode=0o700)
+
+
+def run_all_with_default_values():
+    p1.process_default_contract()
+    p2.create_default_labels()
+    p3.process_all_labels_with_default_specific_fields()
 
 
 def p1_select_contract():
