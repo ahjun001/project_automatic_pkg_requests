@@ -20,6 +20,7 @@ page_view_box_h = 257
 
 
 def p3_select_specific_fields_context_func():
+    display_specific_fields_for_all_products()
     print('~~~ Now processing contract #: ', p1.p1_contract_nr if p1.p1_contract_nr else None)
     print('~~~ Now working on label: ', p3_fields_dir)
     print('~~~ Specific fields selected so far:', p3_already_selected_l)
@@ -46,12 +47,10 @@ def init():
             '1': process_all_labels_with_default_specific_fields,
             '2': display_or_load_output_overview,
             '3': select_a_label,
-            '4': display_specific_fields_for_all_products,
-            '7': p1.display_p1_contract_info_d,
-            '8': p1.display_p1_contract_info_f,
-            '9': display_p3_fields_info_d,
-            '10': display_p3_fields_info_f,
-            '11': p3_load_fields_info_d,
+            '6': p1.display_p1_contract_info_d,
+            '7': p1.display_p1_contract_info_f,
+            '8': display_p3_fields_info_d,
+            '9': display_p3_fields_info_f,
             'b': p.back_to_main,
             'q': p.normal_exit,
         }

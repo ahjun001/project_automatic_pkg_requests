@@ -272,8 +272,8 @@ def process_default_contract():
         for prod in contract_json_d['l_i']:  # inspecting products one by one
             tmp_dct = {  # adding 03.Prod_spec-产品规则 info
                 'info_kind': 'spec',
-                'what': '03.Prod_spec',
-                'where': '05.Quantity-数量',
+                'what': 'xl_prod_spec',
+                'where': 'xl_quantity-数量',
                 'prod_nr': prod['01.TST_prod_#-需方产品编号'],
                 'info': prod["03.Prod_spec-产品规格"]
             }
@@ -281,7 +281,7 @@ def process_default_contract():
             tmp_dct = {  # adding 05.Quantity-数量 info
                 'info_kind': 'pack_qty',
                 'what': 'total_qty',
-                'where': '05.Quantity-数量',
+                'where': 'xl_quantity-数量',
                 'prod_nr': prod['01.TST_prod_#-需方产品编号'],
                 'info': int(prod['05.Quantity-数量'])
             }
