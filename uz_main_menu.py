@@ -24,7 +24,7 @@ context_func_d = {
 def init():
     # menus
     p.menu = 'main_menu'
-    p.mod_lev_1_menu = p.menu
+    # p.mod_lev_1_menu = p.menu
     if not p.main_menu:
         p.main_menu = p.menu
     p.menus = {
@@ -37,7 +37,7 @@ def init():
             'q': p.normal_exit,
         },
     }
-    p.mod_lev_1_menus = p.menus
+    # p.mod_lev_1_menus = p.menus
     if not p.main_menus:
         p.main_menus = p.menus
     p.context_func_d = {**p.context_func_d, **context_func_d}
@@ -73,6 +73,8 @@ def u_maintain_set_of_indicators_regex_to_be_searched():
 def main():
     """ Driver """
     init()
+    p.mod_lev_1_menu = p.menu
+    p.mod_lev_1_menus = p.menus
     p.run()
 
 

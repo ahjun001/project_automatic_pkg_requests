@@ -41,6 +41,7 @@ def init():
 
     # initializing menus last, so that context functions display most recent information
     menu = 'select_specific_fields'
+    # p.mod_lev_1_menu = p.menu
     p.menu = menu
     menus = {
         menu: {
@@ -66,7 +67,7 @@ def init():
         p3_already_selected_l = []
         print('\nNo specific fields selected at this point\n')
 
-    p.mod_lev_1_menus = p.menus
+    # p.mod_lev_1_menus = p.menus
     if not p.main_menus:
         p.main_menus = p.menus
     p.context_func_d = {**p.context_func_d, **context_func_d}
@@ -452,6 +453,8 @@ def inverted_display_specific_fields_for_all_products():
 def main():
     """ Driver """
     init()
+    p.mod_lev_1_menu = p.menu
+    p.mod_lev_1_menus = p.menus
     p.run()
 
 

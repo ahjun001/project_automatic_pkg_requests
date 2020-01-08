@@ -29,7 +29,7 @@ def init():
 
     # initializing menus last, so that context functions display most recent information
     p.menu = 'p2_select_labels'
-    p.mod_lev_1_menu = p.menu
+    # p.mod_lev_1_menu = p.menu
     if not p.main_menu:
         p.main_menu = p.menu
     p.menus = {
@@ -42,7 +42,7 @@ def init():
             'q': p.normal_exit,
         },
     }
-    p.mod_lev_1_menus = p.menus
+    # p.mod_lev_1_menus = p.menus
     if not p.main_menus:
         p.main_menus = p.menus
     p.context_func_d = {**p.context_func_d, **context_func_d}
@@ -159,6 +159,8 @@ def create_label(dr):
 def main():
     """ Driver """
     init()
+    p.mod_lev_1_menu = p.menu
+    p.mod_lev_1_menus = p.menus
     p.run()
 
 
