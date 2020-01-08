@@ -334,6 +334,85 @@ def p3_load_fields_info_d():
 
 
 def display_specific_fields_for_all_products():
+    # make sure global variables are set in all situations, outside the loop to do it once only
+    if not p1.p1_all_products_to_be_processed_set:
+        p1.load_p1_all_products_to_be_processed_set()
+    if not p1.p1b_indics_from_contract_l:
+        p1.load_p1b_indics_from_contract_l()
+
+    if not p1.p1e_specific_fields_d_of_d:
+        p1.load_p1e_specific_fields_d_of_d()
+    p1e_l = list(next(iter(p1.p1e_specific_fields_d_of_d.values())))
+
+    # building the header
+    tmp_l = [8*' ']
+    for f in p1e_l:
+        tmp_l.append(f)
+    dsp_l = [tmp_l]
+
+    # building the body
+    spec_by_prod = {}
+    for prod in p1.p1_all_products_to_be_processed_set:
+        spec_by_prod[prod] = {}
+    for d in p1.p1b_indics_from_contract_l:
+        if d['what'] in p1e_l:
+            spec_by_prod[d['prod_nr']][d['what']] = d['info']
+
+    for prod in spec_by_prod.keys():
+        tmp_l = [prod]
+        for k in spec_by_prod[prod].keys():
+            tmp_l.append(spec_by_prod[prod][k])
+        dsp_l.append(tmp_l)
+
+    m = 0
+    for l_l in dsp_l:
+        for ls in l_l:
+            m = max(m, len(str(ls)))
+    s = ''
+    for l_l in dsp_l:
+        for ls in l_l:
+            s += (m - len(str(ls))) * ' ' + str(ls)
+        s += '\n'
+    print(s)
+
+
+def good_by_not_pretty_display_specific_fields_for_all_products():
+    # writing for dsp_sf
+    dsp_p = ''
+
+    # make sure global variables are set in all situations, outside the loop to do it once only
+    if not p1.p1_all_products_to_be_processed_set:
+        p1.load_p1_all_products_to_be_processed_set()
+    if not p1.p1b_indics_from_contract_l:
+        p1.load_p1b_indics_from_contract_l()
+
+    if not p1.p1e_specific_fields_d_of_d:
+        p1.load_p1e_specific_fields_d_of_d()
+    p1e_l = list(next(iter(p1.p1e_specific_fields_d_of_d.values())))
+
+    # building the header
+    for f in p1e_l:
+        dsp_p += f'\t{f}'
+    dsp_p += '\n'
+    # building the body
+    spec_by_prod = {}
+
+    for prod in p1.p1_all_products_to_be_processed_set:
+        spec_by_prod[prod] = {}
+    for d in p1.p1b_indics_from_contract_l:
+        if d['what'] in p1e_l:
+            spec_by_prod[d['prod_nr']][d['what']] = d['info']
+
+    for prod in spec_by_prod.keys():
+        dsp_p += '\t' + prod
+        for k in spec_by_prod[prod].keys():
+            dsp_p += '\t' + str(spec_by_prod[prod][k])
+        dsp_p += '\n'
+
+    print(dsp_p)
+
+
+def inverted_display_specific_fields_for_all_products():
     # writing for dsp_sf
     dsp_s = ''
 
@@ -350,18 +429,25 @@ def display_specific_fields_for_all_products():
     dsp_s += '\n'
     # building the body
     prod_by_spec = {}
-    p1e_l = list(next(iter(p1.p1e_specific_fields_d_of_d.values())))
     if not p1.p1e_specific_fields_d_of_d:
         p1.load_p1e_specific_fields_d_of_d()
+    p1e_l = list(next(iter(p1.p1e_specific_fields_d_of_d.values())))
     for spec in p1e_l:
         prod_by_spec[spec] = {}
     for d in p1.p1b_indics_from_contract_l:
         if d['what'] in p1e_l:
             prod_by_spec[d['what']][d['prod_nr']] = d['info']
 
-    pprint.pprint(dsp_s)
-    pprint.pprint(prod_by_spec)
-    pass
+    idx = 0
+    for spec in prod_by_spec.keys():
+        dsp_s += str(idx)
+        dsp_s += '\t' + spec
+        for k in prod_by_spec[spec].keys():
+            dsp_s += '\t' + str(prod_by_spec[spec][k])
+        dsp_s += '\n'
+        idx += 1
+
+    print(dsp_s)
 
 
 def main():
