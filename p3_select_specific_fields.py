@@ -2,6 +2,10 @@
 import json
 import os
 import pprint
+import subprocess
+
+from mako.template import Template
+
 import p0_menus as p
 import p1_select_contract as p1
 import p2_select_labels as p2
@@ -54,6 +58,7 @@ def init():
         p.main_menu = p.menu
     p.menus = {
         p.menu: {
+            '0': f50_present_one_reference_label_svg,
             '1': process_all_labels_with_default_specific_fields,
             '2': display_or_load_output_overview,
             '3': select_a_label_n_edit_fields,
@@ -67,6 +72,9 @@ def init():
     }
     if not p.main_menus:
         p.main_menus = p.menus
+    if __name__ == '__main__':
+        p.mod_lev_1_menu = p.menu
+        p.mod_lev_1_menus = p.menus
     p.context_func_d = {**p.context_func_d, **context_func_d}
 
 
@@ -92,7 +100,7 @@ def process_all_labels_with_default_specific_fields():
                 if f in p3_options_l and f not in p3_already_selected_l:
                     p3_already_selected_l.append(f)
             write_to_disk()
-            make_mako(p3_fields_dir)
+            make_mako_input(p3_fields_dir)
 
 
 def display_or_load_output_overview():
@@ -157,7 +165,7 @@ def select_a_label_n_edit_fields():
                     print('!\n! That\'s not an integer, try again\n!')
 
         write_to_disk()
-        make_mako(p3_fields_dir)
+        make_mako_input(p3_fields_dir)
     else:
         return
 
@@ -279,44 +287,6 @@ def del_fields():
     write_to_disk()
 
 
-def make_mako(dr):
-    global p3_already_selected_l
-
-    # writing the input file for Mako
-    mako_input = ''
-
-    # make sure global variables are set in all situations, outside the loop to do it once only
-    if not p1.p1b_indics_from_contract_l:
-        p1.load_p1b_indics_from_contract_l()
-    if not p1.p1_all_products_to_be_processed_set:
-        p1.load_p1_all_products_to_be_processed_set()
-
-    if p3_already_selected_l:
-        # building the header
-        mako_input += 'idx, prod_n'
-        for indc in p3_already_selected_l:
-            mako_input += ', ' + indc
-        mako_input += '\n'
-        # building the body
-        indc_by_prod = {}
-        for prod in p1.p1_all_products_to_be_processed_set:
-            indc_by_prod[prod] = {}
-        for indc_c in p1.p1b_indics_from_contract_l:  # loop over the big one once
-            if indc_c['what'] in p3_already_selected_l:  # loop over the smaller more
-                indc_by_prod[indc_c['prod_nr']][indc_c['what']] = indc_c['info']
-        idx = 0
-        for prod in indc_by_prod.keys():
-            mako_input += str(idx)
-            mako_input += ', ' + prod
-            for k in indc_by_prod[prod].keys():
-                mako_input += ', ' + str(indc_by_prod[prod][k])
-            mako_input += '\n'
-            idx += 1
-
-        with open(os.path.join(p1.p1_contract_dir + '/' + dr, 'mako_input.csv'), 'w') as f:
-            f.write(mako_input)
-
-
 def p3_read_fields_info_d_from_disk():
     global p3_fields_info_f
     global p3_fields_info_d
@@ -375,11 +345,107 @@ def display_specific_fields_for_all_products():
     print(s)
 
 
+def make_mako_input(drctry):
+    global p3_already_selected_l
+
+    # writing the input file for Mako
+    mako_input = ''
+
+    # make sure global variables are set in all situations, outside the loop to do it once only
+    if not p1.p1b_indics_from_contract_l:
+        p1.load_p1b_indics_from_contract_l()
+    if not p1.p1_all_products_to_be_processed_set:
+        p1.load_p1_all_products_to_be_processed_set()
+
+    if p3_already_selected_l:
+        # building the header
+        mako_input += 'idx, prod_n'
+        for indc in p3_already_selected_l:
+            mako_input += ', ' + indc
+        mako_input += '\n'
+        # building the body
+        indc_by_prod = {}
+        for prod in p1.p1_all_products_to_be_processed_set:
+            indc_by_prod[prod] = {}
+        for indc_c in p1.p1b_indics_from_contract_l:  # loop over the big one once
+            if indc_c['what'] in p3_already_selected_l:  # loop over the smaller more
+                indc_by_prod[indc_c['prod_nr']][indc_c['what']] = indc_c['info']
+        idx = 0
+        for prod in indc_by_prod.keys():
+            mako_input += str(idx)
+            mako_input += ', ' + prod
+            for k in indc_by_prod[prod].keys():
+                mako_input += ', ' + str(indc_by_prod[prod][k])
+            mako_input += '\n'
+            idx += 1
+
+        with open(os.path.join(p1.p1_contract_dir + '/' + drctry, 'mako_input.csv'), 'w') as f:
+            f.write(mako_input)
+
+
+def f50_present_one_reference_label_svg():
+    """
+    Printing one label so that it can be checked before printing many
+    """
+    global p3_options_l
+
+    if not p3_options_l:
+        p3_options_l = p1.p1e_specific_fields_d_of_d.items()
+
+    # todo: isolate the separate function, remove body from repository
+    filename = os.path.join(p1.p1_contract_dir + '/' + p3_fields_dir, 'label_template_header.svg')
+    with open(filename) as h:
+        header = h.read()
+    svg_out = os.path.join(p1.p1_contract_dir + '/' + p3_fields_dir, 'page_0.svg')
+    with open(svg_out, 'w') as f:
+        f.write(header)
+        filename = os.path.join(p1.p1_contract_dir + '/' + p3_fields_dir, 'label_template_body.svg')
+        label_template = Template(filename = filename, input_encoding = 'utf-8')
+        f51_write_data_in_label_template_item(f, label_template, p3_options_l[0])
+        f.write('</svg>')
+    # subprocess.Popen([r'/usr/bin/google-chrome', '--disable-gpu', '--disable-software-rasterizer', svg_out])
+    # subprocess.Popen([r'google-chrome', svg_out])
+    subprocess.Popen([r'firefox', svg_out])
+    # subprocess.Popen(['cat', os.path.join(p3_fields_dir, f'page_0.svg')])
+
+
+def f51_write_data_in_label_template_item(f, label_template, v):
+    f.write(label_template.render(
+        i = v['idx'],
+        prod_n = v['prod_n'],
+        prod_spec = v['prod_spec'],
+        u_parc = v['u_parc'],
+        plstc_bg = v['plstc_bg'],
+        pack = v['pack'],
+        parc = v['parc'],
+        brandk = v['brandk'],
+        brandd = v['brandd'],
+        branddp = v['branddp'],
+        kg = v['kg'],
+        mm = v['mm'],
+        v_Hz = v['v_Hz'],
+        r_power = v['r_power'],
+        l_flux = v['l_flux'],
+        c_tmp = v['c_tmp'],
+        c_idx = v['c_idx'],
+        b_ang = v['b_ang'],
+        p_size = v['p_size'],
+        prot_lev = v['prot_lev'],
+        serv_lif = v['serv_lif'],
+        q_ass = v['q_ass'],
+        nut_grade = v['nut_grade'],
+        material1 = v['material1'],
+        nut_norm = v['nut_norm'],
+        material2 = v['material2'],
+        nut_spec = v['nut_spec'],
+        bg_pr_crgtd_bx = v['bg_pr_crgtd_bx'],
+        bg_pr_o_bx = v['bg_pr_o_bx'],
+    ))
+
+
 def main():
     """ Driver """
     init()
-    p.mod_lev_1_menu = p.menu
-    p.mod_lev_1_menus = p.menus
     p.run()
 
 

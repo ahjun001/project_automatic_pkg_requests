@@ -40,6 +40,10 @@ def init():
     # p.mod_lev_1_menus = p.menus
     if not p.main_menus:
         p.main_menus = p.menus
+
+    if __name__ == '__main__':
+        p.mod_lev_1_menu = p.menu
+        p.mod_lev_1_menus = p.menus
     p.context_func_d = {**p.context_func_d, **context_func_d}
 
     # If the data directory does not exist, process_default_contract it
@@ -73,8 +77,6 @@ def u_maintain_set_of_indicators_regex_to_be_searched():
 def main():
     """ Driver """
     init()
-    p.mod_lev_1_menu = p.menu
-    p.mod_lev_1_menus = p.menus
     p.run()
 
 

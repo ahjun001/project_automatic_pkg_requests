@@ -28,7 +28,7 @@ def init():
     p.menus = {
         p.menu: {
             '3': update,
-            'p': p.back_to_main,
+            'b': p.back_to_main,
             'q': p.normal_exit,
         },
     }
