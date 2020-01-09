@@ -4,7 +4,7 @@ import p0_menus as p
 import p1_select_contract as p1
 import p2_select_labels as p2
 import p3_select_specific_fields as p3
-import u_maintain_set_of_indicators_regex_to_be_searched as i
+import pu_maintain_set_of_indicators_regex_to_be_searched as i
 
 p0_root_dir = os.path.dirname(os.path.abspath(__file__))  # root directory where the program is located
 

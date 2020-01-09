@@ -13,7 +13,7 @@ p3_fields_dir = ''  # currently working fields directory
 p3_fields_sel = ''  # current label
 p3_fields_info_d = {}  # info on fields currently being edited
 p3_fields_info_f = None  # info on fields currently being edited
-p3_default_fields = ["03.Prod_spec", "total_qty", "pack", "u_parc"]
+p3_default_fields = ["xl_prod_spec", "total_qty", "u_parc", 'parc']
 header_height = 7
 page_view_box_w = 170
 page_view_box_h = 257
@@ -47,7 +47,7 @@ def init():
         menu: {
             '1': process_all_labels_with_default_specific_fields,
             '2': display_or_load_output_overview,
-            '3': select_a_label,
+            '3': select_a_label_n_edit_fields,
             '6': p1.display_p1_contract_info_d,
             '7': p1.display_p1_contract_info_f,
             '8': display_p3_fields_info_d,
@@ -94,9 +94,7 @@ def process_all_labels_with_default_specific_fields():
             for f in p3_default_fields:
                 if f in p3_options_l and f not in p3_already_selected_l:
                     p3_already_selected_l.append(f)
-            p3_fields_info_f = os.path.join(p1.p1_contract_dir + '/' + p3_fields_dir, 'label-info.json')
-            with open(p3_fields_info_f, 'w') as f:
-                json.dump(p3_fields_info_d, f, ensure_ascii = False)
+            write_to_disk()
             make_mako(p3_fields_dir)
 
 
@@ -104,7 +102,7 @@ def display_or_load_output_overview():
     pass
 
 
-def select_a_label():
+def select_a_label_n_edit_fields():
     global p3_fields_dir
     global p3_already_selected_l
 

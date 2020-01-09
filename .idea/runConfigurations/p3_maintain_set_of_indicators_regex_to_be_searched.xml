@@ -12,7 +12,7 @@
     <option name="IS_MODULE_SDK" value="true" />
     <option name="ADD_CONTENT_ROOTS" value="true" />
     <option name="ADD_SOURCE_ROOTS" value="true" />
-    <option name="SCRIPT_NAME" value="$PROJECT_DIR$/u_maintain_set_of_indicators_regex_to_be_searched.py" />
+    <option name="SCRIPT_NAME" value="$PROJECT_DIR$/pu_maintain_set_of_indicators_regex_to_be_searched.py" />
     <option name="PARAMETERS" value="" />
     <option name="SHOW_COMMAND_LINE" value="false" />
     <option name="EMULATE_TERMINAL" value="true" />

@@ -38,7 +38,7 @@ def init():
             '2': load_n_display,
             '3': add_new_labels,
             '4': delete_existing_labels,
-            'p': p.back_to_main,
+            'b': p.back_to_main,
             'q': p.normal_exit,
         },
     }

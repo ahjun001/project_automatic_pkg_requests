@@ -31,6 +31,11 @@ def p0_load_program_info_d():
     global p1_full_path_source_file_xls
     global p1_contract_dir
 
+    # If the data directory does not exist, process_default_contract it
+    data_dir = os.path.join(p0_root_dir, 'data')
+    if not os.path.exists(data_dir):
+        os.mkdir(data_dir, mode = 0o700)
+
     p1_program_info_f = os.path.join(p0_root_dir, 'program-info.json')
     if pathlib.Path(p1_program_info_f).exists():
         # then load the info it contains in p1_program_info_d dictionary
@@ -68,7 +73,8 @@ def p1_load_contract_info_d():
 
     if not p0_load_program_info_d():
         if not p1_contract_dir or not p1_contract_nr:
-            init()
+            # init()
+            p0_load_program_info_d()
             process_default_contract()
     p1_contract_info_f = os.path.join(p1_contract_dir, 'p1_' + p1_contract_nr + '_contract-info.json')
     with open(p1_contract_info_f) as fi:
@@ -101,11 +107,6 @@ context_func_d = {
 
 def init():
     global p1_program_info_f
-    # If the data directory does not exist, process_default_contract it
-    data_dir = os.path.join(p0_root_dir, 'data')
-    if not os.path.exists(data_dir):
-        os.mkdir(data_dir, mode = 0o700)
-
     # initializing globals necessary for all functions
     p1_program_info_f = os.path.join(p0_root_dir, 'program-info.json')
 
@@ -123,11 +124,11 @@ def init():
             '7': display_sub_processes_output,
             '8': display_p1_program_info_d,
             '9': display_p1_program_info_f,
-            'p': p.back_to_main,
+            'b': p.back_to_main,
             'q': p.normal_exit,
         },
         'display_sub_processes_output': {
-            '1': after_running_p1_only_display_p4_search_reg_ex_l,
+            '1': display_p1_search_reg_ex_l,
             '2': display_p1_all_products_to_be_processed_set,
             '3': display_p1b_indics_from_contract_l,
             '4': display_p1c_all_relevant_data,
@@ -258,11 +259,7 @@ def process_default_contract():
 
     # def create_2():
     # reading info from ./common/indicators.csv, which was kept in csv format to make human input easier
-    with open(indicators_csv) as f:
-        my_dict_reader = csv.DictReader(f)
-        for row in my_dict_reader:
-            temp_dict = dict(row)
-            p1_search_reg_ex_l.append(temp_dict)
+    load_p1_search_reg_ex_l()
 
     # p1b_indics_from_contract_l: harvesting all indicators possibly available in the contract_json_d
     for row_indic in p1_search_reg_ex_l:
@@ -315,8 +312,7 @@ def process_default_contract():
         # p1c_prods_w_same_key_set = {}  # make a dictionary key= info, value = sets of prods with that key
         for row in p1b_indics_from_contract_l:
             # for index, row in c_df.iterrows():  # index is not used
-            if (row['info_kind'], row['what'], row['where'], row['info']) \
-                        not in p1c_prods_w_same_key_set.keys():
+            if (row['info_kind'], row['what'], row['where'], row['info']) not in p1c_prods_w_same_key_set.keys():
                 p1c_prods_w_same_key_set[(row['info_kind'], row['what'], row['where'], row['info'])] = set()
             p1c_prods_w_same_key_set[(row['info_kind'], row['what'], row['where'], row['info'])].add(
                 row['prod_nr'])
@@ -386,7 +382,6 @@ def display_or_load_output_overview():
 def display():
     if p1_contract_info_d:
         display_p1_contract_info_d()
-        return
     elif p1_contract_info_f:
         print('trying to read_program_info from disk:')
         display_p1_program_info_f()
@@ -588,10 +583,6 @@ def document_in_program_info_json():
         json.dump(p1_program_info_d, fw, ensure_ascii = False)
 
 
-def after_running_p1_only_display_p4_search_reg_ex_l():
-    pprint.pprint(p1_search_reg_ex_l)
-
-
 def load_p1_all_products_to_be_processed_set():
     global p1_contract_info_d
     global p1_contract_info_f
@@ -601,6 +592,23 @@ def load_p1_all_products_to_be_processed_set():
         with open(p1_contract_info_f) as f1:
             p1_contract_info_d = json.load(f1)
     p1_all_products_to_be_processed_set = p1_contract_info_d['p1_all_products_to_be_processed_set']
+    if p1_all_products_to_be_processed_set:
+        return True
+
+
+def load_p1_search_reg_ex_l():
+    with open(indicators_csv) as f:
+        my_dict_reader = csv.DictReader(f)
+        for row in my_dict_reader:
+            temp_dict = dict(row)
+            p1_search_reg_ex_l.append(temp_dict)
+    if p1_search_reg_ex_l:
+        return True
+
+
+def display_p1_search_reg_ex_l():
+    if load_p1_search_reg_ex_l():
+        pprint.pprint(p1_search_reg_ex_l)
 
 
 def display_p1_all_products_to_be_processed_set():
@@ -658,6 +666,8 @@ def load_p1e_specific_fields_d_of_d():
     filename = p1_contract_info_d['p1e_extract_specifics']
     with open(os.path.join(p1_contract_dir, filename)) as f1e:
         p1e_specific_fields_d_of_d = json.load(f1e)
+    if p1e_specific_fields_d_of_d:
+        return True
 
 
 def display_p1e_specific_fields_d_of_d():
