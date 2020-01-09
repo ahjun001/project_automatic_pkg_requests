@@ -112,7 +112,6 @@ def init():
 
     # initializing menus last, so that context functions display most recent information
     p.menu = 'select_contract'
-    # p.mod_lev_1_menu = p.menu
     if not p.main_menu:
         p.main_menu = p.menu
     p.menus = {
@@ -138,7 +137,6 @@ def init():
             'q': p.normal_exit,
         }
     }
-    # p.mod_lev_1_menus = p.menus
     if not p.main_menus:
         p.main_menus = p.menus
     p.context_func_d = {**p.context_func_d, **context_func_d}
@@ -744,7 +742,7 @@ def read_dirs(walk_dir):
     global p1_contract_dir
 
     if walk_dir:
-        (root, dirs, files) = next(os.walk(walk_dir))
+        _, dirs, _ = next(os.walk(walk_dir))
         if dirs:
             dirs.sort()
             dirs[:] = [d for d in dirs if d[0] not in ['.', '_']]

@@ -68,9 +68,7 @@ def create_default_labels():
 
 
 def load_n_display():
-    p1.display_dirs(
-        p2_load_labels_info_l()
-    )
+    p1.display_dirs(p1.p1_contract_dir)
 
 
 def p2_load_labels_info_l():

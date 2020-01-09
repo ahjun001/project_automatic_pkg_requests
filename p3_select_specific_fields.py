@@ -39,12 +39,21 @@ def init():
     if not p1.read_dirs(p1.p1_contract_dir):
         p2.create_default_labels()
 
+    global p3_options_l
+    p3_options_l = []
+    global p3_already_selected_l
+    if p3_read_fields_info_d_from_disk():
+        p3_already_selected_l = p3_fields_info_d['selected_fields']
+    else:
+        p3_already_selected_l = []
+        print('\nNo specific fields selected at this point\n')
+
     # initializing menus last, so that context functions display most recent information
-    menu = 'select_specific_fields'
-    # p.mod_lev_1_menu = p.menu
-    p.menu = menu
-    menus = {
-        menu: {
+    p.menu = 'select_specific_fields'
+    if not p.main_menu:
+        p.main_menu = p.menu
+    p.menus = {
+        p.menu: {
             '1': process_all_labels_with_default_specific_fields,
             '2': display_or_load_output_overview,
             '3': select_a_label_n_edit_fields,
@@ -56,18 +65,6 @@ def init():
             'q': p.normal_exit,
         }
     }
-    p.menus = menus
-
-    global p3_options_l
-    p3_options_l = []
-    global p3_already_selected_l
-    if p3_load_fields_info_d():
-        p3_already_selected_l = p3_fields_info_d['selected_fields']
-    else:
-        p3_already_selected_l = []
-        print('\nNo specific fields selected at this point\n')
-
-    # p.mod_lev_1_menus = p.menus
     if not p.main_menus:
         p.main_menus = p.menus
     p.context_func_d = {**p.context_func_d, **context_func_d}
@@ -89,7 +86,7 @@ def process_all_labels_with_default_specific_fields():
     drs = p2.p2_load_labels_info_l()
     if drs:
         for p3_fields_dir in drs:
-            if p3_load_fields_info_d():
+            if p3_read_fields_info_d_from_disk():
                 p3_already_selected_l = p3_fields_info_d['selected_fields']
             for f in p3_default_fields:
                 if f in p3_options_l and f not in p3_already_selected_l:
@@ -99,7 +96,17 @@ def process_all_labels_with_default_specific_fields():
 
 
 def display_or_load_output_overview():
-    pass
+    global p3_fields_dir
+    global p3_fields_info_d
+
+    print('~~~ Overview')
+    _, drs, _ = next(os.walk(p1.p1_contract_dir))
+    for dr in drs:
+        print(dr)
+        p3_fields_dir = dr
+        if p3_read_fields_info_d_from_disk():
+            print('\t', p3_fields_info_d['selected_fields'])
+    print('~~~')
 
 
 def select_a_label_n_edit_fields():
@@ -125,7 +132,7 @@ def select_a_label_n_edit_fields():
                         os.system('clear')
                         p3_fields_dir = drs[s_i]
                         # load fields already selected for label as they are on file
-                        if p3_load_fields_info_d():
+                        if p3_read_fields_info_d_from_disk():
                             p3_already_selected_l = p3_fields_info_d['selected_fields']
                         print(f'now ready to work on {p3_fields_dir}')
                         while True:
@@ -310,17 +317,11 @@ def make_mako(dr):
             f.write(mako_input)
 
 
-def p3_load_fields_info_d():
-    """
-    if information is already in memory, do not reload it, returns True
-    else load from disk
-    """
+def p3_read_fields_info_d_from_disk():
     global p3_fields_info_f
     global p3_fields_info_d
     global p3_fields_dir
 
-    if p3_fields_info_d:
-        return True
     if p3_fields_dir:
         p3_fields_info_f = os.path.join(p1.p1_contract_dir + '/' + p3_fields_dir, 'label-info.json')
         if os.path.exists(p3_fields_info_f):
@@ -343,7 +344,7 @@ def display_specific_fields_for_all_products():
     p1e_l = list(next(iter(p1.p1e_specific_fields_d_of_d.values())))
 
     # building the header
-    tmp_l = [8*' ']
+    tmp_l = [8 * ' ']
     for f in p1e_l:
         tmp_l.append(f)
     dsp_l = [tmp_l]
@@ -372,80 +373,6 @@ def display_specific_fields_for_all_products():
             s += (m - len(str(ls))) * ' ' + str(ls)
         s += '\n'
     print(s)
-
-
-def good_by_not_pretty_display_specific_fields_for_all_products():
-    # writing for dsp_sf
-    dsp_p = ''
-
-    # make sure global variables are set in all situations, outside the loop to do it once only
-    if not p1.p1_all_products_to_be_processed_set:
-        p1.load_p1_all_products_to_be_processed_set()
-    if not p1.p1b_indics_from_contract_l:
-        p1.load_p1b_indics_from_contract_l()
-
-    if not p1.p1e_specific_fields_d_of_d:
-        p1.load_p1e_specific_fields_d_of_d()
-    p1e_l = list(next(iter(p1.p1e_specific_fields_d_of_d.values())))
-
-    # building the header
-    for f in p1e_l:
-        dsp_p += f'\t{f}'
-    dsp_p += '\n'
-    # building the body
-    spec_by_prod = {}
-
-    for prod in p1.p1_all_products_to_be_processed_set:
-        spec_by_prod[prod] = {}
-    for d in p1.p1b_indics_from_contract_l:
-        if d['what'] in p1e_l:
-            spec_by_prod[d['prod_nr']][d['what']] = d['info']
-
-    for prod in spec_by_prod.keys():
-        dsp_p += '\t' + prod
-        for k in spec_by_prod[prod].keys():
-            dsp_p += '\t' + str(spec_by_prod[prod][k])
-        dsp_p += '\n'
-
-    print(dsp_p)
-
-
-def inverted_display_specific_fields_for_all_products():
-    # writing for dsp_sf
-    dsp_s = ''
-
-    # make sure global variables are set in all situations, outside the loop to do it once only
-    if not p1.p1b_indics_from_contract_l:
-        p1.load_p1b_indics_from_contract_l()
-    if not p1.p1_all_products_to_be_processed_set:
-        p1.load_p1_all_products_to_be_processed_set()
-
-    # building the header
-    dsp_s += 'field'
-    for f in p1.p1_all_products_to_be_processed_set:
-        dsp_s += f'\t{f}'
-    dsp_s += '\n'
-    # building the body
-    prod_by_spec = {}
-    if not p1.p1e_specific_fields_d_of_d:
-        p1.load_p1e_specific_fields_d_of_d()
-    p1e_l = list(next(iter(p1.p1e_specific_fields_d_of_d.values())))
-    for spec in p1e_l:
-        prod_by_spec[spec] = {}
-    for d in p1.p1b_indics_from_contract_l:
-        if d['what'] in p1e_l:
-            prod_by_spec[d['what']][d['prod_nr']] = d['info']
-
-    idx = 0
-    for spec in prod_by_spec.keys():
-        dsp_s += str(idx)
-        dsp_s += '\t' + spec
-        for k in prod_by_spec[spec].keys():
-            dsp_s += '\t' + str(prod_by_spec[spec][k])
-        dsp_s += '\n'
-        idx += 1
-
-    print(dsp_s)
 
 
 def main():
