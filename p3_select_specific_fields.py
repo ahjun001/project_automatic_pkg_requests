@@ -12,12 +12,13 @@ import p2_select_labels as p2
 
 p0_root_dir = os.path.dirname(os.path.abspath(__file__))  # root directory where the program is located
 p3_already_selected_l = []
-p3_options_l = []
+p3_all_specific_fields_l = []
 p3_fields_dir = ''  # currently working fields directory
 p3_fields_sel = ''  # current label
 p3_fields_info_d = {}  # info on fields currently being edited
 p3_fields_info_f = None  # info on fields currently being edited
-p3_default_fields = ["xl_prod_spec", "total_qty", "u_parc", 'parc']
+p3_default_fields = ["xl_prod_spec", "u_parc", 'plstc_bg']
+p3_selected_indc_by_prod_d = {}
 header_height = 7
 page_view_box_w = 170
 page_view_box_h = 257
@@ -43,8 +44,8 @@ def init():
     if not p1.read_dirs(p1.p1_contract_dir):
         p2.create_default_labels()
 
-    global p3_options_l
-    p3_options_l = []
+    global p3_all_specific_fields_l
+    p3_all_specific_fields_l = []
     global p3_already_selected_l
     if p3_read_fields_info_d_from_disk():
         p3_already_selected_l = p3_fields_info_d['selected_fields']
@@ -58,7 +59,6 @@ def init():
         p.main_menu = p.menu
     p.menus = {
         p.menu: {
-            '0': f50_present_one_reference_label_svg,
             '1': process_all_labels_with_default_specific_fields,
             '2': display_or_load_output_overview,
             '3': select_a_label_n_edit_fields,
@@ -82,13 +82,13 @@ def process_all_labels_with_default_specific_fields():
     global p3_fields_dir
     global p3_already_selected_l
     global p3_fields_info_d
-    global p3_options_l
+    global p3_all_specific_fields_l
     global p3_fields_info_f
 
     # p3_select_specific_fields_context_func()
     if not p1.p1e_specific_fields_d_of_d:
         p1.load_p1e_specific_fields_d_of_d()
-    p3_options_l = list(next(iter(p1.p1e_specific_fields_d_of_d.values())))
+    p3_all_specific_fields_l = list(next(iter(p1.p1e_specific_fields_d_of_d.values())))
 
     # read existing labels
     drs = p2.p2_load_labels_info_l()
@@ -97,7 +97,7 @@ def process_all_labels_with_default_specific_fields():
             if p3_read_fields_info_d_from_disk():
                 p3_already_selected_l = p3_fields_info_d['selected_fields']
             for f in p3_default_fields:
-                if f in p3_options_l and f not in p3_already_selected_l:
+                if f in p3_all_specific_fields_l and f not in p3_already_selected_l:
                     p3_already_selected_l.append(f)
             write_to_disk()
             make_mako_input(p3_fields_dir)
@@ -184,14 +184,14 @@ def p3_display_selected_fields():
     with open(os.path.join(p1.p1_contract_dir, 'p4_' + p1.p1_contract_nr + '_fields_from_contract_l.json')) as f:
         p3_fields_from_contract_l = json.load(f)
     indic_val_d = {}
-    for option in p3_options_l:
+    for option in p3_all_specific_fields_l:
         temp_d = {}
         for indic in p3_fields_from_contract_l:
             if indic['what'] == option:
                 temp_d[indic['prod_nr']] = indic['info']
         indic_val_d[option] = temp_d
 
-    for option in p3_options_l:
+    for option in p3_all_specific_fields_l:
         nr_tabs = 1 if len(option) >= 8 else 2
         print(option, nr_tabs * '\t', list(indic_val_d[option].values()))
     print('\nAlready selected: ', p3_already_selected_l, '\n')
@@ -223,7 +223,7 @@ def add_fields():
     global p3_fields_info_f
     global p3_fields_dir
     global p3_already_selected_l
-    global p3_options_l
+    global p3_all_specific_fields_l
 
     # if not p3_already_selected_l:
     #     p3_already_selected_l = ["03.Prod_spec", "pack", "total_qty"]
@@ -231,12 +231,12 @@ def add_fields():
     # p3_select_specific_fields_context_func()
     if not p1.p1e_specific_fields_d_of_d:
         p1.load_p1e_specific_fields_d_of_d()
-    p3_options_l = list(next(iter(p1.p1e_specific_fields_d_of_d.values())))
-    # select from p3_options_l and put in p3_already_selected_l
+    p3_all_specific_fields_l = list(next(iter(p1.p1e_specific_fields_d_of_d.values())))
+    # select from p3_all_specific_fields_l and put in p3_already_selected_l
     while True:
         print(f'~~~ Already selected:\n{p3_already_selected_l}\n~~~ Can be added:')
         not_yet_l = []
-        for o in p3_options_l:
+        for o in p3_all_specific_fields_l:
             if o not in p3_already_selected_l:
                 not_yet_l.append(o)
         for i in range(len(not_yet_l)):
@@ -346,6 +346,8 @@ def display_specific_fields_for_all_products():
 
 
 def make_mako_input(drctry):
+    # will be set in this function
+    global p3_selected_indc_by_prod_d
     # make sure global variables are set in all situations, outside the loop to do it once only
     if not p1.p1b_indics_from_contract_l:
         p1.load_p1b_indics_from_contract_l()
@@ -353,65 +355,22 @@ def make_mako_input(drctry):
         p1.load_p1_all_products_to_be_processed_set()
 
     if p3_already_selected_l:
-        indc_by_prod_d = {}
-        for prod in p1.p1_all_products_to_be_processed_set:
-            indc_by_prod_d[prod] = {}
-        for indc_c in p1.p1b_indics_from_contract_l:  # loop over the big one once
-            if indc_c['what'] in p3_already_selected_l:  # loop over the smaller more
-                indc_by_prod_d[indc_c['prod_nr']][indc_c['what']] = indc_c['info']
-
-        with open(os.path.join(p1.p1_contract_dir + '/' + drctry, 'mako_input.json'), 'w') as f:
-            json.dump(indc_by_prod_d, f, ensure_ascii = False)
-
-
-def old_make_mako_input(drctry):
-    global p3_already_selected_l
-
-    # writing the input file for Mako
-    mako_input = ''
-
-    # make sure global variables are set in all situations, outside the loop to do it once only
-    if not p1.p1b_indics_from_contract_l:
-        p1.load_p1b_indics_from_contract_l()
-    if not p1.p1_all_products_to_be_processed_set:
-        p1.load_p1_all_products_to_be_processed_set()
-
-    if p3_already_selected_l:
-        # building the header
-        mako_input += 'idx, prod_n'
-        for indc in p3_already_selected_l:
-            mako_input += ', ' + indc
-        mako_input += '\n'
-        # building the body
-        indc_by_prod = {}
-        for prod in p1.p1_all_products_to_be_processed_set:
-            indc_by_prod[prod] = {}
-        for indc_c in p1.p1b_indics_from_contract_l:  # loop over the big one once
-            if indc_c['what'] in p3_already_selected_l:  # loop over the smaller more
-                indc_by_prod[indc_c['prod_nr']][indc_c['what']] = indc_c['info']
         idx = 0
-        for prod in indc_by_prod.keys():
-            mako_input += str(idx)
-            mako_input += ', ' + prod
-            for k in indc_by_prod[prod].keys():
-                mako_input += ', ' + str(indc_by_prod[prod][k])
-            mako_input += '\n'
+        for prod in p1.p1_all_products_to_be_processed_set:
+            temp_d = {'i': idx + 1, 'prod_n': prod}
+            for indc_c in p1.p1b_indics_from_contract_l:  # loop over the big one once
+                if indc_c['what'] in p3_already_selected_l:  # loop over the smaller more
+                    temp_d[indc_c['what']] = indc_c['info']
+            p3_selected_indc_by_prod_d[idx] = temp_d
             idx += 1
 
-        with open(os.path.join(p1.p1_contract_dir + '/' + drctry, 'mako_input.csv'), 'w') as f:
-            f.write(mako_input)
+        filename = os.path.join(p1.p1_contract_dir + '/' + drctry, 'mako_input.json')
+        with open(filename, 'w') as f:
+            json.dump(p3_selected_indc_by_prod_d, f, ensure_ascii = False)
+    else:
+        print('No label has been selected for display')
 
-
-def f50_present_one_reference_label_svg():
-    """
-    Printing one label so that it can be checked before printing many
-    """
-    global p3_options_l
-
-    if not p3_options_l:
-        p3_options_l = p1.p1e_specific_fields_d_of_d.items()
-
-    # todo: isolate the separate function, remove body from repository
+    # building the html page
     filename = os.path.join(p1.p1_contract_dir + '/' + p3_fields_dir, 'label_template_header.svg')
     with open(filename) as h:
         header = h.read()
@@ -420,46 +379,11 @@ def f50_present_one_reference_label_svg():
         f.write(header)
         filename = os.path.join(p1.p1_contract_dir + '/' + p3_fields_dir, 'label_template_body.svg')
         label_template = Template(filename = filename, input_encoding = 'utf-8')
-        f51_write_data_in_label_template_item(f, label_template, p3_options_l[0])
+        f.write(label_template.render(**p3_selected_indc_by_prod_d[0]))
         f.write('</svg>')
     # subprocess.Popen([r'/usr/bin/google-chrome', '--disable-gpu', '--disable-software-rasterizer', svg_out])
     # subprocess.Popen([r'google-chrome', svg_out])
     subprocess.Popen([r'firefox', svg_out])
-    # subprocess.Popen(['cat', os.path.join(p3_fields_dir, f'page_0.svg')])
-
-
-def f51_write_data_in_label_template_item(f, label_template, v):
-    f.write(label_template.render(
-        i = v['idx'],
-        prod_n = v['prod_n'],
-        prod_spec = v['prod_spec'],
-        u_parc = v['u_parc'],
-        plstc_bg = v['plstc_bg'],
-        pack = v['pack'],
-        parc = v['parc'],
-        brandk = v['brandk'],
-        brandd = v['brandd'],
-        branddp = v['branddp'],
-        kg = v['kg'],
-        mm = v['mm'],
-        v_Hz = v['v_Hz'],
-        r_power = v['r_power'],
-        l_flux = v['l_flux'],
-        c_tmp = v['c_tmp'],
-        c_idx = v['c_idx'],
-        b_ang = v['b_ang'],
-        p_size = v['p_size'],
-        prot_lev = v['prot_lev'],
-        serv_lif = v['serv_lif'],
-        q_ass = v['q_ass'],
-        nut_grade = v['nut_grade'],
-        material1 = v['material1'],
-        nut_norm = v['nut_norm'],
-        material2 = v['material2'],
-        nut_spec = v['nut_spec'],
-        bg_pr_crgtd_bx = v['bg_pr_crgtd_bx'],
-        bg_pr_o_bx = v['bg_pr_o_bx'],
-    ))
 
 
 def main():
