@@ -346,6 +346,25 @@ def display_specific_fields_for_all_products():
 
 
 def make_mako_input(drctry):
+    # make sure global variables are set in all situations, outside the loop to do it once only
+    if not p1.p1b_indics_from_contract_l:
+        p1.load_p1b_indics_from_contract_l()
+    if not p1.p1_all_products_to_be_processed_set:
+        p1.load_p1_all_products_to_be_processed_set()
+
+    if p3_already_selected_l:
+        indc_by_prod_d = {}
+        for prod in p1.p1_all_products_to_be_processed_set:
+            indc_by_prod_d[prod] = {}
+        for indc_c in p1.p1b_indics_from_contract_l:  # loop over the big one once
+            if indc_c['what'] in p3_already_selected_l:  # loop over the smaller more
+                indc_by_prod_d[indc_c['prod_nr']][indc_c['what']] = indc_c['info']
+
+        with open(os.path.join(p1.p1_contract_dir + '/' + drctry, 'mako_input.json'), 'w') as f:
+            json.dump(indc_by_prod_d, f, ensure_ascii = False)
+
+
+def old_make_mako_input(drctry):
     global p3_already_selected_l
 
     # writing the input file for Mako
