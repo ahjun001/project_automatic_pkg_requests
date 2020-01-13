@@ -59,6 +59,7 @@ def init():
         p.main_menu = p.menu
     p.menus = {
         p.menu: {
+            '0': display_typical_label,
             '1': process_all_labels_with_default_specific_fields,
             '2': display_or_load_output_overview,
             '3': select_a_label_n_edit_fields,
@@ -392,6 +393,38 @@ def make_mako_input(drctry):
     # subprocess.Popen([r'/usr/bin/google-chrome', '--disable-gpu', '--disable-software-rasterizer', svg_out])
     # subprocess.Popen([r'google-chrome', svg_out])
     subprocess.Popen([r'firefox', svg_out])
+
+
+def display_typical_label():
+    label_template_s = os.path.join(p0_root_dir + '/common/1.Outer_box_外箱', 'label_template.svg')
+    # from_dir = p0_root_dir + '/common/1.Outer_box_外箱'
+    go_to_dir = p1.p1_contract_dir + '/1.Outer_box_外箱'
+
+    # with open(label_template_s) as f:
+    #     lines = f.readlines()
+    #     for line in lines:
+    #         if 'viewBox' in line:
+    #             width = re.search(r'(?<=width=\").*?(?=\")', line).group()
+    #             height = re.search(r'(?<=width=\").*?(?=\")', line).group()
+    #             # vb_s = re.search(r'(?<=viewBox\=\").*?(?=\")',line).group()
+    #             # vb_l = re.split(r'\s', vb_s)
+    #             vb = f' <rect style="fill:none;fill-opacity:1;stroke:fuchsia;stroke-width:0.1;stroke-opacity:1"\
+    #             id="view_box_pgm" width="{width}" height="{height}" x="0" y="02" /> '
+
+    # header_s = os.path.join(p1.p1_contract_dir + '/1.Outer_box_外箱', 'label_template_header.svg')
+    # body_s = os.path.join(p1.p1_contract_dir + '/1.Outer_box_外箱', 'label_template_body.svg')
+    # header_s = os.path.join(from_dir, 'label_template_header.svg')
+    body_s = os.path.join(go_to_dir, 'label_template_body.svg')
+
+    with open(label_template_s) as f_t, open(body_s, 'w') as f_b:
+        write_b = False
+        lines = f_t.readlines()
+        for i in range(len(lines) - 1):
+            if r'</metadata>' in lines[i]:
+                write_b = True
+                continue
+            if write_b:
+                f_b.write(lines[i])
 
 
 def main():
