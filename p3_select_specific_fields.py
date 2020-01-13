@@ -359,8 +359,9 @@ def make_mako_input(drctry):
         for prod in p1.p1_all_products_to_be_processed_set:
             temp_d = {'i': idx + 1, 'prod_n': prod}
             for indc_c in p1.p1b_indics_from_contract_l:  # loop over the big one once
-                if indc_c['what'] in p3_already_selected_l:  # loop over the smaller more
-                    temp_d[indc_c['what']] = indc_c['info']
+                if indc_c['prod_nr'] == prod:
+                    if indc_c['what'] in p3_already_selected_l:  # loop over the smaller more
+                        temp_d[indc_c['what']] = indc_c['info']
             p3_selected_indc_by_prod_d[idx] = temp_d
             idx += 1
 
