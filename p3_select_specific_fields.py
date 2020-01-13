@@ -355,15 +355,22 @@ def make_mako_input(drctry):
         p1.load_p1_all_products_to_be_processed_set()
 
     if p3_already_selected_l:
+        # make a skeleton for p3_selected_indc_by_prod_d with key = prod
         idx = 0
+        temp_d = {}
         for prod in p1.p1_all_products_to_be_processed_set:
-            temp_d = {'i': idx + 1, 'prod_n': prod}
-            for indc_c in p1.p1b_indics_from_contract_l:  # loop over the big one once
-                if indc_c['prod_nr'] == prod:
-                    if indc_c['what'] in p3_already_selected_l:  # loop over the smaller more
-                        temp_d[indc_c['what']] = indc_c['info']
-            p3_selected_indc_by_prod_d[idx] = temp_d
+            temp_d[prod] = {'i': idx + 1, 'prod_n': prod}
             idx += 1
+
+        # populate the skeleton
+        for indc_d in p1.p1b_indics_from_contract_l:  # loop over the big one once
+            if indc_d['prod_nr'] in p1.p1_all_products_to_be_processed_set:
+                if indc_d['what'] in p3_already_selected_l:  # loop over the smaller more
+                    temp_d[indc_d['prod_nr']][indc_d['what']] = indc_d['info']
+
+        # build p3_selected_indc_by_prod_d with key = i - 1
+        for v in temp_d.values():
+            p3_selected_indc_by_prod_d[v['i'] - 1] = v
 
         filename = os.path.join(p1.p1_contract_dir + '/' + drctry, 'mako_input.json')
         with open(filename, 'w') as f:
