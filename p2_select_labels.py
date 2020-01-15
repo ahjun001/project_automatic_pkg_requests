@@ -108,14 +108,14 @@ def add_labels_from_list(list_l, ask_questions):
                 try:
                     s_i = int(s)
                     if s_i in range(len(candidates_l)):
-                        create_label(candidates_l[s_i])
+                        create_label_dir(candidates_l[s_i])
                     else:
                         print('Integer, but not an option, try again')
                 except ValueError:
                     print('That\'s not an integer, try again')
     else:
         for c in candidates_l:
-            create_label(c)
+            create_label_dir(c)
 
 
 def delete_existing_labels():
@@ -143,18 +143,10 @@ def delete_existing_labels():
                 print('That\'s not an integer, try again')
 
 
-def create_label(dr):
-    # if directories do not exist, process_default_contract them
-    p2_lbl_dir = os.path.join(p1.p1_contract_dir, dr)
-    if not os.path.exists(p2_lbl_dir):
-        os.mkdir(p2_lbl_dir, mode = 0o700)
-    # and transfer the label_templates there
-    if not os.path.exists(os.path.join(p2_lbl_dir, 'label_template_header.svg')):
-        shutil.copy(os.path.join(p0_root_dir + '/common/1.Outer_box_外箱',
-                                 'label_template_header.svg'), p2_lbl_dir)
-    if not os.path.exists(os.path.join(p2_lbl_dir, 'label_template_body.svg')):
-        shutil.copy(os.path.join(p0_root_dir + '/common/1.Outer_box_外箱',
-                                 'label_template_body.svg'), p2_lbl_dir)
+def create_label_dir(dr):
+    lbl_dir = os.path.join(p1.p1_contract_dir, dr)
+    if not os.path.exists(lbl_dir):
+        os.mkdir(lbl_dir, mode = 0o700)
 
 
 def main():

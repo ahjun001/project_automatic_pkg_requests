@@ -2,6 +2,7 @@
 import json
 import os
 import pprint
+import shutil
 import subprocess
 
 from mako.template import Template
@@ -59,7 +60,7 @@ def init():
         p.main_menu = p.menu
     p.menus = {
         p.menu: {
-            '0': display_typical_label,
+            '0': build_template_header_n_body,
             '1': process_all_labels_with_default_specific_fields,
             '2': display_or_load_output_overview,
             '3': select_a_label_n_edit_fields,
@@ -379,6 +380,9 @@ def make_mako_input(drctry):
     else:
         print('No label has been selected for display')
 
+    # copy header, build body from template svg
+    build_template_header_n_body(p1.p1_contract_dir + '/' + drctry)
+
     # building the html page
     filename = os.path.join(p1.p1_contract_dir + '/' + p3_fields_dir, 'label_template_header.svg')
     with open(filename) as h:
@@ -395,12 +399,14 @@ def make_mako_input(drctry):
     subprocess.Popen([r'firefox', svg_out])
 
 
-def display_typical_label():
-    label_template_s = os.path.join(p0_root_dir + '/common/1.Outer_box_外箱', 'label_template.svg')
-    # from_dir = p0_root_dir + '/common/1.Outer_box_外箱'
-    go_to_dir = p1.p1_contract_dir + '/1.Outer_box_外箱'
+def build_template_header_n_body(to_dir = None):
+    from_dir = p0_root_dir + '/common/1.Outer_box_外箱'
+    if not to_dir:
+        to_dir = p1.p1_contract_dir + '/1.Outer_box_外箱'
+    template_fr = os.path.join(from_dir, 'label_template.svg')
+    body_fw = os.path.join(to_dir, 'label_template_body.svg')
 
-    # with open(label_template_s) as f:
+    # with open(template_fr) as f:
     #     lines = f.readlines()
     #     for line in lines:
     #         if 'viewBox' in line:
@@ -412,19 +418,23 @@ def display_typical_label():
     #             id="view_box_pgm" width="{width}" height="{height}" x="0" y="02" /> '
 
     # header_s = os.path.join(p1.p1_contract_dir + '/1.Outer_box_外箱', 'label_template_header.svg')
-    # body_s = os.path.join(p1.p1_contract_dir + '/1.Outer_box_外箱', 'label_template_body.svg')
+    # body_fw = os.path.join(p1.p1_contract_dir + '/1.Outer_box_外箱', 'label_template_body.svg')
     # header_s = os.path.join(from_dir, 'label_template_header.svg')
-    body_s = os.path.join(go_to_dir, 'label_template_body.svg')
 
-    with open(label_template_s) as f_t, open(body_s, 'w') as f_b:
+    with open(template_fr) as fr, open(body_fw, 'w') as fw:
         write_b = False
-        lines = f_t.readlines()
+        lines = fr.readlines()
         for i in range(len(lines) - 1):
             if r'</metadata>' in lines[i]:
                 write_b = True
                 continue
             if write_b:
-                f_b.write(lines[i])
+                fw.write(lines[i])
+
+    # and copy the label_template_header there
+    common_dir = p0_root_dir + '/common'
+    if not os.path.exists(os.path.join(to_dir, 'label_template_header.svg')):
+        shutil.copy(os.path.join(common_dir, 'label_template_header.svg'), to_dir)
 
 
 def main():
