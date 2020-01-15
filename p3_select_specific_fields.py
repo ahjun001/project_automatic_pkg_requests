@@ -2,8 +2,10 @@
 import json
 import os
 import pprint
+import re
 import shutil
 import subprocess
+import webbrowser
 
 from mako.template import Template
 
@@ -20,9 +22,9 @@ p3_fields_info_d = {}  # info on fields currently being edited
 p3_fields_info_f = None  # info on fields currently being edited
 p3_default_fields = ["xl_prod_spec", "u_parc", 'plstc_bg']
 p3_selected_indc_by_prod_d = {}
-header_height = 7
-page_view_box_w = 170
-page_view_box_h = 257
+p3_header_height = 7
+p3_page_view_box_w = 170
+p3_page_view_box_h = 257
 
 
 def p3_select_specific_fields_context_func():
@@ -79,6 +81,14 @@ def init():
     p.context_func_d = {**p.context_func_d, **context_func_d}
 
 
+def p3_load_p3_all_specific_fields_l():
+    global p3_all_specific_fields_l
+
+    if not p1.p1e_specific_fields_d_of_d:
+        p1.load_p1e_specific_fields_d_of_d()
+    p3_all_specific_fields_l = list(next(iter(p1.p1e_specific_fields_d_of_d.values())))
+
+
 def process_all_labels_with_default_specific_fields():
     global p3_fields_rdir
     global p3_already_selected_l
@@ -87,13 +97,12 @@ def process_all_labels_with_default_specific_fields():
     global p3_fields_info_f
 
     # p3_select_specific_fields_context_func()
-    if not p1.p1e_specific_fields_d_of_d:
-        p1.load_p1e_specific_fields_d_of_d()
-    p3_all_specific_fields_l = list(next(iter(p1.p1e_specific_fields_d_of_d.values())))
+    p3_load_p3_all_specific_fields_l()
 
     # read existing labels
     drs = p2.p2_load_labels_info_l()
     if drs:
+        # for each label that has been created as a subdir to p1.p1_contract_adir
         for p3_fields_rdir in drs:
             if p3_read_fields_info_d_from_disk():
                 p3_already_selected_l = p3_fields_info_d['selected_fields']
@@ -102,6 +111,8 @@ def process_all_labels_with_default_specific_fields():
                     p3_already_selected_l.append(f)
             write_to_disk()
             make_mako_input(p3_fields_rdir)
+            render_mako_prototype()
+            render_mako_all()
 
 
 def display_or_load_output_overview():
@@ -167,6 +178,7 @@ def select_a_label_n_edit_fields():
 
         write_to_disk()
         make_mako_input(p3_fields_rdir)
+        render_mako_prototype()
     else:
         return
 
@@ -382,20 +394,29 @@ def make_mako_input(some_rdir):
     # copy header, build body from template svg
     build_template_header_n_body(some_rdir)
 
+
+def render_mako_prototype():
     # building the html page
-    filename = os.path.join(p1.p1_contract_adir + '/' + p3_fields_rdir, 'label_template_header.svg')
+    p3_fields_adir = os.path.join(p1.p1_contract_adir, p3_fields_rdir)
+    filename = os.path.join(p3_fields_adir, 'label_template_header.svg')
     with open(filename) as h:
         header = h.read()
-    svg_out = os.path.join(p1.p1_contract_adir + '/' + p3_fields_rdir, 'page_0.svg')
+    svg_out = os.path.join(p3_fields_adir, 'page_0.svg')
     with open(svg_out, 'w') as f:
         f.write(header)
-        filename = os.path.join(p1.p1_contract_adir + '/' + p3_fields_rdir, 'label_template_body.svg')
+        filename = os.path.join(p3_fields_adir, 'label_template_body.svg')
         label_template = Template(filename = filename, input_encoding = 'utf-8')
         f.write(label_template.render(**p3_selected_indc_by_prod_d[0]))
         f.write('</svg>')
     # subprocess.Popen([r'/usr/bin/google-chrome', '--disable-gpu', '--disable-software-rasterizer', svg_out])
     # subprocess.Popen([r'google-chrome', svg_out])
     subprocess.Popen([r'firefox', svg_out])
+
+
+def render_mako_all():
+    label_view_box_w, label_view_box_h, spacing_w, spacing_h = f60_suggest_hor_n_vert_spacings_between_labels()
+    f70_assemble_all_labels_into_svg(label_view_box_w, label_view_box_h, spacing_w, spacing_h)
+    pass
 
 
 def build_template_header_n_body(some_rdir = None):
@@ -432,6 +453,142 @@ def build_template_header_n_body(some_rdir = None):
     # and copy the label_template_header there
     if not os.path.exists(os.path.join(to_adir, 'label_template_header.svg')):
         shutil.copy(os.path.join(p0_root_adir + '/common', 'label_template_header.svg'), to_adir)
+
+
+def f60_suggest_hor_n_vert_spacings_between_labels():
+    """
+    Print min and max spacing depending on # of labels to be laid in rows & columns
+    """
+    label_view_box_w, label_view_box_h = f61_get_label_view_box_from_template()
+    w = f62_suggest_spacing_calc(p3_page_view_box_w, label_view_box_w, 'w')  # first horizontally, w = width
+    # print()
+    h = f62_suggest_spacing_calc(p3_page_view_box_h - p3_header_height, label_view_box_h, 'h')  # then vertically
+    return label_view_box_w, label_view_box_h, w, h
+
+
+def f61_get_label_view_box_from_template():
+    global p3_fields_rdir
+    from_adir = os.path.join(p0_root_adir + '/common', p3_fields_rdir)
+
+    with open(os.path.join(from_adir, 'label_template.svg')) as f:
+        contents = f.read()
+        m = re.search(r'(?<=viewBox=")(\d) (\d) (\d+.*\d*) (\d+\.*\d*)', contents)
+        if m.groups()[0] != '0' or m.groups()[1] != '0':
+            print("Error in building 'label_template.svg': origin is not (0, 0), exiting program ...")
+            exit()
+        return float(m.groups()[2]), float(m.groups()[3])  # label_view_box_h, label_view_box_h
+
+
+def f62_suggest_spacing_calc(lgth, label_view_box, orientation):
+    n_of_labels_per_dim = int(lgth // label_view_box)
+
+    assert orientation == orientation  # todo: remove line
+    # if orientation == 'w':
+    #     print(f'Labels width: {label_view_box}')
+    #     print("# of labels spacing min,       max")
+    # else:
+    #     print(f'Labels height: {label_view_box}')
+
+    for i in range(1, n_of_labels_per_dim + 1):
+        x = f63_suggest_spacing_func(lgth, label_view_box, i)
+        if i == n_of_labels_per_dim:
+            m = 0
+        else:
+            m = f63_suggest_spacing_func(lgth, label_view_box, i + 1) + 1
+
+        print("{:>11d} {:>10d} {:>10d} ".format(i, m, x))
+    return min(10, f63_suggest_spacing_func(lgth, label_view_box, n_of_labels_per_dim))
+
+
+def f63_suggest_spacing_func(lgth, label_view_box, i):
+    return int((lgth - i * label_view_box) / max(1, (i - 1)))
+
+
+def f64_horizontal_centering_offset(label_view_box_w, spacing_w):
+    n_of_labels_per_row = int(p3_page_view_box_w // label_view_box_w)
+    result = (p3_page_view_box_w - n_of_labels_per_row * label_view_box_w - (n_of_labels_per_row - 1) * spacing_w) / 2
+    return result
+
+
+def f70_assemble_all_labels_into_svg(label_view_box_w, label_view_box_h, spacing_w, spacing_h):
+    """
+    assemble prepared svg files
+    output to out.svg
+    """
+    global p3_selected_indc_by_prod_d
+    global p3_fields_rdir
+
+    from_adir = os.path.join(p0_root_adir + '/common', p3_fields_rdir)
+    p3_fields_adir = os.path.join(p1.p1_contract_adir, p3_fields_rdir)
+
+    # from label_template.svg , build header and body templates
+    with open(os.path.join(from_adir, 'label_template.svg')) as f:
+        header, sentinel, body = f.read().partition('</metadata>\n')
+    # Todo: Label template header should be generated from a file with correct page_view_box w & h
+    # with open(os.path.join(p3_fields_adir, 'label_template_header.svg'), 'w') as f:
+    #    f.write(header)
+    #    f.write(sentinel)
+    with open(os.path.join(p3_fields_adir, 'label_template_body.tmp'), 'w') as f:
+        f.write(body)
+        family = re.search(r'(?<=font-family:)([\w-]+)', body).groups()[0]
+        size = re.search(r'(?<=font-size:)(\d+\.*\d*\w*)', body).groups()[0]
+        style = re.search(r'(?<=font-style:)([\w-]+)', body).groups()[0]
+
+    with open(os.path.join(p3_fields_adir, 'label_template_body.tmp')) as fr:
+        lines = fr.readlines()
+    with open(os.path.join(p3_fields_adir, 'label_template_body.svg'), 'w') as fw:
+        for i in range(len(lines) - 1):
+            fw.write(lines[i])
+    os.remove(os.path.join(p3_fields_adir, 'label_template_body.tmp'))
+
+    assert label_view_box_w + spacing_w <= p3_page_view_box_w, \
+        "write_labels: ! label + spacing width don't fit in the page"
+    assert label_view_box_h + spacing_h <= p3_page_view_box_h, \
+        'write_labels: ! label + spacing height don\'t fit in the page'
+
+    # printing labels in pages, when a page is full, open a new one
+    svg_in = os.path.join(p3_fields_adir, 'label_template_header.svg')
+    with open(svg_in) as h:
+        header = h.read()
+
+    label_template = Template(filename = os.path.join(p3_fields_adir, 'label_template_body.svg'),
+                              input_encoding = 'utf-8')
+
+    N = len(p3_selected_indc_by_prod_d)  # of products in the contract
+    page = 1  # nr of page being built
+    i = 0  # index of the label to print
+    ox = - spacing_w + f64_horizontal_centering_offset(label_view_box_w, spacing_w)
+    oy = - spacing_h + p3_header_height
+
+    while i < N:  # enumerating over each item in the contract
+        # opening a new page
+        svg_out = os.path.join(p3_fields_adir, f'page_{page}.svg')
+        with open(svg_out, 'w') as f:
+            f.write(header)
+            f.write("<g transform='translate(20, 20)'>\n")
+            if page == 1:
+                f.write(
+                    "<g>\n<text transform='translate(0, 5)' "
+                    f"style='font-family:{family};font-size:{size};font-style:{style}'>1. 外箱的唛头</text>\n</g>\n")
+            while oy + label_view_box_h + spacing_h <= p3_page_view_box_h and i < N:
+                while ox + label_view_box_w + spacing_w <= p3_page_view_box_w and i < N:
+                    offset_x = ox + spacing_w
+                    offset_y = oy + spacing_h
+                    f.write(r"<g transform = 'translate(" + f"{offset_x}, {offset_y})'>\n")
+                    f.write(label_template.render(**p3_selected_indc_by_prod_d[i]))
+                    f.write('</g>\n')
+                    ox += label_view_box_w + spacing_w
+                    i += 1
+                ox = - spacing_w + f64_horizontal_centering_offset(label_view_box_w, spacing_w)
+                oy += label_view_box_h + spacing_h
+            oy = - spacing_h + p3_header_height
+            f.write('\n</g>\n</svg>\n')
+        # subprocess.Popen(['cat', os.path.join(p3_fields_adir, f'page_{page}.svg')])
+        # subprocess.Popen([r'/usr/bin/google-chrome', '--disable-gpu', '--disable-software-rasterizer', svg_out])
+        # PYCHARM TURN OFF Run / Edit configurations / Emulate terminal in output console
+        # subprocess.Popen([r'firefox', svg_out])
+        webbrowser.get('firefox').open_new_tab(svg_out)
+        page += 1
 
 
 def main():
