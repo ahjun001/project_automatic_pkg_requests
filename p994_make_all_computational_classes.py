@@ -245,7 +245,7 @@ class Json:
         if not os.path.exists(g.contract_dir):
             try:
                 # create it
-                os.mkdir(g.contract_dir, mode = 0o700)  # create drctry for user only, excluding group & everyone else
+                os.mkdir(g.contract_dir, mode = 0o700)  # create some_rdir for user only, excluding group & everyone else
                 # if the initial source file is present
             except OSError:
                 raise

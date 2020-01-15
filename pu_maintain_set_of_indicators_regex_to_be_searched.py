@@ -7,7 +7,7 @@ import pandas as pd
 
 import p0_menus as p
 
-p0_root_dir = os.path.dirname(os.path.abspath(__file__))  # root directory where the program is located
+p0_root_adir = os.path.dirname(os.path.abspath(__file__))  # root directory where the program is located
 
 
 def p_context():
@@ -38,7 +38,7 @@ def init():
     p.context_func_d = {**p.context_func_d, **context_func_d}
 
 
-indicators_csv = os.path.join(p0_root_dir + '/common', 'indicators.csv')
+indicators_csv = os.path.join(p0_root_adir + '/common', 'indicators.csv')
 
 
 def read():

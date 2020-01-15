@@ -11,10 +11,10 @@ import p0_menus as p
 import p1_select_contract as p1
 import p2_select_labels as p2
 
-p0_root_dir = os.path.dirname(os.path.abspath(__file__))  # root directory where the program is located
+p0_root_adir = os.path.dirname(os.path.abspath(__file__))  # root directory where the program is located
 p3_already_selected_l = []
 p3_all_specific_fields_l = []
-p3_fields_dir = ''  # currently working fields directory
+p3_fields_rdir = ''  # currently working fields directory
 p3_fields_sel = ''  # current label
 p3_fields_info_d = {}  # info on fields currently being edited
 p3_fields_info_f = None  # info on fields currently being edited
@@ -28,7 +28,7 @@ page_view_box_h = 257
 def p3_select_specific_fields_context_func():
     display_specific_fields_for_all_products()
     print('~~~ Now processing contract #: ', p1.p1_contract_nr if p1.p1_contract_nr else None)
-    print('~~~ Now working on label: ', p3_fields_dir)
+    print('~~~ Now working on label: ', p3_fields_rdir)
     print('~~~ Specific fields selected so far:', p3_already_selected_l)
     print('\n>>> Select an action: ')
 
@@ -42,7 +42,7 @@ def init():
     # make sure p1 infrastructure is in place
     if not p1.p1_load_contract_info_d():
         print('p1 has not run successfully')
-    if not p1.read_dirs(p1.p1_contract_dir):
+    if not p1.read_dirs(p1.p1_contract_adir):
         p2.create_default_labels()
 
     global p3_all_specific_fields_l
@@ -60,7 +60,6 @@ def init():
         p.main_menu = p.menu
     p.menus = {
         p.menu: {
-            '0': build_template_header_n_body,
             '1': process_all_labels_with_default_specific_fields,
             '2': display_or_load_output_overview,
             '3': select_a_label_n_edit_fields,
@@ -81,7 +80,7 @@ def init():
 
 
 def process_all_labels_with_default_specific_fields():
-    global p3_fields_dir
+    global p3_fields_rdir
     global p3_already_selected_l
     global p3_fields_info_d
     global p3_all_specific_fields_l
@@ -95,36 +94,36 @@ def process_all_labels_with_default_specific_fields():
     # read existing labels
     drs = p2.p2_load_labels_info_l()
     if drs:
-        for p3_fields_dir in drs:
+        for p3_fields_rdir in drs:
             if p3_read_fields_info_d_from_disk():
                 p3_already_selected_l = p3_fields_info_d['selected_fields']
             for f in p3_default_fields:
                 if f in p3_all_specific_fields_l and f not in p3_already_selected_l:
                     p3_already_selected_l.append(f)
             write_to_disk()
-            make_mako_input(p3_fields_dir)
+            make_mako_input(p3_fields_rdir)
 
 
 def display_or_load_output_overview():
-    global p3_fields_dir
+    global p3_fields_rdir
     global p3_fields_info_d
 
     print('~~~ Overview')
-    _, drs, _ = next(os.walk(p1.p1_contract_dir))
+    _, drs, _ = next(os.walk(p1.p1_contract_adir))
     for dr in drs:
         print(dr)
-        p3_fields_dir = dr
+        p3_fields_rdir = dr
         if p3_read_fields_info_d_from_disk():
             print('\t', p3_fields_info_d['selected_fields'])
     print('~~~')
 
 
 def select_a_label_n_edit_fields():
-    global p3_fields_dir
+    global p3_fields_rdir
     global p3_already_selected_l
 
     # read existing labels
-    drs = p1.read_dirs(p1.p1_contract_dir)
+    drs = p1.read_dirs(p1.p1_contract_adir)
     if drs:
         print(f'~~~ Now processing contract #: {p1.p1_contract_nr}')
         print('>>> Select label to edit:\n')
@@ -140,11 +139,11 @@ def select_a_label_n_edit_fields():
                     s_i = int(s)
                     if s_i in range(len(drs)):
                         os.system('clear')
-                        p3_fields_dir = drs[s_i]
+                        p3_fields_rdir = drs[s_i]
                         # load fields already selected for label as they are on file
                         if p3_read_fields_info_d_from_disk():
                             p3_already_selected_l = p3_fields_info_d['selected_fields']
-                        print(f'now ready to work on {p3_fields_dir}')
+                        print(f'now ready to work on {p3_fields_rdir}')
                         while True:
                             p3_select_specific_fields_context_func()
                             s = input('\'a\' to add a field\n'
@@ -167,7 +166,7 @@ def select_a_label_n_edit_fields():
                     print('!\n! That\'s not an integer, try again\n!')
 
         write_to_disk()
-        make_mako_input(p3_fields_dir)
+        make_mako_input(p3_fields_rdir)
     else:
         return
 
@@ -177,13 +176,13 @@ def write_to_disk():
     global p3_fields_info_d
 
     p3_fields_info_d['selected_fields'] = p3_already_selected_l
-    p3_fields_info_f = os.path.join(p1.p1_contract_dir + '/' + p3_fields_dir, 'label-info.json')
+    p3_fields_info_f = os.path.join(p1.p1_contract_adir + '/' + p3_fields_rdir, 'label-info.json')
     with open(p3_fields_info_f, 'w') as f:
         json.dump(p3_fields_info_d, f, ensure_ascii = False)
 
 
 def p3_display_selected_fields():
-    with open(os.path.join(p1.p1_contract_dir, 'p4_' + p1.p1_contract_nr + '_fields_from_contract_l.json')) as f:
+    with open(os.path.join(p1.p1_contract_adir, 'p4_' + p1.p1_contract_nr + '_fields_from_contract_l.json')) as f:
         p3_fields_from_contract_l = json.load(f)
     indic_val_d = {}
     for option in p3_all_specific_fields_l:
@@ -197,7 +196,7 @@ def p3_display_selected_fields():
         nr_tabs = 1 if len(option) >= 8 else 2
         print(option, nr_tabs * '\t', list(indic_val_d[option].values()))
     print('\nAlready selected: ', p3_already_selected_l, '\n')
-    print('Currently processing ', p3_fields_dir)
+    print('Currently processing ', p3_fields_rdir)
 
 
 def display_p3_fields_info_d():
@@ -223,7 +222,7 @@ def display_p3_fields_info_f():
 
 def add_fields():
     global p3_fields_info_f
-    global p3_fields_dir
+    global p3_fields_rdir
     global p3_already_selected_l
     global p3_all_specific_fields_l
 
@@ -292,10 +291,10 @@ def del_fields():
 def p3_read_fields_info_d_from_disk():
     global p3_fields_info_f
     global p3_fields_info_d
-    global p3_fields_dir
+    global p3_fields_rdir
 
-    if p3_fields_dir:
-        p3_fields_info_f = os.path.join(p1.p1_contract_dir + '/' + p3_fields_dir, 'label-info.json')
+    if p3_fields_rdir:
+        p3_fields_info_f = os.path.join(p1.p1_contract_adir + '/' + p3_fields_rdir, 'label-info.json')
         if os.path.exists(p3_fields_info_f):
             with open(p3_fields_info_f) as f:
                 p3_fields_info_d = json.load(f)
@@ -347,7 +346,7 @@ def display_specific_fields_for_all_products():
     print(s)
 
 
-def make_mako_input(drctry):
+def make_mako_input(some_rdir):
     # will be set in this function
     global p3_selected_indc_by_prod_d
     # make sure global variables are set in all situations, outside the loop to do it once only
@@ -374,23 +373,23 @@ def make_mako_input(drctry):
         for v in temp_d.values():
             p3_selected_indc_by_prod_d[v['i'] - 1] = v
 
-        filename = os.path.join(p1.p1_contract_dir + '/' + drctry, 'mako_input.json')
+        filename = os.path.join(p1.p1_contract_adir + '/' + some_rdir, 'mako_input.json')
         with open(filename, 'w') as f:
             json.dump(p3_selected_indc_by_prod_d, f, ensure_ascii = False)
     else:
         print('No label has been selected for display')
 
     # copy header, build body from template svg
-    build_template_header_n_body(p1.p1_contract_dir + '/' + drctry)
+    build_template_header_n_body(some_rdir)
 
     # building the html page
-    filename = os.path.join(p1.p1_contract_dir + '/' + p3_fields_dir, 'label_template_header.svg')
+    filename = os.path.join(p1.p1_contract_adir + '/' + p3_fields_rdir, 'label_template_header.svg')
     with open(filename) as h:
         header = h.read()
-    svg_out = os.path.join(p1.p1_contract_dir + '/' + p3_fields_dir, 'page_0.svg')
+    svg_out = os.path.join(p1.p1_contract_adir + '/' + p3_fields_rdir, 'page_0.svg')
     with open(svg_out, 'w') as f:
         f.write(header)
-        filename = os.path.join(p1.p1_contract_dir + '/' + p3_fields_dir, 'label_template_body.svg')
+        filename = os.path.join(p1.p1_contract_adir + '/' + p3_fields_rdir, 'label_template_body.svg')
         label_template = Template(filename = filename, input_encoding = 'utf-8')
         f.write(label_template.render(**p3_selected_indc_by_prod_d[0]))
         f.write('</svg>')
@@ -399,12 +398,11 @@ def make_mako_input(drctry):
     subprocess.Popen([r'firefox', svg_out])
 
 
-def build_template_header_n_body(to_dir = None):
-    from_dir = p0_root_dir + '/common/1.Outer_box_外箱'
-    if not to_dir:
-        to_dir = p1.p1_contract_dir + '/1.Outer_box_外箱'
-    template_fr = os.path.join(from_dir, 'label_template.svg')
-    body_fw = os.path.join(to_dir, 'label_template_body.svg')
+def build_template_header_n_body(some_rdir = None):
+    from_adir = os.path.join(p0_root_adir + '/common', some_rdir if some_rdir else '1.Outer_box_外箱')
+    to_adir = os.path.join(p1.p1_contract_adir, some_rdir if some_rdir else '1.Outer_box_外箱')
+    template_fr = os.path.join(from_adir, 'label_template.svg')
+    body_fw = os.path.join(to_adir, 'label_template_body.svg')
 
     # with open(template_fr) as f:
     #     lines = f.readlines()
@@ -417,9 +415,9 @@ def build_template_header_n_body(to_dir = None):
     #             vb = f' <rect style="fill:none;fill-opacity:1;stroke:fuchsia;stroke-width:0.1;stroke-opacity:1"\
     #             id="view_box_pgm" width="{width}" height="{height}" x="0" y="02" /> '
 
-    # header_s = os.path.join(p1.p1_contract_dir + '/1.Outer_box_外箱', 'label_template_header.svg')
-    # body_fw = os.path.join(p1.p1_contract_dir + '/1.Outer_box_外箱', 'label_template_body.svg')
-    # header_s = os.path.join(from_dir, 'label_template_header.svg')
+    # header_s = os.path.join(p1.p1_contract_adir + '/1.Outer_box_外箱', 'label_template_header.svg')
+    # body_fw = os.path.join(p1.p1_contract_adir + '/1.Outer_box_外箱', 'label_template_body.svg')
+    # header_s = os.path.join(from_adir, 'label_template_header.svg')
 
     with open(template_fr) as fr, open(body_fw, 'w') as fw:
         write_b = False
@@ -432,9 +430,8 @@ def build_template_header_n_body(to_dir = None):
                 fw.write(lines[i])
 
     # and copy the label_template_header there
-    common_dir = p0_root_dir + '/common'
-    if not os.path.exists(os.path.join(to_dir, 'label_template_header.svg')):
-        shutil.copy(os.path.join(common_dir, 'label_template_header.svg'), to_dir)
+    if not os.path.exists(os.path.join(to_adir, 'label_template_header.svg')):
+        shutil.copy(os.path.join(p0_root_adir + '/common', 'label_template_header.svg'), to_adir)
 
 
 def main():
