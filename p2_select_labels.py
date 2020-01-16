@@ -5,14 +5,14 @@ import shutil
 import p1_select_contract as p1
 import p0_menus as p
 
-p0_root_adir = os.path.dirname(os.path.abspath(__file__))  # root directory where the program is located
+p0_root_abs_dir = os.path.dirname(os.path.abspath(__file__))  # root directory where the program is located
 
 
 def p2_select_labels_context_func(prompt = True):
     print('~~~ Now processing contract #: ', p1.p1_contract_nr if p1.p1_contract_nr else None)
     print('\n~~~ Labels already added:')
 
-    p1.display_dirs(p1.p1_contract_adir)
+    p1.display_dirs(p1.p1_contract_abs_dir)
     if prompt:
         print('\n>>> Select action: ')
 
@@ -71,11 +71,11 @@ def create_default_labels():
 
 
 def load_n_display():
-    p1.display_dirs(p1.p1_contract_adir)
+    p1.display_dirs(p1.p1_contract_abs_dir)
 
 
 def p2_load_labels_info_l():
-    return p1.read_dirs(p1.p1_contract_adir)
+    return p1.read_dirs(p1.p1_contract_abs_dir)
 
 
 def add_new_labels():
@@ -84,7 +84,7 @@ def add_new_labels():
 
 def add_labels_from_list(list_l, ask_questions):
     # read existing labels
-    drs = p1.read_dirs(p1.p1_contract_adir)
+    drs = p1.read_dirs(p1.p1_contract_abs_dir)
     # make a candidate set of labels to be added
     candidates_l = []
     if drs:
@@ -120,7 +120,7 @@ def add_labels_from_list(list_l, ask_questions):
 
 def delete_existing_labels():
     print('~~~ Deleting labels non-empty directory data')
-    drs = p1.read_dirs(p1.p1_contract_adir)
+    drs = p1.read_dirs(p1.p1_contract_abs_dir)
     if not drs:
         return
     for i in range(len(drs)):
@@ -135,7 +135,7 @@ def delete_existing_labels():
             try:
                 s_i = int(s)
                 if s_i in range(len(drs)):
-                    shutil.rmtree(os.path.join(p1.p1_contract_adir, drs[s_i]))
+                    shutil.rmtree(os.path.join(p1.p1_contract_abs_dir, drs[s_i]))
                     break
                 else:
                     print('Integer, but not an option, try again')
@@ -144,9 +144,9 @@ def delete_existing_labels():
 
 
 def create_label_dir(dr):
-    lbl_adir = os.path.join(p1.p1_contract_adir, dr)
-    if not os.path.exists(lbl_adir):
-        os.mkdir(lbl_adir, mode = 0o700)
+    lbl_abs_dir = os.path.join(p1.p1_contract_abs_dir, dr)
+    if not os.path.exists(lbl_abs_dir):
+        os.mkdir(lbl_abs_dir, mode = 0o700)
 
 
 def main():
