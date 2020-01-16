@@ -502,26 +502,48 @@ def render_all_label_all_products():
     global p3_fields_info_d
     global p3_all_specific_fields_l
     global p3_selected_fields_values_by_prod_d
+    global p3_body_svg
 
     # load data from p1.p1e_specific_fields_d_of_d, put in a list of dicts
     load_p3_all_specific_fields_l()
 
     # read existing labels
     drs = p2.p2_load_labels_info_l()
+    svg_out = ''
+    fw = None
     if drs:
-        # for each label that has been created as a subdir to p1.p1_contract_abs_dir
+        page = 1  # nr of page being built
         for p3_fields_rel_dir in drs:
+            build_template_header_n_body(p3_fields_rel_dir)
+            family = re.search(r'(?<=font-family:)([\w-]+)', p3_body_svg).groups()[0]
+            size = re.search(r'(?<=font-size:)(\d+\.*\d*\w*)', p3_body_svg).groups()[0]
+            style = re.search(r'(?<=font-style:)([\w-]+)', p3_body_svg).groups()[0]
+            # opening a new page
+            p3_fields_abs_dir = os.path.join(p1.p1_contract_abs_dir, p3_fields_rel_dir)
+            # printing labels in pages, when a page is full, open a new one
+            svg_in = os.path.join(p3_fields_abs_dir, 'label_template_header.svg')
+            with open(svg_in) as h:
+                header = h.read()
+            if page == 1:
+                svg_out = os.path.join(p3_fields_abs_dir, f'page_{page}.svg')
+                fw = open(svg_out, 'w')
+                fw.write(header)
+                fw.write("<g transform='translate(20, 20)'>\n")
+                fw.write(
+                    "<g>\n<text transform='translate(0, 5)' "
+                    f"style='font-family:{family};font-size:{size};font-style:{style}'>1. 外箱的唛头</text>\n</g>\n")
+            # for each label that has been created as a subdir to p1.p1_contract_abs_dir
             # read fields that were last used with this label
             if p3_read_fields_info_d_from_disk():
                 p3_selected_fields_l = p3_fields_info_d['selected_fields']
             # complete the list with possibly missing default fields
-            for f in p3_default_fields:
-                if f in p3_all_specific_fields_l and f not in p3_selected_fields_l:
-                    p3_selected_fields_l.append(f)
+            for field in p3_default_fields:
+                if field in p3_all_specific_fields_l and field not in p3_selected_fields_l:
+                    p3_selected_fields_l.append(field)
             # update disk version
             save_label_info_json()
             # from template build the body necessary to multiply labels  todo: make sure all fields are in place
-            build_template_header_n_body(p3_fields_rel_dir)
+            # build_template_header_n_body(p3_fields_rel_dir)  todo: remove all together
             # build the value input file for mako
             make_mako_input_val_json(p3_fields_rel_dir)
 
@@ -543,56 +565,47 @@ def render_all_label_all_products():
             assemble prepared svg files
             output to out.svg
             """
-            p3_fields_abs_dir = os.path.join(p1.p1_contract_abs_dir, p3_fields_rel_dir)
-
-            family = re.search(r'(?<=font-family:)([\w-]+)', p3_body_svg).groups()[0]
-            size = re.search(r'(?<=font-size:)(\d+\.*\d*\w*)', p3_body_svg).groups()[0]
-            style = re.search(r'(?<=font-style:)([\w-]+)', p3_body_svg).groups()[0]
 
             assert label_view_box_w + spacing_w <= p3_page_view_box_w, \
                 "write_labels: ! label + spacing width don't fit in the page"
             assert label_view_box_h + spacing_h <= p3_page_view_box_h, \
                 'write_labels: ! label + spacing height don\'t fit in the page'
 
-            # printing labels in pages, when a page is full, open a new one
-            svg_in = os.path.join(p3_fields_abs_dir, 'label_template_header.svg')
-            with open(svg_in) as h:
-                header = h.read()
-
             label_template = Template(filename = os.path.join(p3_fields_abs_dir, 'label_template_body.svg'),
                                       input_encoding = 'utf-8')
 
             N = len(p3_selected_fields_values_by_prod_d)  # nr of products in the contract
-            page = 1  # nr of page being built
             i = 0  # index of the label to print
             ox = - spacing_w + horizontal_centering_offset(label_view_box_w, spacing_w)
             oy = - spacing_h + p3_header_height
 
             while i < N:  # enumerating over each item in the contract
-                # opening a new page
-                svg_out = os.path.join(p3_fields_abs_dir, f'page_{page}.svg')
-                with open(svg_out, 'w') as f:
-                    f.write(header)
-                    f.write("<g transform='translate(20, 20)'>\n")
-                    if page == 1:
-                        f.write(
-                            "<g>\n<text transform='translate(0, 5)' "
-                            f"style='font-family:{family};font-size:{size};font-style:{style}'>1. 外箱的唛头</text>\n</g>\n")
-                    while oy + label_view_box_h + spacing_h <= p3_page_view_box_h and i < N:
-                        while ox + label_view_box_w + spacing_w <= p3_page_view_box_w and i < N:
-                            offset_x = ox + spacing_w
-                            offset_y = oy + spacing_h
-                            f.write(r"<g transform = 'translate(" + f"{offset_x}, {offset_y})'>\n")
-                            f.write(label_template.render(**p3_selected_fields_values_by_prod_d[i]))
-                            f.write('</g>\n')
-                            ox += label_view_box_w + spacing_w
-                            i += 1
-                        ox = - spacing_w + horizontal_centering_offset(label_view_box_w, spacing_w)
-                        oy += label_view_box_h + spacing_h
-                    oy = - spacing_h + p3_header_height
-                    f.write('\n</g>\n</svg>\n')
-                webbrowser.get('firefox').open_new_tab(svg_out)
-                page += 1
+                # writing horizontally while there are labels to print
+                while i < N:
+                    # writing vertically while there labels to print
+                    while ox + label_view_box_w + spacing_w <= p3_page_view_box_w and i < N:
+                        offset_x = ox + spacing_w
+                        offset_y = oy + spacing_h
+                        fw.write(r"<g transform = 'translate(" + f"{offset_x}, {offset_y})'>\n")
+                        fw.write(label_template.render(**p3_selected_fields_values_by_prod_d[i]))
+                        fw.write('</g>\n')
+                        ox += label_view_box_w + spacing_w
+                        i += 1
+                    ox = - spacing_w + horizontal_centering_offset(label_view_box_w, spacing_w)
+                    oy += label_view_box_h + spacing_h
+                    # after each line check if there is still space to write the next one, if not open a new page
+                    if oy + label_view_box_h + spacing_h > p3_page_view_box_h:
+                        fw.write('\n</g>\n</svg>\n')
+                        fw.close()
+                        webbrowser.get('firefox').open_new_tab(svg_out)
+                        page += 1
+                        svg_out = os.path.join(p3_fields_abs_dir, f'page_{page}.svg')
+                        fw = open(svg_out, 'w')
+                        fw.write(header)
+                        fw.write("<g transform='translate(20, 20)'>\n")
+                oy = - spacing_h + p3_header_height
+                fw.write('\n</g>\n</svg>\n')
+                fw.close()
 
 
 def build_template_header_n_body(some_rel_dir = None):
@@ -605,6 +618,7 @@ def build_template_header_n_body(some_rel_dir = None):
     from_abs_dir = os.path.join(p0_root_abs_dir + '/common', some_rel_dir if some_rel_dir else '1.Outer_box_外箱')
     to_abs_dir = os.path.join(p1.p1_contract_abs_dir, some_rel_dir if some_rel_dir else '1.Outer_box_外箱')
 
+    # copy the label_template if necessary
     template_fr = os.path.join(to_abs_dir, 'label_template.svg')
     if not os.path.exists(template_fr):
         shutil.copy(os.path.join(from_abs_dir, 'label_template.svg'), to_abs_dir)
