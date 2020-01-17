@@ -510,6 +510,7 @@ def render_all_label_all_products():
     # read existing labels
     drs = p2.p2_load_labels_info_l()
     svg_out = ''
+    oy = 0
     fw = None
     if drs:
         page = 1  # nr of page being built
@@ -525,10 +526,7 @@ def render_all_label_all_products():
             with open(svg_in) as h:
                 header = h.read()
             if page == 1:
-                svg_out = os.path.join(p3_fields_abs_dir, f'page_{page}.svg')
-                fw = open(svg_out, 'w')
-                fw.write(header)
-                fw.write("<g transform='translate(20, 20)'>\n")
+                fw, svg_out = open_svg_for_output(fw, header, page, svg_out)
                 fw.write(
                     "<g>\n<text transform='translate(0, 5)' "
                     f"style='font-family:{family};font-size:{size};font-style:{style}'>1. 外箱的唛头</text>\n</g>\n")
@@ -560,6 +558,9 @@ def render_all_label_all_products():
                 label_view_box_h = float(m.groups()[3])  # label_view_box_h, label_view_box_h
             spacing_w = suggest_spacing_calc(p3_page_view_box_w, label_view_box_w)  # first horizontally, w = width
             spacing_h = suggest_spacing_calc(p3_page_view_box_h - p3_header_height, label_view_box_h)  # then vertically
+            ox = - spacing_w + horizontal_centering_offset(label_view_box_w, spacing_w)
+            if page == 1:
+                oy = - spacing_h + p3_header_height
 
             """
             assemble prepared svg files
@@ -576,13 +577,11 @@ def render_all_label_all_products():
 
             N = len(p3_selected_fields_values_by_prod_d)  # nr of products in the contract
             i = 0  # index of the label to print
-            ox = - spacing_w + horizontal_centering_offset(label_view_box_w, spacing_w)
-            oy = - spacing_h + p3_header_height
 
             while i < N:  # enumerating over each item in the contract
-                # writing horizontally while there are labels to print
+                # writing vertically while there are labels to print
                 while i < N:
-                    # writing vertically while there labels to print
+                    # writing horizontally while there labels to print
                     while ox + label_view_box_w + spacing_w <= p3_page_view_box_w and i < N:
                         offset_x = ox + spacing_w
                         offset_y = oy + spacing_h
@@ -595,24 +594,32 @@ def render_all_label_all_products():
                     oy += label_view_box_h + spacing_h
                     # after each line check if there is still space to write the next one, if not open a new page
                     if oy + label_view_box_h + spacing_h > p3_page_view_box_h:
-                        fw.write('\n</g>\n</svg>\n')
-                        fw.close()
-                        webbrowser.get('firefox').open_new_tab(svg_out)
+                        close_svg_for_output(fw, svg_out)
                         page += 1
-                        svg_out = os.path.join(p3_fields_abs_dir, f'page_{page}.svg')
-                        fw = open(svg_out, 'w')
-                        fw.write(header)
-                        fw.write("<g transform='translate(20, 20)'>\n")
-                oy = - spacing_h + p3_header_height
-                fw.write('\n</g>\n</svg>\n')
-                fw.close()
+                        fw, svg_out = open_svg_for_output(fw, header, page, svg_out)
+                        oy = - spacing_h + p3_header_height  # todo: originally 3 indent before
+        close_svg_for_output(fw, svg_out)
+
+
+def close_svg_for_output(fw, svg_out):
+    fw.write('\n</g>\n</svg>\n')
+    fw.close()
+    webbrowser.get('firefox').open_new_tab(svg_out)
+
+
+def open_svg_for_output(fw, header, page, svg_out):
+    assert fw == fw
+    assert svg_out == svg_out
+    svg_out = os.path.join(p1.p1_contract_abs_dir, f'page_{page}.svg')
+    fw = open(svg_out, 'w')
+    fw.write(header)
+    fw.write("<g transform='translate(20, 20)'>\n")
+    return fw, svg_out
 
 
 def build_template_header_n_body(some_rel_dir = None):
     """
-    copy header, build body from template svg
-    :param some_rel_dir:
-    :return:
+    copy header, also template if necessary, build body from template.svg copy that is in  local directory
     """
 
     from_abs_dir = os.path.join(p0_root_abs_dir + '/common', some_rel_dir if some_rel_dir else '1.Outer_box_外箱')
