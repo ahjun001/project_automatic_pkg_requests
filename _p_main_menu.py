@@ -9,6 +9,28 @@ import pu_maintain_set_of_indicators_regex_to_be_searched as i
 p0_root_abs_dir = os.path.dirname(os.path.abspath(__file__))  # root directory where the program is located
 
 
+def run_all_with_default_values():
+    p1.process_default_contract()
+    p2.create_default_labels()
+    p3.process_all_labels_with_default_specific_fields()
+
+
+def p1_select_contract():
+    p1.init()
+
+
+def p2_select_labels():
+    p2.init()
+
+
+def p3_select_distinctive_fields():
+    p3.init()
+
+
+def u_maintain_set_of_indicators_regex_to_be_searched():
+    i.init()
+
+
 def main_menu_context_func():
     print(f'p1 selected contract: {p1.p1_contract_nr if p1.p1_contract_nr else None}')
     print(f'p2 selected labels: {p1.read_dirs(p1.p1_contract_abs_dir)}')
@@ -50,28 +72,6 @@ def init():
     data_adir = os.path.join(p0_root_abs_dir, 'data')
     if not os.path.exists(data_adir):
         os.mkdir(data_adir, mode=0o700)
-
-
-def run_all_with_default_values():
-    p1.process_default_contract()
-    p2.create_default_labels()
-    p3.process_all_labels_with_default_specific_fields()
-
-
-def p1_select_contract():
-    p1.init()
-
-
-def p2_select_labels():
-    p2.init()
-
-
-def p3_select_distinctive_fields():
-    p3.init()
-
-
-def u_maintain_set_of_indicators_regex_to_be_searched():
-    i.init()
 
 
 def main():

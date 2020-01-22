@@ -82,69 +82,6 @@ def p1_load_contract_info_d():
     return True
 
 
-def p1_select_contract_main_context_func():
-    if p0_load_program_info_d():
-        display_dirs(p0_root_abs_dir + '/data/')
-        print('~~~ Now processing contract #: ', p1_contract_nr if p1_contract_nr else None)
-        print('>>> Select action: ')
-    else:
-        print('File \'program-info.json\' could not be loaded')
-
-
-def p1_select_contract_display_context_func():
-    if p0_load_program_info_d():
-        display_dirs(p0_root_abs_dir + '/data/')
-        print('~~~ Select contract / Display ~~~')
-    else:
-        print('File \'program-info.json\' could not be loaded')
-
-
-context_func_d = {
-    'select_contract': p1_select_contract_main_context_func,
-    'display_sub_processes_output': p1_select_contract_display_context_func,
-}
-
-
-def init():
-    global p1_program_info_f
-    # initializing globals necessary for all functions
-    p1_program_info_f = os.path.join(p0_root_abs_dir, 'program-info.json')
-
-    # initializing menus last, so that context functions display most recent information
-    p.menu = 'select_contract'
-    if not p.main_menu:
-        p.main_menu = p.menu
-    p.menus = {
-        p.menu: {
-            '1': process_default_contract,
-            '2': display_or_load_output_overview,
-            '3': select_new_contract,
-            '4': delete_all_data_on_selected_contract,
-            '7': display_sub_processes_output,
-            '8': display_p1_program_info_d,
-            '9': display_p1_program_info_f,
-            'b': p.back_to_main,
-            'q': p.normal_exit,
-        },
-        'display_sub_processes_output': {
-            '1': display_p1_search_reg_ex_l,
-            '2': display_p1_all_products_to_be_processed_set,
-            '3': display_p1b_indics_from_contract_l,
-            '4': display_p1c_all_relevant_data,
-            '5': display_p1d_common_indics_l,
-            '6': display_p1e_specific_fields_d_of_d,
-            'b': p.back,
-            'q': p.normal_exit,
-        }
-    }
-    if not p.main_menus:
-        p.main_menus = p.menus
-    if __name__ == '__main__':
-        p.mod_lev_1_menu = p.menu
-        p.mod_lev_1_menus = p.menus
-    p.context_func_d = {**p.context_func_d, **context_func_d}
-
-
 def process_default_contract():
     global p1_contract_nr
     global p1_contract_abs_dir
@@ -760,6 +697,69 @@ def display_dirs(walk_abs_dir):
             print(dr)
     else:
         return None
+
+
+def p1_select_contract_main_context_func():
+    if p0_load_program_info_d():
+        display_dirs(p0_root_abs_dir + '/data/')
+        print('~~~ Now processing contract #: ', p1_contract_nr if p1_contract_nr else None)
+        print('>>> Select action: ')
+    else:
+        print('File \'program-info.json\' could not be loaded')
+
+
+def p1_select_contract_display_context_func():
+    if p0_load_program_info_d():
+        display_dirs(p0_root_abs_dir + '/data/')
+        print('~~~ Select contract / Display ~~~')
+    else:
+        print('File \'program-info.json\' could not be loaded')
+
+
+context_func_d = {
+    'select_contract': p1_select_contract_main_context_func,
+    'display_sub_processes_output': p1_select_contract_display_context_func,
+}
+
+
+def init():
+    global p1_program_info_f
+    # initializing globals necessary for all functions
+    p1_program_info_f = os.path.join(p0_root_abs_dir, 'program-info.json')
+
+    # initializing menus last, so that context functions display most recent information
+    p.menu = 'select_contract'
+    if not p.main_menu:
+        p.main_menu = p.menu
+    p.menus = {
+        p.menu: {
+            '1': process_default_contract,
+            '2': display_or_load_output_overview,
+            '3': select_new_contract,
+            '4': delete_all_data_on_selected_contract,
+            '7': display_sub_processes_output,
+            '8': display_p1_program_info_d,
+            '9': display_p1_program_info_f,
+            'b': p.back_to_main,
+            'q': p.normal_exit,
+        },
+        'display_sub_processes_output': {
+            '1': display_p1_search_reg_ex_l,
+            '2': display_p1_all_products_to_be_processed_set,
+            '3': display_p1b_indics_from_contract_l,
+            '4': display_p1c_all_relevant_data,
+            '5': display_p1d_common_indics_l,
+            '6': display_p1e_specific_fields_d_of_d,
+            'b': p.back,
+            'q': p.normal_exit,
+        }
+    }
+    if not p.main_menus:
+        p.main_menus = p.menus
+    if __name__ == '__main__':
+        p.mod_lev_1_menu = p.menu
+        p.mod_lev_1_menus = p.menus
+    p.context_func_d = {**p.context_func_d, **context_func_d}
 
 
 def main():
