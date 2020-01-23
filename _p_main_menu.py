@@ -2,7 +2,7 @@
 import os
 import p0_menus as p
 import p1_select_contract as p1
-import p2_select_labels as p2
+import p2_select_templates as p2
 import p3_select_specific_fields as p3
 import pu_maintain_set_of_indicators_regex_to_be_searched as i
 
@@ -11,15 +11,15 @@ p0_root_abs_dir = os.path.dirname(os.path.abspath(__file__))  # root directory w
 
 def run_all_with_default_values():
     p1.process_default_contract()
-    p2.create_default_labels()
-    p3.render_all_labels_with_default_specific_fields()
+    p2.create_default_templates()
+    p3.render_all_templates_with_default_specific_fields()
 
 
 def p1_select_contract():
     p1.init()
 
 
-def p2_select_labels():
+def p2_select_templates():
     p2.init()
 
 
@@ -33,7 +33,7 @@ def u_maintain_set_of_indicators_regex_to_be_searched():
 
 def main_menu_context_func():
     print(f'p1 selected contract: {p1.p1_contract_nr if p1.p1_contract_nr else None}')
-    print(f'p2 selected labels: {p1.read_dirs(p1.p1_contract_abs_dir)}')
+    print(f'p2 selected templates: {p1.read_dirs(p1.p1_contract_abs_dir)}')
     print(f'p3 selected distinctive fields: {p3.p3_selected_fields_l}')
     print('>>> Main menu:')
 
@@ -53,7 +53,7 @@ def init():
         p.menu: {
             '1': run_all_with_default_values,
             '2': p1_select_contract,
-            '3': p2_select_labels,
+            '3': p2_select_templates,
             '4': p3_select_distinctive_fields,
             'u': u_maintain_set_of_indicators_regex_to_be_searched,
             'q': p.normal_exit,

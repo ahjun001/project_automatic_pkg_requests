@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# p2_select_labels.py
+# p2_select_templates.py
 import os
 import shutil
 import p1_select_contract as p1
@@ -8,7 +8,7 @@ import p0_menus as p
 p0_root_abs_dir = os.path.dirname(os.path.abspath(__file__))  # root directory where the program is located
 
 
-p2_label_groups_l = [
+p2_templates_l = [
     '1.Outer_box_外箱',
     '2.Inner_box_内盒',
     '3.Inside_box_中箱',
@@ -17,32 +17,32 @@ p2_label_groups_l = [
     '6.Prod_sticker_产品上不干胶',
 ]
 
-p2_default_labels_l = [
+p2_default_templates_l = [
     '1.Outer_box_外箱',
     '6.Prod_sticker_产品上不干胶',
 ]
 
 
-def create_default_labels():
-    add_labels_from_list(p2_default_labels_l, ask_questions = False)
+def create_default_templates():
+    add_templates_from_list(p2_default_templates_l, ask_questions = False)
 
 
 def load_n_display():
     p1.display_dirs(p1.p1_contract_abs_dir)
 
 
-def p2_load_labels_info_l():
+def p2_load_templates_info_l():
     return p1.read_dirs(p1.p1_contract_abs_dir)
 
 
-def add_new_labels():
-    add_labels_from_list(p2_label_groups_l, ask_questions = True)
+def add_new_templates():
+    add_templates_from_list(p2_templates_l, ask_questions = True)
 
 
-def add_labels_from_list(list_l, ask_questions):
-    # read existing labels
+def add_templates_from_list(list_l, ask_questions):
+    # read existing templates
     drs = p1.read_dirs(p1.p1_contract_abs_dir)
-    # make a candidate set of labels to be added
+    # make a candidate set of templates to be added
     candidates_l = []
     if drs:
         for lg in list_l:
@@ -52,8 +52,8 @@ def add_labels_from_list(list_l, ask_questions):
         candidates_l = list(list_l)
 
     if ask_questions:
-        p2_select_labels_context_func(prompt = False)
-        print('>>> Select # in front of the label name to be added:\n')
+        p2_select_templates_context_func(prompt = False)
+        print('>>> Select # in front of the template name to be added:\n')
         for i in range(len(candidates_l)):
             print(str(i) + '. ' + candidates_l[i][2:])
         while True:
@@ -65,18 +65,18 @@ def add_labels_from_list(list_l, ask_questions):
                 try:
                     s_i = int(s)
                     if s_i in range(len(candidates_l)):
-                        create_label_dir(candidates_l[s_i])
+                        create_template_dir(candidates_l[s_i])
                     else:
                         print('Integer, but not an option, try again')
                 except ValueError:
                     print('That\'s not an integer, try again')
     else:
         for c in candidates_l:
-            create_label_dir(c)
+            create_template_dir(c)
 
 
-def delete_existing_labels():
-    print('~~~ Deleting labels non-empty directory data')
+def delete_existing_templates():
+    print('~~~ Deleting templates non-empty directory data')
     drs = p1.read_dirs(p1.p1_contract_abs_dir)
     if not drs:
         return
@@ -84,7 +84,7 @@ def delete_existing_labels():
         print(i, drs[i][2:])
     print('~~~')
     while True:
-        s = input('Enter nr of label to delete, \'b\' to return:\n')
+        s = input('Enter nr of template to delete, \'b\' to return:\n')
         if s == 'b':
             os.system('clear')
             break
@@ -100,13 +100,13 @@ def delete_existing_labels():
                 print('That\'s not an integer, try again')
 
 
-def create_label_dir(dr):
+def create_template_dir(dr):
     lbl_abs_dir = os.path.join(p1.p1_contract_abs_dir, dr)
     if not os.path.exists(lbl_abs_dir):
         os.mkdir(lbl_abs_dir, mode = 0o700)
 
 
-def p2_select_labels_context_func(prompt = True):
+def p2_select_templates_context_func(prompt = True):
     print('~~~ Now processing contract #: ', p1.p1_contract_nr if p1.p1_contract_nr else None)
     print('\n~~~ Labels already added:')
 
@@ -116,7 +116,7 @@ def p2_select_labels_context_func(prompt = True):
 
 
 context_func_d = {
-    'p2_select_labels': p2_select_labels_context_func,
+    'p2_select_templates': p2_select_templates_context_func,
 }
 
 
@@ -126,16 +126,16 @@ def init():
         print('p1 has not run successfully')
 
     # initializing menus last, so that context functions display most recent information
-    p.menu = 'p2_select_labels'
+    p.menu = 'p2_select_templates'
     # p.mod_lev_1_menu = p.menu
     if not p.main_menu:
         p.main_menu = p.menu
     p.menus = {
         p.menu: {
-            '1': create_default_labels,
+            '1': create_default_templates,
             '2': load_n_display,
-            '3': add_new_labels,
-            '4': delete_existing_labels,
+            '3': add_new_templates,
+            '4': delete_existing_templates,
             'b': p.back_to_main,
             'q': p.normal_exit,
         },
