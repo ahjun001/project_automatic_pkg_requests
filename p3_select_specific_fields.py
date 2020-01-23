@@ -24,7 +24,9 @@ p3_body_svg = ''  # content of label_template_body.svg
 p3_header_height = 7
 p3_page_view_box_w = 170
 p3_page_view_box_h = 257
-
+# todo: if in memory check version, else is on disk load, else create default
+# todo: check that when change contracts all fields with previous information is updated
+# todo: make only one function to see one label, one product, or one contract
 
 def load_p3_all_specific_fields_l():
     global p3_all_specific_fields_l
@@ -219,7 +221,7 @@ def render_1_label_all_products():
         page += 1
 
 
-def process_all_labels_with_default_specific_fields():
+def render_all_labels_with_default_specific_fields():
     global p3_fields_rel_dir
     global p3_selected_fields_l
     global p3_label_header_s
@@ -520,11 +522,11 @@ def render_all_label_all_products():
 
     # read existing labels
     drs = p2.p2_load_labels_info_l()
-    svg_out = ''
-    oy = 0
-    fw = None
-    label_nr = 0
     if drs:
+        svg_out = ''
+        oy = 0
+        fw = None
+        label_nr = 0
         page = 1  # nr of page being built
         for p3_fields_rel_dir in drs:
             label_nr += 1
@@ -652,7 +654,7 @@ def init():
     p.menus = {
         p.menu: {
             '0': render_all_label_all_products,
-            '1': process_all_labels_with_default_specific_fields,
+            '1': render_all_labels_with_default_specific_fields,
             '2': display_or_load_output_overview,
             '3': select_a_label_n_edit_fields,
             '4': display_selected_fields,

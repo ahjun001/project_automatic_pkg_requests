@@ -12,7 +12,7 @@ p0_root_abs_dir = os.path.dirname(os.path.abspath(__file__))  # root directory w
 def run_all_with_default_values():
     p1.process_default_contract()
     p2.create_default_labels()
-    p3.process_all_labels_with_default_specific_fields()
+    p3.render_all_labels_with_default_specific_fields()
 
 
 def p1_select_contract():
