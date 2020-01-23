@@ -20,7 +20,7 @@ p3_body_svg = ''  # content of label_template_body.svg
 p3_default_fields_l = ["xl_prod_spec", "u_parc", 'plstc_bg']
 p3_f = None  # info on fields directory currently being edited
 p3_d = {
-    "selected_fields": [],
+    "selected_fields": list(p3_default_fields_l),
     "template_header": '',
     "header_height": 7,
     "page_view_box_w": 170,
@@ -85,6 +85,28 @@ def build_template_header_n_body(some_rel_dir = None):
         shutil.copy(os.path.join(p0_root_abs_dir + '/common', 'label_template_header.svg'), to_abs_dir)
 
 
+def load_o_create_p3_fields_info_f():
+    global p3_f
+    global p3_d
+    global p3_fields_rel_dir
+    global p3_default_fields_l
+
+    if p3_fields_rel_dir:
+        # either read data,
+        p3_f = os.path.join(p1.p1_contract_abs_dir + '/' + p3_fields_rel_dir, 'template-info.json')
+        if os.path.exists(p3_f):
+            with open(p3_f) as f:
+                p3_d = json.load(f)
+        # or populate missing fields with default information relative to the directory
+        # other default information is set at variable initialization
+        else:
+            p3_d['template_header'] = p3_fields_rel_dir[p3_fields_rel_dir.rfind('_') + 1:]
+        return True
+    else:
+        print('!\n! The contract directory does not contain subdirectories: cannot load or create labels\n!')
+        return False
+
+
 def make_mako_input_values_json(some_rel_dir):
     """
     Creates a json file with variables and values necessary to mako rendering
@@ -98,10 +120,7 @@ def make_mako_input_values_json(some_rel_dir):
         p1.load_p1b_indics_from_contract_l()
     if not p1.p1_all_products_to_be_processed_set:
         p1.load_p1_all_products_to_be_processed_set()
-    if not p3_d['selected_fields']:
-        check_load_o_create_p3_fields_info_f()
-
-    if p3_d['selected_fields']:
+    if load_o_create_p3_fields_info_f():
         # make a skeleton for p3_selected_fields_values_by_prod_d with key = prod
         idx = 0
         temp_d = {}
@@ -225,30 +244,6 @@ def render_1_template_all_products():
         page += 1
 
 
-def check_load_o_create_p3_fields_info_f(use_mem_data_d = True):
-    global p3_f
-    global p3_d
-    global p3_fields_rel_dir
-    global p3_default_fields_l
-
-    if p3_fields_rel_dir:
-        if p3_d and use_mem_data_d:
-            return True
-        p3_f = os.path.join(p1.p1_contract_abs_dir + '/' + p3_fields_rel_dir, 'template-info.json')
-        if os.path.exists(p3_f):
-            with open(p3_f) as f:
-                p3_d = json.load(f)
-                if p3_d:
-                    return True
-        p3_d['selected_fields'] = p3_default_fields_l
-        p3_d['template_header'] = p3_fields_rel_dir[p3_fields_rel_dir.rfind('_') + 1:]
-        p3_d['header_height'] = p3_d['header_height']
-        p3_d['page_view_box_w'] = p3_d['page_view_box_w']
-        p3_d['page_view_box_h'] = p3_d['page_view_box_h']
-
-    return False
-
-
 def render_all_templates_with_default_specific_fields():
     global p3_fields_rel_dir
     global p3_d
@@ -260,17 +255,13 @@ def render_all_templates_with_default_specific_fields():
         # for each template that has been created as a subdir to p1.p1_contract_abs_dir
         for p3_fields_rel_dir in drs:
             # if data exist on disk, use it & don't replace it automatically
-            if check_load_o_create_p3_fields_info_f(use_mem_data_d = False):
+            if load_o_create_p3_fields_info_f():
                 p3_d['selected_fields'] = p3_d['selected_fields']
                 p3_d['template_header'] = p3_d['template_header']
                 p3_d['header_height'] = p3_d['header_height']
                 p3_d['page_view_box_w'] = p3_d['page_view_box_w']
                 p3_d['page_view_box_h'] = p3_d['page_view_box_h']
 
-            # complement existing fields with default_fields anyway
-            for f in p3_default_fields_l:
-                if f in p3_all_specific_fields_l and f not in p3_d['selected_fields']:
-                    p3_d['selected_fields'].append(f)
             # and save to disk
             save_template_info_json()
             build_template_header_n_body(p3_fields_rel_dir)
@@ -288,7 +279,7 @@ def display_or_load_output_overview():
     for dr in drs:
         print(dr)
         p3_fields_rel_dir = dr
-        if check_load_o_create_p3_fields_info_f():
+        if load_o_create_p3_fields_info_f():
             print('\t', p3_d['selected_fields'])
     print('~~~')
 
@@ -427,7 +418,7 @@ def select_a_template_n_edit_fields():
                         os.system('clear')
                         p3_fields_rel_dir = drs[s_i]
                         # load fields already selected for template as they are on file
-                        if check_load_o_create_p3_fields_info_f():
+                        if load_o_create_p3_fields_info_f():
                             p3_d['selected_fields'] = p3_d['selected_fields']
                             p3_d['template_header'] = p3_d['template_header']
                         print(f'now ready to work on {p3_fields_rel_dir}')
@@ -552,7 +543,7 @@ def render_all_template_all_products():
             style = re.search(r'(?<=font-style:)([\w-]+)', p3_body_svg).groups()[0]
             # for each template that has been created as a subdir to p1.p1_contract_abs_dir
             # read fields that were last used with this template
-            if check_load_o_create_p3_fields_info_f():
+            if load_o_create_p3_fields_info_f():
                 p3_d['selected_fields'] = p3_d['selected_fields']
                 p3_d['template_header'] = p3_d['template_header']
             # complete the list with possibly missing default fields
@@ -692,7 +683,7 @@ if __name__ == '__main__':
     global p3_d['page_view_box_w']
     global p3_d['page_view_box_h']
 
-    if check_load_o_create_p3_fields_info_f():
+    if load_o_create_p3_fields_info_f():
         p3_d['selected_fields'] = p3_d['selected_fields']
         p3_d['template_header'] = p3_d['template_header']
         p3_d['header_height'] = p3_d['header_height']
