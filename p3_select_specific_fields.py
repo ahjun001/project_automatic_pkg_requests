@@ -44,11 +44,6 @@ def save_template_info_json():
     global p3_f
     global p3_d
 
-    p3_d['selected_fields'] = p3_d['selected_fields']
-    p3_d['template_header'] = p3_d['template_header']
-    p3_d['header_height'] = p3_d['header_height']
-    p3_d['page_view_box_w'] = p3_d['page_view_box_w']
-    p3_d['page_view_box_h'] = p3_d['page_view_box_h']
     p3_f = os.path.join(p1.p1_contract_abs_dir + '/' + p3_fields_rel_dir, 'template-info.json')
     with open(p3_f, 'w') as f:
         json.dump(p3_d, f, ensure_ascii = False)
@@ -254,20 +249,14 @@ def render_all_templates_with_default_specific_fields():
     if drs:
         # for each template that has been created as a subdir to p1.p1_contract_abs_dir
         for p3_fields_rel_dir in drs:
-            # if data exist on disk, use it & don't replace it automatically
+            # use data on disk, if not on disk create with default values
             if load_o_create_p3_fields_info_f():
-                p3_d['selected_fields'] = p3_d['selected_fields']
-                p3_d['template_header'] = p3_d['template_header']
-                p3_d['header_height'] = p3_d['header_height']
-                p3_d['page_view_box_w'] = p3_d['page_view_box_w']
-                p3_d['page_view_box_h'] = p3_d['page_view_box_h']
-
-            # and save to disk
-            save_template_info_json()
-            build_template_header_n_body(p3_fields_rel_dir)
-            make_mako_input_values_json(p3_fields_rel_dir)
-            render_1_template_1_product()
-            render_1_template_all_products()
+                # and save to disk
+                save_template_info_json()
+                build_template_header_n_body(p3_fields_rel_dir)
+                make_mako_input_values_json(p3_fields_rel_dir)
+                render_1_template_1_product()
+                render_1_template_all_products()
 
 
 def display_or_load_output_overview():
@@ -419,9 +408,7 @@ def select_a_template_n_edit_fields():
                         p3_fields_rel_dir = drs[s_i]
                         # load fields already selected for template as they are on file
                         if load_o_create_p3_fields_info_f():
-                            p3_d['selected_fields'] = p3_d['selected_fields']
-                            p3_d['template_header'] = p3_d['template_header']
-                        print(f'now ready to work on {p3_fields_rel_dir}')
+                            print(f'now ready to work on {p3_fields_rel_dir}')
                         while True:
                             p3_select_specific_fields_context_func()
                             s = input('\'a\' to add a field\n'
@@ -498,12 +485,14 @@ def close_svg_for_output(fw, svg_out):
 
 
 def open_svg_for_output(fw, header, page, svg_out):
+    global p3_d
     assert fw == fw
     assert svg_out == svg_out
+
     svg_out = os.path.join(p1.p1_contract_abs_dir, f'page_{page}.svg')
     fw = open(svg_out, 'w')
     fw.write(header)
-    fw.write("<g transform='translate(20, 20)'>\n")
+    fw.write("<g transform='translate(20, 20)'>\n")  # todo: reset with page margins
     return fw, svg_out
 
 
@@ -538,14 +527,9 @@ def render_all_template_all_products():
         for p3_fields_rel_dir in drs:
             template_nr += 1
             build_template_header_n_body(p3_fields_rel_dir)
-            family = re.search(r'(?<=font-family:)([\w-]+)', p3_body_svg).groups()[0]
-            size = re.search(r'(?<=font-size:)(\d+\.*\d*\w*)', p3_body_svg).groups()[0]
-            style = re.search(r'(?<=font-style:)([\w-]+)', p3_body_svg).groups()[0]
             # for each template that has been created as a subdir to p1.p1_contract_abs_dir
             # read fields that were last used with this template
-            if load_o_create_p3_fields_info_f():
-                p3_d['selected_fields'] = p3_d['selected_fields']
-                p3_d['template_header'] = p3_d['template_header']
+            load_o_create_p3_fields_info_f()
             # complete the list with possibly missing default fields
             for field in p3_default_fields_l:
                 if field in p3_all_specific_fields_l and field not in p3_d['selected_fields']:
@@ -558,12 +542,15 @@ def render_all_template_all_products():
             svg_in = os.path.join(p3_fields_abs_dir, 'label_template_header.svg')
             with open(svg_in) as h:
                 header = h.read()
+            family = re.search(r'(?<=font-family:)([\w-]+)', p3_body_svg).groups()[0]
+            size = re.search(r'(?<=font-size:)(\d+\.*\d*\w*)', p3_body_svg).groups()[0]
+            style = re.search(r'(?<=font-style:)([\w-]+)', p3_body_svg).groups()[0]
             if page == 1:
                 fw, svg_out = open_svg_for_output(fw, header, page, svg_out)
                 fw.write(
                     "<g>\n<text transform='translate(0, 5)' "
                     f"style='font-family:{family};font-size:{size};font-style:{style}'>\
-{template_nr}. {p3_d['template_header']}</text>\n</g>\n")
+                {template_nr}. {p3_d['template_header']}</text>\n</g>\n")
             # from template build the body necessary to multiply templates  todo: make sure all fields are in place
             make_mako_input_values_json(p3_fields_rel_dir)
 
@@ -675,21 +662,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-"""
-    global p3_d['selected_fields']
-    global p3_d['template_header']
-    global p3_d['header_height']
-    global p3_d['page_view_box_w']
-    global p3_d['page_view_box_h']
-
-    if load_o_create_p3_fields_info_f():
-        p3_d['selected_fields'] = p3_d['selected_fields']
-        p3_d['template_header'] = p3_d['template_header']
-        p3_d['header_height'] = p3_d['header_height']
-        p3_d['page_view_box_w'] = p3_d['page_view_box_w']
-        p3_d['page_view_box_h'] = p3_d['page_view_box_h']
-    else:
-        print('\nNo data loaded at this point\n')
-
-"""
