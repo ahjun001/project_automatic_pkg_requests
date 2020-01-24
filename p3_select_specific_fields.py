@@ -527,33 +527,23 @@ def render_all_template_all_products():
         for p3_fields_rel_dir in drs:
             template_nr += 1
             build_template_header_n_body(p3_fields_rel_dir)
-            # for each template that has been created as a subdir to p1.p1_contract_abs_dir
-            # read fields that were last used with this template
+            # loading data previously used with this template
             load_o_create_p3_fields_info_f()
-            # complete the list with possibly missing default fields
-            for field in p3_default_fields_l:
-                if field in p3_all_specific_fields_l and field not in p3_d['selected_fields']:
-                    p3_d['selected_fields'].append(field)
-            # update disk version in template subdir
-            save_template_info_json()
             # opening a new page
             p3_fields_abs_dir = os.path.join(p1.p1_contract_abs_dir, p3_fields_rel_dir)
-            # printing templates in pages svg
+            # printing header template in page_# svg
             svg_in = os.path.join(p3_fields_abs_dir, 'label_template_header.svg')
             with open(svg_in) as h:
                 header = h.read()
+            # printing body template in page_# svg
             family = re.search(r'(?<=font-family:)([\w-]+)', p3_body_svg).groups()[0]
             size = re.search(r'(?<=font-size:)(\d+\.*\d*\w*)', p3_body_svg).groups()[0]
             style = re.search(r'(?<=font-style:)([\w-]+)', p3_body_svg).groups()[0]
             if page == 1:
+                # open the first web page, it will be closed when there is no space left, and a new one opened
                 fw, svg_out = open_svg_for_output(fw, header, page, svg_out)
-                fw.write(
-                    "<g>\n<text transform='translate(0, 5)' "
-                    f"style='font-family:{family};font-size:{size};font-style:{style}'>\
-                {template_nr}. {p3_d['template_header']}</text>\n</g>\n")
             # from template build the body necessary to multiply templates  todo: make sure all fields are in place
             make_mako_input_values_json(p3_fields_rel_dir)
-
             # read view box values from template_body so as to compute spacings
             to_abs_dir = os.path.join(p1.p1_contract_abs_dir, p3_fields_rel_dir)
             with open(os.path.join(to_abs_dir, 'label_template.svg')) as f:
@@ -570,45 +560,45 @@ def render_all_template_all_products():
                                              template_view_box_h)  # then vertically
             ox = - spacing_w + horizontal_centering_offset(template_view_box_w, spacing_w)
             if page == 1:
-                oy = - spacing_h + p3_d['header_height']
-
-            """
-            assemble prepared svg files
-            output to out.svg
-            """
-
+                oy = - spacing_h
             assert template_view_box_w + spacing_w <= p3_d['page_view_box_w'], \
-                "write_templates: ! template + spacing width don't fit in the page"
+                "write_templates: ! template width + spacing width don't fit in the page"
             assert template_view_box_h + spacing_h <= p3_d['page_view_box_h'], \
-                'write_templates: ! template + spacing height don\'t fit in the page'
-
+                'write_templates: ! template height + spacing height don\'t fit in the page'
+            # write the header for this directory
+            oy += p3_d['header_height']  # todo: check if at end of page
+            fw.write(
+                f"<g>\n<text transform='translate(0, {oy})' "
+                f"style='font-family:{family};font-size:{size};font-style:{style}'>\
+                {template_nr}. {p3_d['template_header']}</text>\n</g>\n"
+            )
             # run mako.template.Template
-            mako_template = Template(filename = os.path.join(p3_fields_abs_dir, 'label_template_body.svg'),
-                                     input_encoding = 'utf-8')
-
+            mako_template = Template(
+                filename = os.path.join(p3_fields_abs_dir, 'label_template_body.svg'),
+                input_encoding = 'utf-8'
+            )
             N = len(p3_selected_fields_values_by_prod_d)  # nr of products in the contract
             i = 0  # index of the template to print
 
-            while i < N:  # enumerating over each item in the contract
-                # writing vertically while there are templates to print
-                while i < N:
-                    # writing horizontally while there templates to print
-                    while ox + template_view_box_w + spacing_w <= p3_d['page_view_box_w'] and i < N:
-                        offset_x = ox + spacing_w
-                        offset_y = oy + spacing_h
-                        fw.write(r"<g transform = 'translate(" + f"{offset_x}, {offset_y})'>\n")
-                        fw.write(mako_template.render(**p3_selected_fields_values_by_prod_d[i]))
-                        fw.write('</g>\n')
-                        ox += template_view_box_w + spacing_w
-                        i += 1
-                    ox = - spacing_w + horizontal_centering_offset(template_view_box_w, spacing_w)
-                    oy += template_view_box_h + spacing_h
-                    # after each line check if there is still space to write the next one, if not open a new page
-                    if oy + template_view_box_h + spacing_h > p3_d['page_view_box_h']:
-                        close_svg_for_output(fw, svg_out)
-                        page += 1
-                        fw, svg_out = open_svg_for_output(fw, header, page, svg_out)
-                        oy = - spacing_h + p3_d['header_height']
+            while i < N:  # writing vertically while there are templates to print
+                # writing horizontally while there templates to print
+                while ox + template_view_box_w + spacing_w <= p3_d['page_view_box_w'] and i < N:
+                    offset_x = ox + spacing_w
+                    offset_y = oy + spacing_h
+                    fw.write(r"<g transform = 'translate(" + f"{offset_x}, {offset_y})'>\n")
+                    fw.write(mako_template.render(**p3_selected_fields_values_by_prod_d[i]))
+                    fw.write('</g>\n')
+                    ox += template_view_box_w + spacing_w
+                    i += 1
+                ox = - spacing_w + horizontal_centering_offset(template_view_box_w, spacing_w)
+                oy += template_view_box_h + spacing_h
+                # with the new oy, check if there is still space to write the next one, if not open a new page
+                if oy + template_view_box_h + spacing_h > p3_d['page_view_box_h']:
+                    close_svg_for_output(fw, svg_out)
+                    page += 1
+                    fw, svg_out = open_svg_for_output(fw, header, page, svg_out)
+                    oy = - spacing_h + p3_d['header_height']
+            # after last item is written, write the next header if needed
         close_svg_for_output(fw, svg_out)
 
     else:
