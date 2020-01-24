@@ -4,7 +4,6 @@ import os
 import pprint
 import re
 import shutil
-import subprocess
 import webbrowser
 from mako.template import Template
 import p0_menus as p
@@ -140,123 +139,9 @@ def make_mako_input_values_json(some_rel_dir):
         print('!\n! No template has been selected for display\n!')
 
 
-def render_1_template_1_product():
-    # building the html page
-    p3_fields_abs_dir = os.path.join(p1.p1_contract_abs_dir, p3_fields_rel_dir)
-    filename = os.path.join(p3_fields_abs_dir, 'label_template_header.svg')
-    with open(filename) as h:
-        header = h.read()
-    svg_out = os.path.join(p3_fields_abs_dir, 'page_0.svg')
-    with open(svg_out, 'w') as f:
-        f.write(header)
-        filename = os.path.join(p3_fields_abs_dir, 'label_template_body.svg')
-        mako_template = Template(filename = filename, input_encoding = 'utf-8')
-        f.write(mako_template.render(**p3_selected_fields_values_by_prod_d[0]))
-        f.write('</svg>')
-    subprocess.Popen([r'firefox', svg_out])
-
-
 def suggest_spacing_calc(lgth, template_view_box):
     n_of_templates_per_dim = int(lgth // template_view_box)
     return min(10, int((lgth - n_of_templates_per_dim * template_view_box) / max(1, (n_of_templates_per_dim - 1))))
-
-
-def render_1_template_all_products():
-    """
-    Print min and max spacing depending on # of templates to be laid in rows & columns
-    """
-    global p3_fields_rel_dir
-    global p3_selected_fields_values_by_prod_d
-    global p3_fields_rel_dir
-
-    from_abs_dir = os.path.join(p0_root_abs_dir + '/common', p3_fields_rel_dir)
-    with open(os.path.join(from_abs_dir, 'label_template.svg')) as f:
-        contents = f.read()
-        m = re.search(r'(?<=viewBox=")(\d) (\d) (\d+.*\d*) (\d+\.*\d*)', contents)
-        if m.groups()[0] != '0' or m.groups()[1] != '0':
-            print("Error in building 'label_template.svg': origin is not (0, 0), exiting program ...")
-            exit()
-
-        template_view_box_w = float(m.groups()[2])
-        template_view_box_h = float(m.groups()[3])  # template_view_box_h, template_view_box_h
-    spacing_w = suggest_spacing_calc(p3_d['page_view_box_w'], template_view_box_w)  # first horizontally, w = width
-    spacing_h = suggest_spacing_calc(p3_d['page_view_box_h'] - p3_d['header_height'],
-                                     template_view_box_h)  # then vertically
-
-    """
-    assemble prepared svg files
-    output to out.svg
-    """
-    p3_fields_abs_dir = os.path.join(p1.p1_contract_abs_dir, p3_fields_rel_dir)
-
-    family = re.search(r'(?<=font-family:)([\w-]+)', p3_body_svg).groups()[0]
-    size = re.search(r'(?<=font-size:)(\d+\.*\d*\w*)', p3_body_svg).groups()[0]
-    style = re.search(r'(?<=font-style:)([\w-]+)', p3_body_svg).groups()[0]
-
-    assert template_view_box_w + spacing_w <= p3_d['page_view_box_w'], \
-        "write_templates: ! template + spacing width don't fit in the page"
-    assert template_view_box_h + spacing_h <= p3_d['page_view_box_h'], \
-        'write_templates: ! template + spacing height don\'t fit in the page'
-
-    # printing templates in pages, when a page is full, open a new one
-    svg_in = os.path.join(p3_fields_abs_dir, 'label_template_header.svg')
-    with open(svg_in) as h:
-        header = h.read()
-
-    mako_template = Template(filename = os.path.join(p3_fields_abs_dir, 'label_template_body.svg'),
-                             input_encoding = 'utf-8')
-
-    N = len(p3_selected_fields_values_by_prod_d)  # nr of products in the contract
-    page = 1  # nr of page being built
-    i = 0  # index of the template to print
-    ox = - spacing_w + horizontal_centering_offset(template_view_box_w, spacing_w)
-    oy = - spacing_h + p3_d['header_height']
-
-    while i < N:  # enumerating over each item in the contract
-        # opening a new page
-        svg_out = os.path.join(p3_fields_abs_dir, f'page_{page}.svg')
-        with open(svg_out, 'w') as f:
-            f.write(header)
-            f.write("<g transform='translate(20, 20)'>\n")
-            if page == 1:
-                f.write(
-                    "<g>\n<text transform='translate(0, 5)' "
-                    f"style='font-family:{family};font-size:{size};font-style:{style}'>1. 外箱的唛头</text>\n</g>\n")
-            while oy + template_view_box_h + spacing_h <= p3_d['page_view_box_h'] and i < N:
-                while ox + template_view_box_w + spacing_w <= p3_d['page_view_box_w'] and i < N:
-                    offset_x = ox + spacing_w
-                    offset_y = oy + spacing_h
-                    f.write(r"<g transform = 'translate(" + f"{offset_x}, {offset_y})'>\n")
-                    f.write(mako_template.render(**p3_selected_fields_values_by_prod_d[i]))
-                    f.write('</g>\n')
-                    ox += template_view_box_w + spacing_w
-                    i += 1
-                ox = - spacing_w + horizontal_centering_offset(template_view_box_w, spacing_w)
-                oy += template_view_box_h + spacing_h
-            oy = - spacing_h + p3_d['header_height']
-            f.write('\n</g>\n</svg>\n')
-        webbrowser.get('firefox').open_new_tab(svg_out)
-        page += 1
-
-
-def render_all_templates_with_default_specific_fields():
-    global p3_fields_rel_dir
-    global p3_d
-    global p3_all_specific_fields_l
-
-    # read existing templates
-    drs = p2.p2_load_templates_info_l()
-    if drs:
-        # for each template that has been created as a subdir to p1.p1_contract_abs_dir
-        for p3_fields_rel_dir in drs:
-            # use data on disk, if not on disk create with default values
-            if load_o_create_p3_fields_info_f():
-                # and save to disk
-                save_template_info_json()
-                build_template_header_n_body(p3_fields_rel_dir)
-                make_mako_input_values_json(p3_fields_rel_dir)
-                render_1_template_1_product()
-                render_1_template_all_products()
 
 
 def display_or_load_output_overview():
@@ -484,12 +369,19 @@ def close_svg_for_output(fw, svg_out):
     webbrowser.get('firefox').open_new_tab(svg_out)
 
 
-def open_svg_for_output(fw, header, page, svg_out):
+def open_svg_for_output(fw, header, page, svg_out, only_1_temp, only_1_prod):
     global p3_d
     assert fw == fw
     assert svg_out == svg_out
 
-    svg_out = os.path.join(p1.p1_contract_abs_dir, f'page_{page}.svg')
+    p3_fields_abs_dir = os.path.join(p1.p1_contract_abs_dir, p3_fields_rel_dir)
+    if only_1_temp:
+        if only_1_prod:
+            svg_out = os.path.join(p3_fields_abs_dir, f'1_product.svg')
+        else:
+            svg_out = os.path.join(p3_fields_abs_dir, f'1_template.svg')
+    else:
+        svg_out = os.path.join(p1.p1_contract_abs_dir, f'page_{page}.svg')
     fw = open(svg_out, 'w')
     fw.write(header)
     fw.write("<g transform='translate(20, 20)'>\n")  # todo: reset with page margins
@@ -503,7 +395,7 @@ def horizontal_centering_offset(template_view_box_w, spacing_w):
     return result
 
 
-def render_all_template_all_products():
+def render_all_template_all_products(only_1_temp = False, only_1_prod = False):
     """
 
     """
@@ -517,7 +409,7 @@ def render_all_template_all_products():
     load_p3_all_specific_fields_l()
 
     # read existing templates
-    drs = p2.p2_load_templates_info_l()
+    drs = [p3_fields_rel_dir] if only_1_temp else p2.p2_load_templates_info_l()
     if drs:
         svg_out = ''
         oy = 0
@@ -541,7 +433,7 @@ def render_all_template_all_products():
             style = re.search(r'(?<=font-style:)([\w-]+)', p3_body_svg).groups()[0]
             if page == 1:
                 # open the first web page, it will be closed when there is no space left, and a new one opened
-                fw, svg_out = open_svg_for_output(fw, header, page, svg_out)
+                fw, svg_out = open_svg_for_output(fw, header, page, svg_out, only_1_temp, only_1_prod)
             # from template build the body necessary to multiply templates  todo: make sure all fields are in place
             make_mako_input_values_json(p3_fields_rel_dir)
             # read view box values from template_body so as to compute spacings
@@ -552,7 +444,6 @@ def render_all_template_all_products():
                 if m.groups()[0] != '0' or m.groups()[1] != '0':
                     print("Error in building 'label_template.svg': origin is not (0, 0), exiting program ...")
                     exit()
-
                 template_view_box_w = float(m.groups()[2])
                 template_view_box_h = float(m.groups()[3])  # template_view_box_h, template_view_box_h
             spacing_w = suggest_spacing_calc(p3_d['page_view_box_w'], template_view_box_w)  # horizontally, w = width
@@ -580,9 +471,10 @@ def render_all_template_all_products():
             N = len(p3_selected_fields_values_by_prod_d)  # nr of products in the contract
             i = 0  # index of the template to print
 
-            while i < N:  # writing vertically while there are templates to print
+            while i < (1 if only_1_prod else N):  # writing vertically while there are templates to print
                 # writing horizontally while there templates to print
-                while ox + template_view_box_w + spacing_w <= p3_d['page_view_box_w'] and i < N:
+                while ox + template_view_box_w + spacing_w <= p3_d['page_view_box_w'] \
+                        and i < (1 if only_1_prod else N):
                     offset_x = ox + spacing_w
                     offset_y = oy + spacing_h
                     fw.write(r"<g transform = 'translate(" + f"{offset_x}, {offset_y})'>\n")
@@ -593,16 +485,38 @@ def render_all_template_all_products():
                 ox = - spacing_w + horizontal_centering_offset(template_view_box_w, spacing_w)
                 oy += template_view_box_h + spacing_h
                 # with the new oy, check if there is still space to write the next one, if not open a new page
-                if oy + template_view_box_h + spacing_h > p3_d['page_view_box_h']:
+                if oy + template_view_box_h + spacing_h > p3_d['page_view_box_h'] and i != N - 1 \
+                        and template_nr != len(drs):  # to avoid printing a blank page when there is no data left
                     close_svg_for_output(fw, svg_out)
                     page += 1
-                    fw, svg_out = open_svg_for_output(fw, header, page, svg_out)
+                    fw, svg_out = open_svg_for_output(fw, header, page, svg_out, only_1_temp, only_1_prod)
                     oy = - spacing_h
             # after last item is written, write the next header if needed
         close_svg_for_output(fw, svg_out)
 
     else:
         print('No template directory found, go back to general menu and create one or more templates')
+
+
+def render_1_template_1_product():
+    render_all_template_all_products(only_1_temp = True, only_1_prod = True)
+
+
+def render_1_template_all_products():
+    render_all_template_all_products(only_1_temp = True)
+
+
+def render_all_templates_with_default_specific_fields():
+    global p3_fields_rel_dir
+    # read existing templates
+    drs = p2.p2_load_templates_info_l()
+    if drs:
+        # for each template that has been created as a subdir to p1.p1_contract_abs_dir
+        for p3_fields_rel_dir in drs:
+            # use data on disk, if not on disk create with default values
+            if load_o_create_p3_fields_info_f():
+                render_1_template_1_product()
+                render_1_template_all_products()
 
 
 context_func_d = {
