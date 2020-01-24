@@ -597,7 +597,7 @@ def render_all_template_all_products():
                     close_svg_for_output(fw, svg_out)
                     page += 1
                     fw, svg_out = open_svg_for_output(fw, header, page, svg_out)
-                    oy = - spacing_h + p3_d['header_height']
+                    oy = - spacing_h
             # after last item is written, write the next header if needed
         close_svg_for_output(fw, svg_out)
 

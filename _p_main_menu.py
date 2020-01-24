@@ -51,10 +51,10 @@ def init():
         p.main_menu = p.menu
     p.menus = {
         p.menu: {
-            '1': run_all_with_default_values,
-            '2': p1_select_contract,
-            '3': p2_select_templates,
-            '4': p3_select_distinctive_fields,
+            '0': run_all_with_default_values,
+            '1': p1_select_contract,
+            '2': p2_select_templates,
+            '3': p3_select_distinctive_fields,
             'u': u_maintain_set_of_indicators_regex_to_be_searched,
             'q': p.normal_exit,
         },
