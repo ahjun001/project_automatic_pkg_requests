@@ -4,6 +4,7 @@ import os
 import pprint
 import re
 import shutil
+# import subprocess
 import subprocess
 import webbrowser
 from mako.template import Template
@@ -364,18 +365,37 @@ def display_p3_fields_info_f():
         print(f'\nFile {p3_f} not built yet\n')
 
 
-def close_svg_for_output(fw, page, svg_out, only_1_temp, only_1_prod):
+def svg_to_pdf_output():
+    os.chdir(p1.p1_contract_abs_dir)
+    print_svg_l = [f for f in os.listdir(p1.p1_contract_abs_dir) if os.path.isfile(f) and f.endswith('.svg')]
+
+    for file in print_svg_l:
+        filename, _ = os.path.splitext(file)
+        subprocess.Popen([
+            'inkscape',
+            '-A',
+            filename + '.pdf',
+            file,
+        ])
+
+    print_pdf_l = [f for f in os.listdir(p1.p1_contract_abs_dir) if os.path.isfile(f) and f.endswith('.pdf')]
+    output_s = p1.p1_contract_nr + '.pdf'
+    subprocess.Popen([
+        'pdfunite',
+        *print_pdf_l,
+        output_s,
+    ])
+    subprocess.Popen([
+        'xreader',
+        output_s,
+    ])
+    os.chdir(p0_root_abs_dir)
+
+
+def close_svg_for_output(fw, svg_out):
     fw.write('\n</g>\n</svg>\n')
     fw.close()
     webbrowser.get('firefox').open_new_tab(svg_out)
-    p3_fields_abs_dir = os.path.join(p1.p1_contract_abs_dir, p3_fields_rel_dir)
-    if only_1_temp:
-        if only_1_prod:
-            subprocess.Popen(['inkscape', '--export-pdf=', svg_out, os.path.join(p3_fields_abs_dir, '1_product.pdf')])
-        else:
-            subprocess.Popen(['inkscape', '--export-pdf=', svg_out, os.path.join(p3_fields_abs_dir, '1_template.pdf')])
-    else:
-        subprocess.Popen(['inkscape', f'--export-pdf={svg_out}', os.path.join(p3_fields_abs_dir, f'page_{page}.pdf')])
 
 
 def open_svg_for_output(fw, header, page, svg_out, only_1_temp, only_1_prod):
@@ -496,12 +516,12 @@ def render_all_template_all_products(only_1_temp = False, only_1_prod = False):
                 # with the new oy, check if there is still space to write the next one, if not open a new page
                 if oy + template_view_box_h + spacing_h > p3_d['page_view_box_h'] and i != N - 1 \
                         and template_nr != len(drs):  # to avoid printing a blank page when there is no data left
-                    close_svg_for_output(fw, page, svg_out, only_1_temp, only_1_prod)
+                    close_svg_for_output(fw, svg_out)
                     page += 1
                     fw, svg_out = open_svg_for_output(fw, header, page, svg_out, only_1_temp, only_1_prod)
                     oy = - spacing_h
             # after last item is written, write the next header if needed
-        close_svg_for_output(fw, page, svg_out, only_1_temp, only_1_prod)
+        close_svg_for_output(fw, svg_out)
     else:
         print('No template directory found, go back to general menu and create one or more templates')
 
@@ -545,6 +565,7 @@ def init():
         p.main_menu = p.menu
     p.menus = {
         p.menu: {
+            '5': svg_to_pdf_output,
             '0': render_all_template_all_products,
             '1': render_all_templates_with_default_specific_fields,
             '2': display_or_load_output_overview,

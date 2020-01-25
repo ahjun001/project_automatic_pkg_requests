@@ -9,11 +9,13 @@
       <w>indctrs</w>
       <w>infos</w>
       <w>inkscape</w>
+      <w>pdfunite</w>
       <w>prfx</w>
       <w>pytest</w>
       <w>readlines</w>
       <w>shutil</w>
       <w>venv</w>
+      <w>xreader</w>
     </words>
   </dictionary>
 </component>
