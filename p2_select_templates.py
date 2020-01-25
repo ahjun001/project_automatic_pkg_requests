@@ -9,17 +9,17 @@ p0_root_abs_dir = os.path.dirname(os.path.abspath(__file__))  # root directory w
 
 
 p2_templates_l = [
-    '1.Outer_box_外箱',
-    '2.Inner_box_内盒',
-    '3.Inside_box_中箱',
-    '4.Prod_packaging_产品包装',
-    '5.Plastic_bag_塑料袋',
-    '6.Prod_sticker_产品上不干胶',
+    'a.Outer_box_外箱',
+    'b.Inner_box_内盒',
+    'c.Inside_box_中箱',
+    'd.Prod_packaging_产品包装',
+    'e.Plastic_bag_塑料袋',
+    'f.Prod_sticker_产品上不干胶',
 ]
 
 p2_default_templates_l = [
-    '1.Outer_box_外箱',
-    '6.Prod_sticker_产品上不干胶',
+    'a.Outer_box_外箱',
+    'f.Prod_sticker_产品上不干胶',
 ]
 
 

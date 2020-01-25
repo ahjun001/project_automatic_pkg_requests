@@ -4,10 +4,11 @@ import os
 import pprint
 import re
 import shutil
-# import subprocess
 import subprocess
 import webbrowser
+
 from mako.template import Template
+
 import p0_menus as p
 import p1_select_contract as p1
 import p2_select_templates as p2
@@ -50,13 +51,13 @@ def save_template_info_json():
         json.dump(p3_d, f, ensure_ascii = False)
 
 
-def build_template_header_n_body(some_rel_dir = None):
+def build_template_header_n_body(some_rel_dir):
     """
     copy header, also template if necessary, build body from template.svg copy that is in repository directory
     """
 
-    from_abs_dir = os.path.join(p0_root_abs_dir + '/common', some_rel_dir if some_rel_dir else '1.Outer_box_外箱')
-    to_abs_dir = os.path.join(p1.p1_contract_abs_dir, some_rel_dir if some_rel_dir else '1.Outer_box_外箱')
+    from_abs_dir = os.path.join(p0_root_abs_dir + '/common', some_rel_dir)
+    to_abs_dir = os.path.join(p1.p1_contract_abs_dir, some_rel_dir)
 
     # copy the label_template if necessary
     template_fr = os.path.join(to_abs_dir, 'label_template.svg')
@@ -320,7 +321,7 @@ def select_a_template_n_edit_fields():
         save_template_info_json()
         build_template_header_n_body(p3_fields_rel_dir)
         make_mako_input_values_json(p3_fields_rel_dir)
-        render_1_template_1_product()
+        render_svg_1_template_1_product()
     else:
         return
 
@@ -365,6 +366,36 @@ def display_p3_fields_info_f():
         print(f'\nFile {p3_f} not built yet\n')
 
 
+def display_pdf():
+    output_s = p1.p1_contract_nr + '.pdf'
+    subprocess.Popen([
+        'xreader',
+        output_s,
+    ])
+
+
+def make_pdf():
+    os.chdir(p1.p1_contract_abs_dir)
+    print_pdf_l = [f for f in os.listdir(p1.p1_contract_abs_dir) if os.path.isfile(f) and f.endswith('.pdf')]
+
+    output_s = p1.p1_contract_nr + '.pdf'
+    if os.path.exists(output_s):
+        os.remove(output_s)
+        
+    # subprocess.Popen([
+    #     'pdfunite',
+    #     *print_pdf_l,
+    #     output_s,
+    # ])
+    sys_command = 'pdfunite'
+    for f in print_pdf_l:
+        sys_command += ' ' + f
+    sys_command += ' ' + output_s
+    print(f'sys_command = {sys_command}')
+    os.system(sys_command)
+    os.chdir(p0_root_abs_dir)
+
+
 def svg_to_pdf_output():
     os.chdir(p1.p1_contract_abs_dir)
     print_svg_l = [f for f in os.listdir(p1.p1_contract_abs_dir) if os.path.isfile(f) and f.endswith('.svg')]
@@ -377,18 +408,6 @@ def svg_to_pdf_output():
             filename + '.pdf',
             file,
         ])
-
-    print_pdf_l = [f for f in os.listdir(p1.p1_contract_abs_dir) if os.path.isfile(f) and f.endswith('.pdf')]
-    output_s = p1.p1_contract_nr + '.pdf'
-    subprocess.Popen([
-        'pdfunite',
-        *print_pdf_l,
-        output_s,
-    ])
-    subprocess.Popen([
-        'xreader',
-        output_s,
-    ])
     os.chdir(p0_root_abs_dir)
 
 
@@ -424,7 +443,7 @@ def horizontal_centering_offset(template_view_box_w, spacing_w):
     return result
 
 
-def render_all_template_all_products(only_1_temp = False, only_1_prod = False):
+def render_svg_all_template_all_products(only_1_temp = False, only_1_prod = False):
     """
 
     """
@@ -526,15 +545,15 @@ def render_all_template_all_products(only_1_temp = False, only_1_prod = False):
         print('No template directory found, go back to general menu and create one or more templates')
 
 
-def render_1_template_1_product():
-    render_all_template_all_products(only_1_temp = True, only_1_prod = True)
+def render_svg_1_template_1_product():
+    render_svg_all_template_all_products(only_1_temp = True, only_1_prod = True)
 
 
-def render_1_template_all_products():
-    render_all_template_all_products(only_1_temp = True)
+def render_svg_1_template_all_products():
+    render_svg_all_template_all_products(only_1_temp = True)
 
 
-def render_all_templates_with_default_specific_fields():
+def display_all_templates():
     global p3_fields_rel_dir
     # read existing templates
     drs = p2.p2_load_templates_info_l()
@@ -543,8 +562,10 @@ def render_all_templates_with_default_specific_fields():
         for p3_fields_rel_dir in drs:
             # use data on disk, if not on disk create with default values
             if load_o_create_p3_fields_info_f():
-                render_1_template_1_product()
-                render_1_template_all_products()
+                render_svg_1_template_1_product()
+                render_svg_1_template_all_products()
+    render_svg_all_template_all_products()
+    svg_to_pdf_output()
 
 
 context_func_d = {
@@ -565,9 +586,11 @@ def init():
         p.main_menu = p.menu
     p.menus = {
         p.menu: {
+            '-2': display_pdf,
+            '-1': make_pdf,
             '5': svg_to_pdf_output,
-            '0': render_all_template_all_products,
-            '1': render_all_templates_with_default_specific_fields,
+            '0': render_svg_all_template_all_products,
+            '1': display_all_templates,
             '2': display_or_load_output_overview,
             '3': select_a_template_n_edit_fields,
             '4': display_selected_fields,
