@@ -381,7 +381,7 @@ def make_pdf():
     output_s = p1.p1_contract_nr + '.pdf'
     if os.path.exists(output_s):
         os.remove(output_s)
-        
+
     # subprocess.Popen([
     #     'pdfunite',
     #     *print_pdf_l,
