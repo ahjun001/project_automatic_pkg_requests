@@ -98,6 +98,7 @@ def load_o_create_p3_fields_info_f():
         # other default information is set at variable initialization
         else:
             p3_d['template_header'] = p3_fields_rel_dir[p3_fields_rel_dir.rfind('_') + 1:]
+        save_template_info_json()
         return True
     else:
         print('!\n! The contract directory does not contain subdirectories: cannot load or create labels\n!')
@@ -367,36 +368,25 @@ def display_p3_fields_info_f():
 
 
 def display_pdf():
-    output_s = p1.p1_contract_nr + '.pdf'
-    subprocess.Popen([
-        'xreader',
-        output_s,
-    ])
-
-
-def make_pdf():
     os.chdir(p1.p1_contract_abs_dir)
-    print_pdf_l = [f for f in os.listdir(p1.p1_contract_abs_dir) if os.path.isfile(f) and f.endswith('.pdf')]
-
     output_s = p1.p1_contract_nr + '.pdf'
-    if os.path.exists(output_s):
-        os.remove(output_s)
-
-    # subprocess.Popen([
-    #     'pdfunite',
-    #     *print_pdf_l,
-    #     output_s,
-    # ])
-    sys_command = 'pdfunite'
-    for f in print_pdf_l:
-        sys_command += ' ' + f
-    sys_command += ' ' + output_s
-    print(f'sys_command = {sys_command}')
-    os.system(sys_command)
+    subprocess.Popen(['xreader', output_s, ])
     os.chdir(p0_root_abs_dir)
 
 
-def svg_to_pdf_output():
+def remove_fuchsia():
+    os.chdir(p1.p1_contract_abs_dir)
+    print_svg_l = [f for f in os.listdir(p1.p1_contract_abs_dir) if os.path.isfile(f) and f.endswith('.svg')]
+
+    for file in print_svg_l:
+        clean_file = 'clean_' + file
+        with open(file) as fr, open(clean_file, 'w') as fw:
+            for line in fr:
+                fw.write(line.replace('fuchsia', 'none'))
+    os.chdir(p0_root_abs_dir)
+
+
+def make_deliverable_pdf():
     os.chdir(p1.p1_contract_abs_dir)
     print_svg_l = [f for f in os.listdir(p1.p1_contract_abs_dir) if os.path.isfile(f) and f.endswith('.svg')]
 
@@ -407,17 +397,22 @@ def svg_to_pdf_output():
             '-A',
             filename + '.pdf',
             file,
-        ])
+        ]).wait()
+
+    output_s = p1.p1_contract_nr + '.pdf'
+
+    # not workable solution: erase but doesn't create, create but doesn't erase
+    # print_pdf_l = [f for f in os.listdir(p1.p1_contract_abs_dir) if os.path.isfile(f) and f.endswith('.pdf')]
+    # if os.path.exists(output_s):
+    #     subprocess.Popen(['rm', output_s, ]).wait()
+    # subprocess.Popen(['pdfunite', *print_pdf_l, output_s, ]).wait()
+
+    os.system('pdfunite page_?.pdf ' + output_s)
+    subprocess.Popen(['xreader', output_s, ])
     os.chdir(p0_root_abs_dir)
 
 
-def close_svg_for_output(fw, svg_out):
-    fw.write('\n</g>\n</svg>\n')
-    fw.close()
-    webbrowser.get('firefox').open_new_tab(svg_out)
-
-
-def open_svg_for_output(fw, header, page, svg_out, only_1_temp, only_1_prod):
+def open_svg_for_output(fw, header, page, svg_out, only_1_temp, only_1_prod, family, size, style):
     global p3_d
     assert fw == fw
     assert svg_out == svg_out
@@ -432,8 +427,20 @@ def open_svg_for_output(fw, header, page, svg_out, only_1_temp, only_1_prod):
         svg_out = os.path.join(p1.p1_contract_abs_dir, f'page_{page}.svg')
     fw = open(svg_out, 'w')
     fw.write(header)
+    page_x = 100  # page middle - 5mm to center text, assuming A4
+    page_y = int(p3_d['page_view_box_h'] + 3 * (297 - p3_d['page_view_box_h']) / 4)
+    fw.write(
+        f"<g>\n<text transform='translate({page_x}, {page_y})' "
+        f"style='font-family:{family};font-size:{size};font-style:{style}'>-- {page} --</text>\n</g>\n"
+    )
     fw.write("<g transform='translate(20, 20)'>\n")  # todo: reset with page margins
     return fw, svg_out
+
+
+def close_svg_for_output(fw, svg_out):
+    fw.write('\n</g>\n</svg>\n')
+    fw.close()
+    webbrowser.get('firefox').open_new_tab(svg_out)
 
 
 def horizontal_centering_offset(template_view_box_w, spacing_w):
@@ -481,7 +488,10 @@ def render_svg_all_template_all_products(only_1_temp = False, only_1_prod = Fals
             style = re.search(r'(?<=font-style:)([\w-]+)', p3_body_svg).groups()[0]
             if page == 1:
                 # open the first web page, it will be closed when there is no space left, and a new one opened
-                fw, svg_out = open_svg_for_output(fw, header, page, svg_out, only_1_temp, only_1_prod)
+                fw, svg_out = open_svg_for_output(
+                    fw, header, page, svg_out, only_1_temp, only_1_prod,
+                    family, size, style
+                )
             # from template build the body necessary to multiply templates  todo: make sure all fields are in place
             make_mako_input_values_json(p3_fields_rel_dir)
             # read view box values from template_body so as to compute spacings
@@ -521,24 +531,30 @@ def render_svg_all_template_all_products(only_1_temp = False, only_1_prod = Fals
 
             while i < (1 if only_1_prod else N):  # writing vertically while there are templates to print
                 # writing horizontally while there templates to print
-                while ox + template_view_box_w + spacing_w <= p3_d['page_view_box_w'] \
-                        and i < (1 if only_1_prod else N):
+                while ox + template_view_box_w + spacing_w <= p3_d['page_view_box_w'] and i < (1 if only_1_prod else N):
                     offset_x = ox + spacing_w
                     offset_y = oy + spacing_h
                     fw.write(r"<g transform = 'translate(" + f"{offset_x}, {offset_y})'>\n")
-                    fw.write(mako_template.render(**p3_selected_fields_values_by_prod_d[i]))
+                    fw.write(mako_template.render(
+                        template_nr = template_nr,
+                        **p3_selected_fields_values_by_prod_d[i])
+                    )
                     fw.write('</g>\n')
                     ox += template_view_box_w + spacing_w
                     i += 1
                 ox = - spacing_w + horizontal_centering_offset(template_view_box_w, spacing_w)
                 oy += template_view_box_h + spacing_h
-                # with the new oy, check if there is still space to write the next one, if not open a new page
-                if oy + template_view_box_h + spacing_h > p3_d['page_view_box_h'] and i != N - 1 \
-                        and template_nr != len(drs):  # to avoid printing a blank page when there is no data left
-                    close_svg_for_output(fw, svg_out)
-                    page += 1
-                    fw, svg_out = open_svg_for_output(fw, header, page, svg_out, only_1_temp, only_1_prod)
-                    oy = - spacing_h
+                # check if there is still space to write the next one, if not open a new page
+                # first check if it was the last label of this template so that template_view_box_h can be updated !!!
+                if oy + template_view_box_h + spacing_h > p3_d['page_view_box_h']:
+                    if i != N - 1 and template_nr != len(drs):  # to avoid printing a blank page when no data left
+                        close_svg_for_output(fw, svg_out)
+                        page += 1
+                        fw, svg_out = open_svg_for_output(
+                            fw, header, page, svg_out, only_1_temp, only_1_prod,
+                            family, size, style
+                        )
+                        oy = - spacing_h
             # after last item is written, write the next header if needed
         close_svg_for_output(fw, svg_out)
     else:
@@ -565,7 +581,7 @@ def display_all_templates():
                 render_svg_1_template_1_product()
                 render_svg_1_template_all_products()
     render_svg_all_template_all_products()
-    svg_to_pdf_output()
+    make_deliverable_pdf()
 
 
 context_func_d = {
@@ -586,10 +602,9 @@ def init():
         p.main_menu = p.menu
     p.menus = {
         p.menu: {
-            '-2': display_pdf,
-            '-1': make_pdf,
-            '5': svg_to_pdf_output,
-            '0': render_svg_all_template_all_products,
+            '77': remove_fuchsia,
+            '66': make_deliverable_pdf,
+            '55': render_svg_all_template_all_products,
             '1': display_all_templates,
             '2': display_or_load_output_overview,
             '3': select_a_template_n_edit_fields,

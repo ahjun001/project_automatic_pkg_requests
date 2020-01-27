@@ -98,7 +98,7 @@
            style="stroke-width:0.26766479">PI/911004</tspan></tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.56870008px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:red;fill-opacity:1;stroke:none;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.56870008px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none"
        x="-4.6032004"
        y="-235.34076"
        id="text941-2"
@@ -107,9 +107,9 @@
          id="tspan55"
          x="-4.6032004"
          y="-235.34076"><tspan
-   style="fill:black;stroke:white"
-   id="tspan57">1.${i}.我司货号</tspan>${prod_n} ${xl_prod_spec} <tspan
-   style="fill:black"
+   style="fill:#000000;stroke:#ffffff"
+   id="tspan57">${template_nr}.${i}.我司货号</tspan>${prod_n} ${xl_prod_spec} <tspan
+   style="fill:#000000"
    id="tspan874">双一字槽瓦楞钉</tspan></tspan></text>
     <text
        xml:space="preserve"
