@@ -38,7 +38,7 @@ def load_p3_all_specific_fields_l():
     global p3_all_specific_fields_l
 
     if not p1.p1e_specific_fields_d_of_d:
-        p1.load_p1e_specific_fields_d_of_d()
+        p1.load_p1e_specific_fields_d_of_d_n_p3_needed_vars()
     p3_all_specific_fields_l = list(next(iter(p1.p1e_specific_fields_d_of_d.values())))
 
 
@@ -168,7 +168,7 @@ def add_fields():
     global p3_all_specific_fields_l
 
     if not p1.p1e_specific_fields_d_of_d:
-        p1.load_p1e_specific_fields_d_of_d()
+        p1.load_p1e_specific_fields_d_of_d_n_p3_needed_vars()
     p3_all_specific_fields_l = list(next(iter(p1.p1e_specific_fields_d_of_d.values())))
     # select from p3_all_specific_fields_l and put in p3_d['selected_fields']
     while True:
@@ -231,7 +231,7 @@ def display_specific_fields_for_all_products():
         p1.load_p1b_indics_from_contract_l()
 
     if not p1.p1e_specific_fields_d_of_d:
-        p1.load_p1e_specific_fields_d_of_d()
+        p1.load_p1e_specific_fields_d_of_d_n_p3_needed_vars()
     p1e_l = list(next(iter(p1.p1e_specific_fields_d_of_d.values())))
 
     # building the header
