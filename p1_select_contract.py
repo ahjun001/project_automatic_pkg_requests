@@ -145,7 +145,7 @@ def process_default_contract():
         build_program_info_d_from_root_xls_file_or_ask_open_file()
 
     # the name of the -contract.json file can now be set
-    rel_path_contract_json_f = 'p1a_' + p1_contract_nr + '-contract.json'
+    rel_path_contract_json_f = '.p1a_' + p1_contract_nr + '-contract.json'
 
     # Creating the json file from the local xls file: opening the xl file
     book = xlrd.open_workbook(p1_full_path_source_file_xls)
@@ -238,7 +238,7 @@ def process_default_contract():
                             }
                             p1b_indics_from_contract_l.append(tmp_dct)
         p1b_indics_from_contract_l.sort(key = lambda item: item['prod_nr'])
-        file_indics = 'p1b_' + p1_contract_nr + '_indics_from_contract_l.json'
+        file_indics = '.p1b_' + p1_contract_nr + '_indics_from_contract_l.json'
 
         # register in file and object
         document_in_contract_info_json('p1b_indics_from_contract_l', file_indics)
@@ -256,7 +256,7 @@ def process_default_contract():
                 row['prod_nr'])
 
             # document in all_relevant_data_json
-    p1c_file_out_f = 'p1c_' + p1_contract_nr + '_all_relevant_data.txt'
+    p1c_file_out_f = '.p1c_' + p1_contract_nr + '_all_relevant_data.txt'
     f = os.path.join(p1_contract_abs_dir, p1c_file_out_f)
     with open(f, 'w') as f1c:
         # json.dump(p1c_prods_w_same_key_set, f1c, ensure_ascii = False) won't work
@@ -296,7 +296,7 @@ def process_default_contract():
             exit()
 
     # indicators common to all products: write to file
-    filename = 'p1d_' + p1_contract_nr + '_extract_common.json'
+    filename = '.p1d_' + p1_contract_nr + '_extract_common.json'
     f = os.path.join(p1_contract_abs_dir, filename)
     with open(f, 'w') as p1d_f:
         json.dump(p1d_common_indics_l, p1d_f, ensure_ascii = False)
@@ -304,7 +304,7 @@ def process_default_contract():
     document_in_contract_info_json('p1d_extract_common', filename)
 
     # indicators specific to one or more products, but not to all: print p1e_specific_fields_d_of_d
-    filename = 'p1e_' + p1_contract_nr + '_extract_specifics.json'
+    filename = '.p1e_' + p1_contract_nr + '_extract_specifics.json'
     f = os.path.join(p1_contract_abs_dir, filename)
     with open(f, 'w') as p1e_f:
         json.dump(p1e_specific_fields_d_of_d, p1e_f, ensure_ascii = False)
