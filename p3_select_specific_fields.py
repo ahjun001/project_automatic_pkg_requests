@@ -374,23 +374,26 @@ def display_pdf():
     os.chdir(p0_root_abs_dir)
 
 
-def remove_fuchsia():
-    os.chdir(p1.p1_contract_abs_dir)
-    print_svg_l = [f for f in os.listdir(p1.p1_contract_abs_dir) if os.path.isfile(f) and f.endswith('.svg')]
-
-    for file in print_svg_l:
-        clean_file = 'clean_' + file
-        with open(file) as fr, open(clean_file, 'w') as fw:
-            for line in fr:
-                fw.write(line.replace('fuchsia', 'none'))
-    os.chdir(p0_root_abs_dir)
-
-
 def make_deliverable_pdf():
     os.chdir(p1.p1_contract_abs_dir)
-    print_svg_l = [f for f in os.listdir(p1.p1_contract_abs_dir) if os.path.isfile(f) and f.endswith('.svg')]
+    print_svg_l = [f for f in os.listdir(p1.p1_contract_abs_dir) if os.path.isfile(f)
+                   and f.endswith('.svg')
+                   and f[0] != '.']
+
+    print(f'print_svg_l: {print_svg_l}')
 
     for file in print_svg_l:
+        with open(file) as fr, open('.' + file, 'w') as fw:
+            for line in fr:
+                fw.write(line.replace('fuchsia', 'none'))
+
+    print_clean_svg_l = [f for f in os.listdir(p1.p1_contract_abs_dir) if os.path.isfile(f)
+                         and f.endswith('.svg')
+                         and f[0] == '.']
+
+    print(f'print_clean_svg_l: {print_svg_l}')
+
+    for file in print_clean_svg_l:
         filename, _ = os.path.splitext(file)
         subprocess.Popen([
             'inkscape',
@@ -407,7 +410,7 @@ def make_deliverable_pdf():
     #     subprocess.Popen(['rm', output_s, ]).wait()
     # subprocess.Popen(['pdfunite', *print_pdf_l, output_s, ]).wait()
 
-    os.system('pdfunite page_?.pdf ' + output_s)
+    os.system('pdfunite .page_?.pdf ' + output_s)
     subprocess.Popen(['xreader', output_s, ])
     os.chdir(p0_root_abs_dir)
 
@@ -602,7 +605,6 @@ def init():
         p.main_menu = p.menu
     p.menus = {
         p.menu: {
-            '77': remove_fuchsia,
             '66': make_deliverable_pdf,
             '55': render_svg_all_template_all_products,
             '1': display_all_templates,
