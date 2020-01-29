@@ -42,7 +42,7 @@ def p0_load_program_info_d():
         with open(p1_program_info_f) as f:
             p1_program_info_d = json.load(f)
         # check if p1_program_info_d['p1_contract_nr'] helps point to a valid file,
-        if p1_program_info_d:   # todo: why p1_initial_xls is not loaded here
+        if p1_program_info_d:
             p1_contract_nr = p1_program_info_d['p1_contract_nr']
             p1_full_path_source_file_xls = p1_program_info_d['p1_full_path_source_file_xls']
             p1_contract_abs_dir = p0_root_abs_dir + f'/data/{p1_contract_nr}'

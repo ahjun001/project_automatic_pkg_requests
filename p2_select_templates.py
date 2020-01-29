@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # p2_select_templates.py
 import os
+import pathlib
 import shutil
 import p1_select_contract as p1
 import p0_menus as p
@@ -102,7 +103,7 @@ def delete_existing_templates():
 
 def create_template_dir(dr):
     lbl_abs_dir = os.path.join(p1.p1_contract_abs_dir, dr)
-    if not os.path.exists(lbl_abs_dir):
+    if not pathlib.Path(lbl_abs_dir).exists():
         os.mkdir(lbl_abs_dir, mode = 0o700)
 
 
