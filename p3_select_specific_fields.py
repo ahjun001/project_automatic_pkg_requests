@@ -13,10 +13,11 @@ import p0_menus as p
 import p1_select_contract as p1
 import p2_select_templates as p2
 
-p0_root_abs_dir = os.path.dirname(os.path.abspath(__file__))  # root directory where the program is located
+
+p0_root_abs_dir = os.path.dirname(os.path.abspath(__file__))  # root directory
 p3_fields_rel_dir = ''  # currently working fields directory
-p3_all_specific_fields_l = []  # list of fields that are product specific, read from p1e_specific_fields_d_of_d
-p3_selected_fields_values_by_prod_d = {}  # field values for current product, as stored in mako_input.json
+p3_all_specific_fields_l = []  # list of fields from p1e_specific_fields_d_of_d
+p3_selected_fields_values_by_prod_d = {}  # field values as in mako_input.json
 p3_body_svg = ''  # content of label_template_body.svg
 
 p3_default_fields_l = ["xl_prod_spec", "u_parc", 'plstc_bg']
@@ -31,22 +32,26 @@ p3_d = {
 
 
 # todo: if in memory check version, else is on disk load, else create default
-# todo: check that when change contracts all fields with previous information is updated
-# todo: make only one function to see one template, one product, or one contract
+# todo: when change contracts are all fields with previous information updated
+# todo: make only one function to see one template, 1 product, or 1 contract
 
 def load_p3_all_specific_fields_l():
     global p3_all_specific_fields_l
 
-    if not p1.p1e_specific_fields_d_of_d:
+    if (not p1.p1e_specific_fields_d_of_d):
         p1.load_p1e_specific_fields_d_of_d_n_p3_needed_vars()
-    p3_all_specific_fields_l = list(next(iter(p1.p1e_specific_fields_d_of_d.values())))
+    p3_all_specific_fields_l = list(
+        next(iter(p1.p1e_specific_fields_d_of_d.values()))
+    )
 
 
 def save_template_info_json():
     global p3_f
     global p3_d
 
-    p3_f = os.path.join(p1.p1_contract_abs_dir + '/' + p3_fields_rel_dir, 'template-info.json')
+    p3_f = os.path.join(p1.p1_contract_abs_dir
+                        + '/'
+                        + p3_fields_rel_dir, 'template-info.json')
     with open(p3_f, 'w') as f:
         json.dump(p3_d, f, ensure_ascii = False)
 
@@ -54,6 +59,7 @@ def save_template_info_json():
 def build_template_header_n_body(some_rel_dir):
     """
     copy header, also template if necessary, build body from template.svg copy that is in repository directory
+    copy header, also template if necessary, build body from template.svg copy that is in repository directory yancey ya
     """
 
     from_abs_dir = os.path.join(p0_root_abs_dir + '/common', some_rel_dir)
