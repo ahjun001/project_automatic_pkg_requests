@@ -1,0 +1,32 @@
+__pycache__/*.*
+data/*.*
+data/A911008-008/.p1a_A911008-008-contract.json
+data/A911008-008/.p1b_A911008-008_indics_from_contract_l.json
+data/A911008-008/.p1c_A911008-008_all_relevant_data.txt
+data/A911008-008/.p1d_A911008-008_extract_common.json
+data/A911008-008/.p1e_A911008-008_extract_specifics.json
+data/A911008-008/.page_1.pdf
+data/A911008-008/.page_1.svg
+data/A911008-008/.page_2.pdf
+data/A911008-008/.page_2.svg
+data/A911008-008/A911008-008 嘉兴凯顺 双一字槽瓦楞钉.xls
+data/A911008-008/A911008-008.pdf
+data/A911008-008/p1_A911008-008_contract-info.json
+data/A911008-008/page_1.svg
+data/A911008-008/page_2.svg
+data/A911008-008/a.Outer_box_外箱/1_product.svg
+data/A911008-008/a.Outer_box_外箱/1_template.svg
+data/A911008-008/a.Outer_box_外箱/label_template_body.svg
+data/A911008-008/a.Outer_box_外箱/label_template_header.svg
+data/A911008-008/a.Outer_box_外箱/label_template.svg
+data/A911008-008/a.Outer_box_外箱/mako_input.json
+data/A911008-008/a.Outer_box_外箱/template-info.json
+data/A911008-008/f.Prod_sticker_产品上不干胶/1_product.svg
+data/A911008-008/f.Prod_sticker_产品上不干胶/1_template.svg
+data/A911008-008/f.Prod_sticker_产品上不干胶/label_template_body.svg
+data/A911008-008/f.Prod_sticker_产品上不干胶/label_template_header.svg
+data/A911008-008/f.Prod_sticker_产品上不干胶/label_template.svg
+data/A911008-008/f.Prod_sticker_产品上不干胶/mako_input.json
+data/A911008-008/f.Prod_sticker_产品上不干胶/template-info.json
+program-info.json
+common/a.Outer_box_外箱/label_template (copy).svg.bkup

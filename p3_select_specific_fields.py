@@ -53,7 +53,7 @@ def save_template_info_json():
                         + '/'
                         + p3_fields_rel_dir, 'template-info.json')
     with open(p3_f, 'w') as f:
-        json.dump(p3_d, f, ensure_ascii = False)
+        json.dump(p3_d, f, ensure_ascii=False)
 
 
 def build_template_header_n_body(some_rel_dir):
@@ -144,7 +144,7 @@ def make_mako_input_values_json(some_rel_dir):
 
         filename = os.path.join(p1.p1_contract_abs_dir + '/' + some_rel_dir, 'mako_input.json')
         with open(filename, 'w') as f:
-            json.dump(p3_selected_fields_values_by_prod_d, f, ensure_ascii = False)
+            json.dump(p3_selected_fields_values_by_prod_d, f, ensure_ascii=False)
     else:
         print('!\n! No template has been selected for display\n!')
 
@@ -459,7 +459,7 @@ def horizontal_centering_offset(template_view_box_w, spacing_w):
     return result
 
 
-def render_svg_all_template_all_products(only_1_temp = False, only_1_prod = False):
+def render_svg_all_template_all_products(only_1_temp=False, only_1_prod=False):
     """
 
     """
@@ -532,8 +532,8 @@ def render_svg_all_template_all_products(only_1_temp = False, only_1_prod = Fals
             )
             # run mako.template.Template
             mako_template = Template(
-                filename = os.path.join(p3_fields_abs_dir, 'label_template_body.svg'),
-                input_encoding = 'utf-8'
+                filename=os.path.join(p3_fields_abs_dir, 'label_template_body.svg'),
+                input_encoding='utf-8'
             )
             N = len(p3_selected_fields_values_by_prod_d)  # nr of products in the contract
             i = 0  # index of the template to print
@@ -545,7 +545,8 @@ def render_svg_all_template_all_products(only_1_temp = False, only_1_prod = Fals
                     offset_y = oy + spacing_h
                     fw.write(r"<g transform = 'translate(" + f"{offset_x}, {offset_y})'>\n")
                     fw.write(mako_template.render(
-                        template_nr = template_nr,
+                        contract_n=p1.p1_contract_nr,
+                        template_nr=template_nr,
                         **p3_selected_fields_values_by_prod_d[i])
                     )
                     fw.write('</g>\n')
@@ -571,11 +572,11 @@ def render_svg_all_template_all_products(only_1_temp = False, only_1_prod = Fals
 
 
 def render_svg_1_template_1_product():
-    render_svg_all_template_all_products(only_1_temp = True, only_1_prod = True)
+    render_svg_all_template_all_products(only_1_temp=True, only_1_prod=True)
 
 
 def render_svg_1_template_all_products():
-    render_svg_all_template_all_products(only_1_temp = True)
+    render_svg_all_template_all_products(only_1_temp=True)
 
 
 def display_all_templates():
