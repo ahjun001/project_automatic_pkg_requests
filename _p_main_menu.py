@@ -33,7 +33,7 @@ def u_maintain_set_of_indicators_regex_to_be_searched():
 
 def main_menu_context_func():
     print(f'p1 selected contract:'
-    + '{ p1.p1_contract_nr if p1.p1_contract_nr else None }')
+          + '{ p1.p1_contract_nr if p1.p1_contract_nr else None }')
     print(f'p2 selected templates: {p1.read_dirs(p1.p1_contract_abs_dir)}')
     print(f'p3 selected distinctive fields: {p3.p3_d["selected_fields"]}')
     print('>>> Main menu:')

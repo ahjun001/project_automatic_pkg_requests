@@ -34,7 +34,7 @@ def p0_load_program_info_d():
     # If the data directory does not exist, process_default_contract it
     data_abs_dir = os.path.join(p0_root_abs_dir, 'data')
     if not pathlib.Path(data_abs_dir).exists():
-        os.mkdir(data_abs_dir, mode = 0o700)
+        os.mkdir(data_abs_dir, mode=0o700)
 
     p1_program_info_f = os.path.join(p0_root_abs_dir, 'program-info.json')
     if pathlib.Path(p1_program_info_f).exists():
@@ -128,7 +128,7 @@ def process_default_contract():
                     # if a valid initial file exists but is not uniquely copied in the repertory
                     if 'p1_initial_xls' in p1_program_info_d:  # tests True even if  == ""
                         if not pathlib.Path(p1_contract_abs_dir).exists():
-                            os.mkdir(p1_contract_abs_dir, mode = 0o700)
+                            os.mkdir(p1_contract_abs_dir, mode=0o700)
                         p1_initial_xls_contract_file = p1_program_info_d['p1_initial_xls']
                         shutil.copy(p1_initial_xls_contract_file, p1_contract_abs_dir)
                         _, filename_ext = os.path.split(p1_initial_xls_contract_file)
@@ -186,14 +186,14 @@ def process_default_contract():
         row += 3
 
     with open(os.path.join(p1_contract_abs_dir, rel_path_contract_json_f), 'w') as fc:
-        json.dump(contract_json_d, fc, ensure_ascii = False)
+        json.dump(contract_json_d, fc, ensure_ascii=False)
     # document in A1234-456-info.json
     p1_contract_info_f = 'p1_' + p1_contract_nr + '_contract-info.json'
     # process_default_contract a structure to store label information
     p1_contract_info_d = {'p1a_contract_json': rel_path_contract_json_f}
     filename = os.path.join(p1_contract_abs_dir, p1_contract_info_f)
     with open(filename, 'w') as fi:
-        json.dump(p1_contract_info_d, fi, ensure_ascii = False)
+        json.dump(p1_contract_info_d, fi, ensure_ascii=False)
 
     # def create_2():
     # reading info from ./common/indicators.csv, which was kept in csv format to make human input easier
@@ -237,7 +237,7 @@ def process_default_contract():
                                 'prod_nr': prod["01.TST_prod_#-需方产品编号"],  # 1050205001#
                             }
                             p1b_indics_from_contract_l.append(tmp_dct)
-        p1b_indics_from_contract_l.sort(key = lambda item: item['prod_nr'])
+        p1b_indics_from_contract_l.sort(key=lambda item: item['prod_nr'])
         file_indics = '.p1b_' + p1_contract_nr + '_indics_from_contract_l.json'
 
         # register in file and object
@@ -245,7 +245,7 @@ def process_default_contract():
 
         f = os.path.join(p1_contract_abs_dir, file_indics)
         with open(f, 'w') as f:
-            json.dump(p1b_indics_from_contract_l, f, ensure_ascii = False)
+            json.dump(p1b_indics_from_contract_l, f, ensure_ascii=False)
 
         # p1c_prods_w_same_key_set = {}  # make a dictionary key= info, value = sets of prods with that key
         for row in p1b_indics_from_contract_l:
@@ -261,7 +261,7 @@ def process_default_contract():
     with open(f, 'w') as f1c:
         # json.dump(p1c_prods_w_same_key_set, f1c, ensure_ascii = False) won't work
         # f1c.write(p1c_prods_w_same_key_set.__str__()) doesn't look pretty
-        pprint.PrettyPrinter(indent = 2, stream = f1c).pprint(p1c_prods_w_same_key_set)
+        pprint.PrettyPrinter(indent=2, stream=f1c).pprint(p1c_prods_w_same_key_set)
 
     document_in_contract_info_json('p1c_all_relevant_data', p1c_file_out_f)
 
@@ -299,7 +299,7 @@ def process_default_contract():
     filename = '.p1d_' + p1_contract_nr + '_extract_common.json'
     f = os.path.join(p1_contract_abs_dir, filename)
     with open(f, 'w') as p1d_f:
-        json.dump(p1d_common_indics_l, p1d_f, ensure_ascii = False)
+        json.dump(p1d_common_indics_l, p1d_f, ensure_ascii=False)
 
     document_in_contract_info_json('p1d_extract_common', filename)
 
@@ -307,7 +307,7 @@ def process_default_contract():
     filename = '.p1e_' + p1_contract_nr + '_extract_specifics.json'
     f = os.path.join(p1_contract_abs_dir, filename)
     with open(f, 'w') as p1e_f:
-        json.dump(p1e_specific_fields_d_of_d, p1e_f, ensure_ascii = False)
+        json.dump(p1e_specific_fields_d_of_d, p1e_f, ensure_ascii=False)
 
     document_in_contract_info_json('p1e_extract_specifics', filename)
 
@@ -359,7 +359,7 @@ def select_new_contract():
             p1_contract_abs_dir = os.path.join(p0_root_abs_dir + '/data/' + p1_contract_nr)
             p1_full_path_source_file_xls = os.path.join(p1_contract_abs_dir, filename_ext)
             if not pathlib.Path(p1_contract_abs_dir).exists():
-                os.mkdir(p1_contract_abs_dir, mode = 0o700)
+                os.mkdir(p1_contract_abs_dir, mode=0o700)
                 # do not overwrite an existing contract file
             if not pathlib.Path(p1_full_path_source_file_xls).exists():
                 shutil.copy(p1_initial_xls_contract_file, p1_contract_abs_dir)
@@ -411,7 +411,7 @@ def delete_all_data_on_selected_contract():
                 print('That\'s not an integer, try again')
 
 
-def check_sole_cntrct_ext_file_w_o_wo_prefix_is_in_dir(some_abs_dir, ext, check_prefix = True):
+def check_sole_cntrct_ext_file_w_o_wo_prefix_is_in_dir(some_abs_dir, ext, check_prefix=True):
     """
         To check prefix, this requires that p1_contract_nr has been initialized
         """
@@ -487,7 +487,7 @@ def build_program_info_d_from_root_xls_file_or_ask_open_file():
         # If the directory does not exist yet, process_default_contract it
         if not pathlib.Path(p1_contract_abs_dir).exists():
             try:
-                os.mkdir(p1_contract_abs_dir, mode = 0o700)
+                os.mkdir(p1_contract_abs_dir, mode=0o700)
             except OSError:
                 raise
 
@@ -524,7 +524,7 @@ def document_in_program_info_json():
     p1_program_info_d['p1_initial_xls'] = p1_initial_xls_contract_file
     p1_program_info_d['p1_full_path_source_file_xls'] = p1_full_path_source_file_xls
     with open(p1_program_info_f, 'w') as fw:
-        json.dump(p1_program_info_d, fw, ensure_ascii = False)
+        json.dump(p1_program_info_d, fw, ensure_ascii=False)
 
 
 def load_p1_all_products_to_be_processed_set():
@@ -625,7 +625,7 @@ def document_in_contract_info_json(key, filename):
     p1_contract_info_d[key] = filename
     f = os.path.join(p1_contract_abs_dir, p1_contract_info_f)
     with open(f, 'w') as fi:
-        json.dump(p1_contract_info_d, fi, ensure_ascii = False)
+        json.dump(p1_contract_info_d, fi, ensure_ascii=False)
 
 
 def view_too_many_ext_files_in_directory(xls_file_l, ext):

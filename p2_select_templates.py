@@ -25,7 +25,7 @@ p2_default_templates_l = [
 
 
 def create_default_templates():
-    add_templates_from_list(p2_default_templates_l, ask_questions = False)
+    add_templates_from_list(p2_default_templates_l, ask_questions=False)
 
 
 def load_n_display():
@@ -37,7 +37,7 @@ def p2_load_templates_info_l():
 
 
 def add_new_templates():
-    add_templates_from_list(p2_templates_l, ask_questions = True)
+    add_templates_from_list(p2_templates_l, ask_questions=True)
 
 
 def add_templates_from_list(list_l, ask_questions):
@@ -53,7 +53,7 @@ def add_templates_from_list(list_l, ask_questions):
         candidates_l = list(list_l)
 
     if ask_questions:
-        p2_select_templates_context_func(prompt = False)
+        p2_select_templates_context_func(prompt=False)
         print('>>> Select # in front of the template name to be added:\n')
         for i in range(len(candidates_l)):
             print(str(i) + '. ' + candidates_l[i][2:])
@@ -104,10 +104,10 @@ def delete_existing_templates():
 def create_template_dir(dr):
     lbl_abs_dir = os.path.join(p1.p1_contract_abs_dir, dr)
     if not pathlib.Path(lbl_abs_dir).exists():
-        os.mkdir(lbl_abs_dir, mode = 0o700)
+        os.mkdir(lbl_abs_dir, mode=0o700)
 
 
-def p2_select_templates_context_func(prompt = True):
+def p2_select_templates_context_func(prompt=True):
     print('~~~ Now processing contract #: ', p1.p1_contract_nr if p1.p1_contract_nr else None)
     print('\n~~~ Labels already added:')
 
