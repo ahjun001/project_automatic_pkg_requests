@@ -13,7 +13,6 @@ import p0_menus as p
 import p1_select_contract as p1
 import p2_select_templates as p2
 
-
 p0_root_abs_dir = os.path.dirname(os.path.abspath(__file__))  # root directory
 p3_fields_rel_dir = ''  # currently working fields directory
 p3_all_specific_fields_l = []  # list of fields from p1e_specific_fields_d_of_d
@@ -38,7 +37,7 @@ p3_d = {
 def load_p3_all_specific_fields_l():
     global p3_all_specific_fields_l
 
-    if (not p1.p1e_specific_fields_d_of_d):
+    if not p1.p1e_specific_fields_d_of_d:
         p1.load_p1e_specific_fields_d_of_d_n_p3_needed_vars()
     p3_all_specific_fields_l = list(
         next(iter(p1.p1e_specific_fields_d_of_d.values()))
@@ -111,7 +110,7 @@ def load_o_create_p3_fields_info_f():
         return False
 
 
-def make_mako_input_values_json(some_rel_dir):
+def load_o_create_mako_input_values_json(some_rel_dir):
     """
     Creates a json file with variables and values necessary to mako rendering
     :param some_rel_dir:
@@ -120,33 +119,37 @@ def make_mako_input_values_json(some_rel_dir):
     # will be set in this function
     global p3_selected_fields_values_by_prod_d
     # make sure global variables are set in all situations, outside the loop to do it once only
-    if not p1.p1b_indics_from_contract_l:
-        p1.load_p1b_indics_from_contract_l()
-    if not p1.p1_all_products_to_be_processed_set:
-        p1.load_p1_all_products_to_be_processed_set()
-    if load_o_create_p3_fields_info_f():
-        # make a skeleton for p3_selected_fields_values_by_prod_d with key = prod
-        idx = 0
-        temp_d = {}
-        for prod in p1.p1_all_products_to_be_processed_set:
-            temp_d[prod] = {'i': idx + 1, 'prod_n': prod}
-            idx += 1
-
-        # populate the skeleton
-        for indc_d in p1.p1b_indics_from_contract_l:  # loop over the big one once
-            if indc_d['prod_nr'] in p1.p1_all_products_to_be_processed_set:
-                if indc_d['what'] in p3_d['selected_fields']:  # loop over the smaller more
-                    temp_d[indc_d['prod_nr']][indc_d['what']] = indc_d['info']
-
-        # build p3_selected_fields_values_by_prod_d with key = i - 1
-        for v in temp_d.values():
-            p3_selected_fields_values_by_prod_d[v['i'] - 1] = v
-
-        filename = os.path.join(p1.p1_contract_abs_dir + '/' + some_rel_dir, 'mako_input.json')
-        with open(filename, 'w') as f:
-            json.dump(p3_selected_fields_values_by_prod_d, f, ensure_ascii=False)
+    filename = os.path.join(p1.p1_contract_abs_dir + '/' + some_rel_dir, 'mako_input.json')
+    if os.path.exists(filename):
+        with open(filename) as fr:
+            p3_selected_fields_values_by_prod_d = json.load(fr)
     else:
-        print('!\n! No template has been selected for display\n!')
+        if not p1.p1b_indics_from_contract_l:
+            p1.load_p1b_indics_from_contract_l()
+        if not p1.p1_all_products_to_be_processed_set:
+            p1.load_p1_all_products_to_be_processed_set()
+        if load_o_create_p3_fields_info_f():
+            # make a skeleton for p3_selected_fields_values_by_prod_d with key = prod
+            idx = 0
+            temp_d = {}
+            for prod in p1.p1_all_products_to_be_processed_set:
+                temp_d[prod] = {'i': idx + 1, 'prod_n': prod}
+                idx += 1
+
+            # populate the skeleton
+            for indc_d in p1.p1b_indics_from_contract_l:  # loop over the big one once
+                if indc_d['prod_nr'] in p1.p1_all_products_to_be_processed_set:
+                    if indc_d['what'] in p3_d['selected_fields']:  # loop over the smaller more
+                        temp_d[indc_d['prod_nr']][indc_d['what']] = indc_d['info']
+
+            # build p3_selected_fields_values_by_prod_d with key = i - 1
+            for v in temp_d.values():
+                p3_selected_fields_values_by_prod_d[v['i'] - 1] = v
+
+            with open(filename, 'w') as f:
+                json.dump(p3_selected_fields_values_by_prod_d, f, ensure_ascii=False)
+        else:
+            print('!\n! No template has been selected for display\n!')
 
 
 def suggest_spacing_calc(lgth, template_view_box):
@@ -327,7 +330,7 @@ def select_a_template_n_edit_fields():
 
         save_template_info_json()
         build_template_header_n_body(p3_fields_rel_dir)
-        make_mako_input_values_json(p3_fields_rel_dir)
+        load_o_create_mako_input_values_json(p3_fields_rel_dir)
         render_svg_1_template_1_product()
     else:
         return
@@ -455,11 +458,11 @@ def close_svg_for_output(fw, svg_out):
 def horizontal_centering_offset(template_view_box_w, spacing_w):
     n_of_templates_per_row = int(p3_d['page_view_box_w'] // template_view_box_w)
     result = (p3_d['page_view_box_w'] - n_of_templates_per_row * template_view_box_w - (
-        n_of_templates_per_row - 1) * spacing_w) / 2
+              n_of_templates_per_row - 1) * spacing_w) / 2
     return result
 
 
-def render_svg_all_template_all_products(only_1_temp=False, only_1_prod=False):
+def render_svg_all_templates_all_products(only_1_temp=False, only_1_prod=False):
     """
 
     """
@@ -502,7 +505,8 @@ def render_svg_all_template_all_products(only_1_temp=False, only_1_prod=False):
                     family, size, style
                 )
             # from template build the body necessary to multiply templates  todo: make sure all fields are in place
-            make_mako_input_values_json(p3_fields_rel_dir)
+            if not p3_selected_fields_values_by_prod_d:
+                load_o_create_mako_input_values_json(p3_fields_rel_dir)
             # read view box values from template_body so as to compute spacings
             to_abs_dir = os.path.join(p1.p1_contract_abs_dir, p3_fields_rel_dir)
             with open(os.path.join(to_abs_dir, 'label_template.svg')) as f:
@@ -535,19 +539,20 @@ def render_svg_all_template_all_products(only_1_temp=False, only_1_prod=False):
                 filename=os.path.join(p3_fields_abs_dir, 'label_template_body.svg'),
                 input_encoding='utf-8'
             )
-            N = len(p3_selected_fields_values_by_prod_d)  # nr of products in the contract
+            lngth = len(p3_selected_fields_values_by_prod_d)  # nr of products in the contract
             i = 0  # index of the template to print
 
-            while i < (1 if only_1_prod else N):  # writing vertically while there are templates to print
+            while i < (1 if only_1_prod else lngth):  # writing vertically while there are templates to print
                 # writing horizontally while there templates to print
-                while ox + template_view_box_w + spacing_w <= p3_d['page_view_box_w'] and i < (1 if only_1_prod else N):
+                while ox + template_view_box_w + spacing_w <= p3_d['page_view_box_w'] and i < (
+                        1 if only_1_prod else lngth):
                     offset_x = ox + spacing_w
                     offset_y = oy + spacing_h
                     fw.write(r"<g transform = 'translate(" + f"{offset_x}, {offset_y})'>\n")
                     fw.write(mako_template.render(
                         contract_n=p1.p1_contract_nr,
                         template_nr=template_nr,
-                        **p3_selected_fields_values_by_prod_d[i])
+                        **p3_selected_fields_values_by_prod_d[str(i)])
                     )
                     fw.write('</g>\n')
                     ox += template_view_box_w + spacing_w
@@ -557,7 +562,7 @@ def render_svg_all_template_all_products(only_1_temp=False, only_1_prod=False):
                 # check if there is still space to write the next one, if not open a new page
                 # first check if it was the last label of this template so that template_view_box_h can be updated !!!
                 if oy + template_view_box_h + spacing_h > p3_d['page_view_box_h']:
-                    if i != N - 1 and template_nr != len(drs):  # to avoid printing a blank page when no data left
+                    if i != lngth - 1 and template_nr != len(drs):  # to avoid printing a blank page when no data left
                         close_svg_for_output(fw, svg_out)
                         page += 1
                         fw, svg_out = open_svg_for_output(
@@ -572,14 +577,87 @@ def render_svg_all_template_all_products(only_1_temp=False, only_1_prod=False):
 
 
 def render_svg_1_template_1_product():
-    render_svg_all_template_all_products(only_1_temp=True, only_1_prod=True)
+    render_svg_all_templates_all_products(only_1_temp=True, only_1_prod=True)
 
 
 def render_svg_1_template_all_products():
-    render_svg_all_template_all_products(only_1_temp=True)
+    render_svg_all_templates_all_products(only_1_temp=True)
 
 
-def display_all_templates():
+def render_title_page():
+    global p3_fields_rel_dir
+    global p3_d
+    global p3_selected_fields_values_by_prod_d
+
+    # load data from p1.p1e_specific_fields_d_of_d, put in a list of dicts
+    p3_fields_rel_dir = p2.p2_load_templates_info_l()[0]
+    load_o_create_p3_fields_info_f()
+    load_p3_all_specific_fields_l()
+
+    # copy first label on cover page template
+    p3_fields_abs_dir = os.path.join(p1.p1_contract_abs_dir, p3_fields_rel_dir)
+    svg_in = os.path.join(p3_fields_abs_dir, '1_product.svg')
+    if svg_in:
+        with open(svg_in) as fr:
+            lines = fr.readlines()
+        balance = 0
+        keep_l = []
+        tmp_l = []
+        i = 0
+        good_n = 0
+        for line in lines:
+            res1 = re.match('\s*<g', line)
+            if res1:
+                balance += 1
+            res2 = re.match('\s*</g>', line)
+            if balance >= 3:
+                tmp_l.append(line)
+            if res2:
+                if balance == 3:
+                    keep_l.append(tmp_l)
+                    i += 1
+                    tmp_l = []
+                balance -= 1
+            if 'label="label"' in line:
+                good_n = i
+        with open(os.path.join(p0_root_abs_dir + '/common/title_page_template.svg')) as fr:
+            lines = fr.readlines()
+        svg_out = os.path.join(p1.p1_contract_abs_dir, 'title_page_template.svg')
+        with open(svg_out, 'w') as fw:
+            for i in range(len(lines) - 1):
+                fw.writelines(lines[i])
+            fw.write('<g transform="matrix(1,0,0,1,15,45)">\n')
+            for good in keep_l[good_n]:
+                fw.write(good)
+            # fw.writelines(keep_l[good_n])
+            fw.write('</g>\n')
+            fw.write('<g transform="matrix(.25,0,0,.25,22,167)">\n')
+            for good in keep_l[good_n]:
+                fw.write(good)
+            # fw.writelines(keep_l[good_n])
+            fw.write('</g>\n')
+            fw.writelines(lines[len(lines) - 1])
+
+        # run mako.template.Template
+        mako_template = Template(
+            filename=svg_out,
+            input_encoding='utf-8'
+        )
+
+        if not p3_selected_fields_values_by_prod_d:
+            load_o_create_mako_input_values_json(p3_fields_rel_dir)
+        cover_s = os.path.join(p1.p1_contract_abs_dir, '0_page.svg')
+        with open(cover_s, 'w') as fw:
+            fw.write(mako_template.render(
+                contract_n=p1.p1_contract_nr,
+                **p3_selected_fields_values_by_prod_d['0']
+            ))
+        webbrowser.get('Firefox').open_new_tab(cover_s)
+    else:
+        print(f'{svg_in}: no such file, should be build before cover page')
+
+
+def display_all():
     global p3_fields_rel_dir
     # read existing templates
     drs = p2.p2_load_templates_info_l()
@@ -590,7 +668,7 @@ def display_all_templates():
             if load_o_create_p3_fields_info_f():
                 render_svg_1_template_1_product()
                 render_svg_1_template_all_products()
-    render_svg_all_template_all_products()
+    render_svg_all_templates_all_products()
     make_deliverable_pdf()
 
 
@@ -612,9 +690,10 @@ def init():
         p.main_menu = p.menu
     p.menus = {
         p.menu: {
+            '77': render_title_page,
             '66': make_deliverable_pdf,
-            '55': render_svg_all_template_all_products,
-            '1': display_all_templates,
+            '55': render_svg_all_templates_all_products,
+            '1': display_all,
             '2': display_or_load_output_overview,
             '3': select_a_template_n_edit_fields,
             '4': display_selected_fields,
