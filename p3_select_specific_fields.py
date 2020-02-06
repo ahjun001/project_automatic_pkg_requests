@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import json
 import os
+import pathlib
 import pprint
 import re
 import shutil
@@ -66,7 +67,7 @@ def build_template_header_n_body(some_rel_dir):
 
     # copy the label_template if necessary
     template_fr = os.path.join(to_abs_dir, 'label_template.svg')
-    if not os.path.exists(template_fr):
+    if not pathlib.Path(template_fr).exists():
         shutil.copy(os.path.join(from_abs_dir, 'label_template.svg'), to_abs_dir)
     body_fw = os.path.join(to_abs_dir, 'label_template_body.svg')
 
@@ -83,7 +84,7 @@ def build_template_header_n_body(some_rel_dir):
                 fw.write(lines[i])
 
     # and copy the label_template_header there
-    if not os.path.exists(os.path.join(to_abs_dir, 'label_template_header.svg')):
+    if not pathlib.Path(os.path.join(to_abs_dir, 'label_template_header.svg')).exists():
         shutil.copy(os.path.join(p0_root_abs_dir + '/common', 'label_template_header.svg'), to_abs_dir)
 
 
@@ -96,7 +97,7 @@ def load_o_create_p3_fields_info_f():
     if p3_fields_rel_dir:
         # either read data,
         p3_f = os.path.join(p1.p1_contract_abs_dir + '/' + p3_fields_rel_dir, 'template-info.json')
-        if os.path.exists(p3_f):
+        if pathlib.Path(p3_f).exists():
             with open(p3_f) as f:
                 p3_d = json.load(f)
         # or populate missing fields with default information relative to the directory
@@ -120,7 +121,7 @@ def load_o_create_mako_input_values_json(some_rel_dir):
     global p3_selected_fields_values_by_prod_d
     # make sure global variables are set in all situations, outside the loop to do it once only
     filename = os.path.join(p1.p1_contract_abs_dir + '/' + some_rel_dir, 'mako_input.json')
-    if os.path.exists(filename):
+    if pathlib.Path(filename).exists():
         with open(filename) as fr:
             p3_selected_fields_values_by_prod_d = json.load(fr)
     else:
@@ -367,7 +368,7 @@ def display_p3_fields_info_f():
     global p3_d
 
     if p3_d:
-        if os.path.exists(p3_f):
+        if pathlib.Path(p3_f).exists():
             print('~~~ Reading template-info.json file contents ~~~')
             with open(p3_f) as f:
                 pprint.pprint(f.read())
@@ -383,7 +384,7 @@ def display_pdf():
     os.chdir(p0_root_abs_dir)
 
 
-def make_deliverable_pdf():
+def svg_s_to_pdf_deliverable():
     os.chdir(p1.p1_contract_abs_dir)
     print_svg_l = [f for f in os.listdir(p1.p1_contract_abs_dir) if os.path.isfile(f)
                    and f.endswith('.svg')
@@ -394,7 +395,7 @@ def make_deliverable_pdf():
     for file in print_svg_l:
         with open(file) as fr, open('.' + file, 'w') as fw:
             for line in fr:
-                fw.write(line.replace('fuchsia', 'none'))
+                fw.write(line.replace('fuchsia', 'none').replace('#ff00ff', 'none'))
 
     print_clean_svg_l = [f for f in os.listdir(p1.p1_contract_abs_dir) if os.path.isfile(f)
                          and f.endswith('.svg')
@@ -646,7 +647,7 @@ def render_title_page():
 
         if not p3_selected_fields_values_by_prod_d:
             load_o_create_mako_input_values_json(p3_fields_rel_dir)
-        cover_s = os.path.join(p1.p1_contract_abs_dir, '0_page.svg')
+        cover_s = os.path.join(p1.p1_contract_abs_dir, 'page_0.svg')
         with open(cover_s, 'w') as fw:
             fw.write(mako_template.render(
                 contract_n=p1.p1_contract_nr,
@@ -667,9 +668,10 @@ def display_all():
             # use data on disk, if not on disk create with default values
             if load_o_create_p3_fields_info_f():
                 render_svg_1_template_1_product()
+                render_title_page()
                 render_svg_1_template_all_products()
     render_svg_all_templates_all_products()
-    make_deliverable_pdf()
+    svg_s_to_pdf_deliverable()
 
 
 context_func_d = {
@@ -691,7 +693,7 @@ def init():
     p.menus = {
         p.menu: {
             '77': render_title_page,
-            '66': make_deliverable_pdf,
+            '66': svg_s_to_pdf_deliverable,
             '55': render_svg_all_templates_all_products,
             '1': display_all,
             '2': display_or_load_output_overview,
