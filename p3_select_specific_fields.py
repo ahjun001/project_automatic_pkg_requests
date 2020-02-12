@@ -31,6 +31,7 @@ p3_d = {
 }
 
 
+# todo: when change directory redo input_mako.json
 def load_p3_all_specific_fields_l():
     global p3_all_specific_fields_l
 
@@ -403,8 +404,7 @@ def svg_s_to_pdf_deliverable():
         filename, _ = os.path.splitext(file)
         subprocess.Popen([
             'inkscape',
-            '-A',
-            filename + '.pdf',
+            f'--export-file={filename}.pdf',
             file,
         ]).wait()
 
