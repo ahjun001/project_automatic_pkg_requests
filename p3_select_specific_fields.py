@@ -31,10 +31,6 @@ p3_d = {
 }
 
 
-# todo: if in memory check version, else is on disk load, else create default
-# todo: when change contracts are all fields with previous information updated
-# todo: make only one function to see one template, 1 product, or 1 contract
-
 def load_p3_all_specific_fields_l():
     global p3_all_specific_fields_l
 
