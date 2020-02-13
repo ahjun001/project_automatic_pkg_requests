@@ -131,7 +131,7 @@ def load_o_create_mako_input_values_json(some_rel_dir):
             idx = 0
             temp_d = {}
             for prod in p1.p1_all_products_to_be_processed_set:
-                temp_d[prod] = {'i': idx + 1, 'prod_n': prod}
+                temp_d[prod] = {'i': str(idx + 1), 'prod_n': prod}
                 idx += 1
 
             # populate the skeleton
@@ -142,7 +142,7 @@ def load_o_create_mako_input_values_json(some_rel_dir):
 
             # build p3_selected_fields_values_by_prod_d with key = i - 1
             for v in temp_d.values():
-                p3_selected_fields_values_by_prod_d[v['i'] - 1] = v
+                p3_selected_fields_values_by_prod_d[int(v['i']) - 1] = v
 
             with open(filename, 'w') as f:
                 json.dump(p3_selected_fields_values_by_prod_d, f, ensure_ascii=False)
@@ -287,12 +287,14 @@ def select_a_template_n_edit_fields():
     # read existing templates
     drs = p1.read_dirs(p1.p1_contract_abs_dir)
     if drs:
+        if not p3_fields_rel_dir:
+            p3_fields_rel_dir = drs[0]
         print(f'~~~ Now processing contract #: {p1.p1_contract_nr}')
         print('>>> Select template to edit:\n')
         for i in range(len(drs)):
             print(str(i) + '. ' + drs[i][2:])
         while True:
-            s = input('\nEnter nr of directory to delete_all_data_on_selected_contract, \'b\' to return : ')
+            s = input('\nEnter nr of template to be edited, \'b\' to return : ')
             if s == 'b':
                 os.system('clear')
                 break
@@ -334,22 +336,22 @@ def select_a_template_n_edit_fields():
         return
 
 
-def display_selected_fields():
-    with open(os.path.join(p1.p1_contract_abs_dir, 'p4_' + p1.p1_contract_nr + '_fields_from_contract_l.json')) as f:
-        p3_fields_from_contract_l = json.load(f)
-    indic_val_d = {}
-    for option in p3_all_specific_fields_l:
-        temp_d = {}
-        for indic in p3_fields_from_contract_l:
-            if indic['what'] == option:
-                temp_d[indic['prod_nr']] = indic['info']
-        indic_val_d[option] = temp_d
-
-    for option in p3_all_specific_fields_l:
-        nr_tabs = 1 if len(option) >= 8 else 2
-        print(option, nr_tabs * '\t', list(indic_val_d[option].values()))
-    print('\nAlready selected: ', p3_d['selected_fields'], '\n')
-    print('Currently processing ', p3_fields_rel_dir)
+# def display_selected_fields():
+#     with open(os.path.join(p1.p1_contract_abs_dir, 'p4_' + p1.p1_contract_nr + '_fields_from_contract_l.json')) as f:
+#         p3_fields_from_contract_l = json.load(f)
+#     indic_val_d = {}
+#     for option in p3_all_specific_fields_l:
+#         temp_d = {}
+#         for indic in p3_fields_from_contract_l:
+#             if indic['what'] == option:
+#                 temp_d[indic['prod_nr']] = indic['info']
+#         indic_val_d[option] = temp_d
+#
+#     for option in p3_all_specific_fields_l:
+#         nr_tabs = 1 if len(option) >= 8 else 2
+#         print(option, nr_tabs * '\t', list(indic_val_d[option].values()))
+#     print('\nAlready selected: ', p3_d['selected_fields'], '\n')
+#     print('Currently processing ', p3_fields_rel_dir)
 
 
 def display_p3_fields_info_d():
@@ -549,7 +551,7 @@ def render_svg_all_templates_all_products(only_1_temp=False, only_1_prod=False):
                     fw.write(mako_template.render(
                         contract_n=p1.p1_contract_nr,
                         template_nr=template_nr,
-                        **p3_selected_fields_values_by_prod_d[str(i)])
+                        **p3_selected_fields_values_by_prod_d[int(i)])
                     )
                     fw.write('</g>\n')
                     ox += template_view_box_w + spacing_w
@@ -688,13 +690,11 @@ def init():
         p.main_menu = p.menu
     p.menus = {
         p.menu: {
-            '77': render_title_page,
             '66': svg_s_to_pdf_deliverable,
             '55': render_svg_all_templates_all_products,
             '1': display_all,
             '2': display_or_load_output_overview,
             '3': select_a_template_n_edit_fields,
-            '4': display_selected_fields,
             '6': p1.display_p1_contract_info_d,
             '7': p1.display_p1_contract_info_f,
             '8': display_p3_fields_info_d,
