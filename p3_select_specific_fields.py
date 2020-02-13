@@ -116,7 +116,7 @@ def load_o_create_mako_input_values_json(some_rel_dir):
     """
     # will be set in this function
     global p3_selected_fields_values_by_prod_d
-    # make sure global variables are set in all situations, outside the loop to do it once only
+    # make sure global variables are initialized in all situations, outside the loop to do it once only
     filename = os.path.join(p1.p1_contract_abs_dir + '/' + some_rel_dir, 'mako_input.json')
     if pathlib.Path(filename).exists():
         with open(filename) as fr:
@@ -140,9 +140,9 @@ def load_o_create_mako_input_values_json(some_rel_dir):
                     if indc_d['what'] in p3_d['selected_fields']:  # loop over the smaller more
                         temp_d[indc_d['prod_nr']][indc_d['what']] = indc_d['info']
 
-            # build p3_selected_fields_values_by_prod_d with key = i - 1
+            # build the dictionary p3_selected_fields_values_by_prod_d with key = i - 1
             for v in temp_d.values():
-                p3_selected_fields_values_by_prod_d[int(v['i']) - 1] = v
+                p3_selected_fields_values_by_prod_d[str(int(v['i']) - 1)] = v
 
             with open(filename, 'w') as f:
                 json.dump(p3_selected_fields_values_by_prod_d, f, ensure_ascii=False)
@@ -284,12 +284,14 @@ def p3_select_specific_fields_context_func():
 def select_a_template_n_edit_fields():
     global p3_fields_rel_dir
 
-    # read existing templates
+    # list existing directories, each containing a template
     drs = p1.read_dirs(p1.p1_contract_abs_dir)
     if drs:
+        # giving a default directory if none has been set before
         if not p3_fields_rel_dir:
             p3_fields_rel_dir = drs[0]
         print(f'~~~ Now processing contract #: {p1.p1_contract_nr}')
+        print(f'~~~ Working on: {p3_fields_rel_dir}')
         print('>>> Select template to edit:\n')
         for i in range(len(drs)):
             print(str(i) + '. ' + drs[i][2:])
@@ -329,6 +331,7 @@ def select_a_template_n_edit_fields():
                     print('!\n! That\'s not an integer, try again\n!')
 
         save_template_info_json()
+        # todo: put this in the loop when field are edited
         build_template_header_n_body(p3_fields_rel_dir)
         load_o_create_mako_input_values_json(p3_fields_rel_dir)
         render_svg_1_template_1_product()
@@ -406,7 +409,7 @@ def svg_s_to_pdf_deliverable():
         filename, _ = os.path.splitext(file)
         subprocess.Popen([
             'inkscape',
-            f'--export-file={filename}.pdf',
+            f'--export-pdf={filename}.pdf',  # f'--export-file={filename}.pdf',
             file,
         ]).wait()
 
@@ -551,7 +554,7 @@ def render_svg_all_templates_all_products(only_1_temp=False, only_1_prod=False):
                     fw.write(mako_template.render(
                         contract_n=p1.p1_contract_nr,
                         template_nr=template_nr,
-                        **p3_selected_fields_values_by_prod_d[int(i)])
+                        **p3_selected_fields_values_by_prod_d[str(i)])
                     )
                     fw.write('</g>\n')
                     ox += template_view_box_w + spacing_w
@@ -692,6 +695,7 @@ def init():
         p.menu: {
             '66': svg_s_to_pdf_deliverable,
             '55': render_svg_all_templates_all_products,
+            '44': render_title_page,
             '1': display_all,
             '2': display_or_load_output_overview,
             '3': select_a_template_n_edit_fields,
