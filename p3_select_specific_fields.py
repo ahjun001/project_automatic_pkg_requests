@@ -169,6 +169,40 @@ def display_or_load_output_overview():
     print('~~~')
 
 
+def fields_from_template(rel_dir):
+    template_s = os.path.join(p0_root_abs_dir + '/common/' + rel_dir, 'label_template.svg')
+    with open(template_s) as fr:
+        lines = fr.readlines()
+    template_fields_set = set()
+    for line in lines:
+        finds = re.findall(r'(\${)(.+?)(})', line)
+        for find in finds:
+            template_fields_set.add(find[1])
+    return template_fields_set
+
+
+# Todo: check why plst_bag does not come out
+def check_selected_fields_mismatch():
+    template_fields = fields_from_template(p3_fields_rel_dir)
+    template_fields.remove('i')
+    template_fields.remove('template_nr')
+    template_fields.remove('prod_n')
+    if list(template_fields) not in p3_d['selected_fields']:
+        missing_in_template_l = []
+        for f in template_fields:
+            if f not in p3_d['selected_fields']:
+                missing_in_template_l.append(f)
+        print('The following fields where not found in the template', missing_in_template_l)
+
+
+def check_all_templates():
+    load_o_create_p3_fields_info_f()
+    global p3_fields_rel_dir
+    _, drs, _ = next(os.walk(p1.p1_contract_abs_dir))
+    for p3_fields_rel_dir in drs:
+        check_selected_fields_mismatch()
+
+
 def add_fields():
     global p3_f
     global p3_fields_rel_dir
@@ -546,8 +580,8 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
 
             while i < (1 if only_1_prod else lngth):  # writing vertically while there are templates to print
                 # writing horizontally while there templates to print
-                while ox + template_view_box_w + spacing_w <= p3_d['page_view_box_w'] and i < (
-                      1 if only_1_prod else lngth):
+                while ox + template_view_box_w + spacing_w <= p3_d['page_view_box_w'] \
+                      and i < (1 if only_1_prod else lngth):
                     offset_x = ox + spacing_w
                     offset_y = oy + spacing_h
                     fw.write(r"<g transform = 'translate(" + f"{offset_x}, {offset_y})'>\n")
@@ -694,6 +728,7 @@ def init():
         p.main_menu = p.menu
     p.menus = {
         p.menu: {
+            '0': check_all_templates,
             '1': display_all,
             '2': select_a_template_n_edit_fields,
             '3': render_svg_1_template_1_product,
