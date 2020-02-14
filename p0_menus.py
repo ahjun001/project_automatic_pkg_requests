@@ -23,6 +23,15 @@ def back_to_main():  # just there to have a selection in the menu, the function 
     print('~~~ Returning to main  ~~~')
 
 
+def debug():
+    global mod_lev_1_menu
+    global menu
+
+    print('~~~debug~~~')
+    mod_lev_1_menu = menu
+    menu = 'debug'
+
+
 def normal_exit():
     print('~~~ Regular program exit ~~~')
     sys.exit(0)

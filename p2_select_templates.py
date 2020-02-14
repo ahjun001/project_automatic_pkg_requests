@@ -118,6 +118,7 @@ def p2_select_templates_context_func(prompt=True):
 
 context_func_d = {
     'p2_select_templates': p2_select_templates_context_func,
+    'debug': p2_select_templates_context_func,
 }
 
 
@@ -139,9 +140,17 @@ def init():
             '4': delete_existing_templates,
             'b': p.back_to_main,
             'q': p.normal_exit,
+            'd': p.debug,
+        },
+        'debug': {
+            '1': create_default_templates,
+            '2': load_n_display,
+            '3': add_new_templates,
+            '4': delete_existing_templates,
+            'b': p.back,
+            'q': p.normal_exit,
         },
     }
-    # p.mod_lev_1_menus = p.menus
     if not p.main_menus:
         p.main_menus = p.menus
     if __name__ == '__main__':

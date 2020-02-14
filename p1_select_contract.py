@@ -327,12 +327,6 @@ def display():
         print('p1 has not run or data cannot be loaded from disk:')
 
 
-def display_sub_processes_output():
-    print('~~~display_sub_processes_output~~~')
-    p.mod_lev_1_menu = p.menu
-    p.menu = 'display_sub_processes_output'
-
-
 def select_new_contract():
     global p1_contract_nr
     global p1_contract_abs_dir
@@ -641,7 +635,7 @@ def view_file_not_in_directory():
 
 
 def view_a_prefix_could_not_be_read_from_filename_ext():
-    print('A prefix could not be display_sub_processes_output from filename ext')
+    print('A prefix could not be read from filename ext')
 
 
 def display_p1_contract_info_d():
@@ -717,7 +711,7 @@ def p1_select_contract_main_context_func():
               )
 
 
-def p1_select_contract_display_context_func():
+def p1_select_contract_debug_func():
     if p0_load_program_info_d():
         display_dirs(p0_root_abs_dir + '/data/')
         print('~~~ Select contract / Display ~~~')
@@ -727,7 +721,7 @@ def p1_select_contract_display_context_func():
 
 context_func_d = {
     'select_contract': p1_select_contract_main_context_func,
-    'display_sub_processes_output': p1_select_contract_display_context_func,
+    'debug': p1_select_contract_debug_func,
 }
 
 
@@ -746,13 +740,13 @@ def init():
             '2': display_or_load_output_overview,
             '3': select_new_contract,
             '4': delete_all_data_on_selected_contract,
-            '7': display_sub_processes_output,
             '8': display_p1_program_info_d,
             '9': display_p1_program_info_f,
             'b': p.back_to_main,
             'q': p.normal_exit,
+            'd': p.debug,
         },
-        'display_sub_processes_output': {
+        'debug': {
             '1': display_p1_search_reg_ex_l,
             '2': display_p1_all_products_to_be_processed_set,
             '3': display_p1b_indics_from_contract_l,
@@ -761,7 +755,7 @@ def init():
             '6': display_p1e_specific_fields_d_of_d,
             'b': p.back,
             'q': p.normal_exit,
-        }
+        },
     }
     if not p.main_menus:
         p.main_menus = p.menus

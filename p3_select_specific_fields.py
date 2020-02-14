@@ -50,7 +50,7 @@ def save_template_info_json():
                         + '/'
                         + p3_fields_rel_dir, 'template-info.json')
     with open(p3_f, 'w') as f:
-        json.dump(p3_d, f, ensure_ascii=False)
+        json.dump(p3_d, f, ensure_ascii = False)
 
 
 def build_template_header_n_body(some_rel_dir):
@@ -145,7 +145,7 @@ def load_o_create_mako_input_values_json(some_rel_dir):
                 p3_selected_fields_values_by_prod_d[str(int(v['i']) - 1)] = v
 
             with open(filename, 'w') as f:
-                json.dump(p3_selected_fields_values_by_prod_d, f, ensure_ascii=False)
+                json.dump(p3_selected_fields_values_by_prod_d, f, ensure_ascii = False)
         else:
             print('!\n! No template has been selected for display\n!')
 
@@ -409,7 +409,7 @@ def svg_s_to_pdf_deliverable():
         filename, _ = os.path.splitext(file)
         subprocess.Popen([
             'inkscape',
-            f'--export-pdf={filename}.pdf',  # f'--export-file={filename}.pdf',
+            f'--export-file={filename}.pdf',  # f'--export-pdf={filename}.pdf',
             file,
         ]).wait()
 
@@ -460,11 +460,11 @@ def close_svg_for_output(fw, svg_out):
 def horizontal_centering_offset(template_view_box_w, spacing_w):
     n_of_templates_per_row = int(p3_d['page_view_box_w'] // template_view_box_w)
     result = (p3_d['page_view_box_w'] - n_of_templates_per_row * template_view_box_w - (
-              n_of_templates_per_row - 1) * spacing_w) / 2
+        n_of_templates_per_row - 1) * spacing_w) / 2
     return result
 
 
-def render_svg_all_templates_all_products(only_1_temp=False, only_1_prod=False):
+def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = False):
     """
 
     """
@@ -538,8 +538,8 @@ def render_svg_all_templates_all_products(only_1_temp=False, only_1_prod=False):
             )
             # run mako.template.Template
             mako_template = Template(
-                filename=os.path.join(p3_fields_abs_dir, 'label_template_body.svg'),
-                input_encoding='utf-8'
+                filename = os.path.join(p3_fields_abs_dir, 'label_template_body.svg'),
+                input_encoding = 'utf-8'
             )
             lngth = len(p3_selected_fields_values_by_prod_d)  # nr of products in the contract
             i = 0  # index of the template to print
@@ -547,13 +547,13 @@ def render_svg_all_templates_all_products(only_1_temp=False, only_1_prod=False):
             while i < (1 if only_1_prod else lngth):  # writing vertically while there are templates to print
                 # writing horizontally while there templates to print
                 while ox + template_view_box_w + spacing_w <= p3_d['page_view_box_w'] and i < (
-                        1 if only_1_prod else lngth):
+                      1 if only_1_prod else lngth):
                     offset_x = ox + spacing_w
                     offset_y = oy + spacing_h
                     fw.write(r"<g transform = 'translate(" + f"{offset_x}, {offset_y})'>\n")
                     fw.write(mako_template.render(
-                        contract_n=p1.p1_contract_nr,
-                        template_nr=template_nr,
+                        contract_n = p1.p1_contract_nr,
+                        template_nr = template_nr,
                         **p3_selected_fields_values_by_prod_d[str(i)])
                     )
                     fw.write('</g>\n')
@@ -579,11 +579,11 @@ def render_svg_all_templates_all_products(only_1_temp=False, only_1_prod=False):
 
 
 def render_svg_1_template_1_product():
-    render_svg_all_templates_all_products(only_1_temp=True, only_1_prod=True)
+    render_svg_all_templates_all_products(only_1_temp = True, only_1_prod = True)
 
 
 def render_svg_1_template_all_products():
-    render_svg_all_templates_all_products(only_1_temp=True)
+    render_svg_all_templates_all_products(only_1_temp = True)
 
 
 def render_title_page():
@@ -608,10 +608,10 @@ def render_title_page():
         i = 0
         good_n = 0
         for line in lines:
-            res1 = re.match('\s*<g', line)
+            res1 = re.match(r'\s*<g', line)
             if res1:
                 balance += 1
-            res2 = re.match('\s*</g>', line)
+            res2 = re.match(r'\s*</g>', line)
             if balance >= 3:
                 tmp_l.append(line)
             if res2:
@@ -642,8 +642,8 @@ def render_title_page():
 
         # run mako.template.Template
         mako_template = Template(
-            filename=svg_out,
-            input_encoding='utf-8'
+            filename = svg_out,
+            input_encoding = 'utf-8'
         )
 
         if not p3_selected_fields_values_by_prod_d:
@@ -651,7 +651,7 @@ def render_title_page():
         cover_s = os.path.join(p1.p1_contract_abs_dir, 'page_0.svg')
         with open(cover_s, 'w') as fw:
             fw.write(mako_template.render(
-                contract_n=p1.p1_contract_nr,
+                contract_n = p1.p1_contract_nr,
                 **p3_selected_fields_values_by_prod_d['0']
             ))
         webbrowser.get('Firefox').open_new_tab(cover_s)
@@ -677,6 +677,7 @@ def display_all():
 
 context_func_d = {
     'select_specific_fields': p3_select_specific_fields_context_func,
+    'debug': p3_select_specific_fields_context_func,
 }
 
 
@@ -693,6 +694,16 @@ def init():
         p.main_menu = p.menu
     p.menus = {
         p.menu: {
+            '1': display_all,
+            '2': select_a_template_n_edit_fields,
+            '3': render_svg_1_template_1_product,
+            '4': render_title_page,
+            '5': render_svg_all_templates_all_products,
+            'b': p.back_to_main,
+            'q': p.normal_exit,
+            'd': p.debug,
+        },
+        'debug': {
             '66': svg_s_to_pdf_deliverable,
             '55': render_svg_all_templates_all_products,
             '44': render_title_page,
@@ -703,7 +714,7 @@ def init():
             '7': p1.display_p1_contract_info_f,
             '8': display_p3_fields_info_d,
             '9': display_p3_fields_info_f,
-            'b': p.back_to_main,
+            'b': p.back,
             'q': p.normal_exit,
         }
     }
