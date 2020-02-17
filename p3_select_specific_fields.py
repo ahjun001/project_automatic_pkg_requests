@@ -20,14 +20,14 @@ p3_all_specific_fields_l = []  # list of fields from p1e_specific_fields_d_of_d
 p3_selected_fields_values_by_prod_d = {}  # field values as in mako_input.json
 p3_body_svg = ''  # content of label_template_body.svg
 
-p3_default_fields_l = ["xl_prod_spec", "u_parc", 'plstc_bg']
+p3_default_fields_l = ["xl_prod_spec", "u_parc"]
 p3_f = None  # info on fields directory currently being edited
 p3_d = {
     "selected_fields": list(p3_default_fields_l),
     "template_header": '',
     "header_height": 7,
-    "page_view_box_w": 170,
-    "page_view_box_h": 257,
+    "page_view_box_w": 180,
+    "page_view_box_h": 287,
 }
 
 
@@ -53,10 +53,9 @@ def save_template_info_json():
         json.dump(p3_d, f, ensure_ascii = False)
 
 
-def build_template_header_n_body(some_rel_dir):
+def if_not_exists_build_template_header_n_body(some_rel_dir):
     """
     copy header, also template if necessary, build body from template.svg copy that is in repository directory
-    copy header, also template if necessary, build body from template.svg copy that is in repository directory yancey ya
     """
 
     from_abs_dir = os.path.join(p0_root_abs_dir + '/common', some_rel_dir)
@@ -108,16 +107,16 @@ def load_o_create_p3_fields_info_f():
         return False
 
 
-def load_o_create_mako_input_values_json(some_rel_dir):
+def load_o_create_mako_input_values_json():
+    global p3_fields_rel_dir
     """
     Creates a json file with variables and values necessary to mako rendering
-    :param some_rel_dir:
     :return:
     """
     # will be set in this function
     global p3_selected_fields_values_by_prod_d
     # make sure global variables are initialized in all situations, outside the loop to do it once only
-    filename = os.path.join(p1.p1_contract_abs_dir + '/' + some_rel_dir, 'mako_input.json')
+    filename = os.path.join(p1.p1_contract_abs_dir + '/' + p3_fields_rel_dir, 'mako_input.json')
     if pathlib.Path(filename).exists():
         with open(filename) as fr:
             p3_selected_fields_values_by_prod_d = json.load(fr)
@@ -169,8 +168,8 @@ def display_or_load_output_overview():
     print('~~~')
 
 
-def fields_from_template(rel_dir):
-    template_s = os.path.join(p0_root_abs_dir + '/common/' + rel_dir, 'label_template.svg')
+def fields_from_template():
+    template_s = os.path.join(os.path.join(p1.p1_contract_abs_dir, p3_fields_rel_dir), 'label_template.svg')
     with open(template_s) as fr:
         lines = fr.readlines()
     template_fields_set = set()
@@ -181,26 +180,29 @@ def fields_from_template(rel_dir):
     return template_fields_set
 
 
-# Todo: check why plst_bag does not come out
-def check_selected_fields_mismatch():
-    template_fields = fields_from_template(p3_fields_rel_dir)
-    template_fields.remove('i')
-    template_fields.remove('template_nr')
-    template_fields.remove('prod_n')
-    if list(template_fields) not in p3_d['selected_fields']:
+def check_possible_mismatch_selected_fields_n_template():
+    template_fields = fields_from_template()
+    [template_fields.remove(x) for x in ['i', 'template_nr', 'prod_n']]
+    diff_set = template_fields - set(p3_d['selected_fields'])
+    if diff_set:
         missing_in_template_l = []
         for f in template_fields:
             if f not in p3_d['selected_fields']:
                 missing_in_template_l.append(f)
-        print('The following fields where not found in the template', missing_in_template_l)
+        print('The template requires the following fields but they were not found in the data: ', missing_in_template_l)
+        template_f = os.path.join(os.path.join(p1.p1_contract_abs_dir, p3_fields_rel_dir), 'label_template.svg')
+        subprocess.Popen([
+            'inkscape',
+            template_f,
+        ]).wait()
 
 
-def check_all_templates():
-    load_o_create_p3_fields_info_f()
+def check_all_templates_have_correct_fields():
     global p3_fields_rel_dir
     _, drs, _ = next(os.walk(p1.p1_contract_abs_dir))
     for p3_fields_rel_dir in drs:
-        check_selected_fields_mismatch()
+        load_o_create_p3_fields_info_f()
+        check_possible_mismatch_selected_fields_n_template()
 
 
 def add_fields():
@@ -365,9 +367,9 @@ def select_a_template_n_edit_fields():
                     print('!\n! That\'s not an integer, try again\n!')
 
         save_template_info_json()
-        # todo: put this in the loop when field are edited
-        build_template_header_n_body(p3_fields_rel_dir)
-        load_o_create_mako_input_values_json(p3_fields_rel_dir)
+        if_not_exists_build_template_header_n_body(p3_fields_rel_dir)
+        check_possible_mismatch_selected_fields_n_template()
+        load_o_create_mako_input_values_json()
         render_svg_1_template_1_product()
     else:
         return
@@ -426,8 +428,6 @@ def svg_s_to_pdf_deliverable():
                    and f.endswith('.svg')
                    and f[0] != '.']
 
-    print(f'print_svg_l: {print_svg_l}')
-
     for file in print_svg_l:
         with open(file) as fr, open('.' + file, 'w') as fw:
             for line in fr:
@@ -436,8 +436,6 @@ def svg_s_to_pdf_deliverable():
     print_clean_svg_l = [f for f in os.listdir(p1.p1_contract_abs_dir) if os.path.isfile(f)
                          and f.endswith('.svg')
                          and f[0] == '.']
-
-    print(f'print_clean_svg_l: {print_svg_l}')
 
     for file in print_clean_svg_l:
         filename, _ = os.path.splitext(file)
@@ -481,7 +479,7 @@ def open_svg_for_output(fw, header, page, svg_out, only_1_temp, only_1_prod, fam
         f"<g>\n<text transform='translate({page_x}, {page_y})' "
         f"style='font-family:{family};font-size:{size};font-style:{style}'>-- {page} --</text>\n</g>\n"
     )
-    fw.write("<g transform='translate(20, 20)'>\n")  # todo: reset with page margins
+    fw.write("<g transform='translate(15, 15)'>\n")  # todo: reset with page margins
     return fw, svg_out
 
 
@@ -521,7 +519,7 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
         page = 1  # nr of page being built
         for p3_fields_rel_dir in drs:
             template_nr += 1
-            build_template_header_n_body(p3_fields_rel_dir)
+            if_not_exists_build_template_header_n_body(p3_fields_rel_dir)
             # loading data previously used with this template
             load_o_create_p3_fields_info_f()
             # opening a new page
@@ -540,9 +538,10 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
                     fw, header, page, svg_out, only_1_temp, only_1_prod,
                     family, size, style
                 )
-            # from template build the body necessary to multiply templates  todo: make sure all fields are in place
+            # from template build the body necessary to multiply templates
             if not p3_selected_fields_values_by_prod_d:
-                load_o_create_mako_input_values_json(p3_fields_rel_dir)
+                check_possible_mismatch_selected_fields_n_template()
+                load_o_create_mako_input_values_json()
             # read view box values from template_body so as to compute spacings
             to_abs_dir = os.path.join(p1.p1_contract_abs_dir, p3_fields_rel_dir)
             with open(os.path.join(to_abs_dir, 'label_template.svg')) as f:
@@ -564,7 +563,7 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
             assert template_view_box_h + spacing_h <= p3_d['page_view_box_h'], \
                 'write_templates: ! template height + spacing height don\'t fit in the page'
             # write the header for this directory
-            oy += p3_d['header_height']  # todo: check if at end of page
+            oy += p3_d['header_height']  # todo: check if at last product, then necessary height is of next label's
             fw.write(
                 f"<g>\n<text transform='translate(0, {oy})' "
                 f"style='font-family:{family};font-size:{size};font-style:{style}'>\
@@ -681,7 +680,8 @@ def render_title_page():
         )
 
         if not p3_selected_fields_values_by_prod_d:
-            load_o_create_mako_input_values_json(p3_fields_rel_dir)
+            check_possible_mismatch_selected_fields_n_template()
+            load_o_create_mako_input_values_json()
         cover_s = os.path.join(p1.p1_contract_abs_dir, 'page_0.svg')
         with open(cover_s, 'w') as fw:
             fw.write(mako_template.render(
@@ -728,7 +728,7 @@ def init():
         p.main_menu = p.menu
     p.menus = {
         p.menu: {
-            '0': check_all_templates,
+            '0': check_all_templates_have_correct_fields,
             '1': display_all,
             '2': select_a_template_n_edit_fields,
             '3': render_svg_1_template_1_product,
