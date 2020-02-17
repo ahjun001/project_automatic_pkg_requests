@@ -151,7 +151,7 @@ def load_o_create_mako_input_values_json():
 
 def suggest_spacing_calc(lgth, template_view_box):
     n_of_templates_per_dim = int(lgth // template_view_box)
-    return min(10, int((lgth - n_of_templates_per_dim * template_view_box) / max(1, (n_of_templates_per_dim - 1))))
+    return sum([0, int((lgth - n_of_templates_per_dim * template_view_box) / max(1, (n_of_templates_per_dim - 1)))])/1
 
 
 def display_or_load_output_overview():
