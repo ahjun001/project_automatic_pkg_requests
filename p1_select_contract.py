@@ -14,8 +14,8 @@ import p0_menus as p
 
 p0_root_abs_dir = os.path.dirname(os.path.abspath(__file__))  # root directory where the program is located
 p1_contract_nr = ''  # prefix of the contract xls source file
-p1_program_info_f = ''
-p1_program_info_d = {}
+p1_f = ''
+p1_d = {}
 p1_initial_xls_contract_file = ''
 p1_full_path_source_file_xls = ''  # full path of source xls file
 p1_contract_abs_dir = ''  # directory where a copy of the xls contract file and contract extracted data is
@@ -26,8 +26,8 @@ def p0_load_program_info_d():
     Loads p1_contract_nr, p1_full_path_source_file_xls, and p1_contract_abs_dir from program-info.json
     """
     global p1_contract_nr
-    global p1_program_info_f
-    global p1_program_info_d
+    global p1_f
+    global p1_d
     global p1_full_path_source_file_xls
     global p1_contract_abs_dir
 
@@ -36,15 +36,15 @@ def p0_load_program_info_d():
     if not pathlib.Path(data_abs_dir).exists():
         os.mkdir(data_abs_dir, mode=0o700)
 
-    p1_program_info_f = os.path.join(p0_root_abs_dir, 'program-info.json')
-    if pathlib.Path(p1_program_info_f).exists():
-        # then load the info it contains in p1_program_info_d dictionary
-        with open(p1_program_info_f) as f:
-            p1_program_info_d = json.load(f)
-        # check if p1_program_info_d['p1_contract_nr'] helps point to a valid file,
-        if p1_program_info_d:
-            p1_contract_nr = p1_program_info_d['p1_contract_nr']
-            p1_full_path_source_file_xls = p1_program_info_d['p1_full_path_source_file_xls']
+    p1_f = os.path.join(p0_root_abs_dir, 'program-info.json')
+    if pathlib.Path(p1_f).exists():
+        # then load the info it contains in p1_d dictionary
+        with open(p1_f) as f:
+            p1_d = json.load(f)
+        # check if p1_d['p1_contract_nr'] helps point to a valid file,
+        if p1_d:
+            p1_contract_nr = p1_d['p1_contract_nr']
+            p1_full_path_source_file_xls = p1_d['p1_full_path_source_file_xls']
             p1_contract_abs_dir = p0_root_abs_dir + f'/data/{p1_contract_nr}'
             return True
 
@@ -88,8 +88,8 @@ def process_default_contract():
     global p1_contract_nr
     global p1_contract_abs_dir
     global p1_full_path_source_file_xls
-    global p1_program_info_f
-    global p1_program_info_d
+    global p1_f
+    global p1_d
     global p1_initial_xls_contract_file
     global p1_search_reg_ex_l
     global p1b_indics_from_contract_l
@@ -107,35 +107,35 @@ def process_default_contract():
 
     p0_load_program_info_d()
     # checking if a program-info.json file exists in the root directory
-    if pathlib.Path(p1_program_info_f).exists():
-        # then load the info it contains in p1_program_info_d dictionary
-        with open(p1_program_info_f) as f:
-            p1_program_info_d = json.load(f)
-        # check if p1_program_info_d['p1_contract_nr'] helps point to a valid file,
-        if p1_program_info_d:
+    if pathlib.Path(p1_f).exists():
+        # then load the info it contains in p1_d dictionary
+        with open(p1_f) as f:
+            p1_d = json.load(f)
+        # check if p1_d['p1_contract_nr'] helps point to a valid file,
+        if p1_d:
             # then check if this one could be working data
-            if 'p1_contract_nr' in p1_program_info_d:
-                p1_contract_abs_dir = p0_root_abs_dir + f'/data/{p1_program_info_d["p1_contract_nr"]}'
+            if 'p1_contract_nr' in p1_d:
+                p1_contract_abs_dir = p0_root_abs_dir + f'/data/{p1_d["p1_contract_nr"]}'
                 if not os.path.isdir(p1_contract_abs_dir):
                     os.mkdir(p1_contract_abs_dir)
                 _, result = check_sole_cntrct_ext_file_w_o_wo_prefix_is_in_dir(p1_contract_abs_dir, '.xls')
                 if result:
                     # create_a_new_label_kind all global variables accordingly
                     p1_full_path_source_file_xls = result
-                    p1_contract_nr = p1_program_info_d["p1_contract_nr"]
-                # if the data from p1_program_info_d cannot be used
+                    p1_contract_nr = p1_d["p1_contract_nr"]
+                # if the data from p1_d cannot be used
                 else:
                     # if a valid initial file exists but is not uniquely copied in the repertory
-                    if 'p1_initial_xls' in p1_program_info_d:  # tests True even if  == ""
+                    if 'p1_initial_xls' in p1_d:  # tests True even if  == ""
                         if not pathlib.Path(p1_contract_abs_dir).exists():
                             os.mkdir(p1_contract_abs_dir, mode=0o700)
-                        p1_initial_xls_contract_file = p1_program_info_d['p1_initial_xls']
+                        p1_initial_xls_contract_file = p1_d['p1_initial_xls']
                         shutil.copy(p1_initial_xls_contract_file, p1_contract_abs_dir)
                         _, filename_ext = os.path.split(p1_initial_xls_contract_file)
                         p1_full_path_source_file_xls = os.path.join(p1_contract_abs_dir, filename_ext)
                     else:
                         # cannot do much else with this info, abandon and start-over
-                        del p1_program_info_d['p1_contract_nr']
+                        del p1_d['p1_contract_nr']
                         build_program_info_d_from_root_xls_file_or_ask_open_file()
         # if program-info.json doesn't point to a valid ./data/p1_contract_nr and xls file, then rebuild
         else:
@@ -339,7 +339,7 @@ def select_new_contract():
     p1_initial_xls_contract_file = askopenfilename()
     if not p1_initial_xls_contract_file:
         return
-    p1_program_info_d['p1_initial_xls'] = p1_initial_xls_contract_file
+    p1_d['p1_initial_xls'] = p1_initial_xls_contract_file
     # split path and filename
     path, filename_ext = os.path.split(p1_initial_xls_contract_file)
     # split filename and extension
@@ -369,7 +369,7 @@ def select_new_contract():
 
 
 def delete_all_data_on_selected_contract():
-    global p1_program_info_d
+    global p1_d
     global p1_contract_nr
     global p0_root_abs_dir
     print('~~~ deleting non-empty directories ~~~')
@@ -395,7 +395,7 @@ def delete_all_data_on_selected_contract():
                             '\tand start as if repository is empty !!!'
                         )
                         os.remove(os.path.join(p0_root_abs_dir, 'program-info.json'))
-                        p1_program_info_d = {}
+                        p1_d = {}
                         p1_contract_nr = ''
                     shutil.rmtree(p0_root_abs_dir + '/data/' + drs[int(s)])
                     break
@@ -412,8 +412,8 @@ def check_sole_cntrct_ext_file_w_o_wo_prefix_is_in_dir(some_abs_dir, ext, check_
     global p1_contract_nr
     global p1_contract_abs_dir
     global p1_full_path_source_file_xls
-    global p1_program_info_f
-    global p1_program_info_d
+    global p1_f
+    global p1_d
     global p1_contract_info_d
     global p1_contract_info_f
 
@@ -462,8 +462,8 @@ def build_program_info_d_from_root_xls_file_or_ask_open_file():
     global p1_contract_abs_dir
     global p1_full_path_source_file_xls
     global p1_initial_xls_contract_file
-    global p1_program_info_f
-    global p1_program_info_d
+    global p1_f
+    global p1_d
     global p1_contract_nr
     global p1_contract_abs_dir
 
@@ -510,15 +510,15 @@ def document_in_program_info_json():
     global p1_contract_nr
     global p1_initial_xls_contract_file
     global p1_full_path_source_file_xls
-    global p1_program_info_f
-    global p1_program_info_d
+    global p1_f
+    global p1_d
 
     # document the info in program-info.json
-    p1_program_info_d['p1_contract_nr'] = p1_contract_nr
-    p1_program_info_d['p1_initial_xls'] = p1_initial_xls_contract_file
-    p1_program_info_d['p1_full_path_source_file_xls'] = p1_full_path_source_file_xls
-    with open(p1_program_info_f, 'w') as fw:
-        json.dump(p1_program_info_d, fw, ensure_ascii=False)
+    p1_d['p1_contract_nr'] = p1_contract_nr
+    p1_d['p1_initial_xls'] = p1_initial_xls_contract_file
+    p1_d['p1_full_path_source_file_xls'] = p1_full_path_source_file_xls
+    with open(p1_f, 'w') as fw:
+        json.dump(p1_d, fw, ensure_ascii=False)
 
 
 def load_p1_all_products_to_be_processed_set():
@@ -660,16 +660,16 @@ def display_p1_contract_info_f():
 
 
 def display_p1_program_info_d():
-    global p1_program_info_d
+    global p1_d
     print('~~~ Reading program-info global value ~~~')
-    pprint.pprint(p1_program_info_d)
+    pprint.pprint(p1_d)
     print('~~~ Finished reading program-info global value ~~~')
 
 
 def display_p1_program_info_f():
-    global p1_program_info_f
+    global p1_f
     print('~~~ Reading program-info.json file contents')
-    with open(p1_program_info_f) as f:
+    with open(p1_f) as f:
         pprint.pprint(f.read())
     print('File program-info.json closed ~~~')
 
@@ -726,9 +726,9 @@ context_func_d = {
 
 
 def init():
-    global p1_program_info_f
+    global p1_f
     # initializing globals necessary for all functions
-    p1_program_info_f = os.path.join(p0_root_abs_dir, 'program-info.json')
+    p1_f = os.path.join(p0_root_abs_dir, 'program-info.json')
 
     # initializing menus last, so that context functions display most recent information
     p.menu = 'select_contract'

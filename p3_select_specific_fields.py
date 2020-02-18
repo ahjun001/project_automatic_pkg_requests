@@ -151,7 +151,7 @@ def load_o_create_mako_input_values_json():
 
 def suggest_spacing_calc(lgth, template_view_box):
     n_of_templates_per_dim = int(lgth // template_view_box)
-    return min(0, int((lgth - n_of_templates_per_dim * template_view_box) / max(1, (n_of_templates_per_dim - 1))))
+    return min(20, int((lgth - n_of_templates_per_dim * template_view_box) / max(1, (n_of_templates_per_dim - 1))))
 
 
 def display_or_load_output_overview():
@@ -513,10 +513,11 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
     drs = [p3_fields_rel_dir] if only_1_temp else p2.p2_load_templates_info_l()
     if drs:
         svg_out = ''
-        oy = 0
         fw = None
         template_nr = 0
         page = 1  # nr of page being built
+        oy = 0
+        h_to_print = p3_d['page_view_box_h']  # length of height available to print
         for p3_fields_rel_dir in drs:
             template_nr += 1
             if_not_exists_build_template_header_n_body(p3_fields_rel_dir)
@@ -553,19 +554,20 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
                 template_view_box_w = float(m.groups()[2])
                 template_view_box_h = float(m.groups()[3])  # template_view_box_h, template_view_box_h
             spacing_w = suggest_spacing_calc(p3_d['page_view_box_w'], template_view_box_w)  # horizontally, w = width
-            spacing_h = suggest_spacing_calc(p3_d['page_view_box_h'] - p3_d['header_height'],
-                                             template_view_box_h)  # then vertically
+            spacing_h = suggest_spacing_calc(h_to_print, template_view_box_h)
             ox = - spacing_w + horizontal_centering_offset(template_view_box_w, spacing_w)
             if page == 1:
                 oy = - spacing_h
+                h_to_print = p3_d['page_view_box_h']
             assert template_view_box_w + spacing_w <= p3_d['page_view_box_w'], \
                 "write_templates: ! template width + spacing width don't fit in the page"
             assert template_view_box_h + spacing_h <= p3_d['page_view_box_h'], \
                 'write_templates: ! template height + spacing height don\'t fit in the page'
             # write the header for this directory
             oy += p3_d['header_height']  # todo: check if at last product, then necessary height is of next label's
+            h_to_print -= p3_d['header_height']
             fw.write(
-                f"<g>\n<text transform='translate(0, {oy})' "
+                f"<g>\n<text transform='translate(0, {oy-2})' "
                 f"style='font-family:{family};font-size:{size};font-style:{style}'>\
                 {template_nr}. {p3_d['template_header']}</text>\n</g>\n"
             )
@@ -577,7 +579,8 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
             lngth = len(p3_selected_fields_values_by_prod_d)  # nr of products in the contract
             i = 0  # index of the template to print
 
-            while i < (1 if only_1_prod else lngth):  # writing vertically while there are templates to print
+            # writing vertically while there are templates to print
+            while i < (1 if only_1_prod else lngth):
                 # writing horizontally while there templates to print
                 while ox + template_view_box_w + spacing_w <= p3_d['page_view_box_w'] \
                       and i < (1 if only_1_prod else lngth):
@@ -594,8 +597,8 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
                     i += 1
                 ox = - spacing_w + horizontal_centering_offset(template_view_box_w, spacing_w)
                 oy += template_view_box_h + spacing_h
+                h_to_print -= template_view_box_h + spacing_h
                 # check if there is still space to write the next one, if not open a new page
-                # first check if it was the last label of this template so that template_view_box_h can be updated !!!
                 if oy + template_view_box_h + spacing_h > p3_d['page_view_box_h']:
                     if i != lngth - 1 and template_nr != len(drs):  # to avoid printing a blank page when no data left
                         close_svg_for_output(fw, svg_out)
@@ -605,6 +608,7 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
                             family, size, style
                         )
                         oy = - spacing_h
+                        h_to_print = p3_d['page_view_box_h']
             # after last item is written, write the next header if needed
         close_svg_for_output(fw, svg_out)
     else:
