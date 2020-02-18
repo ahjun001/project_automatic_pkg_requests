@@ -151,7 +151,7 @@ def load_o_create_mako_input_values_json():
 
 def suggest_spacing_calc(lgth, template_view_box):
     n_of_templates_per_dim = int(lgth // template_view_box)
-    return sum([0, int((lgth - n_of_templates_per_dim * template_view_box) / max(1, (n_of_templates_per_dim - 1)))])/1
+    return min(0, int((lgth - n_of_templates_per_dim * template_view_box) / max(1, (n_of_templates_per_dim - 1))))
 
 
 def display_or_load_output_overview():
@@ -728,6 +728,7 @@ def init():
         p.main_menu = p.menu
     p.menus = {
         p.menu: {
+            '55': render_svg_all_templates_all_products,
             '0': check_all_templates_have_correct_fields,
             '1': display_all,
             '2': select_a_template_n_edit_fields,
@@ -740,7 +741,6 @@ def init():
         },
         'debug': {
             '66': svg_s_to_pdf_deliverable,
-            '55': render_svg_all_templates_all_products,
             '44': render_title_page,
             '1': display_all,
             '2': display_or_load_output_overview,
