@@ -20,14 +20,12 @@ p3_all_specific_fields_l = []  # list of fields from p1e_specific_fields_d_of_d
 p3_selected_fields_values_by_prod_d = {}  # field values as in mako_input.json
 p3_body_svg = ''  # content of label_template_body.svg
 
-p3_default_fields_l = ["xl_prod_spec", "u_parc"]
+p3_default_fields_l = ['xl_prod_spec', 'u_parc', 'plstc_bg']
 p3_f = None  # info on fields directory currently being edited
 p3_d = {
     "selected_fields": list(p3_default_fields_l),
     "template_header": '',
     "header_height": 7,
-    "page_view_box_w": 180,
-    "page_view_box_h": 287,
 }
 
 
@@ -46,7 +44,7 @@ def save_template_info_json():
     global p3_f
     global p3_d
 
-    p3_f = os.path.join(p1.p1_contract_abs_dir
+    p3_f = os.path.join(p1.p1_cntrct_abs_dir
                         + '/'
                         + p3_fields_rel_dir, 'template-info.json')
     with open(p3_f, 'w') as f:
@@ -59,7 +57,7 @@ def if_not_exists_build_template_header_n_body(some_rel_dir):
     """
 
     from_abs_dir = os.path.join(p0_root_abs_dir + '/common', some_rel_dir)
-    to_abs_dir = os.path.join(p1.p1_contract_abs_dir, some_rel_dir)
+    to_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, some_rel_dir)
 
     # copy the label_template if necessary
     template_fr = os.path.join(to_abs_dir, 'label_template.svg')
@@ -92,7 +90,7 @@ def load_o_create_p3_fields_info_f():
 
     if p3_fields_rel_dir:
         # either read data,
-        p3_f = os.path.join(p1.p1_contract_abs_dir + '/' + p3_fields_rel_dir, 'template-info.json')
+        p3_f = os.path.join(p1.p1_cntrct_abs_dir + '/' + p3_fields_rel_dir, 'template-info.json')
         if pathlib.Path(p3_f).exists():
             with open(p3_f) as f:
                 p3_d = json.load(f)
@@ -116,7 +114,7 @@ def load_o_create_mako_input_values_json():
     # will be set in this function
     global p3_selected_fields_values_by_prod_d
     # make sure global variables are initialized in all situations, outside the loop to do it once only
-    filename = os.path.join(p1.p1_contract_abs_dir + '/' + p3_fields_rel_dir, 'mako_input.json')
+    filename = os.path.join(p1.p1_cntrct_abs_dir + '/' + p3_fields_rel_dir, 'mako_input.json')
     if pathlib.Path(filename).exists():
         with open(filename) as fr:
             p3_selected_fields_values_by_prod_d = json.load(fr)
@@ -159,7 +157,7 @@ def display_or_load_output_overview():
     global p3_d
 
     print('~~~ Overview')
-    _, drs, _ = next(os.walk(p1.p1_contract_abs_dir))
+    _, drs, _ = next(os.walk(p1.p1_cntrct_abs_dir))
     for dr in drs:
         print(dr)
         p3_fields_rel_dir = dr
@@ -169,7 +167,7 @@ def display_or_load_output_overview():
 
 
 def fields_from_template():
-    template_s = os.path.join(os.path.join(p1.p1_contract_abs_dir, p3_fields_rel_dir), 'label_template.svg')
+    template_s = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir), 'label_template.svg')
     with open(template_s) as fr:
         lines = fr.readlines()
     template_fields_set = set()
@@ -190,7 +188,7 @@ def check_possible_mismatch_selected_fields_n_template():
             if f not in p3_d['selected_fields']:
                 missing_in_template_l.append(f)
         print('The template requires the following fields but they were not found in the data: ', missing_in_template_l)
-        template_f = os.path.join(os.path.join(p1.p1_contract_abs_dir, p3_fields_rel_dir), 'label_template.svg')
+        template_f = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir), 'label_template.svg')
         subprocess.Popen([
             'inkscape',
             template_f,
@@ -199,7 +197,7 @@ def check_possible_mismatch_selected_fields_n_template():
 
 def check_all_templates_have_correct_fields():
     global p3_fields_rel_dir
-    _, drs, _ = next(os.walk(p1.p1_contract_abs_dir))
+    _, drs, _ = next(os.walk(p1.p1_cntrct_abs_dir))
     for p3_fields_rel_dir in drs:
         load_o_create_p3_fields_info_f()
         check_possible_mismatch_selected_fields_n_template()
@@ -311,7 +309,7 @@ def display_specific_fields_for_all_products():
 
 def p3_select_specific_fields_context_func():
     display_specific_fields_for_all_products()
-    print('~~~ Now processing contract #: ', p1.p1_contract_nr if p1.p1_contract_nr else None)
+    print('~~~ Now processing contract #: ', p1.p1_d["cntrct_nr"] if p1.p1_d["cntrct_nr"] else None)
     print('~~~ Now working on template: ', p3_fields_rel_dir)
     print('~~~ Specific fields selected so far:', p3_d['selected_fields'])
     print('\n>>> Select an action: ')
@@ -321,12 +319,12 @@ def select_a_template_n_edit_fields():
     global p3_fields_rel_dir
 
     # list existing directories, each containing a template
-    drs = p1.read_dirs(p1.p1_contract_abs_dir)
+    drs = p1.read_dirs(p1.p1_cntrct_abs_dir)
     if drs:
         # giving a default directory if none has been set before
         if not p3_fields_rel_dir:
             p3_fields_rel_dir = drs[0]
-        print(f'~~~ Now processing contract #: {p1.p1_contract_nr}')
+        print(f'~~~ Now processing contract #: {p1.p1_d["cntrct_nr"]}')
         print(f'~~~ Working on: {p3_fields_rel_dir}')
         print('>>> Select template to edit:\n')
         for i in range(len(drs)):
@@ -376,7 +374,7 @@ def select_a_template_n_edit_fields():
 
 
 # def display_selected_fields():
-#     with open(os.path.join(p1.p1_contract_abs_dir, 'p4_' + p1.p1_contract_nr + '_fields_from_contract_l.json')) as f:
+#     with open(os.path.join(p1.p1_cntrct_abs_dir, 'p4_' + p1.p1_d["cntrct_nr"] + '_fields_from_contract_l.json')) as f:
 #         p3_fields_from_contract_l = json.load(f)
 #     indic_val_d = {}
 #     for option in p3_all_specific_fields_l:
@@ -416,15 +414,15 @@ def display_p3_fields_info_f():
 
 
 def display_pdf():
-    os.chdir(p1.p1_contract_abs_dir)
-    output_s = p1.p1_contract_nr + '.pdf'
+    os.chdir(p1.p1_cntrct_abs_dir)
+    output_s = p1.p1_d["cntrct_nr"] + '.pdf'
     subprocess.Popen(['xreader', output_s, ])
     os.chdir(p0_root_abs_dir)
 
 
 def svg_s_to_pdf_deliverable():
-    os.chdir(p1.p1_contract_abs_dir)
-    print_svg_l = [f for f in os.listdir(p1.p1_contract_abs_dir) if os.path.isfile(f)
+    os.chdir(p1.p1_cntrct_abs_dir)
+    print_svg_l = [f for f in os.listdir(p1.p1_cntrct_abs_dir) if os.path.isfile(f)
                    and f.endswith('.svg')
                    and f[0] != '.']
 
@@ -433,7 +431,7 @@ def svg_s_to_pdf_deliverable():
             for line in fr:
                 fw.write(line.replace('fuchsia', 'none').replace('#ff00ff', 'none'))
 
-    print_clean_svg_l = [f for f in os.listdir(p1.p1_contract_abs_dir) if os.path.isfile(f)
+    print_clean_svg_l = [f for f in os.listdir(p1.p1_cntrct_abs_dir) if os.path.isfile(f)
                          and f.endswith('.svg')
                          and f[0] == '.']
 
@@ -445,10 +443,10 @@ def svg_s_to_pdf_deliverable():
             file,
         ]).wait()
 
-    output_s = p1.p1_contract_nr + '.pdf'
+    output_s = p1.p1_d["cntrct_nr"] + '.pdf'
 
     # not workable solution: erase but doesn't create, create but doesn't erase
-    # print_pdf_l = [f for f in os.listdir(p1.p1_contract_abs_dir) if os.path.isfile(f) and f.endswith('.pdf')]
+    # print_pdf_l = [f for f in os.listdir(p1.p1_cntrct_abs_dir) if os.path.isfile(f) and f.endswith('.pdf')]
     # if os.path.exists(output_s):
     #     subprocess.Popen(['rm', output_s, ]).wait()
     # subprocess.Popen(['pdfunite', *print_pdf_l, output_s, ]).wait()
@@ -463,18 +461,18 @@ def open_svg_for_output(fw, header, page, svg_out, only_1_temp, only_1_prod, fam
     assert fw == fw
     assert svg_out == svg_out
 
-    p3_fields_abs_dir = os.path.join(p1.p1_contract_abs_dir, p3_fields_rel_dir)
+    p3_fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir)
     if only_1_temp:
         if only_1_prod:
             svg_out = os.path.join(p3_fields_abs_dir, '1_product.svg')
         else:
             svg_out = os.path.join(p3_fields_abs_dir, '1_template.svg')
     else:
-        svg_out = os.path.join(p1.p1_contract_abs_dir, f'page_{page}.svg')
+        svg_out = os.path.join(p1.p1_cntrct_abs_dir, f'page_{page}.svg')
     fw = open(svg_out, 'w')
     fw.write(header)
     page_x = 100  # page middle - 5mm to center text, assuming A4
-    page_y = int(p3_d['page_view_box_h'] + 3 * (297 - p3_d['page_view_box_h']) / 4)
+    page_y = int(p1.p1_cntrct_info_d['page_view_box_h'] + 3 * (297 - p1.p1_cntrct_info_d['page_view_box_h']) / 4)
     fw.write(
         f"<g>\n<text transform='translate({page_x}, {page_y})' "
         f"style='font-family:{family};font-size:{size};font-style:{style}'>-- {page} --</text>\n</g>\n"
@@ -486,12 +484,13 @@ def open_svg_for_output(fw, header, page, svg_out, only_1_temp, only_1_prod, fam
 def close_svg_for_output(fw, svg_out):
     fw.write('\n</g>\n</svg>\n')
     fw.close()
-    webbrowser.get('firefox').open_new_tab(svg_out)
+    # webbrowser.get('firefox').open_new_tab(svg_out)
+    subprocess.Popen(['inkscape', svg_out])
 
 
 def horizontal_centering_offset(template_view_box_w, spacing_w):
-    n_of_templates_per_row = int(p3_d['page_view_box_w'] // template_view_box_w)
-    result = (p3_d['page_view_box_w'] - n_of_templates_per_row * template_view_box_w - (
+    n_of_templates_per_row = int(p1.p1_cntrct_info_d['page_view_box_w'] // template_view_box_w)
+    result = (p1.p1_cntrct_info_d['page_view_box_w'] - n_of_templates_per_row * template_view_box_w - (
         n_of_templates_per_row - 1) * spacing_w) / 2
     return result
 
@@ -517,14 +516,14 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
         template_nr = 0
         page = 1  # nr of page being built
         oy = 0
-        h_to_print = p3_d['page_view_box_h']  # length of height available to print
+        h_to_print = p1.p1_cntrct_info_d['page_view_box_h']  # length of height available to print
         for p3_fields_rel_dir in drs:
             template_nr += 1
             if_not_exists_build_template_header_n_body(p3_fields_rel_dir)
             # loading data previously used with this template
             load_o_create_p3_fields_info_f()
             # opening a new page
-            p3_fields_abs_dir = os.path.join(p1.p1_contract_abs_dir, p3_fields_rel_dir)
+            p3_fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir)
             # printing header template in page_# svg
             svg_in = os.path.join(p3_fields_abs_dir, 'label_template_header.svg')
             with open(svg_in) as h:
@@ -544,7 +543,7 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
                 check_possible_mismatch_selected_fields_n_template()
                 load_o_create_mako_input_values_json()
             # read view box values from template_body so as to compute spacings
-            to_abs_dir = os.path.join(p1.p1_contract_abs_dir, p3_fields_rel_dir)
+            to_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir)
             with open(os.path.join(to_abs_dir, 'label_template.svg')) as f:
                 contents = f.read()
                 m = re.search(r'(?<=viewBox=")(\d) (\d) (\d+.*\d*) (\d+\.*\d*)', contents)
@@ -553,24 +552,25 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
                     exit()
                 template_view_box_w = float(m.groups()[2])
                 template_view_box_h = float(m.groups()[3])  # template_view_box_h, template_view_box_h
-            spacing_w = suggest_spacing_calc(p3_d['page_view_box_w'], template_view_box_w)  # horizontally, w = width
-            spacing_h = suggest_spacing_calc(h_to_print, template_view_box_h)
-            ox = - spacing_w + horizontal_centering_offset(template_view_box_w, spacing_w)
-            if page == 1:
-                oy = - spacing_h
-                h_to_print = p3_d['page_view_box_h']
-            assert template_view_box_w + spacing_w <= p3_d['page_view_box_w'], \
-                "write_templates: ! template width + spacing width don't fit in the page"
-            assert template_view_box_h + spacing_h <= p3_d['page_view_box_h'], \
-                'write_templates: ! template height + spacing height don\'t fit in the page'
+
             # write the header for this directory
             oy += p3_d['header_height']  # todo: check if at last product, then necessary height is of next label's
             h_to_print -= p3_d['header_height']
             fw.write(
-                f"<g>\n<text transform='translate(0, {oy-2})' "
+                f"<g>\n<text transform='translate(0, {oy})' "
                 f"style='font-family:{family};font-size:{size};font-style:{style}'>\
                 {template_nr}. {p3_d['template_header']}</text>\n</g>\n"
             )
+            spacing_w = suggest_spacing_calc(p1.p1_cntrct_info_d['page_view_box_w'], template_view_box_w)
+            spacing_h = suggest_spacing_calc(h_to_print, template_view_box_h)
+            ox = - spacing_w + horizontal_centering_offset(template_view_box_w, spacing_w)
+            if page == 1:
+                oy = - spacing_h
+                h_to_print = p1.p1_cntrct_info_d['page_view_box_h']
+            assert template_view_box_w + spacing_w <= p1.p1_cntrct_info_d['page_view_box_w'], \
+                "write_templates: ! template width + spacing width don't fit in the page"
+            assert template_view_box_h + spacing_h <= p1.p1_cntrct_info_d['page_view_box_h'], \
+                'write_templates: ! template height + spacing height don\'t fit in the page'
             # run mako.template.Template
             mako_template = Template(
                 filename = os.path.join(p3_fields_abs_dir, 'label_template_body.svg'),
@@ -582,13 +582,13 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
             # writing vertically while there are templates to print
             while i < (1 if only_1_prod else lngth):
                 # writing horizontally while there templates to print
-                while ox + template_view_box_w + spacing_w <= p3_d['page_view_box_w'] \
+                while ox + template_view_box_w + spacing_w <= p1.p1_cntrct_info_d['page_view_box_w'] \
                       and i < (1 if only_1_prod else lngth):
                     offset_x = ox + spacing_w
                     offset_y = oy + spacing_h
                     fw.write(r"<g transform = 'translate(" + f"{offset_x}, {offset_y})'>\n")
                     fw.write(mako_template.render(
-                        contract_n = p1.p1_contract_nr,
+                        contract_n = p1.p1_d["cntrct_nr"],
                         template_nr = template_nr,
                         **p3_selected_fields_values_by_prod_d[str(i)])
                     )
@@ -599,7 +599,7 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
                 oy += template_view_box_h + spacing_h
                 h_to_print -= template_view_box_h + spacing_h
                 # check if there is still space to write the next one, if not open a new page
-                if oy + template_view_box_h + spacing_h > p3_d['page_view_box_h']:
+                if oy + template_view_box_h + spacing_h > p1.p1_cntrct_info_d['page_view_box_h']:
                     if i != lngth - 1 and template_nr != len(drs):  # to avoid printing a blank page when no data left
                         close_svg_for_output(fw, svg_out)
                         page += 1
@@ -608,7 +608,7 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
                             family, size, style
                         )
                         oy = - spacing_h
-                        h_to_print = p3_d['page_view_box_h']
+                        h_to_print = p1.p1_cntrct_info_d['page_view_box_h']
             # after last item is written, write the next header if needed
         close_svg_for_output(fw, svg_out)
     else:
@@ -634,7 +634,7 @@ def render_title_page():
     load_p3_all_specific_fields_l()
 
     # copy first label on cover page template
-    p3_fields_abs_dir = os.path.join(p1.p1_contract_abs_dir, p3_fields_rel_dir)
+    p3_fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir)
     svg_in = os.path.join(p3_fields_abs_dir, '1_product.svg')
     if svg_in:
         with open(svg_in) as fr:
@@ -661,7 +661,7 @@ def render_title_page():
                 good_n = i
         with open(os.path.join(p0_root_abs_dir + '/common/title_page_template.svg')) as fr:
             lines = fr.readlines()
-        svg_out = os.path.join(p1.p1_contract_abs_dir, 'title_page_template.svg')
+        svg_out = os.path.join(p1.p1_cntrct_abs_dir, 'title_page_template.svg')
         with open(svg_out, 'w') as fw:
             for i in range(len(lines) - 1):
                 fw.writelines(lines[i])
@@ -686,10 +686,10 @@ def render_title_page():
         if not p3_selected_fields_values_by_prod_d:
             check_possible_mismatch_selected_fields_n_template()
             load_o_create_mako_input_values_json()
-        cover_s = os.path.join(p1.p1_contract_abs_dir, 'page_0.svg')
+        cover_s = os.path.join(p1.p1_cntrct_abs_dir, 'page_0.svg')
         with open(cover_s, 'w') as fw:
             fw.write(mako_template.render(
-                contract_n = p1.p1_contract_nr,
+                contract_n = p1.p1_d["cntrct_nr"],
                 **p3_selected_fields_values_by_prod_d['0']
             ))
         webbrowser.get('Firefox').open_new_tab(cover_s)
@@ -702,7 +702,7 @@ def display_all():
     # read existing templates
     drs = p2.p2_load_templates_info_l()
     if drs:
-        # for each template that has been created as a subdir to p1.p1_contract_abs_dir
+        # for each template that has been created as a subdir to p1.p1_cntrct_abs_dir
         for p3_fields_rel_dir in drs:
             # use data on disk, if not on disk create with default values
             if load_o_create_p3_fields_info_f():
@@ -723,7 +723,7 @@ def init():
     # make sure p1 infrastructure is in place
     if not p1.p1_load_contract_info_d():
         print('p1 has not run successfully')
-    if not p1.read_dirs(p1.p1_contract_abs_dir):
+    if not p1.read_dirs(p1.p1_cntrct_abs_dir):
         p2.create_default_templates()
 
     # initializing menus last, so that context functions display most recent information
@@ -732,7 +732,6 @@ def init():
         p.main_menu = p.menu
     p.menus = {
         p.menu: {
-            '55': render_svg_all_templates_all_products,
             '0': check_all_templates_have_correct_fields,
             '1': display_all,
             '2': select_a_template_n_edit_fields,
@@ -744,13 +743,14 @@ def init():
             'd': p.debug,
         },
         'debug': {
+            '55': render_svg_all_templates_all_products,
             '66': svg_s_to_pdf_deliverable,
             '44': render_title_page,
             '1': display_all,
             '2': display_or_load_output_overview,
             '3': select_a_template_n_edit_fields,
-            '6': p1.display_p1_contract_info_d,
-            '7': p1.display_p1_contract_info_f,
+            '6': p1.display_p1_cntrct_info_d,
+            '7': p1.display_p1_cntrct_info_f,
             '8': display_p3_fields_info_d,
             '9': display_p3_fields_info_f,
             'b': p.back,

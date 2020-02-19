@@ -29,11 +29,11 @@ def create_default_templates():
 
 
 def load_n_display():
-    p1.display_dirs(p1.p1_contract_abs_dir)
+    p1.display_dirs(p1.p1_cntrct_abs_dir)
 
 
 def p2_load_templates_info_l():
-    return p1.read_dirs(p1.p1_contract_abs_dir)
+    return p1.read_dirs(p1.p1_cntrct_abs_dir)
 
 
 def add_new_templates():
@@ -42,7 +42,7 @@ def add_new_templates():
 
 def add_templates_from_list(list_l, ask_questions):
     # read existing templates
-    drs = p1.read_dirs(p1.p1_contract_abs_dir)
+    drs = p1.read_dirs(p1.p1_cntrct_abs_dir)
     # make a candidate set of templates to be added
     candidates_l = []
     if drs:
@@ -78,7 +78,7 @@ def add_templates_from_list(list_l, ask_questions):
 
 def delete_existing_templates():
     print('~~~ Deleting templates non-empty directory data')
-    drs = p1.read_dirs(p1.p1_contract_abs_dir)
+    drs = p1.read_dirs(p1.p1_cntrct_abs_dir)
     if not drs:
         return
     for i in range(len(drs)):
@@ -93,7 +93,7 @@ def delete_existing_templates():
             try:
                 s_i = int(s)
                 if s_i in range(len(drs)):
-                    shutil.rmtree(os.path.join(p1.p1_contract_abs_dir, drs[s_i]))
+                    shutil.rmtree(os.path.join(p1.p1_cntrct_abs_dir, drs[s_i]))
                     break
                 else:
                     print('Integer, but not an option, try again')
@@ -102,16 +102,16 @@ def delete_existing_templates():
 
 
 def create_template_dir(dr):
-    lbl_abs_dir = os.path.join(p1.p1_contract_abs_dir, dr)
+    lbl_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, dr)
     if not pathlib.Path(lbl_abs_dir).exists():
         os.mkdir(lbl_abs_dir, mode=0o700)
 
 
 def p2_select_templates_context_func(prompt=True):
-    print('~~~ Now processing contract #: ', p1.p1_contract_nr if p1.p1_contract_nr else None)
+    print('~~~ Now processing contract #: ', p1.p1_d["cntrct_nr"] if p1.p1_d["cntrct_nr"] else None)
     print('\n~~~ Labels already added:')
 
-    p1.display_dirs(p1.p1_contract_abs_dir)
+    p1.display_dirs(p1.p1_cntrct_abs_dir)
     if prompt:
         print('\n>>> Select action: ')
 
