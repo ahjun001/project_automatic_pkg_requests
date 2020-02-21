@@ -44,6 +44,7 @@ def p0_load_program_info_d():
 # local path to contract-info.json file
 p1_cntrct_info_d = {}
 p1_cntrct_info_f = ''
+page_setup_d = {}
 p1_search_reg_ex_l = []
 indicators_csv = os.path.join(p0_root_abs_dir + '/common', 'indicators.csv')
 p1_all_products_to_be_processed_set = set()
@@ -66,8 +67,7 @@ def p1_load_contract_info_d():
         if not p1_cntrct_abs_dir or 'cntrct_nr' not in p1_d.keys():
             p0_load_program_info_d()
             process_default_contract()
-    p1_cntrct_info_f = os.path.join(p1_cntrct_abs_dir, p1_d['cntrct_nr'] + '_contract-info.json')
-    with open(p1_cntrct_info_f) as fi:
+    with open(os.path.join(p1_cntrct_abs_dir, p1_d['cntrct_nr'] + '_contract-info.json')) as fi:
         p1_cntrct_info_d = json.load(fi)
     return True
 
@@ -358,12 +358,19 @@ def display_p1e_specific_fields_d_of_d():
 
 
 def load_o_create_page_set_up():
-    global p1_cntrct_info_d
+    global p1_cntrct_abs_dir
+    global p1_d
+    global page_setup_d
 
-    if 'page_view_box_w' not in p1_cntrct_info_d.keys():
-        p1_cntrct_info_d['page_view_box_w'] = 180
-    if 'page_view_box_h' not in p1_cntrct_info_d.keys():
-        p1_cntrct_info_d['page_view_box_h'] = 287
+    filename = os.path.join(p1_cntrct_abs_dir, p1_d['cntrct_nr'] + '_page_setup.json')
+    if pathlib.Path(filename).exists():
+        with open(filename) as f:
+            page_setup_d = json.load(f)
+    else:
+        page_setup_d['margin_w'] = 15
+        page_setup_d['margin_h'] = 15
+        with open(filename, 'w') as f:
+            json.dump(page_setup_d, f,ensure_ascii = False)
 
 
 def dump_contract_info_json(key, filename):
@@ -513,10 +520,13 @@ def process_default_contract():
         build_program_info_d_from_root_xls_file_or_ask_open_file()
 
     # load contract-info.json file if exists
-    filename = os.path.join(p1_cntrct_abs_dir, p1_d['cntrct_nr'] + '_contract-info.json')
-    if pathlib.Path('filename').exists():
+    p1_cntrct_info_f = p1_d['cntrct_nr'] + '_contract-info.json'
+    filename = os.path.join(p1_cntrct_abs_dir, p1_cntrct_info_f)
+    if pathlib.Path(filename).exists():
         with open(filename) as fi:
             p1_cntrct_info_d = json.load(fi)
+    else:
+        p1_cntrct_info_d = {}
 
     # the name of the -contract.json file can now be set
     rel_path_contract_json_f = '.p1a_' + p1_d['cntrct_nr'] + '-contract.json'
@@ -561,13 +571,8 @@ def process_default_contract():
 
     with open(os.path.join(p1_cntrct_abs_dir, rel_path_contract_json_f), 'w') as fc:
         json.dump(contract_json_d, fc, ensure_ascii = False)
-    # document in A1234-456-info.json
-    p1_cntrct_info_f = p1_d['cntrct_nr'] + '_contract-info.json'
-    # process_default_contract a structure to store label information
-    p1_cntrct_info_d = {'p1a_contract_json': rel_path_contract_json_f}
-    filename = os.path.join(p1_cntrct_abs_dir, p1_cntrct_info_f)
-    with open(filename, 'w') as fi:
-        json.dump(p1_cntrct_info_d, fi, ensure_ascii = False)
+    # populate p1_cntrct_info_d: a structure to store label information, and its corresponding json file
+    p1_cntrct_info_d['p1a_contract_json'] = rel_path_contract_json_f
 
     # def create_2():
     # reading info from ./common/indicators.csv, which was kept in csv format to make human input easier
@@ -686,8 +691,10 @@ def process_default_contract():
 
     # define page setup
     load_o_create_page_set_up()
-    f = os.path.join(p1_cntrct_abs_dir, p1_cntrct_info_f)
-    with open(f, 'w') as fi:
+
+    # document in A1234-456_contract-info.json
+    filename = os.path.join(p1_cntrct_abs_dir, p1_cntrct_info_f)
+    with open(filename, 'w') as fi:
         json.dump(p1_cntrct_info_d, fi, ensure_ascii = False)
 
 
