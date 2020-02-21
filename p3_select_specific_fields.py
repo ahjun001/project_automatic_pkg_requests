@@ -477,7 +477,10 @@ def open_svg_for_output(fw, header, page, svg_out, only_1_temp, only_1_prod, fam
         f"<g>\n<text transform='translate({page_x}, {page_y})' "
         f"style='font-family:{family};font-size:{size};font-style:{style}'>-- {page} --</text>\n</g>\n"
     )
-    fw.write("<g transform='translate(15, 15)'>\n")  # todo: reset with page margins
+    # assuming A4
+    margin_w = (210 - p1.p1_cntrct_info_d['page_view_box_w'])/2
+    margin_h = (297 - p1.p1_cntrct_info_d['page_view_box_h'])/2
+    fw.write("<g transform='translate(margin_w, margin_h)'>\n")
     return fw, svg_out
 
 
