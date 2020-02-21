@@ -89,6 +89,12 @@ def load_o_create_p3_fields_info_f():
     global p3_d
     global p3_fields_rel_dir
     global p3_default_fields_l
+    global page_view_box_w
+    global page_view_box_h
+
+    p1.load_o_create_page_set_up()
+    page_view_box_w = 210 - 2 * p1.page_setup_d['margin_w']  # Assuming A4
+    page_view_box_h = 297 - 2 * p1.page_setup_d['margin_h']  # Assuming A4
 
     if p3_fields_rel_dir:
         # either read data,
@@ -458,7 +464,7 @@ def svg_s_to_pdf_deliverable():
     os.chdir(p0_root_abs_dir)
 
 
-def open_svg_for_output(fw, header, page, svg_out, only_1_temp, only_1_prod, family, size, style):
+def open_svg_for_output(header, page, only_1_temp, only_1_prod, family, size, style):
     global p3_d
     global page_view_box_h
     # assert fw == fw
@@ -474,6 +480,9 @@ def open_svg_for_output(fw, header, page, svg_out, only_1_temp, only_1_prod, fam
         svg_out = os.path.join(p1.p1_cntrct_abs_dir, f'page_{page}.svg')
     fw = open(svg_out, 'w')
     fw.write(header)
+    fw.write(f'<rect x="0" y="0"\n'
+             f'width="210" height="297"\n'
+             f'style="fill:none;stroke-width:0.5;stroke-opacity:1;stroke:#ff00ff" />\n')
     page_x = 100  # page middle - 5mm to center text, assuming A4
     page_y = int(page_view_box_h + 3 * (297 - page_view_box_h) / 4)
     fw.write(
@@ -541,7 +550,7 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
             if page == 1:
                 # open the first web page, it will be closed when there is no space left, then a new one will be opened
                 fw, svg_out = open_svg_for_output(
-                    fw, header, page, svg_out, only_1_temp, only_1_prod,
+                    header, page, only_1_temp, only_1_prod,
                     family, size, style
                 )
             # from the editable template, build the 'label_template.svg' that will be used to multiply templates
@@ -592,6 +601,7 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
                     offset_x = ox + spacing_w
                     offset_y = oy + spacing_h
                     fw.write(r"<g transform = 'translate(" + f"{offset_x}, {offset_y})'>\n")
+                    # print(template_nr, page, template_view_box_w, ox + spacing_w, spacing_w)
                     fw.write(mako_template.render(
                         contract_n = p1.p1_d["cntrct_nr"],
                         template_nr = template_nr,
@@ -609,7 +619,7 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
                         close_svg_for_output(fw, svg_out)
                         page += 1
                         fw, svg_out = open_svg_for_output(
-                            fw, header, page, svg_out, only_1_temp, only_1_prod,
+                            header, page, only_1_temp, only_1_prod,
                             family, size, style
                         )
                         oy = - spacing_h
@@ -725,17 +735,12 @@ context_func_d = {
 
 
 def init():
-    global page_view_box_w
-    global page_view_box_h
 
     # make sure p1 infrastructure is in place
     if not p1.p1_load_contract_info_d():
         print('p1 has not run successfully')
     if not p1.read_dirs(p1.p1_cntrct_abs_dir):
         p2.create_default_templates()
-    p1.load_o_create_page_set_up()
-    page_view_box_w = 297 - 2 * p1.page_setup_d['margin_w']  # Assuming A4
-    page_view_box_h = 210 - 2 * p1.page_setup_d['margin_h']  # Assuming A4
 
     # initializing menus last, so that context functions display most recent information
     p.menu = 'select_specific_fields'
