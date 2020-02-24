@@ -601,7 +601,6 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
                     offset_x = ox + spacing_w
                     offset_y = oy + spacing_h
                     fw.write(r"<g transform = 'translate(" + f"{offset_x}, {offset_y})'>\n")
-                    # print(template_nr, page, template_view_box_w, ox + spacing_w, spacing_w)
                     fw.write(mako_template.render(
                         contract_n = p1.p1_d["cntrct_nr"],
                         template_nr = template_nr,
@@ -614,7 +613,7 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
                 oy += template_view_box_h + spacing_h
                 # check if there is still space to write the next one, if not open a new page
                 if oy + template_view_box_h + spacing_h > page_view_box_h:
-                    if i != lngth and template_nr != len(drs):  # to avoid printing a blank page when no data left
+                    if i != lngth or template_nr != len(drs):  # to avoid printing a blank page when no data left
                         close_svg_for_output(fw, svg_out)
                         page += 1
                         fw, svg_out = open_svg_for_output(
