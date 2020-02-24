@@ -527,22 +527,22 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
 
     # read existing templates
     drs = [p3_fields_rel_dir] if only_1_temp else p2.p2_load_templates_info_l()
+    oy = None
     if drs:
         svg_out = ''  # svg output filename
         fw = None  # and its file handler
         template_nr = 0  # number templates so as to make headers
         page = 1  # nr of page being built
-        oy = 0  # vertical positioning in page_view_box_h
-        h_to_print = page_view_box_h  # length of height available to print todo: consider removing
         for p3_fields_rel_dir in drs:  # looping on templates
+            p3_fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir)  # dir for header & body
+            with open(os.path.join(p3_fields_abs_dir, 'label_template_header.svg')) as h:
+                header = h.read()
             template_nr += 1
             if_not_exists_build_template_header_n_body(p3_fields_rel_dir)
             # loading data previously used with this template
             load_o_create_p3_fields_info_f()
+
             # opening a new page, printing header template in 'page_#.svg'
-            p3_fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir)  # dir for header & body
-            with open(os.path.join(p3_fields_abs_dir, 'label_template_header.svg')) as h:
-                header = h.read()
             # printing body template in page_# svg
             family = re.search(r'(?<=font-family:)([\w-]+)', p3_body_svg).groups()[0]
             size = re.search(r'(?<=font-size:)(\d+\.*\d*\w*)', p3_body_svg).groups()[0]
@@ -560,6 +560,10 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
             # read view box values from template_body so as to compute spacings
             to_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir)
             with open(os.path.join(to_abs_dir, 'label_template.svg')) as f:
+                mako_template = Template(
+                    filename = os.path.join(p3_fields_abs_dir, 'label_template_body.svg'),
+                    input_encoding = 'utf-8'
+                )
                 contents = f.read()
                 m = re.search(r'(?<=viewBox=")(\d) (\d) (\d+.*\d*) (\d+\.*\d*)', contents)
                 if m.groups()[0] != '0' or m.groups()[1] != '0':
@@ -567,34 +571,30 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
                     exit()
                 template_view_box_w = float(m.groups()[2])
                 template_view_box_h = float(m.groups()[3])
-
-            # write the header for this directory
-            oy += p3_d['header_height']  # todo: check when come last product, then necessary height is of next label's
-            h_to_print -= p3_d['header_height']
-            fw.write(
-                f"<g>\n<text transform='translate(0, {oy})' "
-                f"style='font-family:{family};font-size:{size};font-style:{style}'>\
-                {template_nr}. {p3_d['template_header']}</text>\n</g>\n"
-            )  # todo: possibly replace \ with "
             spacing_w = suggest_spacing_calc(page_view_box_w, template_view_box_w)
-            spacing_h = suggest_spacing_calc(h_to_print, template_view_box_h)
-            ox = - spacing_w + horizontal_centering_offset(template_view_box_w, spacing_w)
-            if page == 1:
-                oy = - spacing_h
-                h_to_print = page_view_box_h
+            spacing_h = suggest_spacing_calc(page_view_box_h - p3_d['header_height'], template_view_box_h)
             assert template_view_box_w + spacing_w <= page_view_box_w, \
                 "write_templates: ! template width + spacing width don't fit in the page"
             assert template_view_box_h + spacing_h <= page_view_box_h, \
                 'write_templates: ! template height + spacing height don\'t fit in the page'
+
+            # write the header for this template
+            fw.write(
+                f"<g transform='translate(0, {oy})'>\n"
+                f'<rect x="0" y="0"\n'
+                f'width="{page_view_box_w}" height="{p3_d["header_height"]}"\n'
+                f'style="fill:none;stroke-width:0.5;stroke-opacity:1;stroke:#ff00ff" />\n'
+                f"<text alignment-baseline='middle' style='font-family:{family};font-size:{size};font-style:{style}'>\
+                {template_nr}. {p3_d['template_header']}</text>\n</g>\n"
+            )  # todo: possibly replace \ with "
+            if not oy:  # vertical positioning in page_view_box_h
+                oy = - spacing_h
+
             # run mako.template.Template
-            mako_template = Template(
-                filename = os.path.join(p3_fields_abs_dir, 'label_template_body.svg'),
-                input_encoding = 'utf-8'
-            )
+            ox = - spacing_w + horizontal_centering_offset(template_view_box_w, spacing_w)
+            oy += p3_d['header_height']
             lngth = len(p3_selected_fields_values_by_prod_d)  # nr of products in the contract
             i = 0  # index of the template to print
-
-            # writing vertically while there are templates to print
             while i < (1 if only_1_prod else lngth):
                 # writing horizontally while there templates to print
                 while ox + template_view_box_w <= page_view_box_w and i < (1 if only_1_prod else lngth):
@@ -612,18 +612,19 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
                     i += 1
                 ox = - spacing_w + horizontal_centering_offset(template_view_box_w, spacing_w)
                 oy += template_view_box_h + spacing_h
-                h_to_print -= template_view_box_h + spacing_h
                 # check if there is still space to write the next one, if not open a new page
                 if oy + template_view_box_h + spacing_h > page_view_box_h:
-                    if i != lngth - 1 and template_nr != len(drs):  # to avoid printing a blank page when no data left
+                    if i != lngth and template_nr != len(drs):  # to avoid printing a blank page when no data left
                         close_svg_for_output(fw, svg_out)
                         page += 1
                         fw, svg_out = open_svg_for_output(
                             header, page, only_1_temp, only_1_prod,
                             family, size, style
                         )
-                        oy = - spacing_h
-                        h_to_print = page_view_box_h
+                        if i == lngth:  # if at end of a list, then oy = 0
+                            oy = 0
+                        else:
+                            oy = - spacing_h
             # after last item is written, write the next header if needed
         close_svg_for_output(fw, svg_out)
     else:
@@ -745,7 +746,6 @@ context_func_d = {
 
 
 def init():
-
     # make sure p1 infrastructure is in place
     if not p1.p1_load_contract_info_d():
         print('p1 has not run successfully')
