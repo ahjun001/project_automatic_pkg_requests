@@ -447,7 +447,7 @@ def svg_s_to_pdf_deliverable():
         filename, _ = os.path.splitext(file)
         subprocess.Popen([
             'inkscape',
-            f'--export-file={filename}.pdf',  # f'--export-pdf={filename}.pdf',
+            f'--export-filename={filename}.pdf',  # f'--export-file={filename}.pdf',
             file,
         ]).wait()
 
@@ -631,10 +631,20 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
 
 
 def render_svg_1_template_1_product():
+    global p3_fields_rel_dir
+
+    if not p3_fields_rel_dir:
+        drs = p1.read_dirs(p1.p1_cntrct_abs_dir)
+        p3_fields_rel_dir = drs[0]
     render_svg_all_templates_all_products(only_1_temp = True, only_1_prod = True)
 
 
 def render_svg_1_template_all_products():
+    global p3_fields_rel_dir
+
+    if not p3_fields_rel_dir:
+        drs = p1.read_dirs(p1.p1_cntrct_abs_dir)
+        p3_fields_rel_dir = drs[0]
     render_svg_all_templates_all_products(only_1_temp = True)
 
 
@@ -753,7 +763,8 @@ def init():
             '2': select_a_template_n_edit_fields,
             '3': render_svg_1_template_1_product,
             '4': render_title_page,
-            '5': render_svg_all_templates_all_products,
+            '5': render_svg_1_template_all_products,
+            '6': render_svg_all_templates_all_products,
             'b': p.back_to_main,
             'q': p.normal_exit,
             'd': p.debug,
