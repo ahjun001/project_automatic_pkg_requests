@@ -106,6 +106,16 @@ def load_o_create_p3_fields_info_f():
         # other default information is set at variable initialization
         else:
             p3_d['template_header'] = p3_fields_rel_dir[p3_fields_rel_dir.rfind('_') + 1:]
+            p3_d['multi_lines_template_header'] = "<tspan x='5' y='10'>Lorem ipsum dolor sit amet, consectetur " \
+                                                  "adipiscing elit, sed do eiusmod tempor</tspan><tspan x='5' " \
+                                                  "y='15'>incididunt ut labore et dolore magna aliqua. Ut enim ad " \
+                                                  "minim veniam, quis nostrud exercitation ullamco laboris " \
+                                                  "nisi</tspan> <tspan x='5' y='20'>ut aliquip ex ea commodo " \
+                                                  "consequat. Duis aute irure dolor in reprehenderit in voluptate " \
+                                                  "velit esse cillum dolore eu</tspan> <tspan x='5' y='25'>fugiat " \
+                                                  "nulla pariatur. Excepteur sint occaecat cupidatat non proident, " \
+                                                  "sunt in culpa qui officia deserunt mollit anim id est " \
+                                                  "laborum.</tspan> "
         save_template_info_json()
         return True
     else:
@@ -580,13 +590,14 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
 
             # write the header for this template
             fw.write(
-                f"<g transform='translate(0, {oy})'>\n"
+                f'<svg width="{page_view_box_w}" height="{p3_d["header_height"]}" transform="translate(0, {oy})">\n'
                 f'<rect x="0" y="0"\n'
-                f'width="{page_view_box_w}" height="{p3_d["header_height"]}"\n'
+                f'width="100%" height="100%"\n'
                 f'style="fill:none;stroke-width:0.5;stroke-opacity:1;stroke:#ff00ff" />\n'
-                f"<text alignment-baseline='middle' style='font-family:{family};font-size:{size};font-style:{style}'>\
-                {template_nr}. {p3_d['template_header']}</text>\n</g>\n"
-            )  # todo: possibly replace \ with "
+                f'<text x="0%" y="0%" dominant-baseline="text-before-edge" '
+                f'style="font-family:{family};font-size:{size};font-style:{style}">'
+                f'{template_nr}. {p3_d["template_header"]}</text>\n</svg>\n'
+            )
             if not oy:  # vertical positioning in page_view_box_h
                 oy = - spacing_h
 
