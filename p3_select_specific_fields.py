@@ -106,16 +106,6 @@ def load_o_create_p3_fields_info_f():
         # other default information is set at variable initialization
         else:
             p3_d['template_header'] = p3_fields_rel_dir[p3_fields_rel_dir.rfind('_') + 1:]
-            p3_d['multi_lines_template_header'] = "<tspan x='5' y='10'>Lorem ipsum dolor sit amet, consectetur " \
-                                                  "adipiscing elit, sed do eiusmod tempor</tspan><tspan x='5' " \
-                                                  "y='15'>incididunt ut labore et dolore magna aliqua. Ut enim ad " \
-                                                  "minim veniam, quis nostrud exercitation ullamco laboris " \
-                                                  "nisi</tspan> <tspan x='5' y='20'>ut aliquip ex ea commodo " \
-                                                  "consequat. Duis aute irure dolor in reprehenderit in voluptate " \
-                                                  "velit esse cillum dolore eu</tspan> <tspan x='5' y='25'>fugiat " \
-                                                  "nulla pariatur. Excepteur sint occaecat cupidatat non proident, " \
-                                                  "sunt in culpa qui officia deserunt mollit anim id est " \
-                                                  "laborum.</tspan> "
         save_template_info_json()
         return True
     else:
@@ -131,6 +121,8 @@ def load_o_create_mako_input_values_json():
     """
     # will be set in this function
     global p3_selected_fields_values_by_prod_d
+
+    check_possible_mismatch_selected_fields_n_template()
     # make sure global variables are initialized in all situations, outside the loop to do it once only
     filename = os.path.join(p1.p1_cntrct_abs_dir + '/' + p3_fields_rel_dir, 'mako_input.json')
     if pathlib.Path(filename).exists():
@@ -333,6 +325,77 @@ def p3_select_specific_fields_context_func():
     print('\n>>> Select an action: ')
 
 
+def select_a_template_n_edit_paragraph_headers():
+    global p3_fields_rel_dir
+
+    # list existing directories, each containing a template
+    drs = p1.read_dirs(p1.p1_cntrct_abs_dir)
+    if drs:
+        # giving a default directory if none has been set before
+        if not p3_fields_rel_dir:
+            p3_fields_rel_dir = drs[0]
+        print(f'~~~ Now processing contract #: {p1.p1_d["cntrct_nr"]}')
+        print(f'~~~ Working on: {p3_fields_rel_dir}')
+        print('>>> Select template to edit:\n')
+        for i in range(len(drs)):
+            print(str(i) + '. ' + drs[i][2:])
+        while True:
+            s = input('\nEnter nr of template to be edited, \'b\' to return : ')
+            if s == 'b':
+                os.system('clear')
+                break
+            else:
+                try:
+                    s_i = int(s)
+                    if s_i in range(len(drs)):
+                        os.system('clear')
+                        p3_fields_rel_dir = drs[s_i]
+                        # load fields already selected for template as they are on file
+                        if load_o_create_p3_fields_info_f():
+                            print(f'now ready to work on {p3_fields_rel_dir}')
+                        while True:
+                            p3_select_specific_fields_context_func()
+                            s = input('\'m\' to use a multi-lines header\n'
+                                      '\'d\' to use a single line default header\n'
+                                      '\'b\' to go back\n'
+                                      '~~~\n')
+                            if s == 'b':
+                                os.system('clear')
+                                break
+                            elif s == 'm':
+                                # multi-lines header
+                                p3_d['template_header'] = "<tspan x='5' y='10'>Lorem ipsum dolor sit amet, " \
+                                                          "consectetur adipiscing elit, sed do eiusmod " \
+                                                          "tempor</tspan><tspan x='5' y='15'>incididunt ut labore et " \
+                                                          "dolore magna aliqua. Ut enim minim veniam, quis nostrud " \
+                                                          "exercitation ullamco laboris nisi</tspan> <tspan x='5' " \
+                                                          "y='20'>ut aliquip ex commodo consequat. Duis aute irure " \
+                                                          "dolor in reprehenderit in voluptate velit esse cillum " \
+                                                          "dolore eu</tspan> "
+                                p3_d['header_height'] = 20
+                                pass
+                            elif s == 'd':
+                                # single line header
+                                p3_d['template_header'] = p3_fields_rel_dir[p3_fields_rel_dir.rfind('_') + 1:]
+                                p3_d['header_height'] = 7
+                                pass
+                            else:
+                                print(f'{s} is not an option, try again')
+                        break
+                    else:
+                        print('!\n! Integer, but not an option, try again\n!')
+                except ValueError:
+                    print('!\n! That\'s not an integer, try again\n!')
+
+        save_template_info_json()
+        # todo: check if this code could be grouped with other render
+        if_not_exists_build_template_header_n_body(p3_fields_rel_dir)
+        load_o_create_mako_input_values_json()
+        render_svg_1_template_1_product()
+    else:
+        return
+
+
 def select_a_template_n_edit_fields():
     global p3_fields_rel_dir
 
@@ -384,7 +447,6 @@ def select_a_template_n_edit_fields():
 
         save_template_info_json()
         if_not_exists_build_template_header_n_body(p3_fields_rel_dir)
-        check_possible_mismatch_selected_fields_n_template()
         load_o_create_mako_input_values_json()
         render_svg_1_template_1_product()
     else:
@@ -545,10 +607,10 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
         page = 1  # nr of page being built
         for p3_fields_rel_dir in drs:  # looping on templates
             p3_fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir)  # dir for header & body
+            if_not_exists_build_template_header_n_body(p3_fields_rel_dir)
             with open(os.path.join(p3_fields_abs_dir, 'label_template_header.svg')) as h:
                 header = h.read()
             template_nr += 1
-            if_not_exists_build_template_header_n_body(p3_fields_rel_dir)
             # loading data previously used with this template
             load_o_create_p3_fields_info_f()
 
@@ -565,7 +627,6 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
                 )
             # from the editable template, build the 'label_template.svg' that will be used to multiply templates
             if not p3_selected_fields_values_by_prod_d:
-                check_possible_mismatch_selected_fields_n_template()  # check that all fields in template will be fed
                 load_o_create_mako_input_values_json()
             # read view box values from template_body so as to compute spacings
             to_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir)
@@ -594,7 +655,7 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
                 f'<rect x="0" y="0"\n'
                 f'width="100%" height="100%"\n'
                 f'style="fill:none;stroke-width:0.5;stroke-opacity:1;stroke:#ff00ff" />\n'
-                f'<text x="0%" y="0%" dominant-baseline="text-before-edge" '
+                f'<text x="0%" y="100%" dominant-baseline="text-after-edge" '
                 f'style="font-family:{family};font-size:{size};font-style:{style}">'
                 f'{template_nr}. {p3_d["template_header"]}</text>\n</svg>\n'
             )
@@ -720,7 +781,6 @@ def render_title_page():
         )
 
         if not p3_selected_fields_values_by_prod_d:
-            check_possible_mismatch_selected_fields_n_template()
             load_o_create_mako_input_values_json()
         cover_s = os.path.join(p1.p1_cntrct_abs_dir, 'page_0.svg')
         with open(cover_s, 'w') as fw:
@@ -771,10 +831,11 @@ def init():
             '0': check_all_templates_have_correct_fields,
             '1': display_all,
             '2': select_a_template_n_edit_fields,
-            '3': render_svg_1_template_1_product,
-            '4': render_title_page,
-            '5': render_svg_1_template_all_products,
-            '6': render_svg_all_templates_all_products,
+            '3': select_a_template_n_edit_paragraph_headers,
+            '4': render_svg_1_template_1_product,
+            '5': render_title_page,
+            '6': render_svg_1_template_all_products,
+            '7': render_svg_all_templates_all_products,
             'b': p.back_to_main,
             'q': p.normal_exit,
             'd': p.debug,
