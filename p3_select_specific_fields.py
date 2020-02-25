@@ -590,7 +590,7 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
 
             # write the header for this template
             fw.write(
-                f'<svg width="{page_view_box_w}" height="{p3_d["header_height"]}" transform="translate(0, {oy})">\n'
+                f'<svg width="{page_view_box_w}" height="{p3_d["header_height"]}" x="0" y="{oy}">\n'
                 f'<rect x="0" y="0"\n'
                 f'width="100%" height="100%"\n'
                 f'style="fill:none;stroke-width:0.5;stroke-opacity:1;stroke:#ff00ff" />\n'
