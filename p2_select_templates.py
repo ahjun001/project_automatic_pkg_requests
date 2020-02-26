@@ -139,7 +139,7 @@ def init():
             '3': add_new_templates,
             '4': delete_existing_templates,
             'b': p.back_to_main,
-            'q': p.normal_exit,
+            'q': p.normal_exit_正常出口,
             'd': p.debug,
         },
         'debug': {
@@ -148,7 +148,7 @@ def init():
             '3': add_new_templates,
             '4': delete_existing_templates,
             'b': p.back,
-            'q': p.normal_exit,
+            'q': p.normal_exit_正常出口,
         },
     }
     if not p.main_menus:

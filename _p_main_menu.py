@@ -11,7 +11,7 @@ import pu_maintain_set_of_indicators_regex_to_be_searched as i
 p0_root_abs_dir = os.path.dirname(os.path.abspath(__file__))  # root directory where the program is located
 
 
-def run_full_demo_with_default_values():
+def run_full_demo_with_default_values_运行完整的演示():
     p1.process_default_contract()
     p2.create_default_templates()
     p3.display_all()
@@ -35,7 +35,7 @@ def u_maintain_set_of_indicators_regex_to_be_searched():
 
 def main_menu_context_func():
     c_nr = p1.p1_d['cntrct_nr'] if 'cntrct_nr' in p1.p1_d.keys() else ''
-    print(f'p1 selected contract:' + f'{ c_nr if c_nr else "None" }')
+    print(f'p1 selected contract:' + f'{c_nr if c_nr else "None"}')
     print(f'p2 selected templates: {p1.read_dirs(p1.p1_cntrct_abs_dir)}')
     print(f'p3 selected distinctive fields: {p3.p3_d["selected_fields"]}')
     print('>>> Main menu:')
@@ -47,6 +47,26 @@ context_func_d = {
 }
 
 
+def step_1__select_a_contract_选择合同号():
+    pass
+
+
+def step_2__select_type_of_labels_to_print_选择_编辑标签类型():
+    pass
+
+
+def step_3__select_fields_to_print_for_each_label_type_选择每种标签类型的资料():
+    pass
+
+
+def display_and_edit_svg_files():
+    pass
+
+
+def export_svg_s_to_pdf_and_collate():
+    pass
+
+
 def init():
     # menus
     p.menu = 'root_menu'
@@ -55,22 +75,20 @@ def init():
         p.main_menu = p.menu
     p.menus = {
         p.menu: {
-            '0': run_full_demo_with_default_values,
-            '1': p1_select_contract,
-            '2': p2_select_templates,
-            '3': p3_select_distinctive_fields,
-            'u': u_maintain_set_of_indicators_regex_to_be_searched,
-            'q': p.normal_exit,
+            '0': run_full_demo_with_default_values_运行完整的演示,
+            '1': step_1__select_a_contract_选择合同号,
+            '2': step_2__select_type_of_labels_to_print_选择_编辑标签类型,
+            '3': step_3__select_fields_to_print_for_each_label_type_选择每种标签类型的资料,
+            'q': p.normal_exit_正常出口,
             'd': p.debug,
         },
         'debug': {
-            '0': run_full_demo_with_default_values,
             '1': p1_select_contract,
             '2': p2_select_templates,
             '3': p3_select_distinctive_fields,
             'u': u_maintain_set_of_indicators_regex_to_be_searched,
             'b': p.back,
-            'q': p.normal_exit,
+            'q': p.normal_exit_正常出口,
         },
     }
     # p.mod_lev_1_menus = p.menus
@@ -85,7 +103,7 @@ def init():
     # If the data directory does not exist, process_default_contract it
     data_adir = os.path.join(p0_root_abs_dir, 'data')
     if not pathlib.Path(data_adir).exists():
-        os.mkdir(data_adir, mode=0o700)
+        os.mkdir(data_adir, mode = 0o700)
 
 
 def main():

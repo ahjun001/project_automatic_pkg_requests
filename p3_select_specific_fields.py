@@ -839,7 +839,7 @@ def init():
             '6': render_svg_1_template_all_products,
             '7': render_svg_all_templates_all_products,
             'b': p.back_to_main,
-            'q': p.normal_exit,
+            'q': p.normal_exit_正常出口,
             'd': p.debug,
         },
         'debug': {
@@ -853,7 +853,7 @@ def init():
             '8': display_p3_fields_info_d,
             '9': display_p3_fields_info_f,
             'b': p.back,
-            'q': p.normal_exit,
+            'q': p.normal_exit_正常出口,
         }
     }
     if not p.main_menus:

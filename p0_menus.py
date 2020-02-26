@@ -32,7 +32,7 @@ def debug():
     menu = 'debug'
 
 
-def normal_exit():
+def normal_exit_正常出口():
     print('~~~ Regular program exit ~~~')
     sys.exit(0)
 

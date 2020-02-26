@@ -746,7 +746,7 @@ def init():
             '8': display_p1_program_info_d,
             '9': display_p1_program_info_f,
             'b': p.back_to_main,
-            'q': p.normal_exit,
+            'q': p.normal_exit_正常出口,
             'd': p.debug,
         },
         'debug': {
@@ -757,7 +757,7 @@ def init():
             '5': display_p1d_common_indics_l,
             '6': display_p1e_specific_fields_d_of_d,
             'b': p.back,
-            'q': p.normal_exit,
+            'q': p.normal_exit_正常出口,
         },
     }
     if not p.main_menus:

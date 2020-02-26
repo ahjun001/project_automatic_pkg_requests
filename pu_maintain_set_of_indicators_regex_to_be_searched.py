@@ -29,7 +29,7 @@ def init():
         p.menu: {
             '3': update,
             'b': p.back_to_main,
-            'q': p.normal_exit,
+            'q': p.normal_exit_正常出口,
         },
     }
     p.mod_lev_1_menus = p.menus
