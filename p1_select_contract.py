@@ -38,6 +38,9 @@ def p0_load_program_info_d():
             p1_d = json.load(f)
         if p1_d:
             p1_cntrct_abs_dir = p0_root_abs_dir + f'/data/{p1_d["cntrct_nr"]}'
+            if not pathlib.Path(p1_cntrct_abs_dir).exists():
+                print(f"|\n| Cannot access '{p1_cntrct_abs_dir}', no such path or directory\n|")
+                # todo: should try to load init file and build from there
             return True
 
 
@@ -64,8 +67,9 @@ def p1_load_contract_info_d():
     global p1_cntrct_abs_dir
 
     if not p0_load_program_info_d():
+        exit()
+    else:
         if not p1_cntrct_abs_dir or 'cntrct_nr' not in p1_d.keys():
-            p0_load_program_info_d()
             process_default_contract()
     with open(os.path.join(p1_cntrct_abs_dir, p1_d['cntrct_nr'] + '_contract-info.json')) as fi:
         p1_cntrct_info_d = json.load(fi)
@@ -704,9 +708,9 @@ def p1_select_contract_main_context_func():
         print('~~~ Now processing contract #: ', p1_d['cntrct_nr'] if p1_d['cntrct_nr'] else None)
         print('>>> Select action: ')
     else:
-        print('!\n! File \'program-info.json\' could not be loaded,\n'
-              + '! default would be contract.xls in this repository root\n'
-              + '! or select a valid contract xls file\n!'
+        print('|\n| File \'program-info.json\' could not be loaded,\n'
+              + '| Default would be contract.xls in this repository root\n'
+              + '| Or select a valid contract xls file\n|'
               )
 
 

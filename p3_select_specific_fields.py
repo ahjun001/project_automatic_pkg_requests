@@ -17,10 +17,10 @@ import p2_select_templates as p2
 p0_root_abs_dir = os.path.dirname(os.path.abspath(__file__))  # root directory
 p3_fields_rel_dir = ''  # currently working fields directory
 p3_all_specific_fields_l = []  # list of fields from p1e_specific_fields_d_of_d
-p3_selected_fields_values_by_prod_d = {}  # field values as in mako_input.json
+p3_selected_fields_values_by_prod_d = {}  # field values as in .mako_input.json
 p3_body_svg = ''  # content of label_template_body.svg
 
-p3_default_fields_l = ['xl_prod_spec', 'u_parc', 'plstc_bg']
+p3_default_fields_l = ['xl_prod_spec', 'u_parc']
 p3_f = None  # info on fields directory currently being edited
 p3_d = {
     "selected_fields": list(p3_default_fields_l),
@@ -65,7 +65,7 @@ def if_not_exists_build_template_header_n_body(some_rel_dir):
     template_fr = os.path.join(to_abs_dir, 'label_template.svg')
     if not pathlib.Path(template_fr).exists():
         shutil.copy(os.path.join(from_abs_dir, 'label_template.svg'), to_abs_dir)
-    body_fw = os.path.join(to_abs_dir, 'label_template_body.svg')
+    body_fw = os.path.join(to_abs_dir, '.label_template_body.svg')
 
     global p3_body_svg
     with open(template_fr) as fr, open(body_fw, 'w') as fw:
@@ -80,8 +80,8 @@ def if_not_exists_build_template_header_n_body(some_rel_dir):
                 fw.write(lines[i])
 
     # and copy the label_template_header there
-    if not pathlib.Path(os.path.join(to_abs_dir, 'label_template_header.svg')).exists():
-        shutil.copy(os.path.join(p0_root_abs_dir + '/common', 'label_template_header.svg'), to_abs_dir)
+    if not pathlib.Path(os.path.join(to_abs_dir, '.label_template_header.svg')).exists():
+        shutil.copy(os.path.join(p0_root_abs_dir + '/common', '.label_template_header.svg'), to_abs_dir)
 
 
 def load_o_create_p3_fields_info_f():
@@ -124,7 +124,7 @@ def load_o_create_mako_input_values_json():
 
     check_possible_mismatch_selected_fields_n_template()
     # make sure global variables are initialized in all situations, outside the loop to do it once only
-    filename = os.path.join(p1.p1_cntrct_abs_dir + '/' + p3_fields_rel_dir, 'mako_input.json')
+    filename = os.path.join(p1.p1_cntrct_abs_dir + '/' + p3_fields_rel_dir, '.mako_input.json')
     if pathlib.Path(filename).exists():
         with open(filename) as fr:
             p3_selected_fields_values_by_prod_d = json.load(fr)
@@ -178,6 +178,8 @@ def display_or_load_output_overview():
 
 def fields_from_template():
     template_s = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir), 'label_template.svg')
+    if not pathlib.Path(template_s).exists():
+        print(f"|\n| Cannot access '{os.path.join(p3_fields_rel_dir, 'label_template.svg')}': no such file\n|")
     with open(template_s) as fr:
         lines = fr.readlines()
     template_fields_set = set()
@@ -545,9 +547,9 @@ def open_svg_for_output(header, page, only_1_temp, only_1_prod, family, size, st
     p3_fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir)
     if only_1_temp:
         if only_1_prod:
-            svg_out = os.path.join(p3_fields_abs_dir, '1_product.svg')
+            svg_out = os.path.join(p3_fields_abs_dir, '.1_product.svg')
         else:
-            svg_out = os.path.join(p3_fields_abs_dir, '1_template.svg')
+            svg_out = os.path.join(p3_fields_abs_dir, '.1_template.svg')
     else:
         svg_out = os.path.join(p1.p1_cntrct_abs_dir, f'page_{page}.svg')
     fw = open(svg_out, 'w')
@@ -608,7 +610,7 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
         for p3_fields_rel_dir in drs:  # looping on templates
             p3_fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir)  # dir for header & body
             if_not_exists_build_template_header_n_body(p3_fields_rel_dir)
-            with open(os.path.join(p3_fields_abs_dir, 'label_template_header.svg')) as h:
+            with open(os.path.join(p3_fields_abs_dir, '.label_template_header.svg')) as h:
                 header = h.read()
             template_nr += 1
             # loading data previously used with this template
@@ -632,7 +634,7 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
             to_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir)
             with open(os.path.join(to_abs_dir, 'label_template.svg')) as f:
                 mako_template = Template(
-                    filename = os.path.join(p3_fields_abs_dir, 'label_template_body.svg'),
+                    filename = os.path.join(p3_fields_abs_dir, '.label_template_body.svg'),
                     input_encoding = 'utf-8'
                 )
                 contents = f.read()
@@ -732,7 +734,7 @@ def render_title_page():
 
     # copy first label on cover page template
     p3_fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir)
-    svg_in = os.path.join(p3_fields_abs_dir, '1_product.svg')
+    svg_in = os.path.join(p3_fields_abs_dir, '.1_product.svg')
     if svg_in:
         with open(svg_in) as fr:
             lines = fr.readlines()
@@ -756,9 +758,9 @@ def render_title_page():
                 balance -= 1
             if 'label="label"' in line:
                 good_n = i
-        with open(os.path.join(p0_root_abs_dir + '/common/title_page_template.svg')) as fr:
+        with open(os.path.join(p0_root_abs_dir + '/common/.title_page_template.svg')) as fr:
             lines = fr.readlines()
-        svg_out = os.path.join(p1.p1_cntrct_abs_dir, 'title_page_template.svg')
+        svg_out = os.path.join(p1.p1_cntrct_abs_dir, '.title_page_template.svg')
         with open(svg_out, 'w') as fw:
             for i in range(len(lines) - 1):
                 fw.writelines(lines[i])
@@ -841,7 +843,6 @@ def init():
             'd': p.debug,
         },
         'debug': {
-            '55': render_svg_all_templates_all_products,
             '66': svg_s_to_pdf_deliverable,
             '44': render_title_page,
             '1': display_all,

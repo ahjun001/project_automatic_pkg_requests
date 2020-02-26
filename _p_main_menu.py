@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 import os
+import pathlib
+
 import p0_menus as p
 import p1_select_contract as p1
 import p2_select_templates as p2
@@ -82,7 +84,7 @@ def init():
 
     # If the data directory does not exist, process_default_contract it
     data_adir = os.path.join(p0_root_abs_dir, 'data')
-    if not os.path.exists(data_adir):
+    if not pathlib.Path(data_adir).exists():
         os.mkdir(data_adir, mode=0o700)
 
 
