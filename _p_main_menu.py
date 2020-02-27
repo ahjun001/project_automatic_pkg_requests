@@ -11,9 +11,8 @@ import pu_maintain_set_of_indicators_regex_to_be_searched as i
 p0_root_abs_dir = os.path.dirname(os.path.abspath(__file__))  # root directory where the program is located
 
 
-def run_full_demo_with_default_values_运行完整的演示():
-    p1.put_default_contract_in_repertory()
-    p1.process_default_contract()
+def run_full_demo_with_assigned_values_运行完整演示():
+    p1.process_selected_contract()
     p2.create_default_templates()
     p3.display_all()
 
@@ -69,6 +68,8 @@ def export_svg_s_to_pdf_and_collate():
 
 
 def init():
+    # assign a program
+    p1.load_o_create_program_info_d()
     # menus
     p.menu = 'root_menu'
     # p.mod_lev_1_menu = p.menu
@@ -76,7 +77,7 @@ def init():
         p.main_menu = p.menu
     p.menus = {
         p.menu: {
-            '0': run_full_demo_with_default_values_运行完整的演示,
+            '0': run_full_demo_with_assigned_values_运行完整演示,
             '1': step_1__select_a_contract_选择合同号,
             '2': step_2__select_type_of_labels_to_print_选择_编辑标签类型,
             '3': step_3__select_fields_to_print_for_each_label_type_选择每种标签类型的资料,
@@ -101,7 +102,7 @@ def init():
         p.mod_lev_1_menus = p.menus
     p.context_func_d = {**p.context_func_d, **context_func_d}
 
-    # If the data directory does not exist, process_default_contract it
+    # If the data directory does not exist, process_selected_contract it
     data_adir = os.path.join(p0_root_abs_dir, 'data')
     if not pathlib.Path(data_adir).exists():
         os.mkdir(data_adir, mode = 0o700)

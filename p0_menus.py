@@ -14,7 +14,7 @@ def back():
     print('~~~ Returning to level 1  ~~~')
 
 
-def back_to_main():  # just there to have a selection in the menu, the function won't be executed
+def back_to_main_退到主程序():  # just there to have a selection in the menu, the function won't be executed
     global menu, main_menu
     global menus, main_menus
 

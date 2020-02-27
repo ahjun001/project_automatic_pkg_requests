@@ -319,7 +319,7 @@ def display_specific_fields_for_all_products():
     print(s)
 
 
-def p3_select_specific_fields_context_func():
+def select_specific_fields_context_func():
     display_specific_fields_for_all_products()
     print('~~~ Now processing contract #: ', p1.p1_d["cntrct_nr"] if p1.p1_d["cntrct_nr"] else None)
     print('~~~ Now working on template: ', p3_fields_rel_dir)
@@ -356,7 +356,7 @@ def select_a_template_n_edit_paragraph_headers():
                         if load_o_create_p3_fields_info_f():
                             print(f'now ready to work on {p3_fields_rel_dir}')
                         while True:
-                            p3_select_specific_fields_context_func()
+                            select_specific_fields_context_func()
                             s = input('\'m\' to use a multi-lines header\n'
                                       '\'d\' to use a single line default header\n'
                                       '\'b\' to go back\n'
@@ -427,7 +427,7 @@ def select_a_template_n_edit_fields():
                         if load_o_create_p3_fields_info_f():
                             print(f'now ready to work on {p3_fields_rel_dir}')
                         while True:
-                            p3_select_specific_fields_context_func()
+                            select_specific_fields_context_func()
                             s = input('\'a\' to add a field\n'
                                       '\'d\' to delete a field\n'
                                       '\'b\' to go back\n'
@@ -812,8 +812,8 @@ def display_all():
 
 
 context_func_d = {
-    'select_specific_fields': p3_select_specific_fields_context_func,
-    'debug': p3_select_specific_fields_context_func,
+    'select_specific_fields': select_specific_fields_context_func,
+    'debug': select_specific_fields_context_func,
 }
 
 
@@ -838,7 +838,7 @@ def init():
             '5': render_title_page,
             '6': render_svg_1_template_all_products,
             '7': render_svg_all_templates_all_products,
-            'b': p.back_to_main,
+            'b': p.back_to_main_退到主程序,
             'q': p.normal_exit_正常出口,
             'd': p.debug,
         },

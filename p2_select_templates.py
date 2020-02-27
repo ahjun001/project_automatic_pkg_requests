@@ -32,7 +32,7 @@ def load_n_display():
     p1.display_dirs(p1.p1_cntrct_abs_dir)
 
 
-def p2_load_templates_info_l():
+def p2_load_templates_info_l():  # used in p3
     return p1.read_dirs(p1.p1_cntrct_abs_dir)
 
 
@@ -53,7 +53,7 @@ def add_templates_from_list(list_l, ask_questions):
         candidates_l = list(list_l)
 
     if ask_questions:
-        p2_select_templates_context_func(prompt=False)
+        select_templates_context_func(prompt=False)
         print('>>> Select # in front of the template name to be added:\n')
         for i in range(len(candidates_l)):
             print(str(i) + '. ' + candidates_l[i][2:])
@@ -107,7 +107,7 @@ def create_template_dir(dr):
         os.mkdir(lbl_abs_dir, mode=0o700)
 
 
-def p2_select_templates_context_func(prompt=True):
+def select_templates_context_func(prompt=True):
     print('~~~ Now processing contract #: ', p1.p1_d["cntrct_nr"] if p1.p1_d["cntrct_nr"] else None)
     print('\n~~~ Labels already added:')
 
@@ -117,8 +117,8 @@ def p2_select_templates_context_func(prompt=True):
 
 
 context_func_d = {
-    'p2_select_templates': p2_select_templates_context_func,
-    'debug': p2_select_templates_context_func,
+    'p2_select_templates': select_templates_context_func,
+    'debug': select_templates_context_func,
 }
 
 
@@ -138,15 +138,11 @@ def init():
             '2': load_n_display,
             '3': add_new_templates,
             '4': delete_existing_templates,
-            'b': p.back_to_main,
+            'b': p.back_to_main_退到主程序,
             'q': p.normal_exit_正常出口,
             'd': p.debug,
         },
         'debug': {
-            '1': create_default_templates,
-            '2': load_n_display,
-            '3': add_new_templates,
-            '4': delete_existing_templates,
             'b': p.back,
             'q': p.normal_exit_正常出口,
         },

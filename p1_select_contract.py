@@ -16,9 +16,63 @@ p0_root_abs_dir = os.path.dirname(os.path.abspath(__file__))  # root directory w
 prog_info_json_f = ''
 p1_d = {}
 p1_cntrct_abs_dir = ''  # directory where a copy of the xls contract file and contract extracted data is
+p1_cntrct_info_d = {}
+p1_cntrct_info_f = ''
+page_setup_d = {}
+p1_search_reg_ex_l = []
+indicators_csv = os.path.join(p0_root_abs_dir + '/common', 'indicators.csv')
+p1_all_products_to_be_processed_set = set()
+p1b_indics_from_contract_l = []
+p1c_prods_w_same_key_set = {}  # make a dictionary key= info, value = sets of prods with that key
+p1d_common_indics_l = []
+p1e_specific_fields_d_of_d = {}
 
 
-# todo: why does it have to be here?
+def dump_program_info_json():
+    global prog_info_json_f
+    global p1_d
+    # document the info in program-info.json
+    with open(prog_info_json_f, 'w') as fw:
+        json.dump(p1_d, fw, ensure_ascii = False)
+
+
+def select_new_contract():
+    global p1_cntrct_abs_dir
+    global p1_d
+
+    # (p1_d['cntrct_nr'], p1_d['fpath_init_xls'], p1_d["fpath_file_xls"]) = (None, None, None)
+    print('~~~ Select a filename in graphic file browser -- check if window is hidden')
+    ini_xls = askopenfilename()
+    if not ini_xls:
+        return False
+    # split path and filename
+    path, filename_ext = os.path.split(ini_xls)
+    # split filename and extension
+    filename, ext = os.path.splitext(filename_ext)
+    # check extension indeed is '.xls'
+    if ext == '.xls':
+        # extract contract_nr
+        s = re.match(r'\w+-\d+', filename).group()
+        if s:
+            p1_d['cntrct_nr'] = s
+            p1_cntrct_abs_dir = os.path.join(p0_root_abs_dir + '/data/' + p1_d['cntrct_nr'])
+            p1_d["fpath_file_xls"] = os.path.join(p1_cntrct_abs_dir, filename_ext)
+            p1_d['fpath_init_xls'] = ini_xls
+            if not pathlib.Path(p1_cntrct_abs_dir).exists():
+                os.mkdir(p1_cntrct_abs_dir, mode = 0o700)
+                # do not overwrite an existing contract file
+            if not pathlib.Path(p1_d["fpath_file_xls"]).exists():
+                shutil.copy(p1_d['fpath_init_xls'], p1_cntrct_abs_dir)
+        else:  # the prefix has not been checked
+            print('A prefix could not be read from filename ext')
+            return False
+        dump_program_info_json()
+    else:
+        print(f'\nSelected file {filename} extension is not \'.xls\'\n')
+        return False
+    return True
+
+
 def load_o_create_program_info_d():
     """
     Loads p1_d['cntrct_nr'], p1_d["fpath_file_xls"], and p1_cntrct_abs_dir from program-info.json
@@ -44,247 +98,39 @@ def load_o_create_program_info_d():
             p1_d = json.load(f)
         if 'cntrct_nr' in p1_d.keys():
             p1_cntrct_abs_dir = p0_root_abs_dir + f'/data/{p1_d["cntrct_nr"]}'
-            if pathlib.Path(p1_cntrct_abs_dir).exists():
-                if 'fpath_file_xls' in p1_d.keys():
-                    if pathlib.Path(p1_d['fpath_file_xls']).exists():
-                        return True  # (i) json and file already in repository
-                    else:
-                        print(f"|\n| Cannot access '{p1_d['fpath_file_xls']}'\n|")
-                else:
-                    print(f'program-info.json does not contain {p1_d["fpath_file_xls"]} data')
-                print('| Trying to build from fpath_init_xls file in program-info.json')
-                if 'fpath_init_xls' in p1_d.keys():
-                    if pathlib.Path(p1_d['fpath_init_xls']).exists():
-                        shutil.copy(p1_d['fpath_init_xls'], p1_cntrct_abs_dir)
-                        _, filename_ext = os.path.split(p1_d['fpath_init_xls'])
-                        p1_d['fpath_file_xls'] = os.path.join(p1_cntrct_abs_dir, filename_ext)
-                        return True  # (ii) re-create from initial file as per contract-info.json
-                    else:
-                        print(
-                            f"|\n| Cannot access '{p1_d['fpath_init_xls']}' as in 'program-info.json, no such file'\n|")
-                else:
-                    print(f'program-info.json does not contain {p1_d["fpath_init_xls"]} data')
-            else:
+            if not pathlib.Path(p1_cntrct_abs_dir).exists():
+                print(f"|\n| Cannot access {p1_cntrct_abs_dir} directory as in 'program-info.json', creating one\n|")
                 os.mkdir(p1_cntrct_abs_dir, mode = 0o700)
-                print(f"|\n| Cannot access '{p1_cntrct_abs_dir}' as in 'program-info.json, no such directory'\n|")
+            if 'fpath_file_xls' in p1_d.keys():
+                if pathlib.Path(p1_d['fpath_file_xls']).exists():
+                    return True  # (i) json and file already in repository
+                else:
+                    buf = p1_d['fpath_file_xls']
+                    print(f"|\n| Cannot access '{buf}'\n|")
+            else:
+                print(f'program-info.json does not contain {p1_d["fpath_file_xls"]} data')
+            print('| Trying to build from fpath_init_xls file in program-info.json')
+            if 'fpath_init_xls' in p1_d.keys():
+                if pathlib.Path(p1_d['fpath_init_xls']).exists():
+                    shutil.copy(p1_d['fpath_init_xls'], p1_cntrct_abs_dir)
+                    _, filename_ext = os.path.split(p1_d['fpath_init_xls'])
+                    p1_d['fpath_file_xls'] = os.path.join(p1_cntrct_abs_dir, filename_ext)
+                    return True  # (ii) re-create from initial file as per contract-info.json
+                else:
+                    print(
+                        f"|\n| Cannot access '{p1_d['fpath_init_xls']}' as in 'program-info.json, no such file'\n|")
+            else:
+                print(f'program-info.json does not contain {p1_d["fpath_init_xls"]} data')
 
         else:
             print(f'program-info.json does not contain {p1_d["cntrct_nr"]} data')
-    # else:
-    print(f'{prog_info_json_f} does not exist, no such file')
-    # (iii) point at file
+    else:
+        print(f'{prog_info_json_f} does not exist, no such file')
+    # if select then return true
     select_new_contract()
-    return True  # Todo: be more rigorous
+    return True  # (iii) point at file
 
 
-# local path to contract-info.json file
-p1_cntrct_info_d = {}
-p1_cntrct_info_f = ''
-page_setup_d = {}
-p1_search_reg_ex_l = []
-indicators_csv = os.path.join(p0_root_abs_dir + '/common', 'indicators.csv')
-p1_all_products_to_be_processed_set = set()
-p1b_indics_from_contract_l = []
-p1c_prods_w_same_key_set = {}  # make a dictionary key= info, value = sets of prods with that key
-p1d_common_indics_l = []
-p1e_specific_fields_d_of_d = {}
-
-
-def check_sole_cntrct_ext_file_w_o_wo_prefix_is_in_dir(some_abs_dir, ext, check_prefix = True):
-    """
-        To check prefix, this requires that p1_d['cntrct_nr'] has been initialized
-        """
-    global p1_cntrct_abs_dir
-    global prog_info_json_f
-    global p1_d
-    global p1_cntrct_info_d
-    global p1_cntrct_info_f
-
-    # if the cntrct_nr directory os.path.exists
-    c_nr_abs_dir = pathlib.Path(some_abs_dir)  # check why this is necessary
-    if c_nr_abs_dir.exists():
-        # make the sublist of the files that have an '.ext' extension
-        ext_file_l = [fl.name for fl in c_nr_abs_dir.glob('*' + ext)]
-        # if this list contains only one file return prefix and filename, or check the prefix is correct
-        if len(ext_file_l) == 1:
-            # check that this file name begins with cntrct_nr if it exists (after the first time run)
-            s = re.match(r'\w+-\d+', ext_file_l[0])
-            if s:
-                prfx = s.group()
-                if check_prefix:
-                    c_nr = p1_d['cntrct_nr'] if 'cntrct_nr' in p1_d.keys() else ''
-                    if c_nr:
-                        # if prefix and p1_d['cntrct_nr'] match, return prefix, filename
-                        if prfx == p1_d['cntrct_nr']:
-                            p1_d["fpath_file_xls"] = os.path.join(some_abs_dir, ext_file_l[0])
-                            return prfx, p1_d["fpath_file_xls"]
-                        else:
-                            print(f'\nIncorrect! The file in {p1_d["cntrct_nr"]} starts with {prfx}\n')
-                            return None, None
-                # p1_d['cntrct_nr'] has not been populated, probably running the program for the first time
-                p1_d["fpath_file_xls"] = os.path.join(some_abs_dir, ext_file_l[0])
-                return prfx, p1_d["fpath_file_xls"]
-            # the prefix has not been checked
-            else:
-                print('A prefix could not be read from filename ext')
-                return None, None
-        # but also there maybe no ext file in the cntrct_nr directory
-        elif len(ext_file_l) == 0:
-            # view_file_not_in_directory()
-            return None, None
-        # or there maybe more than one, which would not be the canonical situation
-        else:
-            print(f"\n{len(ext_file_l)} {ext} files are present, that's too many, exiting\n")
-            return None, None
-    # if the cntrct_nr directory does not exist, return False
-    else:
-        return None, None
-
-
-def dump_program_info_json():
-    global prog_info_json_f
-    global p1_d
-    # document the info in program-info.json
-    with open(prog_info_json_f, 'w') as fw:
-        json.dump(p1_d, fw, ensure_ascii = False)
-
-
-def select_new_contract():
-    global p1_cntrct_abs_dir
-    global p1_d
-
-    (p1_d['cntrct_nr'], p1_d['fpath_init_xls'], p1_d["fpath_file_xls"]) = (None, None, None)
-    # pick a new xls contract source file with the tkinter browser
-    print('~~~ Select a filename in graphic file browser -- check if window is hidden')
-    ini_xls = askopenfilename()
-    if not ini_xls:
-        return
-    p1_d['fpath_init_xls'] = ini_xls
-    # split path and filename
-    path, filename_ext = os.path.split(p1_d['fpath_init_xls'])
-    # split filename and extension
-    filename, ext = os.path.splitext(filename_ext)
-    # check extension indeed is '.xls'
-    if ext == '.xls':
-        # extract contract_nr
-        s = re.match(r'\w+-\d+', filename).group()
-        if s:
-            p1_d['cntrct_nr'] = s
-            p1_cntrct_abs_dir = os.path.join(p0_root_abs_dir + '/data/' + p1_d['cntrct_nr'])
-            p1_d["fpath_file_xls"] = os.path.join(p1_cntrct_abs_dir, filename_ext)
-            if not pathlib.Path(p1_cntrct_abs_dir).exists():
-                os.mkdir(p1_cntrct_abs_dir, mode = 0o700)
-                # do not overwrite an existing contract file
-            if not pathlib.Path(p1_d["fpath_file_xls"]).exists():
-                shutil.copy(p1_d['fpath_init_xls'], p1_cntrct_abs_dir)
-        # the prefix has not been checked
-        else:
-            print('A prefix could not be read from filename ext')
-            return
-        # create_a_new_label_kind 'p1_cntrct_abs_dir'
-        dump_program_info_json()
-    else:
-        print(f'\nSelected file {filename} extension is not \'.xls\'\n')
-
-
-def build_program_info_d_from_root_xls_file_or_ask_open_file():
-    global p1_cntrct_abs_dir
-    global prog_info_json_f
-    global p1_d
-    global p1_cntrct_abs_dir
-
-    # look for a single xls contract file in the root directory
-    p1_d['cntrct_nr'], p1_d['fpath_init_xls'] = check_sole_cntrct_ext_file_w_o_wo_prefix_is_in_dir(
-        p0_root_abs_dir, '.xls')
-
-    if not p1_d['cntrct_nr'] or not p1_d['fpath_init_xls']:
-        select_new_contract()
-        return
-    else:
-
-        p1_cntrct_abs_dir = os.path.join(p0_root_abs_dir, 'data/', p1_d['cntrct_nr'])
-
-        # If the directory does not exist yet, create it
-        if not pathlib.Path(p1_cntrct_abs_dir).exists():
-            try:
-                os.mkdir(p1_cntrct_abs_dir, mode = 0o700)
-            except OSError:
-                raise
-
-        # If the directory pre-existed, check if it is coherently populated
-        contract_nr_l, filename_source_xls_l = check_sole_cntrct_ext_file_w_o_wo_prefix_is_in_dir(
-            p1_cntrct_abs_dir, '.xls')
-
-        # check for name consistency
-        if contract_nr_l:
-            if contract_nr_l != p1_d['cntrct_nr']:
-                print(f'\nIncorrect! The file in {p1_d["cntrct_nr"]} starts with {contract_nr_l}\n')
-
-        # if a xls contract file does not exist in contract_dir, copy from the root xls file
-        if not filename_source_xls_l:
-            # make a copy in the directory that has just been created
-            shutil.copy(p1_d['fpath_init_xls'], p1_cntrct_abs_dir)
-            # have p1_d["fpath_file_xls"] now point to the program repository
-            _, p1_d["fpath_file_xls"] = check_sole_cntrct_ext_file_w_o_wo_prefix_is_in_dir(
-                p1_cntrct_abs_dir, '.xls')
-            print(f'p1: re-building from root xls contract: {p1_d["fpath_file_xls"]}')
-
-    dump_program_info_json()
-
-
-def new_put_default_contract_in_repository():
-    pass
-
-
-def put_default_contract_in_repository():
-    global p1_cntrct_info_f
-    global p1_cntrct_info_d
-    global p1_cntrct_abs_dir
-    global prog_info_json_f
-    global p1_d
-
-    load_o_create_program_info_d()
-    # checking if a program-info.json file exists in the root directory
-    if pathlib.Path(prog_info_json_f).exists():
-        # then load the info it contains in p1_d dictionary
-        with open(prog_info_json_f) as f:
-            p1_d = json.load(f)
-        # check if p1_d['cntrct_nr' helps point to a valid file,
-        if p1_d:
-            # then check if this one could be working data
-            if p1_d['cntrct_nr']:
-                p1_cntrct_abs_dir = p0_root_abs_dir + f'/data/{p1_d["cntrct_nr"]}'
-                if not os.path.isdir(p1_cntrct_abs_dir):
-                    os.mkdir(p1_cntrct_abs_dir)
-                _, result = check_sole_cntrct_ext_file_w_o_wo_prefix_is_in_dir(p1_cntrct_abs_dir, '.xls')
-                if result:
-                    # create_a_new_label_kind all global variables accordingly
-                    p1_d["fpath_file_xls"] = result
-                # if the data from p1_d cannot be used
-                else:
-                    # if a valid initial file exists but is not uniquely copied in the repository
-                    # todo: write with in p1_d.keys()
-                    # if 'fpath_init_xls' in p1_d.keys():  # tests True even if  == ""
-                    if 'fpath_init_xls' in p1_d.keys():  # tests True even if  == ""
-                        if not pathlib.Path(p1_cntrct_abs_dir).exists():
-                            os.mkdir(p1_cntrct_abs_dir, mode = 0o700)
-                        p1_d['fpath_init_xls'] = p1_d['fpath_init_xls']
-                        shutil.copy(p1_d['fpath_init_xls'], p1_cntrct_abs_dir)
-                        _, filename_ext = os.path.split(p1_d['fpath_init_xls'])
-                        p1_d["fpath_file_xls"] = os.path.join(p1_cntrct_abs_dir, filename_ext)
-                    else:
-                        # cannot do much else with this info, abandon and start-over
-                        del p1_d['cntrct_nr']
-                        build_program_info_d_from_root_xls_file_or_ask_open_file()
-        # if program-info.json doesn't point to a valid ./data/p1_d['cntrct_nr'] and xls file, then rebuild
-        else:
-            build_program_info_d_from_root_xls_file_or_ask_open_file()
-    # if program-info.json does not exist
-    else:
-        build_program_info_d_from_root_xls_file_or_ask_open_file()
-
-
-# todo: load_o_create_contract_info_d
 def load_contract_info_d():
     """
     Loads p1_cntrct_info_f into p1_cntrct_info_d, maybe resetting these values
@@ -298,8 +144,7 @@ def load_contract_info_d():
         exit()
     else:
         if not p1_cntrct_abs_dir or 'cntrct_nr' not in p1_d.keys():
-            # todo: why process here?
-            process_default_contract()
+            process_selected_contract()
     with open(os.path.join(p1_cntrct_abs_dir, p1_d['cntrct_nr'] + '_contract-info.json')) as fi:
         p1_cntrct_info_d = json.load(fi)
     return True
@@ -463,19 +308,6 @@ def load_o_create_page_set_up():
             json.dump(page_setup_d, f, ensure_ascii = False)
 
 
-def dump_contract_info_json(key, filename):
-    global p1_cntrct_info_d
-    global p1_cntrct_abs_dir
-    p1_cntrct_info_d[key] = filename
-    f = os.path.join(p1_cntrct_abs_dir, p1_cntrct_info_f)
-    with open(f, 'w') as fi:
-        json.dump(p1_cntrct_info_d, fi, ensure_ascii = False)
-
-
-def view_file_not_in_directory():
-    print(f'\nThe xls file corresponding to {p1_d["cntrct_nr"]} contract is not present, exiting\n')
-
-
 def display_p1_cntrct_info_d():
     global p1_cntrct_info_d
     print('~~~ Reading contract-info global value ~~~')
@@ -533,7 +365,16 @@ def display_dirs(walk_abs_dir):
         return None
 
 
-def process_default_contract():
+def dump_contract_info_json(key, filename):
+    global p1_cntrct_info_d
+    global p1_cntrct_abs_dir
+    p1_cntrct_info_d[key] = filename
+    f = os.path.join(p1_cntrct_abs_dir, p1_cntrct_info_f)
+    with open(f, 'w') as fi:
+        json.dump(p1_cntrct_info_d, fi, ensure_ascii = False)
+
+
+def process_selected_contract():
     global p1_cntrct_info_f
     global p1_cntrct_info_d
     global p1_cntrct_abs_dir
@@ -553,8 +394,6 @@ def process_default_contract():
     p1d_common_indics_l = []
     p1e_specific_fields_d_of_d = {}
 
-    # todo: why load at this point?, that was good for intermediary process, no longer needed
-    # load contract-info.json file if exists
     p1_cntrct_info_f = p1_d['cntrct_nr'] + '_contract-info.json'
     filename = os.path.join(p1_cntrct_abs_dir, p1_cntrct_info_f)
     if pathlib.Path(filename).exists():
@@ -688,7 +527,7 @@ def process_default_contract():
     for k, v in p1c_prods_w_same_key_set.items():
         # indic is not a  packing quantity and is common to all products
         if k[0] != 'pack_qty' and v == p1_all_products_to_be_processed_set:
-            if k[3]:  # todo: check why this sometimes does not happen
+            if k[3]:
                 p1d_common_indics_l.append(k)
         else:
             for prod in v:
@@ -734,19 +573,13 @@ def process_default_contract():
 
 
 def select_contract_main_context_func():
-    if load_o_create_program_info_d():
-        print('~~~ Now processing contract #: ', p1_d['cntrct_nr'] if 'cntrct_nr' in p1_d.keys() else None)
-        print('>>> Select action: ')
-    else:
-        print('|\n| File \'program-info.json\' could not be loaded,\n|')
+    print('~~~ Now processing contract #: ', p1_d['cntrct_nr'] if 'cntrct_nr' in p1_d.keys() else None)
+    print('>>> Select action: ')
 
 
 def select_contract_debug_func():
-    if load_o_create_program_info_d():
-        display_dirs(p0_root_abs_dir + '/data/')
-        print('~~~ Select contract / Display ~~~')
-    else:
-        print('File \'program-info.json\' could not be loaded')
+    display_dirs(p0_root_abs_dir + '/data/')
+    print('~~~ Select contract / Display ~~~')
 
 
 context_func_d = {
@@ -756,10 +589,6 @@ context_func_d = {
 
 
 def init():
-    # global prog_info_json_f
-    # initializing globals necessary for all functions
-    # prog_info_json_f = os.path.join(p0_root_abs_dir, 'program-info.json')
-    # todo: put_default_contract_in_repository() here
     load_o_create_program_info_d()
 
     # initializing menus last, so that context functions display most recent information
@@ -769,12 +598,13 @@ def init():
     p.menus = {
         p.menu: {
             '0': load_o_create_program_info_d,
-            '1': process_default_contract,
+            '5': select_new_contract,
+            '1': process_selected_contract,
             '2': display_or_load_output_overview,
             '4': delete_all_data_on_selected_contract,
             '8': display_p1_program_info_d,
             '9': display_p1_program_info_f,
-            'b': p.back_to_main,
+            'b': p.back_to_main_退到主程序,
             'q': p.normal_exit_正常出口,
             'd': p.debug,
         },
