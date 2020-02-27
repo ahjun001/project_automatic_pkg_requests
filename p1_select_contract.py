@@ -54,23 +54,25 @@ def select_new_contract():
         # extract contract_nr
         s = re.match(r'\w+-\d+', filename).group()
         if s:
+            print(f"Processing {s}")
             p1_d['cntrct_nr'] = s
             p1_cntrct_abs_dir = os.path.join(p0_root_abs_dir + '/data/' + p1_d['cntrct_nr'])
-            p1_d["fpath_file_xls"] = os.path.join(p1_cntrct_abs_dir, filename_ext)
-            p1_d['fpath_init_xls'] = ini_xls
             if not pathlib.Path(p1_cntrct_abs_dir).exists():
                 os.mkdir(p1_cntrct_abs_dir, mode = 0o700)
                 # do not overwrite an existing contract file
+            p1_d["fpath_file_xls"] = os.path.join(p1_cntrct_abs_dir, filename_ext)
+            p1_d['fpath_init_xls'] = ini_xls
             if not pathlib.Path(p1_d["fpath_file_xls"]).exists():
                 shutil.copy(p1_d['fpath_init_xls'], p1_cntrct_abs_dir)
+            dump_program_info_json()
+            process_selected_contract()
+            return True
         else:  # the prefix has not been checked
             print('A prefix could not be read from filename ext')
             return False
-        dump_program_info_json()
     else:
         print(f'\nSelected file {filename} extension is not \'.xls\'\n')
         return False
-    return True
 
 
 def load_o_create_program_info_d():

@@ -33,22 +33,8 @@ def u_maintain_set_of_indicators_regex_to_be_searched():
     i.init()
 
 
-def main_menu_context_func():
-    c_nr = p1.p1_d['cntrct_nr'] if 'cntrct_nr' in p1.p1_d.keys() else ''
-    print(f'p1 selected contract:' + f'{c_nr if c_nr else "None"}')
-    print(f'p2 selected templates: {p1.read_dirs(p1.p1_cntrct_abs_dir)}')
-    print(f'p3 selected distinctive fields: {p3.p3_d["selected_fields"]}')
-    print('>>> Main menu:')
-
-
-context_func_d = {
-    'root_menu': main_menu_context_func,
-    'debug': main_menu_context_func,
-}
-
-
 def step_1__select_a_contract_选择合同号():
-    pass
+    p1.select_new_contract()
 
 
 def step_2__select_type_of_labels_to_print_选择_编辑标签类型():
@@ -65,6 +51,24 @@ def display_and_edit_svg_files():
 
 def export_svg_s_to_pdf_and_collate():
     pass
+
+
+def main_menu_context_func():
+    c_nr = p1.p1_d['cntrct_nr'] if 'cntrct_nr' in p1.p1_d.keys() else ''
+    print(f'Step 1 selected contract: ' + f'{c_nr if c_nr else "None"}')
+    templ_l = p1.read_dirs(p1.p1_cntrct_abs_dir)
+    if not templ_l:
+        templ_l = p2.p2_default_templates_l
+    print(f'Step 2 selected type of labels to print: {templ_l}')
+    print(f'Step 3 selected fields to print for each label type: {p3.p3_d["selected_fields"]}')
+    print(60 * '-', '\n\n')
+    print('>>> Main menu:')
+
+
+context_func_d = {
+    'root_menu': main_menu_context_func,
+    'debug': main_menu_context_func,
+}
 
 
 def init():

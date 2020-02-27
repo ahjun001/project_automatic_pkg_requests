@@ -19,6 +19,7 @@
       <w>pytest</w>
       <w>readlines</w>
       <w>shutil</w>
+      <w>templ</w>
       <w>tspan</w>
       <w>tuitos</w>
       <w>venv</w>
