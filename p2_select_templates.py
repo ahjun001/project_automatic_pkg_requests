@@ -124,7 +124,7 @@ context_func_d = {
 
 def init():
     # make sure p1 has been run
-    if not p1.p1_load_contract_info_d():
+    if not p1.load_contract_info_d():
         print('p1 has not run successfully')
 
     # initializing menus last, so that context functions display most recent information

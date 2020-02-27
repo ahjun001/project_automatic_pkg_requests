@@ -12,6 +12,7 @@ p0_root_abs_dir = os.path.dirname(os.path.abspath(__file__))  # root directory w
 
 
 def run_full_demo_with_default_values_运行完整的演示():
+    p1.put_default_contract_in_repertory()
     p1.process_default_contract()
     p2.create_default_templates()
     p3.display_all()
