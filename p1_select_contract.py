@@ -41,7 +41,8 @@ def select_new_contract():
     global p1_d
 
     # (p1_d['cntrct_nr'], p1_d['fpath_init_xls'], p1_d["fpath_file_xls"]) = (None, None, None)
-    print('~~~ Select a filename in graphic file browser -- check if window is hidden')
+    print('~~~ Step 1: Selecting a contract ~~~')
+    print('~~~ Select a contract xls file in the graphic file browser -- mind the browser window could be hidden')
     ini_xls = askopenfilename()
     if not ini_xls:
         return False
@@ -448,7 +449,7 @@ def process_selected_contract():
 
     with open(os.path.join(p1_cntrct_abs_dir, rel_path_contract_json_f), 'w') as fc:
         json.dump(contract_json_d, fc, ensure_ascii = False)
-    # populate p1_cntrct_info_d: a structure to store label information, and its corresponding json file
+    # populate p1_cntrct_info_d: a structure to store template information, and its corresponding json file
     p1_cntrct_info_d['p1a_contract_json'] = rel_path_contract_json_f
 
     # def create_2():
@@ -618,7 +619,7 @@ def init():
             '4': display_p1c_all_relevant_data,
             '5': display_p1d_common_indics_l,
             '6': display_p1e_specific_fields_d_of_d,
-            'b': p.back,
+            'b': p.back_后退,
             'q': p.normal_exit_正常出口,
         },
     }

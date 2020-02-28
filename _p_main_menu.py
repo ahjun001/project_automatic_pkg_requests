@@ -37,11 +37,11 @@ def step_1__select_a_contract_选择合同号():
     p1.select_new_contract()
 
 
-def step_2__select_type_of_labels_to_print_选择_编辑标签类型():
+def step_2__select_templates_to_print_选择_编辑标签类型():
     p2.init()
 
 
-def step_3__select_fields_to_print_for_each_label_type_选择每种标签类型的资料():
+def step_3__select_fields_to_print_for_each_template_选择每种标签类型的资料():
     p3.init()
 
 
@@ -56,11 +56,11 @@ def export_svg_s_to_pdf_and_collate():
 def main_menu_context_func():
     c_nr = p1.p1_d['cntrct_nr'] if 'cntrct_nr' in p1.p1_d.keys() else ''
     print(f'Step 1 selected contract: ' + f'{c_nr if c_nr else "None"}')
-    templ_l = p1.read_dirs(p1.p1_cntrct_abs_dir)
+    templ_l, default = p1.read_dirs(p1.p1_cntrct_abs_dir), ''
     if not templ_l:
-        templ_l = p2.p2_default_templates_l
-    print(f'Step 2 selected type of labels to print: {templ_l}')
-    print(f'Step 3 selected fields to print for each label type: {p3.p3_d["selected_fields"]}')
+        templ_l, default = p2.p2_default_templates_l, ' (Default)'
+    print(f'Step 2 selected templates to print: {templ_l} {default}')
+    print(f'Step 3 selected fields to print for each template: {p3.p3_d["selected_fields"]} (Default)')
     print(60 * '-', '\n\n')
     print('>>> Main menu:')
 
@@ -83,8 +83,8 @@ def init():
         p.menu: {
             '0': run_full_demo_with_selected_or_default_values_运行完整演示,
             '1': step_1__select_a_contract_选择合同号,
-            '2': step_2__select_type_of_labels_to_print_选择_编辑标签类型,
-            '3': step_3__select_fields_to_print_for_each_label_type_选择每种标签类型的资料,
+            '2': step_2__select_templates_to_print_选择_编辑标签类型,
+            '3': step_3__select_fields_to_print_for_each_template_选择每种标签类型的资料,
             'q': p.normal_exit_正常出口,
             'd': p.debug,
         },
@@ -93,7 +93,7 @@ def init():
             '2': p2_select_templates,
             '3': p3_select_distinctive_fields,
             'u': u_maintain_set_of_indicators_regex_to_be_searched,
-            'b': p.back,
+            'b': p.back_后退,
             'q': p.normal_exit_正常出口,
         },
     }

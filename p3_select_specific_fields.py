@@ -327,7 +327,6 @@ def select_a_template_n_edit_paragraph_headers():
         if not p3_fields_rel_dir:
             p3_fields_rel_dir = drs[0]
         print(f'~~~ Now processing contract #: {p1.p1_d["cntrct_nr"]}')
-        print(f'~~~ Working on: {p3_fields_rel_dir}')
         print('>>> Select template to edit:\n')
         for i in range(len(drs)):
             print(str(i) + '. ' + drs[i][2:])
@@ -349,7 +348,7 @@ def select_a_template_n_edit_paragraph_headers():
                             select_specific_fields_context_func()
                             s = input('\'m\' to use a multi-lines header\n'
                                       '\'d\' to use a single line default header\n'
-                                      '\'b\' to go back\n'
+                                      '\'b\' to go back_后退\n'
                                       '~~~\n')
                             if s == 'b':
                                 os.system('clear')
@@ -398,7 +397,6 @@ def select_a_template_n_edit_fields():
         if not p3_fields_rel_dir:
             p3_fields_rel_dir = drs[0]
         print(f'~~~ Now processing contract #: {p1.p1_d["cntrct_nr"]}')
-        print(f'~~~ Working on: {p3_fields_rel_dir}')
         print('>>> Select template to edit:\n')
         for i in range(len(drs)):
             print(str(i) + '. ' + drs[i][2:])
@@ -420,7 +418,7 @@ def select_a_template_n_edit_fields():
                             select_specific_fields_context_func()
                             s = input('\'a\' to add a field\n'
                                       '\'d\' to delete a field\n'
-                                      '\'b\' to go back\n'
+                                      '\'b\' to go back_后退\n'
                                       '~~~\n')
                             if s == 'b':
                                 os.system('clear')
@@ -443,24 +441,6 @@ def select_a_template_n_edit_fields():
         render_svg_1_template_1_product()
     else:
         return
-
-
-# def display_selected_fields():
-#     with open(os.path.join(p1.p1_cntrct_abs_dir, 'p4_' + p1.p1_d["cntrct_nr"] + '_fields_from_contract_l.json')) as f:
-#         p3_fields_from_contract_l = json.load(f)
-#     indic_val_d = {}
-#     for option in p3_all_specific_fields_l:
-#         temp_d = {}
-#         for indic in p3_fields_from_contract_l:
-#             if indic['what'] == option:
-#                 temp_d[indic['prod_nr']] = indic['info']
-#         indic_val_d[option] = temp_d
-#
-#     for option in p3_all_specific_fields_l:
-#         nr_tabs = 1 if len(option) >= 8 else 2
-#         print(option, nr_tabs * '\t', list(indic_val_d[option].values()))
-#     print('\nAlready selected: ', p3_d['selected_fields'], '\n')
-#     print('Currently processing ', p3_fields_rel_dir)
 
 
 def display_p3_fields_info_d():
@@ -801,41 +781,101 @@ def display_all():
     svg_s_to_pdf_deliverable()
 
 
+def edit_fields():
+    global p3_fields_rel_dir
+
+    select_specific_fields_context_func(prompt=False)
+    print('\n>>> Select template to edit: ')
+
+    while True:
+        select_specific_fields_context_func(prompt = False)
+        print('\n>>> Select template to edit: ')
+        s = input('\'a\' to add a field\n'
+                  '\'d\' to delete a field\n'
+                  '\'b\' to go back_后退\n'
+                  '~~~\n')
+        if s == 'b':
+            os.system('clear')
+            break
+        elif s == 'a':
+            add_fields()
+        elif s == 'd':
+            del_fields()
+        else:
+            print(f'{s} is not an option, try again')
+
+    # todo: check what template suggest and is missing
+    save_template_info_json()
+    if_not_exists_build_template_header_n_body(p3_fields_rel_dir)
+    load_o_create_mako_input_values_json()
+    # render_svg_1_template_1_product()
+
+
 def select_a_template_for_editing():
-    pass
+    global p3_fields_rel_dir
+    select_specific_fields_context_func()
+    drs = p1.read_dirs(p1.p1_cntrct_abs_dir)
+    if drs:
+        for i in range(len(drs)):
+            print(str(i) + '. ' + drs[i][2:])
+        while True:
+            s = input('\nEnter nr of template to be edited, \'b\' to return : ')
+            if s == 'b':
+                os.system('clear')
+                break
+            else:
+                try:
+                    s_i = int(s)
+                    if s_i in range(len(drs)):
+                        os.system('clear')
+                        p3_fields_rel_dir = drs[s_i]
+                        # load fields already selected for template as they are on file
+                        load_o_create_p3_fields_info_f()
+                        break
+                    else:
+                        print('|\n| Integer, but not an option, try again\n|')
+                except ValueError:
+                    print('|\n| That\'s not an integer, try again\n|')
 
 
-def edit():
-    print('~~~edit~~~')
-    p.mod_lev_1_menu = p.menu
-    p.menu = 'edit'
-
-
-def select_specific_fields_context_func():
+def select_specific_fields_context_func(prompt=True):
+    print('~~~ Step 3: Selecting fields to print for each template ~~~\n')
     display_specific_fields_for_all_products()
     print('~~~ Now processing contract #: ', p1.p1_d["cntrct_nr"] if p1.p1_d["cntrct_nr"] else None)
-    print('~~~ Now working on template: ', p3_fields_rel_dir)
+    print('~~~ Now working on template: ', p3_fields_rel_dir if p3_fields_rel_dir else 'None selected')
     print('~~~ Specific fields selected so far:', p3_d['selected_fields'])
-    print('\n>>> Select an action: ')
+    print(60 * '-', '\n\n')
+    if prompt:
+        print('\n>>> Select an action: ')
 
 
 def select_edit_context_func():
-    pass
+    print('~~~ Step 3: Selecting fields to print for each template / Edit a template ~~~\n')
+    display_specific_fields_for_all_products()
+    print('~~~ Now processing contract #: ', p1.p1_d["cntrct_nr"] if p1.p1_d["cntrct_nr"] else None)
+    print('~~~ Now working on template: ', p3_fields_rel_dir if p3_fields_rel_dir else 'None selected')
+    print('~~~ Specific fields selected so far:', p3_d['selected_fields'])
+    print(60 * '-', '\n\n')
+    print('\n>>> Select an action: ')
 
 
 context_func_d = {
     'select_specific_fields': select_specific_fields_context_func,
-    'edit': select_edit_context_func,
+    'select_a_template_for_editing': select_specific_fields_context_func,
     'debug': select_specific_fields_context_func,
 }
 
 
 def init():
+    global p3_fields_rel_dir
     # make sure p1 infrastructure is in place
     if not p1.load_contract_info_d():
         print('p1 has not run successfully')
     if not p1.read_dirs(p1.p1_cntrct_abs_dir):
         p2.create_default_templates()
+    if not p3_fields_rel_dir:
+        drs = p1.read_dirs(p1.p1_cntrct_abs_dir)
+        p3_fields_rel_dir = drs[0]
 
     # initializing menus last, so that context functions display most recent information
     p.menu = 'select_specific_fields'
@@ -843,32 +883,33 @@ def init():
         p.main_menu = p.menu
     p.menus = {
         p.menu: {
-            '1': display_all,
+            '1': select_a_template_for_editing,
             '2': check_all_templates_have_correct_fields,
-            '3': select_a_template_for_editing,
-            '4': render_svg_all_templates_all_products,
+            '3': render_svg_all_templates_all_products,
+            '4': display_all,
             'b': p.back_to_main_退到主程序,
             'q': p.normal_exit_正常出口,
             'd': p.debug,
         },
-        'edit': {
-            '2': select_a_template_n_edit_fields,
-            '3': select_a_template_n_edit_paragraph_headers,
-            '4': render_svg_1_template_1_product,
-            '5': render_title_page,
-            '6': render_svg_1_template_all_products,
+        'select_a_template_for_editing': {
+            '1': edit_fields,
+            '2': select_a_template_n_edit_paragraph_headers,
+            '3': render_svg_1_template_1_product,
+            '4': render_title_page,
+            '5': render_svg_1_template_all_products,
+            'b': p.back_后退,
+            'q': p.normal_exit_正常出口,
         },
         'debug': {
             '66': svg_s_to_pdf_deliverable,
             '44': render_title_page,
-            '1': display_all,
             '2': display_or_load_output_overview,
             '3': select_a_template_n_edit_fields,
             '6': p1.display_p1_cntrct_info_d,
             '7': p1.display_p1_cntrct_info_f,
             '8': display_p3_fields_info_d,
             '9': display_p3_fields_info_f,
-            'b': p.back,
+            'b': p.back_后退,
             'q': p.normal_exit_正常出口,
         }
     }

@@ -6,21 +6,21 @@ menu = main_menu = mod_lev_1_menu = None
 menus = main_menus = mod_lev_1_menus = {}
 
 
-def back():
+def back_后退():
     global menu
     global mod_lev_1_menu
 
-    menu = mod_lev_1_menu
     print('~~~ Returning to level 1  ~~~')
+    menu = mod_lev_1_menu
 
 
 def back_to_main_退到主程序():  # just there to have a selection in the menu, the function won't be executed
     global menu, main_menu
     global menus, main_menus
 
+    print('~~~ Returning to main  ~~~')
     menu = main_menu
     menus = main_menus
-    print('~~~ Returning to main  ~~~')
 
 
 def debug():
@@ -53,7 +53,7 @@ def run():
     global main_menu
     global main_menus
 
-    # storing last menu to come back either from module menu to main_menu, or from sub_menu to module menu
+    # storing last menu to come back_后退 either from module menu to main_menu, or from sub_menu to module menu
     keep = True
     while keep:
         print()

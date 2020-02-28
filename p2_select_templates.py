@@ -36,7 +36,7 @@ def p2_load_templates_info_l():  # used in p3
     return p1.read_dirs(p1.p1_cntrct_abs_dir)
 
 
-def add_new_templates():
+def add_new_template():
     add_templates_from_list(p2_templates_l, ask_questions=True)
 
 
@@ -76,7 +76,7 @@ def add_templates_from_list(list_l, ask_questions):
             create_template_dir(c)
 
 
-def delete_existing_templates():
+def delete_existing_template():
     print('~~~ Deleting templates non-empty directory data')
     drs = p1.read_dirs(p1.p1_cntrct_abs_dir)
     if not drs:
@@ -108,8 +108,9 @@ def create_template_dir(dr):
 
 
 def select_templates_context_func(prompt=True):
-    print('Now editing contract #: ', p1.p1_d["cntrct_nr"] if p1.p1_d["cntrct_nr"] else None)
-    print('\nLabels already added:')
+    print('~~~ Step 2: Selecting templates to print ~~~')
+    print('Editing contract #: ', p1.p1_d["cntrct_nr"] if p1.p1_d["cntrct_nr"] else None)
+    print('\nTemplates already added:')
     if not p1.display_dirs(p1.p1_cntrct_abs_dir):
         print ('None added yet')
     print(60 * '-', '\n\n')
@@ -136,15 +137,15 @@ def init():
     p.menus = {
         p.menu: {
             '1': create_default_templates,
-            '2': add_new_templates,
-            '3': delete_existing_templates,
+            '2': add_new_template,
+            '3': delete_existing_template,
             'b': p.back_to_main_退到主程序,
             'q': p.normal_exit_正常出口,
             'd': p.debug,
         },
         'debug': {
             '2': load_n_display,
-            'b': p.back,
+            'b': p.back_后退,
             'q': p.normal_exit_正常出口,
         },
     }
