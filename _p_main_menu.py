@@ -11,7 +11,7 @@ import pu_maintain_set_of_indicators_regex_to_be_searched as i
 p0_root_abs_dir = os.path.dirname(os.path.abspath(__file__))  # root directory where the program is located
 
 
-def run_full_demo_with_assigned_values_运行完整演示():
+def run_full_demo_with_selected_or_default_values_运行完整演示():
     p1.process_selected_contract()
     p2.create_default_templates()
     p3.display_all()
@@ -38,11 +38,11 @@ def step_1__select_a_contract_选择合同号():
 
 
 def step_2__select_type_of_labels_to_print_选择_编辑标签类型():
-    pass
+    p2.init()
 
 
 def step_3__select_fields_to_print_for_each_label_type_选择每种标签类型的资料():
-    pass
+    p3.init()
 
 
 def display_and_edit_svg_files():
@@ -81,7 +81,7 @@ def init():
         p.main_menu = p.menu
     p.menus = {
         p.menu: {
-            '0': run_full_demo_with_assigned_values_运行完整演示,
+            '0': run_full_demo_with_selected_or_default_values_运行完整演示,
             '1': step_1__select_a_contract_选择合同号,
             '2': step_2__select_type_of_labels_to_print_选择_编辑标签类型,
             '3': step_3__select_fields_to_print_for_each_label_type_选择每种标签类型的资料,

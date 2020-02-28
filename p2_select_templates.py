@@ -108,10 +108,11 @@ def create_template_dir(dr):
 
 
 def select_templates_context_func(prompt=True):
-    print('~~~ Now processing contract #: ', p1.p1_d["cntrct_nr"] if p1.p1_d["cntrct_nr"] else None)
-    print('\n~~~ Labels already added:')
-
-    p1.display_dirs(p1.p1_cntrct_abs_dir)
+    print('Now editing contract #: ', p1.p1_d["cntrct_nr"] if p1.p1_d["cntrct_nr"] else None)
+    print('\nLabels already added:')
+    if not p1.display_dirs(p1.p1_cntrct_abs_dir):
+        print ('None added yet')
+    print(60 * '-', '\n\n')
     if prompt:
         print('\n>>> Select action: ')
 
@@ -135,14 +136,14 @@ def init():
     p.menus = {
         p.menu: {
             '1': create_default_templates,
-            '2': load_n_display,
-            '3': add_new_templates,
-            '4': delete_existing_templates,
+            '2': add_new_templates,
+            '3': delete_existing_templates,
             'b': p.back_to_main_退到主程序,
             'q': p.normal_exit_正常出口,
             'd': p.debug,
         },
         'debug': {
+            '2': load_n_display,
             'b': p.back,
             'q': p.normal_exit_正常出口,
         },

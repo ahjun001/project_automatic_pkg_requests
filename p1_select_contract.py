@@ -147,7 +147,7 @@ def load_contract_info_d():
     else:
         if not p1_cntrct_abs_dir or 'cntrct_nr' not in p1_d.keys():
             process_selected_contract()
-    with open(os.path.join(p1_cntrct_abs_dir, p1_d['cntrct_nr'] + '_contract-info.json')) as fi:
+    with open(os.path.join(p1_cntrct_abs_dir, '.' + p1_d['cntrct_nr'] + '_contract-info.json')) as fi:
         p1_cntrct_info_d = json.load(fi)
     return True
 
@@ -207,7 +207,7 @@ def load_p1_all_products_to_be_processed_set():
     global p1_cntrct_info_f
     global p1_all_products_to_be_processed_set
     if not p1_cntrct_info_d:
-        p1_cntrct_info_f = os.path.join(p1_cntrct_abs_dir, p1_d['cntrct_nr'] + '_contract-info.json')
+        p1_cntrct_info_f = os.path.join(p1_cntrct_abs_dir, '.' + p1_d['cntrct_nr'] + '_contract-info.json')
         with open(p1_cntrct_info_f) as f1:
             p1_cntrct_info_d = json.load(f1)
     p1_all_products_to_be_processed_set = p1_cntrct_info_d['p1_all_products_to_be_processed_set']
@@ -363,8 +363,9 @@ def display_dirs(walk_abs_dir):
     if drs:
         for dr in drs:
             print(dr)
+        return True
     else:
-        return None
+        return False
 
 
 def dump_contract_info_json(key, filename):
@@ -396,7 +397,7 @@ def process_selected_contract():
     p1d_common_indics_l = []
     p1e_specific_fields_d_of_d = {}
 
-    p1_cntrct_info_f = p1_d['cntrct_nr'] + '_contract-info.json'
+    p1_cntrct_info_f = '.' + p1_d['cntrct_nr'] + '_contract-info.json'
     filename = os.path.join(p1_cntrct_abs_dir, p1_cntrct_info_f)
     if pathlib.Path(filename).exists():
         with open(filename) as fi:
@@ -575,7 +576,7 @@ def process_selected_contract():
 
 
 def select_contract_main_context_func():
-    print('~~~ Now processing contract #: ', p1_d['cntrct_nr'] if 'cntrct_nr' in p1_d.keys() else None)
+    print('~~~ Now editing contract #: ', p1_d['cntrct_nr'] if 'cntrct_nr' in p1_d.keys() else 'None selected')
     print('>>> Select action: ')
 
 

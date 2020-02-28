@@ -7,9 +7,7 @@ import re
 import shutil
 import subprocess
 import webbrowser
-
 from mako.template import Template
-
 import p0_menus as p
 import p1_select_contract as p1
 import p2_select_templates as p2
@@ -109,7 +107,7 @@ def load_o_create_p3_fields_info_f():
         save_template_info_json()
         return True
     else:
-        print('!\n! The contract directory does not contain subdirectories: cannot load or create labels\n!')
+        print('|\n| The contract directory does not contain subdirectories: cannot load or create labels\n|')
         return False
 
 
@@ -154,7 +152,7 @@ def load_o_create_mako_input_values_json():
             with open(filename, 'w') as f:
                 json.dump(p3_selected_fields_values_by_prod_d, f, ensure_ascii = False)
         else:
-            print('!\n! No template has been selected for display\n!')
+            print('|\n| No template has been selected for display\n|')
 
 
 def suggest_spacing_calc(lgth, template_view_box):
@@ -244,9 +242,9 @@ def add_fields():
                     p3_d['selected_fields'].append(not_yet_l[s_i])
                     # break
                 else:
-                    print('!\n! Integer, but not an option, try again\n!')
+                    print('|\n| Integer, but not an option, try again\n|')
             except ValueError:
-                print('!\n! That\'s not an integer, try again\n!')
+                print('|\n| That\'s not an integer, try again\n|')
     save_template_info_json()
 
 
@@ -269,9 +267,9 @@ def del_fields():
                     del p3_d['selected_fields'][s_i]
                     # break
                 else:
-                    print('!\n! Integer, but not an option, try again\n!')
+                    print('|\n| Integer, but not an option, try again\n|')
             except ValueError:
-                print('!\n! That\'s not an integer, try again\n!')
+                print('|\n| That\'s not an integer, try again\n|')
 
     save_template_info_json()
 
@@ -317,14 +315,6 @@ def display_specific_fields_for_all_products():
             s += (m - len(str(ls))) * ' ' + str(ls)
         s += '\n'
     print(s)
-
-
-def select_specific_fields_context_func():
-    display_specific_fields_for_all_products()
-    print('~~~ Now processing contract #: ', p1.p1_d["cntrct_nr"] if p1.p1_d["cntrct_nr"] else None)
-    print('~~~ Now working on template: ', p3_fields_rel_dir)
-    print('~~~ Specific fields selected so far:', p3_d['selected_fields'])
-    print('\n>>> Select an action: ')
 
 
 def select_a_template_n_edit_paragraph_headers():
@@ -385,9 +375,9 @@ def select_a_template_n_edit_paragraph_headers():
                                 print(f'{s} is not an option, try again')
                         break
                     else:
-                        print('!\n! Integer, but not an option, try again\n!')
+                        print('|\n| Integer, but not an option, try again\n|')
                 except ValueError:
-                    print('!\n! That\'s not an integer, try again\n!')
+                    print('|\n| That\'s not an integer, try again\n|')
 
         save_template_info_json()
         # todo: check if this code could be grouped with other render
@@ -443,9 +433,9 @@ def select_a_template_n_edit_fields():
                                 print(f'{s} is not an option, try again')
                         break
                     else:
-                        print('!\n! Integer, but not an option, try again\n!')
+                        print('|\n| Integer, but not an option, try again\n|')
                 except ValueError:
-                    print('!\n! That\'s not an integer, try again\n!')
+                    print('|\n| That\'s not an integer, try again\n|')
 
         save_template_info_json()
         if_not_exists_build_template_header_n_body(p3_fields_rel_dir)
@@ -811,8 +801,31 @@ def display_all():
     svg_s_to_pdf_deliverable()
 
 
+def select_a_template_for_editing():
+    pass
+
+
+def edit():
+    print('~~~edit~~~')
+    p.mod_lev_1_menu = p.menu
+    p.menu = 'edit'
+
+
+def select_specific_fields_context_func():
+    display_specific_fields_for_all_products()
+    print('~~~ Now processing contract #: ', p1.p1_d["cntrct_nr"] if p1.p1_d["cntrct_nr"] else None)
+    print('~~~ Now working on template: ', p3_fields_rel_dir)
+    print('~~~ Specific fields selected so far:', p3_d['selected_fields'])
+    print('\n>>> Select an action: ')
+
+
+def select_edit_context_func():
+    pass
+
+
 context_func_d = {
     'select_specific_fields': select_specific_fields_context_func,
+    'edit': select_edit_context_func,
     'debug': select_specific_fields_context_func,
 }
 
@@ -830,17 +843,20 @@ def init():
         p.main_menu = p.menu
     p.menus = {
         p.menu: {
-            '0': check_all_templates_have_correct_fields,
             '1': display_all,
+            '2': check_all_templates_have_correct_fields,
+            '3': select_a_template_for_editing,
+            '4': render_svg_all_templates_all_products,
+            'b': p.back_to_main_退到主程序,
+            'q': p.normal_exit_正常出口,
+            'd': p.debug,
+        },
+        'edit': {
             '2': select_a_template_n_edit_fields,
             '3': select_a_template_n_edit_paragraph_headers,
             '4': render_svg_1_template_1_product,
             '5': render_title_page,
             '6': render_svg_1_template_all_products,
-            '7': render_svg_all_templates_all_products,
-            'b': p.back_to_main_退到主程序,
-            'q': p.normal_exit_正常出口,
-            'd': p.debug,
         },
         'debug': {
             '66': svg_s_to_pdf_deliverable,

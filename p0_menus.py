@@ -72,4 +72,4 @@ def run():
         if selection_func_name:
             selection_func_name()
         else:
-            print(f'!\n! {selection} is not a valid selection\n!')
+            print(f'|\n| {selection} is not a valid selection\n|')
