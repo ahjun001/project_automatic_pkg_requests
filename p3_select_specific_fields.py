@@ -11,6 +11,7 @@ from mako.template import Template
 import p0_menus as p
 import p1_select_contract as p1
 import p2_select_templates as p2
+import pu_maintain_set_of_indicators_regex_to_be_searched as pu
 
 p0_root_abs_dir = os.path.dirname(os.path.abspath(__file__))  # root directory
 p3_fields_rel_dir = ''  # currently working fields directory
@@ -55,6 +56,7 @@ def if_not_exists_build_template_header_n_body(some_rel_dir):
     """
     copy header, also template if necessary, build body from template.svg copy that is in repository directory
     """
+    global p3_body_svg
 
     from_abs_dir = os.path.join(p0_root_abs_dir + '/common', some_rel_dir)
     to_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, some_rel_dir)
@@ -65,7 +67,6 @@ def if_not_exists_build_template_header_n_body(some_rel_dir):
         shutil.copy(os.path.join(from_abs_dir, 'label_template.svg'), to_abs_dir)
     body_fw = os.path.join(to_abs_dir, '.label_template_body.svg')
 
-    global p3_body_svg
     with open(template_fr) as fr, open(body_fw, 'w') as fw:
         write_b = False
         lines = fr.readlines()
@@ -111,7 +112,7 @@ def load_o_create_p3_fields_info_f():
         return False
 
 
-def load_o_create_mako_input_values_json():
+def load_o_create_mako_input_values_json(force_recreate = False):
     global p3_fields_rel_dir
     """
     Creates a json file with variables and values necessary to mako rendering
@@ -123,7 +124,7 @@ def load_o_create_mako_input_values_json():
     check_possible_mismatch_selected_fields_n_template()
     # make sure global variables are initialized in all situations, outside the loop to do it once only
     filename = os.path.join(p1.p1_cntrct_abs_dir + '/' + p3_fields_rel_dir, '.mako_input.json')
-    if pathlib.Path(filename).exists():
+    if pathlib.Path(filename).exists() and not force_recreate:
         with open(filename) as fr:
             p3_selected_fields_values_by_prod_d = json.load(fr)
     else:
@@ -190,7 +191,9 @@ def fields_from_template():
 
 def check_possible_mismatch_selected_fields_n_template():
     template_fields = fields_from_template()
-    [template_fields.remove(x) for x in ['i', 'template_nr', 'prod_n']]
+    for x in ['i', 'template_nr', 'prod_n']:
+        if x in template_fields:
+            template_fields.remove(x)
     diff_set = template_fields - set(p3_d['selected_fields'])
     if diff_set:
         missing_in_template_l = []
@@ -198,11 +201,11 @@ def check_possible_mismatch_selected_fields_n_template():
             if f not in p3_d['selected_fields']:
                 missing_in_template_l.append(f)
         print('The template requires the following fields but they were not found in the data: ', missing_in_template_l)
-        template_f = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir), 'label_template.svg')
-        subprocess.Popen([
-            'inkscape',
-            template_f,
-        ]).wait()
+        # template_f = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir), 'label_template.svg')
+        # subprocess.Popen([
+        #     'inkscape',
+        #     template_f,
+        # ]).wait()
 
 
 def check_all_templates_have_correct_fields():
@@ -291,18 +294,16 @@ def display_specific_fields_for_all_products():
         tmp_l.append(f)
     dsp_l = [tmp_l]
 
-    # building the body
-    spec_by_prod = {}
-    for prod in p1.p1_all_products_to_be_processed_set:
-        spec_by_prod[prod] = {}
-    for d in p1.p1b_indics_from_contract_l:
-        if d['what'] in p1e_l:
-            spec_by_prod[d['prod_nr']][d['what']] = d['info']
+    spec_by_prod = p1.p1e_specific_fields_d_of_d
 
+    # filling missing information with ***
+    # adding 'prod_nr' to the list and sorting
     for prod in spec_by_prod.keys():
         tmp_l = [prod]
-        for k in spec_by_prod[prod].keys():
-            tmp_l.append(spec_by_prod[prod][k])
+        for value in p1e_l:
+            if value not in spec_by_prod[prod].keys():
+                spec_by_prod[prod][value] = '***'
+            tmp_l.append(spec_by_prod[prod][value])
         dsp_l.append(tmp_l)
 
     m = 0
@@ -364,12 +365,10 @@ def select_a_template_n_edit_paragraph_headers():
                                                           "dolor in reprehenderit in voluptate velit esse cillum " \
                                                           "dolore eu</tspan> "
                                 p3_d['header_height'] = 20
-                                pass
                             elif s == 'd':
                                 # single line header
                                 p3_d['template_header'] = p3_fields_rel_dir[p3_fields_rel_dir.rfind('_') + 1:]
                                 p3_d['header_height'] = 7
-                                pass
                             else:
                                 print(f'{s} is not an option, try again')
                         break
@@ -387,60 +386,60 @@ def select_a_template_n_edit_paragraph_headers():
         return
 
 
-def select_a_template_n_edit_fields():
-    global p3_fields_rel_dir
-
-    # list existing directories, each containing a template
-    drs = p1.read_dirs(p1.p1_cntrct_abs_dir)
-    if drs:
-        # giving a default directory if none has been set before
-        if not p3_fields_rel_dir:
-            p3_fields_rel_dir = drs[0]
-        print(f'~~~ Now processing contract #: {p1.p1_d["cntrct_nr"]}')
-        print('>>> Select template to edit:\n')
-        for i in range(len(drs)):
-            print(str(i) + '. ' + drs[i][2:])
-        while True:
-            s = input('\nEnter nr of template to be edited, \'b\' to return : ')
-            if s == 'b':
-                os.system('clear')
-                break
-            else:
-                try:
-                    s_i = int(s)
-                    if s_i in range(len(drs)):
-                        os.system('clear')
-                        p3_fields_rel_dir = drs[s_i]
-                        # load fields already selected for template as they are on file
-                        if load_o_create_p3_fields_info_f():
-                            print(f'now ready to work on {p3_fields_rel_dir}')
-                        while True:
-                            select_specific_fields_context_func()
-                            s = input('\'a\' to add a field\n'
-                                      '\'d\' to delete a field\n'
-                                      '\'b\' to go back_后退\n'
-                                      '~~~\n')
-                            if s == 'b':
-                                os.system('clear')
-                                break
-                            elif s == 'a':
-                                add_fields()
-                            elif s == 'd':
-                                del_fields()
-                            else:
-                                print(f'{s} is not an option, try again')
-                        break
-                    else:
-                        print('|\n| Integer, but not an option, try again\n|')
-                except ValueError:
-                    print('|\n| That\'s not an integer, try again\n|')
-
-        save_template_info_json()
-        if_not_exists_build_template_header_n_body(p3_fields_rel_dir)
-        load_o_create_mako_input_values_json()
-        render_svg_1_template_1_product()
-    else:
-        return
+# def select_a_template_n_edit_fields():
+#     global p3_fields_rel_dir
+#
+#     # list existing directories, each containing a template
+#     drs = p1.read_dirs(p1.p1_cntrct_abs_dir)
+#     if drs:
+#         # giving a default directory if none has been set before
+#         if not p3_fields_rel_dir:
+#             p3_fields_rel_dir = drs[0]
+#         print(f'~~~ Now processing contract #: {p1.p1_d["cntrct_nr"]}')
+#         print('>>> Select template to edit:\n')
+#         for i in range(len(drs)):
+#             print(str(i) + '. ' + drs[i][2:])
+#         while True:
+#             s = input('\nEnter nr of template to be edited, \'b\' to return : ')
+#             if s == 'b':
+#                 os.system('clear')
+#                 break
+#             else:
+#                 try:
+#                     s_i = int(s)
+#                     if s_i in range(len(drs)):
+#                         os.system('clear')
+#                         p3_fields_rel_dir = drs[s_i]
+#                         # load fields already selected for template as they are on file
+#                         if load_o_create_p3_fields_info_f():
+#                             print(f'now ready to work on {p3_fields_rel_dir}')
+#                         while True:
+#                             select_specific_fields_context_func()
+#                             s = input('\'a\' to add a field\n'
+#                                       '\'d\' to delete a field\n'
+#                                       '\'b\' to go back_后退\n'
+#                                       '~~~\n')
+#                             if s == 'b':
+#                                 os.system('clear')
+#                                 break
+#                             elif s == 'a':
+#                                 add_fields()
+#                             elif s == 'd':
+#                                 del_fields()
+#                             else:
+#                                 print(f'{s} is not an option, try again')
+#                         break
+#                     else:
+#                         print('|\n| Integer, but not an option, try again\n|')
+#                 except ValueError:
+#                     print('|\n| That\'s not an integer, try again\n|')
+#
+#         save_template_info_json()
+#         if_not_exists_build_template_header_n_body(p3_fields_rel_dir)
+#         load_o_create_mako_input_values_json()
+#         render_svg_1_template_1_product()
+#     else:
+#         return
 
 
 def display_p3_fields_info_d():
@@ -784,12 +783,13 @@ def display_all():
 def edit_fields():
     global p3_fields_rel_dir
 
-    select_specific_fields_context_func(prompt=False)
-    print('\n>>> Select template to edit: ')
+    # select_specific_fields_context_func(prompt = False)
+    # print('\n>>> Select template to edit: ')
 
     while True:
-        select_specific_fields_context_func(prompt = False)
-        print('\n>>> Select template to edit: ')
+        # select_specific_fields_context_func(prompt = False)
+        # print('\n>>> Select template to edit: ')
+        print('~~~ Now working on template: ', p3_fields_rel_dir if p3_fields_rel_dir else 'None selected')
         s = input('\'a\' to add a field\n'
                   '\'d\' to delete a field\n'
                   '\'b\' to go back_后退\n'
@@ -806,14 +806,18 @@ def edit_fields():
 
     # todo: check what template suggest and is missing
     save_template_info_json()
-    if_not_exists_build_template_header_n_body(p3_fields_rel_dir)
-    load_o_create_mako_input_values_json()
+    # if_not_exists_build_template_header_n_body(p3_fields_rel_dir)
+    load_o_create_mako_input_values_json(force_recreate = True)
     # render_svg_1_template_1_product()
 
 
 def select_a_template_for_editing():
     global p3_fields_rel_dir
-    select_specific_fields_context_func()
+
+    print('~~~ select a template to edit ~~~')
+    p.mod_lev_1_menu = p.menu
+    p.menu = 'select_a_template_for_editing'
+    # select_specific_fields_context_func()
     drs = p1.read_dirs(p1.p1_cntrct_abs_dir)
     if drs:
         for i in range(len(drs)):
@@ -822,6 +826,7 @@ def select_a_template_for_editing():
             s = input('\nEnter nr of template to be edited, \'b\' to return : ')
             if s == 'b':
                 os.system('clear')
+                p.menu = p.mod_lev_1_menu
                 break
             else:
                 try:
@@ -838,7 +843,7 @@ def select_a_template_for_editing():
                     print('|\n| That\'s not an integer, try again\n|')
 
 
-def select_specific_fields_context_func(prompt=True):
+def select_specific_fields_context_func(prompt = True):
     print('~~~ Step 3: Selecting fields to print for each template ~~~\n')
     display_specific_fields_for_all_products()
     print('~~~ Now processing contract #: ', p1.p1_d["cntrct_nr"] if p1.p1_d["cntrct_nr"] else None)
@@ -866,6 +871,11 @@ context_func_d = {
 }
 
 
+def edit_searched_reg_ex_and_process_again():
+    pu.update()
+    p1.process_selected_contract()
+
+
 def init():
     global p3_fields_rel_dir
     # make sure p1 infrastructure is in place
@@ -883,6 +893,7 @@ def init():
         p.main_menu = p.menu
     p.menus = {
         p.menu: {
+            '0': edit_searched_reg_ex_and_process_again,
             '1': select_a_template_for_editing,
             '2': check_all_templates_have_correct_fields,
             '3': render_svg_all_templates_all_products,
@@ -904,7 +915,6 @@ def init():
             '66': svg_s_to_pdf_deliverable,
             '44': render_title_page,
             '2': display_or_load_output_overview,
-            '3': select_a_template_n_edit_fields,
             '6': p1.display_p1_cntrct_info_d,
             '7': p1.display_p1_cntrct_info_f,
             '8': display_p3_fields_info_d,
