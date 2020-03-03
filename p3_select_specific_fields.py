@@ -176,6 +176,7 @@ def display_or_load_output_overview():
 
 
 def fields_from_template():
+    global p3_fields_rel_dir
     template_s = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir), 'label_template.svg')
     if not pathlib.Path(template_s).exists():
         print(f"|\n| Cannot access '{os.path.join(p3_fields_rel_dir, 'label_template.svg')}': no such file\n|")
@@ -190,10 +191,13 @@ def fields_from_template():
 
 
 def check_possible_mismatch_selected_fields_n_template():
+    global p3_fields_rel_dir
     template_fields = fields_from_template()
     for x in ['i', 'template_nr', 'prod_n']:
         if x in template_fields:
             template_fields.remove(x)
+    print(f'Template in {p3_fields_rel_dir} uses {template_fields}')
+    print(f'Fields selected to feed data are {template_fields}')
     diff_set = template_fields - set(p3_d['selected_fields'])
     if diff_set:
         missing_in_template_l = []
@@ -201,11 +205,13 @@ def check_possible_mismatch_selected_fields_n_template():
             if f not in p3_d['selected_fields']:
                 missing_in_template_l.append(f)
         print('The template requires the following fields but they were not found in the data: ', missing_in_template_l)
-        # template_f = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir), 'label_template.svg')
-        # subprocess.Popen([
-        #     'inkscape',
-        #     template_f,
-        # ]).wait()
+    else:
+        print('Template fields and requested data match.  The template is operational.' )
+        template_f = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir), 'label_template.svg')
+        subprocess.Popen([
+            'inkscape',
+            template_f,
+        ]).wait()
 
 
 def check_all_templates_have_correct_fields():
@@ -318,7 +324,7 @@ def display_specific_fields_for_all_products():
     print(s)
 
 
-def select_a_template_n_edit_paragraph_headers():
+def edit_paragraph_headers():
     global p3_fields_rel_dir
 
     # list existing directories, each containing a template
@@ -871,8 +877,10 @@ context_func_d = {
 }
 
 
-def edit_searched_reg_ex_and_process_again():
+def edit_regular_expressions_to_search_data_and_check_if_templates_requirements_are_met():
+    check_possible_mismatch_selected_fields_n_template()
     pu.update()
+    check_possible_mismatch_selected_fields_n_template()
     p1.process_selected_contract()
 
 
@@ -893,9 +901,8 @@ def init():
         p.main_menu = p.menu
     p.menus = {
         p.menu: {
-            '0': edit_searched_reg_ex_and_process_again,
-            '1': select_a_template_for_editing,
-            '2': check_all_templates_have_correct_fields,
+            '1': check_all_templates_have_correct_fields,
+            '2': select_a_template_for_editing,
             '3': render_svg_all_templates_all_products,
             '4': display_all,
             'b': p.back_to_main_退到主程序,
@@ -904,10 +911,11 @@ def init():
         },
         'select_a_template_for_editing': {
             '1': edit_fields,
-            '2': select_a_template_n_edit_paragraph_headers,
-            '3': render_svg_1_template_1_product,
-            '4': render_title_page,
-            '5': render_svg_1_template_all_products,
+            '2': edit_regular_expressions_to_search_data_and_check_if_templates_requirements_are_met,
+            '3': edit_paragraph_headers,
+            '4': render_svg_1_template_1_product,
+            '5': render_title_page,
+            '6': render_svg_1_template_all_products,
             'b': p.back_后退,
             'q': p.normal_exit_正常出口,
         },
