@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import json
 import os
 import pathlib
 
@@ -6,7 +7,7 @@ import p0_menus as p
 import p1_select_contract as p1
 import p2_select_templates as p2
 import p3_select_specific_fields as p3
-import pu_maintain_set_of_indicators_regex_to_be_searched as i
+import pu_maintain_set_of_indicators_regex_to_be_searched as pu
 
 p0_root_abs_dir = os.path.dirname(os.path.abspath(__file__))  # root directory where the program is located
 
@@ -30,7 +31,7 @@ def p3_select_distinctive_fields():
 
 
 def u_maintain_set_of_indicators_regex_to_be_searched():
-    i.init()
+    pu.init()
 
 
 def step_1__select_a_contract_选择合同号():
@@ -60,7 +61,15 @@ def main_menu_context_func():
     if not templ_l:
         templ_l, default = p2.p2_default_templates_l, ' (Default)'
     print(f'Step 2 selected templates to print: {templ_l} {default}')
-    print(f'Step 3 selected fields to print for each template: {p3.p3_d["selected_fields"]} (Default)')
+    temp_f = f'{p3.p3_default_fields_l} (Defaults)'
+    if p3.p3_fields_rel_dir:
+        # either read data,
+        p3_f = os.path.join(p1.p1_cntrct_abs_dir + '/' + p3.p3_fields_rel_dir, 'template-info.json')
+        if pathlib.Path(p3_f).exists():
+            with open(p3_f) as f:
+                p3_d = json.load(f)
+            temp_f = p3_d['selected_fields3']
+    print(f'Step 3 selected fields to print for each template: {temp_f}')
     print(60 * '-', '\n\n')
     print('>>> Main menu:')
 
@@ -85,6 +94,7 @@ def init():
             '1': step_1__select_a_contract_选择合同号,
             '2': step_2__select_templates_to_print_选择_编辑标签类型,
             '3': step_3__select_fields_to_print_for_each_template_选择每种标签类型的资料,
+            '4': p1.process_selected_contract,
             'q': p.normal_exit_正常出口,
             'd': p.debug,
         },

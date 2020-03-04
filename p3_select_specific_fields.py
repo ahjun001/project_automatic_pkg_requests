@@ -121,7 +121,7 @@ def load_o_create_mako_input_values_json(force_recreate = False):
     # will be set in this function
     global p3_selected_fields_values_by_prod_d
 
-    check_possible_mismatch_selected_fields_n_template()
+    check_if_template_requirements_are_met()
     # make sure global variables are initialized in all situations, outside the loop to do it once only
     filename = os.path.join(p1.p1_cntrct_abs_dir + '/' + p3_fields_rel_dir, '.mako_input.json')
     if pathlib.Path(filename).exists() and not force_recreate:
@@ -190,10 +190,10 @@ def fields_from_template():
     return template_fields_set
 
 
-def check_possible_mismatch_selected_fields_n_template():
+def check_if_template_requirements_are_met():
     global p3_fields_rel_dir
     template_fields = fields_from_template()
-    for x in ['i', 'template_nr', 'prod_n']:
+    for x in ['i', 't', 'prod_n']:
         if x in template_fields:
             template_fields.remove(x)
     print(f'Template in {p3_fields_rel_dir} uses {template_fields}')
@@ -206,12 +206,12 @@ def check_possible_mismatch_selected_fields_n_template():
                 missing_in_template_l.append(f)
         print('The template requires the following fields but they were not found in the data: ', missing_in_template_l)
     else:
-        print('Template fields and requested data match.  The template is operational.' )
-        template_f = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir), 'label_template.svg')
-        subprocess.Popen([
-            'inkscape',
-            template_f,
-        ]).wait()
+        print('Template fields and requested data match.  The template is operational.')
+        # template_f = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir), 'label_template.svg')
+        # subprocess.Popen([
+        #     'inkscape',
+        #     template_f,
+        # ]).wait()
 
 
 def check_all_templates_have_correct_fields():
@@ -219,7 +219,7 @@ def check_all_templates_have_correct_fields():
     _, drs, _ = next(os.walk(p1.p1_cntrct_abs_dir))
     for p3_fields_rel_dir in drs:
         load_o_create_p3_fields_info_f()
-        check_possible_mismatch_selected_fields_n_template()
+        check_if_template_requirements_are_met()
 
 
 def add_fields():
@@ -390,62 +390,6 @@ def edit_paragraph_headers():
         render_svg_1_template_1_product()
     else:
         return
-
-
-# def select_a_template_n_edit_fields():
-#     global p3_fields_rel_dir
-#
-#     # list existing directories, each containing a template
-#     drs = p1.read_dirs(p1.p1_cntrct_abs_dir)
-#     if drs:
-#         # giving a default directory if none has been set before
-#         if not p3_fields_rel_dir:
-#             p3_fields_rel_dir = drs[0]
-#         print(f'~~~ Now processing contract #: {p1.p1_d["cntrct_nr"]}')
-#         print('>>> Select template to edit:\n')
-#         for i in range(len(drs)):
-#             print(str(i) + '. ' + drs[i][2:])
-#         while True:
-#             s = input('\nEnter nr of template to be edited, \'b\' to return : ')
-#             if s == 'b':
-#                 os.system('clear')
-#                 break
-#             else:
-#                 try:
-#                     s_i = int(s)
-#                     if s_i in range(len(drs)):
-#                         os.system('clear')
-#                         p3_fields_rel_dir = drs[s_i]
-#                         # load fields already selected for template as they are on file
-#                         if load_o_create_p3_fields_info_f():
-#                             print(f'now ready to work on {p3_fields_rel_dir}')
-#                         while True:
-#                             select_specific_fields_context_func()
-#                             s = input('\'a\' to add a field\n'
-#                                       '\'d\' to delete a field\n'
-#                                       '\'b\' to go back_后退\n'
-#                                       '~~~\n')
-#                             if s == 'b':
-#                                 os.system('clear')
-#                                 break
-#                             elif s == 'a':
-#                                 add_fields()
-#                             elif s == 'd':
-#                                 del_fields()
-#                             else:
-#                                 print(f'{s} is not an option, try again')
-#                         break
-#                     else:
-#                         print('|\n| Integer, but not an option, try again\n|')
-#                 except ValueError:
-#                     print('|\n| That\'s not an integer, try again\n|')
-#
-#         save_template_info_json()
-#         if_not_exists_build_template_header_n_body(p3_fields_rel_dir)
-#         load_o_create_mako_input_values_json()
-#         render_svg_1_template_1_product()
-#     else:
-#         return
 
 
 def display_p3_fields_info_d():
@@ -652,7 +596,7 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
                     fw.write(r"<g transform = 'translate(" + f"{offset_x}, {offset_y})'>\n")
                     fw.write(mako_template.render(
                         contract_n = p1.p1_d["cntrct_nr"],
-                        template_nr = template_nr,
+                        t = template_nr,
                         **p3_selected_fields_values_by_prod_d[str(i)])
                     )
                     fw.write('</g>\n')
@@ -877,13 +821,6 @@ context_func_d = {
 }
 
 
-def edit_regular_expressions_to_search_data_and_check_if_templates_requirements_are_met():
-    check_possible_mismatch_selected_fields_n_template()
-    pu.update()
-    check_possible_mismatch_selected_fields_n_template()
-    p1.process_selected_contract()
-
-
 def init():
     global p3_fields_rel_dir
     # make sure p1 infrastructure is in place
@@ -910,12 +847,13 @@ def init():
             'd': p.debug,
         },
         'select_a_template_for_editing': {
-            '1': edit_fields,
-            '2': edit_regular_expressions_to_search_data_and_check_if_templates_requirements_are_met,
-            '3': edit_paragraph_headers,
-            '4': render_svg_1_template_1_product,
-            '5': render_title_page,
-            '6': render_svg_1_template_all_products,
+            '1': check_if_template_requirements_are_met,
+            '2': edit_fields,
+            '3': p1.process_selected_contract,
+            '4': edit_paragraph_headers,
+            '5': render_svg_1_template_1_product,
+            '6': render_title_page,
+            '7': render_svg_1_template_all_products,
             'b': p.back_后退,
             'q': p.normal_exit_正常出口,
         },

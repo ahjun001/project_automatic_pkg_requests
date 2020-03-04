@@ -19,7 +19,9 @@ spec,serv_lif,(?<=使用寿命：).+(?=\n)
 spec,q_ass,.+(?=品质保证\n)
 spec,material1,\w*(?=材料)
 spec,material1,\w*钢
-spec,material2,表面镀白锌
+spec,material2,表*面*镀*白*锌
+spec,material2,发黑
+spec,material2,本色
 spec,nut_grade,\d+\.*\d*级
 spec,nut_norm,\w*(?=螺母)
 spec,nut_spec,全丝
