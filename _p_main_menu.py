@@ -22,28 +22,16 @@ def p1_select_contract():
     p1.init()
 
 
-def p2_select_templates():
-    p2.init()
-
-
 def p3_select_distinctive_fields():
-    p3.init()
+    p3.step_3__select_fields_to_print_for_each_template_选择每种标签类型的资料()
 
 
 def u_maintain_set_of_indicators_regex_to_be_searched():
     pu.init()
 
 
-def step_1__select_a_contract_选择合同号():
-    p1.select_new_contract()
-
-
 def step_2__select_templates_to_print_选择_编辑标签类型():
-    p2.init()
-
-
-def step_3__select_fields_to_print_for_each_template_选择每种标签类型的资料():
-    p3.init()
+    p2.step_2__select_templates_to_print_选择_编辑标签类型()
 
 
 def display_and_edit_svg_files():
@@ -55,20 +43,21 @@ def export_svg_s_to_pdf_and_collate():
 
 
 def main_menu_context_func():
+    # todo: put a context higher to calculate only once
     c_nr = p1.p1_d['cntrct_nr'] if 'cntrct_nr' in p1.p1_d.keys() else ''
     print(f'Step 1 selected contract: ' + f'{c_nr if c_nr else "None"}')
     templ_l, default = p1.read_dirs(p1.p1_cntrct_abs_dir), ''
     if not templ_l:
         templ_l, default = p2.p2_default_templates_l, ' (Default)'
     print(f'Step 2 selected templates to print: {templ_l} {default}')
-    temp_f = f'{p3.p3_default_fields_l} (Defaults)'
-    if p3.p3_fields_rel_dir:
+    p3_f = os.path.join(p1.p1_cntrct_abs_dir + '/' + p3.p3_fields_rel_dir, 'template-info.json')
+    if pathlib.Path(p3_f).exists():
+        with open(p3_f) as f:
+            p3_d = json.load(f)
+        temp_f = p3_d['selected_fields']
+    else:
+        temp_f = f'{p3.p3_default_fields_l} (Defaults)'
         # either read data,
-        p3_f = os.path.join(p1.p1_cntrct_abs_dir + '/' + p3.p3_fields_rel_dir, 'template-info.json')
-        if pathlib.Path(p3_f).exists():
-            with open(p3_f) as f:
-                p3_d = json.load(f)
-            temp_f = p3_d['selected_fields3']
     print(f'Step 3 selected fields to print for each template: {temp_f}')
     print(60 * '-', '\n\n')
     print('>>> Main menu:')
@@ -91,16 +80,15 @@ def init():
     p.menus = {
         p.menu: {
             '0': run_full_demo_with_selected_or_default_values_运行完整演示,
-            '1': step_1__select_a_contract_选择合同号,
-            '2': step_2__select_templates_to_print_选择_编辑标签类型,
-            '3': step_3__select_fields_to_print_for_each_template_选择每种标签类型的资料,
+            '1': p1.step_1__select_a_contract_选择合同号,
+            '2': p2.step_2__select_templates_to_print_选择_编辑标签类型,
+            '3': p3.step_3__select_fields_to_print_for_each_template_选择每种标签类型的资料,
             '4': p1.process_selected_contract,
             'q': p.normal_exit_正常出口,
             'd': p.debug,
         },
         'debug': {
             '1': p1_select_contract,
-            '2': p2_select_templates,
             '3': p3_select_distinctive_fields,
             'u': u_maintain_set_of_indicators_regex_to_be_searched,
             'b': p.back_后退,

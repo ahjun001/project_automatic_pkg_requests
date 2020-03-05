@@ -55,7 +55,6 @@ def add_templates_from_list(list_l, ask_questions):
         candidates_l = list(list_l)
 
     if ask_questions:
-        print('~~~ Step 1: Selecting a template ~~~')
         select_templates_context_func(prompt = False)
         print('>>> Select # in front of the template name to be added:\n')
         for i in range(len(candidates_l)):
@@ -71,6 +70,7 @@ def add_templates_from_list(list_l, ask_questions):
                     if s_i in range(len(candidates_l)):
                         new_temp_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, candidates_l[s_i])
                         create_template_dir(candidates_l[s_i])
+                        break
                     else:
                         print('Integer, but not an option, try again')
                 except ValueError:
@@ -87,10 +87,15 @@ def add_templates_from_list(list_l, ask_questions):
         # check extension indeed is '.svg'
         if ext == '.svg':
             shutil.copy(ini_svg, os.path.join(new_temp_abs_dir, 'label_template.svg'))
-            return True
         else:
             print(f'\nSelected file {filename} extension is not \'.svg\'\n')
             return False
+
+        # copy 'template-info.json' file from same directory if it exists
+        p3_f = os.path.join(path, 'template-info.json')
+        if pathlib.Path(p3_f).exists():
+            shutil.copy(p3_f, new_temp_abs_dir)
+        return True
 
     else:
         for c in candidates_l:
@@ -145,7 +150,7 @@ context_func_d = {
 }
 
 
-def init():
+def step_2__select_templates_to_print_选择_编辑标签类型():
     # make sure p1 has been run
     if not p1.load_contract_info_d():
         print('p1 has not run successfully')
@@ -180,7 +185,7 @@ def init():
 
 def main():
     """ Driver """
-    init()
+    step_2__select_templates_to_print_选择_编辑标签类型()
     p.run()
 
 

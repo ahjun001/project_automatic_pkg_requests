@@ -204,7 +204,7 @@ def check_if_template_requirements_are_met():
         for f in template_fields:
             if f not in p3_d['selected_fields']:
                 missing_in_template_l.append(f)
-        print('The template requires the following fields but they were not found in the data: ', missing_in_template_l)
+        print('The template requires the following fields but those\nwere not found in the data requisition list: ', missing_in_template_l)
     else:
         print('Template fields and requested data match.  The template is operational.')
         # template_f = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir), 'label_template.svg')
@@ -373,7 +373,7 @@ def edit_paragraph_headers():
                                 p3_d['header_height'] = 20
                             elif s == 'd':
                                 # single line header
-                                p3_d['template_header'] = p3_fields_rel_dir[p3_fields_rel_dir.rfind('_') + 1:]
+                                p3_d['template_header'] = p3_fields_rel_dir[p3_fields_rel_dir.rfind('_') + 1:] + '唛头'
                                 p3_d['header_height'] = 7
                             else:
                                 print(f'{s} is not an option, try again')
@@ -793,7 +793,7 @@ def select_a_template_for_editing():
                     print('|\n| That\'s not an integer, try again\n|')
 
 
-def select_specific_fields_context_func(prompt = True):
+def select_specific_fields_context_func(prompt = True):  # todo: check it this could be different from next function
     print('~~~ Step 3: Selecting fields to print for each template ~~~\n')
     display_specific_fields_for_all_products()
     print('~~~ Now processing contract #: ', p1.p1_d["cntrct_nr"] if p1.p1_d["cntrct_nr"] else None)
@@ -821,7 +821,7 @@ context_func_d = {
 }
 
 
-def init():
+def step_3__select_fields_to_print_for_each_template_选择每种标签类型的资料():
     global p3_fields_rel_dir
     # make sure p1 infrastructure is in place
     if not p1.load_contract_info_d():
@@ -879,7 +879,7 @@ def init():
 
 def main():
     """ Driver """
-    init()
+    step_3__select_fields_to_print_for_each_template_选择每种标签类型的资料()
     p.run()
 
 

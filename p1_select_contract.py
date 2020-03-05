@@ -36,7 +36,7 @@ def dump_program_info_json():
         json.dump(p1_d, fw, ensure_ascii = False)
 
 
-def select_new_contract():
+def step_1__select_a_contract_选择合同号():
     global p1_cntrct_abs_dir
     global p1_d
 
@@ -118,6 +118,7 @@ def load_o_create_program_info_d():
                     shutil.copy(p1_d['fpath_init_xls'], p1_cntrct_abs_dir)
                     _, filename_ext = os.path.split(p1_d['fpath_init_xls'])
                     p1_d['fpath_file_xls'] = os.path.join(p1_cntrct_abs_dir, filename_ext)
+                    process_selected_contract()
                     return True  # (ii) re-create from initial file as per contract-info.json
                 else:
                     print(
@@ -130,14 +131,14 @@ def load_o_create_program_info_d():
     else:
         print(f'{prog_info_json_f} does not exist, no such file')
     # if select then return true
-    select_new_contract()
+    step_1__select_a_contract_选择合同号()
     return True  # (iii) point at file
 
 
 def load_contract_info_d():
     """
     Loads p1_cntrct_info_f into p1_cntrct_info_d, maybe resetting these values
-    Will run p1.init() and p1.process_default_contact() if necessary
+    Will run p1.step_2__select_templates_to_print_选择_编辑标签类型() and p1.process_default_contact() if necessary
     """
     global p1_cntrct_info_d
     global p1_cntrct_info_f
@@ -602,7 +603,7 @@ def init():
     p.menus = {
         p.menu: {
             '0': load_o_create_program_info_d,
-            '5': select_new_contract,
+            '5': step_1__select_a_contract_选择合同号,
             '1': process_selected_contract,
             '2': display_or_load_output_overview,
             '4': delete_all_data_on_selected_contract,
