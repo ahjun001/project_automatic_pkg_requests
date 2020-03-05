@@ -50,7 +50,7 @@ def main_menu_context_func():
     if not templ_l:
         templ_l, default = p2.p2_default_templates_l, ' (Default)'
     print(f'Step 2 selected templates to print: {templ_l} {default}')
-    p3_f = os.path.join(p1.p1_cntrct_abs_dir + '/' + p3.p3_fields_rel_dir, 'template-info.json')
+    p3_f = os.path.join(p1.p1_cntrct_abs_dir + '/' + templ_l[0], 'template-info.json')
     if pathlib.Path(p3_f).exists():
         with open(p3_f) as f:
             p3_d = json.load(f)
