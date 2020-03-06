@@ -20,7 +20,7 @@ p3_all_specific_fields_l = []  # list of fields from p1e_specific_fields_d_of_d
 p3_selected_fields_values_by_prod_d = {}  # field values as in .mako_input.json
 p3_body_svg = ''  # content of label_template_body.svg
 
-p3_default_fields_l = ['xl_prod_spec', 'u_parc']
+p3_default_fields_l = ['xl_prod_spec', 'u_parc', 'plstc_bg']
 p3_f = None  # info on fields directory currently being edited
 p3_d = {
     "selected_fields": list(p3_default_fields_l),
