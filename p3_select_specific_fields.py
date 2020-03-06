@@ -7,11 +7,12 @@ import re
 import shutil
 import subprocess
 import webbrowser
+
 from mako.template import Template
+
 import p0_menus as p
 import p1_select_contract as p1
 import p2_select_templates as p2
-import pu_maintain_set_of_indicators_regex_to_be_searched as pu
 
 p0_root_abs_dir = os.path.dirname(os.path.abspath(__file__))  # root directory
 p3_fields_rel_dir = ''  # currently working fields directory
@@ -112,6 +113,43 @@ def load_o_create_p3_fields_info_f():
         return False
 
 
+def scrap_template_for_fields():
+    global p3_fields_rel_dir
+    template_fields = fields_from_template()
+    for x in ['t', 'i', 'prod_n']:
+        if x in template_fields:
+            template_fields.remove(x)
+    for f in template_fields:
+        if f not in p3_d['selected_fields']:
+            p3_d['selected_fields'].append(f)
+    save_template_info_json()
+
+
+def check_if_template_requirements_are_met():
+    global p3_fields_rel_dir
+    template_fields = fields_from_template()
+    for x in ['t', 'i', 'prod_n']:
+        if x in template_fields:
+            template_fields.remove(x)
+    print(f'Template in {p3_fields_rel_dir} uses {template_fields}')
+    print(f'Fields selected to feed data are {template_fields}')
+    diff_set = template_fields - set(p3_d['selected_fields'])
+    if diff_set:
+        missing_in_template_l = []
+        for f in template_fields:
+            if f not in p3_d['selected_fields']:
+                missing_in_template_l.append(f)
+        print('The template requires the following fields but those\n'
+              'were not found in the data requisition list: ', missing_in_template_l)
+    else:
+        print('Template fields and requested data match.  The template is operational.')
+        # template_f = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir), 'label_template.svg')
+        # subprocess.Popen([
+        #     'inkscape',
+        #     template_f,
+        # ]).wait()
+
+
 def load_o_create_mako_input_values_json(force_recreate = False):
     global p3_fields_rel_dir
     """
@@ -188,30 +226,6 @@ def fields_from_template():
         for find in finds:
             template_fields_set.add(find[1])
     return template_fields_set
-
-
-def check_if_template_requirements_are_met():
-    global p3_fields_rel_dir
-    template_fields = fields_from_template()
-    for x in ['i', 't', 'prod_n']:
-        if x in template_fields:
-            template_fields.remove(x)
-    print(f'Template in {p3_fields_rel_dir} uses {template_fields}')
-    print(f'Fields selected to feed data are {template_fields}')
-    diff_set = template_fields - set(p3_d['selected_fields'])
-    if diff_set:
-        missing_in_template_l = []
-        for f in template_fields:
-            if f not in p3_d['selected_fields']:
-                missing_in_template_l.append(f)
-        print('The template requires the following fields but those\nwere not found in the data requisition list: ', missing_in_template_l)
-    else:
-        print('Template fields and requested data match.  The template is operational.')
-        # template_f = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir), 'label_template.svg')
-        # subprocess.Popen([
-        #     'inkscape',
-        #     template_f,
-        # ]).wait()
 
 
 def check_all_templates_have_correct_fields():
@@ -847,6 +861,7 @@ def step_3__select_fields_to_print_for_each_template_选择每种标签类型的
             'd': p.debug,
         },
         'select_a_template_for_editing': {
+            '0': scrap_template_for_fields,
             '1': check_if_template_requirements_are_met,
             '2': edit_fields,
             '3': p1.process_selected_contract,
