@@ -5,11 +5,13 @@ import json
 import os
 import pathlib
 import pprint
-import sys
-import xlrd
 import re
 import shutil
+import sys
 from tkinter.filedialog import askopenfilename
+
+import xlrd
+
 import p0_menus as p
 
 p0_root_abs_dir = os.path.dirname(os.path.abspath(__file__))  # root directory where the program is located
@@ -67,6 +69,11 @@ def step_1__select_a_contract_选择合同号():
                 shutil.copy(p1_d['fpath_init_xls'], p1_cntrct_abs_dir)
             dump_program_info_json()
             process_selected_contract()
+            # also copy template directories, svg and json files that might exists
+            _, dirs, _ = next(os.walk(path))
+            if dirs:
+                for some_dir in dirs:
+                    shutil.copytree(path + '/' + some_dir, p1_cntrct_abs_dir + '/' + some_dir)
             return True
         else:  # the prefix has not been checked
             print('A prefix could not be read from filename ext')
@@ -111,14 +118,19 @@ def load_o_create_program_info_d():
                     buf = p1_d['fpath_file_xls']
                     print(f"|\n| Cannot access '{buf}'\n|")
             else:
-                print(f'program-info.json does not contain {p1_d["fpath_file_xls"]} data')
+                print(f'program-info.json does not contain {p1_cntrct_abs_dir} data')
             print('| Trying to build from fpath_init_xls file in program-info.json')
             if 'fpath_init_xls' in p1_d.keys():
                 if pathlib.Path(p1_d['fpath_init_xls']).exists():
                     shutil.copy(p1_d['fpath_init_xls'], p1_cntrct_abs_dir)
-                    _, filename_ext = os.path.split(p1_d['fpath_init_xls'])
+                    path, filename_ext = os.path.split(p1_d['fpath_init_xls'])
                     p1_d['fpath_file_xls'] = os.path.join(p1_cntrct_abs_dir, filename_ext)
                     process_selected_contract()
+                    # also copy template directories, svg and json files that might exists
+                    _, dirs, _ = next(os.walk(path))
+                    if dirs:
+                        for some_dir in dirs:
+                            shutil.copytree(path + '/' + some_dir, p1_cntrct_abs_dir + '/' + some_dir)
                     return True  # (ii) re-create from initial file as per contract-info.json
                 else:
                     print(
@@ -588,7 +600,7 @@ def select_contract_debug_func():
 
 
 context_func_d = {
-    'select_contract': select_contract_main_context_func,
+    'init': select_contract_main_context_func,
     'debug': select_contract_debug_func,
 }
 
@@ -597,29 +609,28 @@ def init():
     load_o_create_program_info_d()
 
     # initializing menus last, so that context functions display most recent information
-    p.menu = 'select_contract'
+    p.menu = 'init'
     if not p.main_menu:
         p.main_menu = p.menu
     p.menus = {
         p.menu: {
-            '0': load_o_create_program_info_d,
-            '5': step_1__select_a_contract_选择合同号,
-            '1': process_selected_contract,
-            '2': display_or_load_output_overview,
-            '4': delete_all_data_on_selected_contract,
-            '8': display_p1_program_info_d,
-            '9': display_p1_program_info_f,
+            '1': step_1__select_a_contract_选择合同号,
+            '2': delete_all_data_on_selected_contract,
             'b': p.back_to_main_退到主程序,
             'q': p.normal_exit_正常出口,
             'd': p.debug,
         },
         'debug': {
-            '1': display_p1_search_reg_ex_l,
-            '2': display_p1_all_products_to_be_processed_set,
-            '3': display_p1b_indics_from_contract_l,
-            '4': display_p1c_all_relevant_data,
-            '5': display_p1d_common_indics_l,
-            '6': display_p1e_specific_fields_d_of_d,
+            '1': display_p1_program_info_d,
+            '2': display_p1_program_info_f,
+            '3': load_o_create_program_info_d,
+            '4': process_selected_contract,
+            '5': display_p1_search_reg_ex_l,
+            '6': display_p1_all_products_to_be_processed_set,
+            '7': display_p1b_indics_from_contract_l,
+            '8': display_p1c_all_relevant_data,
+            '9': display_p1d_common_indics_l,
+            'a': display_p1e_specific_fields_d_of_d,
             'b': p.back_后退,
             'q': p.normal_exit_正常出口,
         },

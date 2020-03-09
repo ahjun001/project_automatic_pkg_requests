@@ -19,7 +19,7 @@ context_func_d = {
 }
 
 
-def init():
+def u_maintain_set_of_indicators_regex_to_be_searched():
     p.menu = 'u_maintain_set_of_indicators_regex_to_be_searched'  # required to display_sub_processes_output on
     # main_menu
     p.mod_lev_1_menu = p.menu
@@ -52,7 +52,7 @@ def update():
 
 def main():
     """ Driver """
-    init()
+    u_maintain_set_of_indicators_regex_to_be_searched()
     p.run()
 
 

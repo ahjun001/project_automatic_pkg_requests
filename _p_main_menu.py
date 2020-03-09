@@ -18,22 +18,6 @@ def run_full_demo_with_selected_or_default_values_运行完整演示():
     p3.display_all()
 
 
-def p1_select_contract():
-    p1.init()
-
-
-def p3_select_distinctive_fields():
-    p3.step_3__select_fields_to_print_for_each_template_选择每种标签类型的资料()
-
-
-def u_maintain_set_of_indicators_regex_to_be_searched():
-    pu.init()
-
-
-def step_2__select_templates_to_print_选择_编辑标签类型():
-    p2.step_2__select_templates_to_print_选择_编辑标签类型()
-
-
 def display_and_edit_svg_files():
     pass
 
@@ -88,9 +72,7 @@ def init():
             'd': p.debug,
         },
         'debug': {
-            '1': p1_select_contract,
-            '3': p3_select_distinctive_fields,
-            'u': u_maintain_set_of_indicators_regex_to_be_searched,
+            'u': pu.u_maintain_set_of_indicators_regex_to_be_searched,
             'b': p.back_后退,
             'q': p.normal_exit_正常出口,
         },
