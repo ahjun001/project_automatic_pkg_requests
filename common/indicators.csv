@@ -4,6 +4,7 @@ pack_qty,parc,(?<=总件数：)\d+\b
 pack_qty,u_parc,(?<=\d\.\d\d/)\d+\b
 pack_qty,u_parc,(?<=\d\d\.\d\d/)\d+\b
 pack_qty,u_parc,(?<=\d\\d\d.\d\d/)\d+\b
+pack_qty,u_parc,(?<=\d\\d\d/)\d+\b
 logo,brandk,Konfort\+s\*牌
 logo,brandd,DETOPLUS\s*牌
 logo,branddp,DETO\s*牌
