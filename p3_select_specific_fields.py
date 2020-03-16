@@ -105,7 +105,7 @@ def load_o_create_p3_fields_info_f():
         # or populate missing fields with default information relative to the directory
         # other default information is set at variable initialization
         else:
-            p3_d['template_header'] = p3_fields_rel_dir[p3_fields_rel_dir.rfind('_') + 1:]
+            p3_d['template_header'] = p3_fields_rel_dir[p3_fields_rel_dir.rfind('_') + 1:] + '唛头'
         save_template_info_json()
         return True
     else:
@@ -122,6 +122,7 @@ def scrap_template_for_fields():
     for f in template_fields:
         if f not in p3_d['selected_fields']:
             p3_d['selected_fields'].append(f)
+    print(f'Template scrapped, selected_fields: {p3_d["selected_fields"]}')
     save_template_info_json()
 
 
@@ -807,6 +808,17 @@ def select_a_template_for_editing():
                     print('|\n| That\'s not an integer, try again\n|')
 
 
+def edit_label_template_svg():
+    global p3_fields_rel_dir
+
+    body_file = os.path.join(p1.p1_cntrct_abs_dir + '/' + p3_fields_rel_dir, '.label_template_body.svg')
+    if pathlib.Path(body_file).exists():
+        os.remove(os.path.join(p1.p1_cntrct_abs_dir + '/' + p3_fields_rel_dir, '.label_template_body.svg'))
+    label_template_file = os.path.join(p1.p1_cntrct_abs_dir + '/' + p3_fields_rel_dir, 'label_template.svg')
+    if pathlib.Path(label_template_file).exists():
+        subprocess.Popen(['inkscape', label_template_file]).wait()
+
+
 def select_specific_fields_context_func(prompt = True):  # todo: check it this could be different from next function
     print('~~~ Step 3: Selecting fields to print for each template ~~~\n')
     display_specific_fields_for_all_products()
@@ -861,6 +873,7 @@ def step_3__select_fields_to_print_for_each_template_选择每种标签类型的
             'd': p.debug,
         },
         'select_a_template_for_editing': {
+            '44': edit_label_template_svg,
             '0': scrap_template_for_fields,
             '1': check_if_template_requirements_are_met,
             '2': edit_fields,
