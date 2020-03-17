@@ -25,22 +25,6 @@ p2_default_templates_l = [
 ]
 
 
-def create_default_templates():
-    add_templates_from_list(p2_default_templates_l, ask_questions = False)
-
-
-def load_n_display():
-    p1.display_dirs(p1.p1_cntrct_abs_dir)
-
-
-def p2_load_templates_info_l():  # used in p3
-    return p1.read_dirs(p1.p1_cntrct_abs_dir)
-
-
-def add_new_template():
-    add_templates_from_list(p2_templates_l, ask_questions = True)
-
-
 def add_templates_from_list(list_l, ask_questions):
     new_temp_abs_dir = ''
     # read existing templates
@@ -100,6 +84,24 @@ def add_templates_from_list(list_l, ask_questions):
     else:
         for c in candidates_l:
             create_template_dir(c)
+
+
+def create_default_templates():
+    drs = p1.read_dirs(p1.p1_cntrct_abs_dir)
+    if not drs:
+        add_templates_from_list(p2_default_templates_l, ask_questions = False)
+
+
+def load_n_display():
+    p1.display_dirs(p1.p1_cntrct_abs_dir)
+
+
+def p2_load_templates_info_l():  # used in p3
+    return p1.read_dirs(p1.p1_cntrct_abs_dir)
+
+
+def add_new_template():
+    add_templates_from_list(p2_templates_l, ask_questions = True)
 
 
 def delete_existing_template():
