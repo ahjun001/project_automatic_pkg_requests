@@ -73,7 +73,9 @@ def step_1__select_a_contract_选择合同号():
             _, dirs, _ = next(os.walk(path))
             if dirs:
                 for some_dir in dirs:
-                    shutil.copytree(path + '/' + some_dir, p1_cntrct_abs_dir + '/' + some_dir)
+                    dest_dir = p1_cntrct_abs_dir + '/' + some_dir
+                    if not pathlib.Path(dest_dir).exists():
+                        shutil.copytree(path + '/' + some_dir, dest_dir)
             return True
         else:  # the prefix has not been checked
             print('A prefix could not be read from filename ext')
@@ -563,7 +565,6 @@ def process_selected_contract():
         if int(v['u_parc']) % int(float(v['pack'])) != 0:
             print(60 * '*' + '\nUnder-parcels not full in xls contract in product: ' + k + '\n' + 60 * '*')
             exit()
-
 
     # indicators common to all products: write to file
     filename = '.p1d_' + p1_d['cntrct_nr'] + '_extract_common.json'

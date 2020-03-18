@@ -749,7 +749,8 @@ def display_all():
             # use data on disk, if not on disk create with default values
             if load_o_create_p3_fields_info_f():
                 render_svg_1_template_1_product()
-                render_title_page()
+                if p3_fields_rel_dir == drs[0]:
+                    render_title_page()
                 render_svg_1_template_all_products()
     render_svg_all_templates_all_products()
     svg_s_to_pdf_deliverable()
