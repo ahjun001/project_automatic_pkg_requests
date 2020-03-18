@@ -564,6 +564,7 @@ def process_selected_contract():
             print(60 * '*' + '\nUnder-parcels not full in xls contract in product: ' + k + '\n' + 60 * '*')
             exit()
 
+
     # indicators common to all products: write to file
     filename = '.p1d_' + p1_d['cntrct_nr'] + '_extract_common.json'
     f = os.path.join(p1_cntrct_abs_dir, filename)

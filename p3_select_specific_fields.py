@@ -179,11 +179,21 @@ def load_o_create_mako_input_values_json(force_recreate = False):
                 temp_d[prod] = {'i': str(idx + 1), 'prod_n': prod}
                 idx += 1
 
+            # prepare to insert translations if needed
+            zh_fr_d = {
+                "本色": "acier brut",
+                "发黑": "acier noir",
+                "白锌": "acier zingué",
+                "镀白锌": "acier zingué"
+            }
+
             # populate the skeleton
             for indc_d in p1.p1b_indics_from_contract_l:  # loop over the big one once
                 if indc_d['prod_nr'] in p1.p1_all_products_to_be_processed_set:
                     if indc_d['what'] in p3_d['selected_fields']:  # loop over the smaller more
                         temp_d[indc_d['prod_nr']][indc_d['what']] = indc_d['info']
+                        if indc_d['what'] == 'material2':
+                            temp_d[indc_d['prod_nr']]['mat2_fr'] = zh_fr_d[indc_d['info']]
 
             # build the dictionary p3_selected_fields_values_by_prod_d with key = i - 1
             for v in temp_d.values():
