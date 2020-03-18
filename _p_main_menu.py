@@ -54,6 +54,7 @@ context_func_d = {
 
 
 def init():
+    os.system('clear')
     # assign a program
     p1.load_o_create_program_info_d()
     # menus
