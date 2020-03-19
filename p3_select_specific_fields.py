@@ -180,12 +180,8 @@ def load_o_create_mako_input_values_json(force_recreate = False):
                 idx += 1
 
             # prepare to insert translations if needed
-            zh_fr_d = {
-                "本色": "acier brut",
-                "发黑": "acier noir",
-                "白锌": "acier zingué",
-                "镀白锌": "acier zingué"
-            }
+            with open(os.path.join(p0_root_abs_dir + '/common', 'zh_fr.json')) as f:
+                zh_fr_d = json.load(f)
 
             # populate the skeleton
             for indc_d in p1.p1b_indics_from_contract_l:  # loop over the big one once
