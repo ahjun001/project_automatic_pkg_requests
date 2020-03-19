@@ -169,13 +169,13 @@ def load_o_create_mako_input_values_json(force_recreate = False):
     else:
         if not p1.p1b_indics_from_contract_l:
             p1.load_p1b_indics_from_contract_l()
-        if not p1.p1_all_products_to_be_processed_set:
+        if not p1.all_products_to_be_processed_set:
             p1.load_p1_all_products_to_be_processed_set()
         if load_o_create_p3_fields_info_f():
             # make a skeleton for p3_selected_fields_values_by_prod_d with key = prod
             idx = 0
             temp_d = {}
-            for prod in p1.p1_all_products_to_be_processed_set:
+            for prod in p1.all_products_to_be_processed_set:
                 temp_d[prod] = {'i': str(idx + 1), 'prod_n': prod}
                 idx += 1
 
@@ -185,7 +185,7 @@ def load_o_create_mako_input_values_json(force_recreate = False):
 
             # populate the skeleton
             for indc_d in p1.p1b_indics_from_contract_l:  # loop over the big one once
-                if indc_d['prod_nr'] in p1.p1_all_products_to_be_processed_set:
+                if indc_d['prod_nr'] in p1.all_products_to_be_processed_set:
                     if indc_d['what'] in p3_d['selected_fields']:  # loop over the smaller more
                         temp_d[indc_d['prod_nr']][indc_d['what']] = indc_d['info']
                         if indc_d['what'] == 'material2':
@@ -306,7 +306,7 @@ def del_fields():
 
 def display_specific_fields_for_all_products():
     # make sure global variables are set in all situations, outside the loop to do it once only
-    if not p1.p1_all_products_to_be_processed_set:
+    if not p1.all_products_to_be_processed_set:
         p1.load_p1_all_products_to_be_processed_set()
     if not p1.p1b_indics_from_contract_l:
         p1.load_p1b_indics_from_contract_l()
@@ -568,8 +568,7 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
                     family, size, style
                 )
             # from the editable template, build the 'label_template.svg' that will be used to multiply templates
-            if not p3_selected_fields_values_by_prod_d:
-                load_o_create_mako_input_values_json()
+            load_o_create_mako_input_values_json(force_recreate = True)
             # read view box values from template_body so as to compute spacings
             to_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir)
             with open(os.path.join(to_abs_dir, 'label_template.svg')) as f:
@@ -615,6 +614,15 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
                     offset_x = ox + spacing_w
                     offset_y = oy + spacing_h
                     fw.write(r"<g transform = 'translate(" + f"{offset_x}, {offset_y})'>\n")
+                    barcode_f = os.path.join(
+                        os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir),
+                        prod_n_to_barcode(p3_selected_fields_values_by_prod_d[str(i)]['prod_n'])
+                    )
+                    if pathlib.Path(barcode_f).exists():
+                        fw.write(r"<g transform = 'translate(5,5)'>\n")
+                        with open(barcode_f) as f:
+                            f.read()
+                        fw.write(r"/g>\n")
                     fw.write(mako_template.render(
                         contract_n = p1.p1_d["cntrct_nr"],
                         t = template_nr,
@@ -847,6 +855,38 @@ def select_edit_context_func():
     print('\n>>> Select an action: ')
 
 
+def prod_n_to_barcode(prod_nr):
+    temp_s = ''
+    for char in prod_nr:
+        if char.isnumeric():
+            temp_s += char
+    while len(temp_s) < 12:
+        if (12 - len(temp_s)) % 2 == 1:
+            temp_s = '3' + temp_s
+        else:
+            temp_s = '0' + temp_s
+    return temp_s + '.svg'
+
+
+def generate_barcode_files():
+    prod_l = list(p1.p1_cntrct_info_d['all_products_to_be_processed_set'])
+    # make a list of files with 12 digits based on stripped prod_nr
+    ean_prod_l = []
+    for prod in prod_l:
+        ean_prod_l.append(prod_n_to_barcode(prod))
+    # pprint.pprint(ean_prod_l)
+    return ean_prod_l
+
+
+def create_barcode_files():
+    global p3_fields_rel_dir
+    for filename in generate_barcode_files():
+        shutil.copy(
+            os.path.join(p0_root_abs_dir + '/common', 'empty_bar_code_file.svg'),
+            os.path.join(p1.p1_cntrct_abs_dir + '/' + p3_fields_rel_dir, filename)
+        )
+
+
 context_func_d = {
     'select_specific_fields': select_specific_fields_context_func,
     'select_a_template_for_editing': select_specific_fields_context_func,
@@ -871,15 +911,16 @@ def step_3__select_fields_to_print_for_each_template_选择每种标签类型的
         p.main_menu = p.menu
     p.menus = {
         p.menu: {
-            '1': check_all_templates_have_correct_fields,
-            '2': select_a_template_for_editing,
-            '3': render_svg_all_templates_all_products,
-            '4': display_all,
+            '1': select_a_template_for_editing,
+            '2': render_svg_all_templates_all_products,
+            '3': display_all,
+            '4': check_all_templates_have_correct_fields,
             'b': p.back_to_main_退到主程序,
             'q': p.normal_exit_正常出口,
             'd': p.debug,
         },
         'select_a_template_for_editing': {
+            '55': create_barcode_files,
             '44': edit_label_template_svg,
             '0': scrap_template_for_fields,
             '1': check_if_template_requirements_are_met,

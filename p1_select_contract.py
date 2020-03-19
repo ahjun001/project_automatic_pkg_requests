@@ -23,7 +23,7 @@ p1_cntrct_info_f = ''
 page_setup_d = {}
 p1_search_reg_ex_l = []
 indicators_csv = os.path.join(p0_root_abs_dir + '/common', 'indicators.csv')
-p1_all_products_to_be_processed_set = set()
+all_products_to_be_processed_set = set()
 p1b_indics_from_contract_l = []
 p1c_prods_w_same_key_set = {}  # make a dictionary key= info, value = sets of prods with that key
 p1d_common_indics_l = []
@@ -221,19 +221,19 @@ def delete_all_data_on_selected_contract():
 def load_p1_all_products_to_be_processed_set():
     global p1_cntrct_info_d
     global p1_cntrct_info_f
-    global p1_all_products_to_be_processed_set
+    global all_products_to_be_processed_set
     if not p1_cntrct_info_d:
         p1_cntrct_info_f = os.path.join(p1_cntrct_abs_dir, '.' + p1_d['cntrct_nr'] + '_contract-info.json')
         with open(p1_cntrct_info_f) as f1:
             p1_cntrct_info_d = json.load(f1)
-    p1_all_products_to_be_processed_set = p1_cntrct_info_d['p1_all_products_to_be_processed_set']
-    if p1_all_products_to_be_processed_set:
+    all_products_to_be_processed_set = p1_cntrct_info_d['all_products_to_be_processed_set']
+    if all_products_to_be_processed_set:
         return True
 
 
 def display_p1_all_products_to_be_processed_set():
     if load_p1_all_products_to_be_processed_set():
-        pprint.pprint(p1_all_products_to_be_processed_set)
+        pprint.pprint(all_products_to_be_processed_set)
 
 
 def load_p1_search_reg_ex_l():
@@ -402,14 +402,14 @@ def process_selected_contract():
     global p1_search_reg_ex_l
     global p1b_indics_from_contract_l
     global p1c_prods_w_same_key_set
-    global p1_all_products_to_be_processed_set
+    global all_products_to_be_processed_set
     global p1d_common_indics_l
     global p1e_specific_fields_d_of_d
     # reset to zero if these had been loaded from disk before
     p1_search_reg_ex_l = []
     p1b_indics_from_contract_l = []
     p1c_prods_w_same_key_set = {}
-    p1_all_products_to_be_processed_set = set()
+    all_products_to_be_processed_set = set()
     p1d_common_indics_l = []
     p1e_specific_fields_d_of_d = {}
 
@@ -539,13 +539,13 @@ def process_selected_contract():
 
     # p1c_build_set_of_all_products_to_be_processed
     for prod in contract_json_d['l_i']:
-        p1_all_products_to_be_processed_set.add(prod["01.TST_prod_#-需方产品编号"])
-    dump_contract_info_json('p1_all_products_to_be_processed_set', sorted(list(p1_all_products_to_be_processed_set)))
+        all_products_to_be_processed_set.add(prod["01.TST_prod_#-需方产品编号"])
+    dump_contract_info_json('all_products_to_be_processed_set', sorted(list(all_products_to_be_processed_set)))
 
     # p6_split_between p6_common_indics and p6_specific_indics
     for k, v in p1c_prods_w_same_key_set.items():
         # indic is not a  packing quantity and is common to all products
-        if k[0] != 'pack_qty' and v == p1_all_products_to_be_processed_set:
+        if k[0] != 'pack_qty' and v == all_products_to_be_processed_set:
             if k[3]:
                 p1d_common_indics_l.append(k)
         else:
