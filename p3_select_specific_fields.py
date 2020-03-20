@@ -128,16 +128,16 @@ def scrap_template_for_fields():
 
 def check_if_template_requirements_are_met():
     global p3_fields_rel_dir
-    template_fields = fields_from_template()
+    template_fields_set = fields_from_template()
     for x in ['t', 'i', 'prod_n']:
-        if x in template_fields:
-            template_fields.remove(x)
-    print(f'Template in {p3_fields_rel_dir} uses {template_fields}')
-    print(f'Fields selected to feed data are {template_fields}')
-    diff_set = template_fields - set(p3_d['selected_fields'])
+        if x in template_fields_set:
+            template_fields_set.remove(x)
+    print(f'Template in {p3_fields_rel_dir} uses {template_fields_set}')
+    print(f'Fields selected to feed data are  {p3_d["selected_fields"]}')
+    diff_set = template_fields_set - set(p3_d['selected_fields'])
     if diff_set:
         missing_in_template_l = []
-        for f in template_fields:
+        for f in template_fields_set:
             if f not in p3_d['selected_fields']:
                 missing_in_template_l.append(f)
         print('The template requires the following fields but those\n'
