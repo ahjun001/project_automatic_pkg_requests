@@ -619,10 +619,14 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
                         prod_n_to_barcode(p3_selected_fields_values_by_prod_d[str(i)]['prod_n'])
                     )
                     if pathlib.Path(barcode_f).exists():
-                        fw.write(r"<g transform = 'translate(5,5)'>\n")
+                        fw.write("<g transform = 'translate(41,17)'>\n")
                         with open(barcode_f) as f:
-                            f.read()
-                        fw.write(r"/g>\n")
+                            fw.write(f.read())
+                        fw.write("</g>\n")
+                        fw.write("<g transform = 'translate(41,55)'>\n")
+                        with open(barcode_f) as f:
+                            fw.write(f.read())
+                        fw.write("</g>\n")
                     fw.write(mako_template.render(
                         contract_n = p1.p1_d["cntrct_nr"],
                         t = template_nr,

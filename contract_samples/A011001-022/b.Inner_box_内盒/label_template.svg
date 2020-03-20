@@ -8,8 +8,8 @@
    xmlns:xlink="http://www.w3.org/1999/xlink"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   inkscape:version="1.1-dev (1:0.92.0+devel+202003171344+4776cc0)"
-   sodipodi:docname="label_template.svg.2020_03_18_18_32_32.0.svg"
+   inkscape:version="1.1-dev (1:0.92.0+devel+202003191343+e6e5ca7)"
+   sodipodi:docname="label_template.svg"
    id="svg12654"
    version="1.2"
    viewBox="0 0 54.999356 81.723571"
@@ -29,16 +29,16 @@
   </metadata>
   <sodipodi:namedview
      inkscape:current-layer="svg12654"
-     inkscape:window-maximized="0"
+     inkscape:window-maximized="1"
      inkscape:window-y="40"
      inkscape:window-x="0"
-     inkscape:cy="108.85012"
-     inkscape:cx="178.3332"
-     inkscape:zoom="0.68158375"
+     inkscape:cy="123.21412"
+     inkscape:cx="140.87728"
+     inkscape:zoom="3.6357219"
      showgrid="false"
      id="namedview12656"
-     inkscape:window-height="1014"
-     inkscape:window-width="959"
+     inkscape:window-height="1015"
+     inkscape:window-width="1920"
      inkscape:pageshadow="2"
      inkscape:pageopacity="0"
      guidetolerance="10"
@@ -3641,67 +3641,6 @@
   <g
      transform="matrix(0.33535029,0,0,0.33538126,-9.4016439,-14.479427)"
      style="fill:#0c0f0c;fill-opacity:1;stroke-width:2.98182"
-     id="g6371">
-    <use
-       xlink:href="#glyph7-1"
-       x="153.5479"
-       y="94.630203"
-       id="use6357"
-       width="100%"
-       height="100%"
-       style="stroke-width:2.98182" />
-    <use
-       xlink:href="#glyph7-1"
-       x="157.5499"
-       y="94.630203"
-       id="use6359"
-       width="100%"
-       height="100%"
-       style="stroke-width:2.98182" />
-    <use
-       xlink:href="#glyph7-2"
-       x="161.5519"
-       y="94.630203"
-       id="use6361"
-       width="100%"
-       height="100%"
-       style="stroke-width:2.98182" />
-    <use
-       xlink:href="#glyph7-3"
-       x="164.88789"
-       y="94.630203"
-       id="use6363"
-       width="100%"
-       height="100%"
-       style="stroke-width:2.98182" />
-    <use
-       xlink:href="#glyph7-4"
-       x="168.22391"
-       y="94.630203"
-       id="use6365"
-       width="100%"
-       height="100%"
-       style="stroke-width:2.98182" />
-    <use
-       xlink:href="#glyph7-2"
-       x="171.55991"
-       y="94.630203"
-       id="use6367"
-       width="100%"
-       height="100%"
-       style="stroke-width:2.98182" />
-    <use
-       xlink:href="#glyph7-5"
-       x="174.8959"
-       y="94.630203"
-       id="use6369"
-       width="100%"
-       height="100%"
-       style="stroke-width:2.98182" />
-  </g>
-  <g
-     transform="matrix(0.33535029,0,0,0.33538126,-9.4016439,-14.479427)"
-     style="fill:#0c0f0c;fill-opacity:1;stroke-width:2.98182"
      id="g9251">
     <use
        xlink:href="#glyph8-1"
@@ -3904,15 +3843,6 @@
        height="100%"
        style="stroke-width:2.98182" />
   </g>
-  <use
-     xlink:href="#image8024"
-     transform="matrix(0.09658122,0,0,0.09659013,41.329832,17.970258)"
-     id="use12623"
-     x="0"
-     y="0"
-     width="100%"
-     height="100%"
-     style="stroke-width:2.98182" />
   <text
      transform="scale(0.99995383,1.0000462)"
      y="2.9874613"
@@ -5469,67 +5399,6 @@
      d="m 5.2541755,76.424906 c -1.5824226,0 -2.864866,-1.289122 -2.864866,-2.882182 0,-1.593063 1.2824434,-2.883495 2.864866,-2.883495 1.5824222,0 2.8661732,1.290432 2.8661732,2.883495 0,1.59306 -1.283751,2.882182 -2.8661732,2.882182 z m 0,0"
      style="fill:none;stroke:#0f0f0f;stroke-width:0.75;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1" />
   <g
-     id="g2203"
-     style="fill:#0c0f0c;fill-opacity:1;stroke-width:2.98183"
-     transform="matrix(0.33534775,0,0,0.33538126,-9.4015713,23.091417)">
-    <use
-       style="stroke-width:2.98183"
-       height="100%"
-       width="100%"
-       id="use2189"
-       y="94.630203"
-       x="153.5479"
-       xlink:href="#glyph7-1" />
-    <use
-       style="stroke-width:2.98183"
-       height="100%"
-       width="100%"
-       id="use2191"
-       y="94.630203"
-       x="157.5499"
-       xlink:href="#glyph7-1" />
-    <use
-       style="stroke-width:2.98183"
-       height="100%"
-       width="100%"
-       id="use2193"
-       y="94.630203"
-       x="161.5519"
-       xlink:href="#glyph7-2" />
-    <use
-       style="stroke-width:2.98183"
-       height="100%"
-       width="100%"
-       id="use2195"
-       y="94.630203"
-       x="164.88789"
-       xlink:href="#glyph7-3" />
-    <use
-       style="stroke-width:2.98183"
-       height="100%"
-       width="100%"
-       id="use2197"
-       y="94.630203"
-       x="168.22391"
-       xlink:href="#glyph7-4" />
-    <use
-       style="stroke-width:2.98183"
-       height="100%"
-       width="100%"
-       id="use2199"
-       y="94.630203"
-       x="171.55991"
-       xlink:href="#glyph7-2" />
-    <use
-       style="stroke-width:2.98183"
-       height="100%"
-       width="100%"
-       id="use2201"
-       y="94.630203"
-       x="174.8959"
-       xlink:href="#glyph7-5" />
-  </g>
-  <g
      id="g2255"
      style="fill:#0c0f0c;fill-opacity:1;stroke-width:2.98183"
      transform="matrix(0.33534775,0,0,0.33538126,-9.4015713,23.091417)">
@@ -5734,15 +5603,6 @@
        x="100.1267"
        xlink:href="#glyph8-2" />
   </g>
-  <use
-     style="stroke-width:2.98183"
-     height="100%"
-     width="100%"
-     y="0"
-     x="0"
-     id="use2257"
-     transform="matrix(0.09658049,0,0,0.09659013,41.32952,55.541111)"
-     xlink:href="#image8024" />
   <text
      xml:space="preserve"
      style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:3.54143px;line-height:1;font-family:'Liberation Sans';-inkscape-font-specification:'Liberation Sans Bold';text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.264582"
@@ -5780,4 +5640,26 @@
        x="52.359173"
        y="69.43396"
        style="stroke-width:0.264583">${mat2_fr}</tspan></text>
+  <text
+     xml:space="preserve"
+     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.11667px;line-height:1.25;font-family:'Liberation Sans';-inkscape-font-specification:'Liberation Sans Bold';font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-variant-east-asian:normal;font-variation-settings:normal;text-indent:0;text-align:end;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:end;white-space:normal;shape-padding:0;shape-margin:0;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke-width:0.264583;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000;stop-opacity:1"
+     x="50.167412"
+     y="16.86665"
+     id="text1118"><tspan
+       sodipodi:role="line"
+       id="tspan1136"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Liberation Sans';-inkscape-font-specification:'Liberation Sans'"
+       x="50.167412"
+       y="16.86665">${prod_n}</tspan></text>
+  <text
+     id="text1140"
+     y="54.468586"
+     x="50.167412"
+     style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:2.11667px;line-height:1.25;font-family:'Liberation Sans';-inkscape-font-specification:'Liberation Sans Bold';font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-variant-east-asian:normal;font-variation-settings:normal;text-indent:0;text-align:end;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:end;white-space:normal;shape-padding:0;shape-margin:0;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke-width:0.264583;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000;stop-opacity:1"
+     xml:space="preserve"><tspan
+       y="54.468586"
+       x="50.167412"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Liberation Sans';-inkscape-font-specification:'Liberation Sans'"
+       id="tspan1138"
+       sodipodi:role="line">${prod_n}</tspan></text>
 </svg>
