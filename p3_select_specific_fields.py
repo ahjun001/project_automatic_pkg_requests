@@ -21,7 +21,7 @@ p3_selected_fields_values_by_prod_d = {}  # field values as in .mako_input.json
 p3_body_svg = ''  # content of label_template_body.svg
 
 p3_default_fields_l = ['xl_prod_spec', 'u_parc', 'plstc_bg']
-p3_f = None  # info on fields directory currently being edited
+p3_f = ''  # None  # info on fields directory currently being edited
 p3_d = {
     "selected_fields": list(p3_default_fields_l),
     "template_header": '',
@@ -176,7 +176,7 @@ def load_o_create_mako_input_values_json(force_recreate = False):
             idx = 0
             temp_d = {}
             for prod in p1.all_products_to_be_processed_set:
-                temp_d[prod] = {'i': str(idx + 1), 'prod_n': prod}
+                temp_d[prod] = {'i': str(idx + 1), 'prod_n': prod, 'gm_zh': '', 'gm_fr': ''}
                 idx += 1
 
             # prepare to insert translations if needed
@@ -188,8 +188,10 @@ def load_o_create_mako_input_values_json(force_recreate = False):
                 if indc_d['prod_nr'] in p1.all_products_to_be_processed_set:
                     if indc_d['what'] in p3_d['selected_fields']:  # loop over the smaller more
                         temp_d[indc_d['prod_nr']][indc_d['what']] = indc_d['info']
-                        if indc_d['what'] == 'material2':
-                            temp_d[indc_d['prod_nr']]['mat2_fr'] = zh_fr_d[indc_d['info']]
+                        what_zh = indc_d['what']
+                        if what_zh in ['clr_zh', 'gm_zh', 'io_zh', 'lr_zh', 'spec_zh']:
+                            what_fr = what_zh[:-2] + 'fr'
+                            temp_d[indc_d['prod_nr']][what_fr] = zh_fr_d[indc_d['info']]
 
             # build the dictionary p3_selected_fields_values_by_prod_d with key = i - 1
             for v in temp_d.values():

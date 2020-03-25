@@ -32,4 +32,12 @@ pack_spec,plstc_bg,\d+(?=个/牢固透明塑料袋)
 pack_spec,plstc_bg,\d+(?=PCS/透明牢固尼龙袋)
 pack_spec,bg_pr_crgtd_bx,\d+(?=袋/瓦楞盒)
 pack_spec,bg_pr_o_bx,\d+(?=盒/外*箱)
-
+spec,clr_zh,黑胡桃
+spec,clr_zh,黑色
+spec,clr_zh,白色
+spec,gm_zh,亚光
+spec,gm_zh,亮光
+spec,io_zh,内开
+spec,io_zh,外开
+spec,lr_zh,右开
+spec,lr_zh,左开

@@ -2,5 +2,14 @@
   "本色": "acier brut",
   "发黑": "acier noir",
   "白锌": "acier zingué",
-  "镀白锌": "acier zingué"
+  "镀白锌": "acier zingué",
+  "黑胡桃": "Noyer foncé (dark walnut)",
+  "黑色": "Noir (black)",
+  "白色": "Blanc (white)",
+  "亚光": "mat",
+  "亮光": "brillant",
+  "内开": "Extérieur vers intérieur",
+  "外开": "Intérieur vers extérieur",
+  "左开": "Ouverture gauche",
+  "右开": "Ouverture droite"
 }
