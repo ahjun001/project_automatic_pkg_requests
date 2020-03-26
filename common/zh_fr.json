@@ -11,5 +11,8 @@
   "内开": "Extérieur vers intérieur",
   "外开": "Intérieur vers extérieur",
   "左开": "Ouverture gauche",
-  "右开": "Ouverture droite"
+  "右开": "Ouverture droite",
+  "单门": "Porte simple battant",
+  "子母防盗门": "Porte battants asymétriques",
+  "对开防盗门": "Porte battants symétriques"
 }

@@ -37,7 +37,10 @@ spec,clr_zh,黑色
 spec,clr_zh,白色
 spec,gm_zh,亚光
 spec,gm_zh,亮光
-spec,io_zh,内开
-spec,io_zh,外开
+spec,io_zh,内开(?=门)
+spec,io_zh,外开(?=门)
 spec,lr_zh,右开
 spec,lr_zh,左开
+spec,spec_zh,单门
+spec,spec_zh,子母防盗门
+spec,spec_zh,对开防盗门

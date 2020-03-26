@@ -192,6 +192,10 @@ def load_o_create_mako_input_values_json(force_recreate = False):
                         if what_zh in ['clr_zh', 'gm_zh', 'io_zh', 'lr_zh', 'spec_zh']:
                             what_fr = what_zh[:-2] + 'fr'
                             temp_d[indc_d['prod_nr']][what_fr] = zh_fr_d[indc_d['info']]
+                        elif what_zh == 'xl_prod_spec':
+                            temp_d[indc_d['prod_nr']]['dim'] = re.search(r"\d*x\d*\s*mm", indc_d['info']).group()
+                            model = re.search(r"JC-\w*", indc_d['info'])
+                            temp_d[indc_d['prod_nr']]['model'] = model.group() if model else 'ISOPLANE'
 
             # build the dictionary p3_selected_fields_values_by_prod_d with key = i - 1
             for v in temp_d.values():
@@ -438,6 +442,7 @@ def display_p3_fields_info_f():
 
 
 def display_pdf():
+    # todo: avoid having to change directories
     os.chdir(p1.p1_cntrct_abs_dir)
     output_s = p1.p1_d["cntrct_nr"] + '.pdf'
     subprocess.Popen(['xreader', output_s, ])
@@ -604,6 +609,8 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
             )
             if not oy:  # vertical positioning in page_view_box_h
                 oy = - spacing_h
+                if page == 1:
+                    oy = 150
 
             # run mako.template.Template
             ox = - spacing_w + horizontal_centering_offset(template_view_box_w, spacing_w)
@@ -629,6 +636,10 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
                         with open(barcode_f) as f:
                             fw.write(f.read())
                         fw.write("</g>\n")
+                    # print(  # for debug purposes
+                    #     p3_selected_fields_values_by_prod_d[str(i)]['i'],
+                    #     p3_selected_fields_values_by_prod_d[str(i)]['prod_n']
+                    # )
                     fw.write(mako_template.render(
                         contract_n = p1.p1_d["cntrct_nr"],
                         t = template_nr,
@@ -917,6 +928,7 @@ def step_3__select_fields_to_print_for_each_template_选择每种标签类型的
         p.main_menu = p.menu
     p.menus = {
         p.menu: {
+            '66': svg_s_to_pdf_deliverable,
             '1': select_a_template_for_editing,
             '2': render_svg_all_templates_all_products,
             '3': display_all,
@@ -940,7 +952,6 @@ def step_3__select_fields_to_print_for_each_template_选择每种标签类型的
             'q': p.normal_exit_正常出口,
         },
         'debug': {
-            '66': svg_s_to_pdf_deliverable,
             '44': render_title_page,
             '2': display_or_load_output_overview,
             '6': p1.display_p1_cntrct_info_d,
