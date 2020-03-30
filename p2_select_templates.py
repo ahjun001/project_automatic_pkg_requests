@@ -97,6 +97,9 @@ def load_n_display():
 
 
 def p2_load_templates_info_l():  # used in p3
+    """
+    :return: list of label subdirectories to the main contract directory
+    """
     return p1.read_dirs(p1.p1_cntrct_abs_dir)
 
 
