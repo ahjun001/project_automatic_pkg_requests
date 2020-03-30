@@ -539,6 +539,11 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
                 'write_templates: ! template height + spacing height don\'t fit in the page'
 
             # write the header for this template
+            if not oy:  # vertical positioning in page_view_box_h
+                oy = - spacing_h
+                if page == 1:
+                    oy = p1.doc_setup_d['page_1_vert_start'] + spacing_h
+
             fw.write(
                 f'<svg width="{page_view_box_w}" height="{p3_d["header_height"]}" x="0" y="{oy}">\n'
                 f'<rect x="0" y="0"\n'
@@ -548,11 +553,6 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
                 f'style="font-family:{family};font-size:{size};font-style:{style}">'
                 f'{template_nr}. {p3_d["template_header"]}</text>\n</svg>\n'
             )
-            if not oy:  # vertical positioning in page_view_box_h
-                oy = - spacing_h
-                if page == 1:
-                    oy = 150
-
             # run mako.template.Template
             ox = - spacing_w + horizontal_centering_offset(template_view_box_w, spacing_w)
             oy += p3_d['header_height']
