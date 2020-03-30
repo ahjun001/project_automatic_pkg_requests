@@ -637,11 +637,15 @@ def render_cover_page():
     global p3_d
     global p3_selected_fields_values_by_prod_d
 
+
     # load data from p1.p1e_specific_fields_d_of_d, put in a list of dicts
     p3_fields_rel_dir = p2.p2_load_templates_info_l()[0]
     load_o_create_p3_fields_info_f()
     load_p3_all_specific_fields_l()
 
+    print(f"From '..._doc_setup.json': cover_page = {p1.doc_setup_d['cover_page']}")
+    if p1.doc_setup_d['cover_page']:
+        print("The label used for the cover page is from the layer 'label' in label_template.svg")
     # copy first label on cover page template
     p3_fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir)
     svg_in = os.path.join(p3_fields_abs_dir, '.1_product.svg')
@@ -715,7 +719,7 @@ def display_all():
             # use data on disk, if not on disk create with default values
             if load_o_create_p3_fields_info_f():
                 render_svg_1_template_1_product()
-                if p3_fields_rel_dir == drs_l[0]:
+                if p1.doc_setup_d['cover_page'] and  p3_fields_rel_dir == drs_l[0]:
                     render_cover_page()
                 render_svg_1_template_all_products()
     render_svg_all_templates_all_products()
@@ -953,7 +957,6 @@ def step_3__select_fields_to_print_for_each_template_选择每种标签类型的
             'q': p.normal_exit_正常出口,
         },
         'debug': {
-            '44': render_cover_page,
             '2': display_or_load_output_overview,
             '6': p1.display_p1_cntrct_info_d,
             '7': p1.display_p1_cntrct_info_f,
