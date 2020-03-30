@@ -99,9 +99,9 @@ def load_o_create_p3_fields_info_f():
     global page_view_box_w
     global page_view_box_h
 
-    p1.load_o_create_page_set_up()
-    page_view_box_w = 210 - 2 * p1.page_setup_d['margin_w']  # Assuming A4
-    page_view_box_h = 297 - 2 * p1.page_setup_d['margin_h']  # Assuming A4
+    p1.load_o_create_doc_set_up()
+    page_view_box_w = 210 - 2 * p1.doc_setup_d['margin_w']  # Assuming A4
+    page_view_box_h = 297 - 2 * p1.doc_setup_d['margin_h']  # Assuming A4
 
     if p3_fields_rel_dir:
         # either read data,
@@ -452,7 +452,7 @@ def open_svg_for_output(header, page, only_1_temp, only_1_prod, family, size, st
         f"style='font-family:{family};font-size:{size};font-style:{style}'>-- {page} --</text>\n</g>\n"
     )
     # assuming A4
-    fw.write(f"<g transform='translate({p1.page_setup_d['margin_w']}, {p1.page_setup_d['margin_h']} )'>\n")
+    fw.write(f"<g transform='translate({p1.doc_setup_d['margin_w']}, {p1.doc_setup_d['margin_h']} )'>\n")
     return fw, svg_out
 
 
@@ -632,7 +632,7 @@ def render_svg_1_template_all_products():
     render_svg_all_templates_all_products(only_1_temp = True)
 
 
-def render_title_page():
+def render_cover_page():
     global p3_fields_rel_dir
     global p3_d
     global p3_selected_fields_values_by_prod_d
@@ -668,9 +668,9 @@ def render_title_page():
                 balance -= 1
             if 'label="label"' in line:
                 good_n = i
-        with open(os.path.join(p0_root_abs_dir + '/common/.title_page_template.svg')) as fr:
+        with open(os.path.join(p0_root_abs_dir + '/common/.cover_page_template.svg')) as fr:
             lines = fr.readlines()
-        svg_out = os.path.join(p1.p1_cntrct_abs_dir, '.title_page_template.svg')
+        svg_out = os.path.join(p1.p1_cntrct_abs_dir, '.cover_page_template.svg')
         with open(svg_out, 'w') as fw:
             for i in range(len(lines) - 1):
                 fw.writelines(lines[i])
@@ -716,7 +716,7 @@ def display_all():
             if load_o_create_p3_fields_info_f():
                 render_svg_1_template_1_product()
                 if p3_fields_rel_dir == drs_l[0]:
-                    render_title_page()
+                    render_cover_page()
                 render_svg_1_template_all_products()
     render_svg_all_templates_all_products()
     svg_s_to_pdf_deliverable()
@@ -930,7 +930,7 @@ def step_3__select_fields_to_print_for_each_template_选择每种标签类型的
     p.menus = {
         p.menu: {
             '44': render_svg_1_template_1_product,
-            '55': render_title_page,
+            '55': render_cover_page,
             '66': svg_s_to_pdf_deliverable,
             '1': select_a_template_for_editing,
             '2': render_svg_all_templates_all_products,
@@ -953,7 +953,7 @@ def step_3__select_fields_to_print_for_each_template_选择每种标签类型的
             'q': p.normal_exit_正常出口,
         },
         'debug': {
-            '44': render_title_page,
+            '44': render_cover_page,
             '2': display_or_load_output_overview,
             '6': p1.display_p1_cntrct_info_d,
             '7': p1.display_p1_cntrct_info_f,

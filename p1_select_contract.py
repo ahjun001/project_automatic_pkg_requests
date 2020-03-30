@@ -20,7 +20,7 @@ p1_d = {}
 p1_cntrct_abs_dir = ''  # directory where a copy of the xls contract file and contract extracted data is
 p1_cntrct_info_d = {}
 p1_cntrct_info_f = ''
-page_setup_d = {}
+doc_setup_d = {}
 p1_search_reg_ex_l = []
 indicators_csv = os.path.join(p0_root_abs_dir + '/common', 'indicators.csv')
 all_products_to_be_processed_set = set()
@@ -67,6 +67,7 @@ def step_1__select_a_contract_选择合同号():
             p1_d['fpath_init_xls'] = ini_xls
             if not pathlib.Path(p1_d["fpath_file_xls"]).exists():
                 shutil.copy(p1_d['fpath_init_xls'], p1_cntrct_abs_dir)
+
             dump_program_info_json()
             process_selected_contract()
             # also copy template directories, svg and json files that might exists
@@ -133,6 +134,9 @@ def load_o_create_program_info_d():
                     if dirs:
                         for some_dir in dirs:
                             shutil.copytree(path + '/' + some_dir, p1_cntrct_abs_dir + '/' + some_dir)
+                    doc_setup_f_ini = os.path.join(path, p1_d['cntrct_nr'] + '_doc_setup.json')
+                    if pathlib.Path(doc_setup_f_ini).exists():
+                        shutil.copy(doc_setup_f_ini, p1_cntrct_abs_dir)
                     return True  # (ii) re-create from initial file as per contract-info.json
                 else:
                     print(
@@ -310,20 +314,21 @@ def display_p1e_specific_fields_d_of_d():
         pprint.pprint(p1e_specific_fields_d_of_d)
 
 
-def load_o_create_page_set_up():
+def load_o_create_doc_set_up():
     global p1_cntrct_abs_dir
     global p1_d
-    global page_setup_d
+    global doc_setup_d
 
-    filename = os.path.join(p1_cntrct_abs_dir, p1_d['cntrct_nr'] + '_page_setup.json')
+    filename = os.path.join(p1_cntrct_abs_dir, p1_d['cntrct_nr'] + '_doc_setup.json')
     if pathlib.Path(filename).exists():
         with open(filename) as f:
-            page_setup_d = json.load(f)
+            doc_setup_d = json.load(f)
     else:
-        page_setup_d['margin_w'] = 15
-        page_setup_d['margin_h'] = 15
+        doc_setup_d['margin_w'] = 15
+        doc_setup_d['margin_h'] = 15
+        doc_setup_d['cover_page'] = True
         with open(filename, 'w') as f:
-            json.dump(page_setup_d, f, ensure_ascii = False)
+            json.dump(doc_setup_d, f, ensure_ascii = False)
 
 
 def display_p1_cntrct_info_d():
@@ -583,7 +588,7 @@ def process_selected_contract():
     dump_contract_info_json('p1e_extract_specifics', filename)
 
     # define page setup
-    load_o_create_page_set_up()
+    load_o_create_doc_set_up()
 
     # document in A1234-456_contract-info.json
     filename = os.path.join(p1_cntrct_abs_dir, p1_cntrct_info_f)
