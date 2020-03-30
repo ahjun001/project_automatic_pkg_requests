@@ -193,7 +193,9 @@ def load_o_create_mako_input_values_json(force_recreate = False):
                             what_fr = what_zh[:-2] + 'fr'
                             temp_d[indc_d['prod_nr']][what_fr] = zh_fr_d[indc_d['info']]
                         elif what_zh == 'xl_prod_spec':
-                            temp_d[indc_d['prod_nr']]['dim'] = re.search(r"\d*x\d*\s*mm", indc_d['info']).group()
+                            dims = re.search(r"\d*x\d*\s*mm", indc_d['info']).group()
+                            largeur = re.search(r'(?<=x)\d*(?=\smm)', dims).group()
+                            temp_d[indc_d['prod_nr']]['dim'] = f'H. 2050 x l. {largeur} mm'
                             model = re.search(r"JC-\w*", indc_d['info'])
                             temp_d[indc_d['prod_nr']]['model'] = model.group() if model else 'ISOPLANE'
 
