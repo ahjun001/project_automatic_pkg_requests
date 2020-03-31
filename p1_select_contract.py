@@ -327,6 +327,8 @@ def load_o_create_doc_set_up():
         doc_setup_d['margin_w'] = 15
         doc_setup_d['margin_h'] = 15
         doc_setup_d['cover_page'] = True
+        doc_setup_d['page_1_vert_start'] = 0
+        doc_setup_d['customized_processing'] = False
         with open(filename, 'w') as f:
             json.dump(doc_setup_d, f, ensure_ascii = False)
 

@@ -183,7 +183,7 @@ def load_o_create_mako_input_values_json(force_recreate = False):
             idx = 0
             temp_d = {}
             for prod in p1.all_products_to_be_processed_set:
-                temp_d[prod] = {'i': str(idx + 1), 'prod_n': prod, 'gm_zh': '', 'gm_fr': ''}
+                temp_d[prod] = {'i': str(idx + 1), 'prod_n': prod, 'gm_zh': '', 'gm_fr': ''}  # todo: externalize
                 idx += 1
 
             # prepare to insert translations if needed
@@ -196,15 +196,16 @@ def load_o_create_mako_input_values_json(force_recreate = False):
                     if indc_d['what'] in p3_d['selected_fields']:  # loop over the smaller more
                         temp_d[indc_d['prod_nr']][indc_d['what']] = indc_d['info']
                         what_zh = indc_d['what']
-                        if what_zh in ['clr_zh', 'gm_zh', 'io_zh', 'lr_zh', 'spec_zh']:
+                        if what_zh in ['clr_zh', 'gm_zh', 'io_zh', 'lr_zh', 'spec_zh', 'mat2_zh']:  # todo: externalize
                             what_fr = what_zh[:-2] + 'fr'
                             temp_d[indc_d['prod_nr']][what_fr] = zh_fr_d[indc_d['info']]
-                        elif what_zh == 'xl_prod_spec':
-                            dims = re.search(r"\d*x\d*\s*mm", indc_d['info']).group()
-                            largeur = re.search(r'(?<=x)\d*(?=\smm)', dims).group()
-                            temp_d[indc_d['prod_nr']]['dim'] = f'H. 2050 x l. {largeur} mm'
-                            model = re.search(r"JC-\w*", indc_d['info'])
-                            temp_d[indc_d['prod_nr']]['model'] = model.group() if model else 'ISOPLANE'
+                        elif p1.doc_setup_d['customized_processing']:
+                            if what_zh == 'xl_prod_spec':
+                                dims = re.search(r"\d*x\d*\s*mm", indc_d['info']).group()
+                                largeur = re.search(r'(?<=x)\d*(?=\smm)', dims).group()
+                                temp_d[indc_d['prod_nr']]['dim'] = f'H. 2050 x l. {largeur} mm'
+                                model = re.search(r"JC-\w*", indc_d['info'])
+                                temp_d[indc_d['prod_nr']]['model'] = model.group() if model else 'ISOPLANE'
 
             # build the dictionary p3_selected_fields_values_by_prod_d with key = i - 1
             for v in temp_d.values():
@@ -568,7 +569,7 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
                     # create the path to a potential barcode file
                     barcode_f = os.path.join(
                         os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir),
-                        prod_n_to_barcode(p3_selected_fields_values_by_prod_d[str(i)]['prod_n'])
+                        p3_selected_fields_values_by_prod_d[str(i)]['prod_n'] + '.svg'
                     )
                     # if such a barcode file exists, then insert it  #  todo: make those places out of program
                     if pathlib.Path(barcode_f).exists():
@@ -636,7 +637,6 @@ def render_cover_page():
     global p3_fields_rel_dir
     global p3_d
     global p3_selected_fields_values_by_prod_d
-
 
     # load data from p1.p1e_specific_fields_d_of_d, put in a list of dicts
     p3_fields_rel_dir = p2.p2_load_templates_info_l()[0]
@@ -719,7 +719,7 @@ def display_all():
             # use data on disk, if not on disk create with default values
             if load_o_create_p3_fields_info_f():
                 render_svg_1_template_1_product()
-                if p1.doc_setup_d['cover_page'] and  p3_fields_rel_dir == drs_l[0]:
+                if p1.doc_setup_d['cover_page'] and p3_fields_rel_dir == drs_l[0]:
                     render_cover_page()
                 render_svg_1_template_all_products()
     render_svg_all_templates_all_products()
@@ -887,26 +887,24 @@ def prod_n_to_barcode(prod_nr):
             temp_s = '3' + temp_s
         else:
             temp_s = '0' + temp_s
-    return temp_s + '.svg'
-
-
-def generate_barcode_files():
-    prod_l = list(p1.p1_cntrct_info_d['all_products_to_be_processed_set'])
-    # make a list of files with 12 digits based on stripped prod_nr
-    ean_prod_l = []
-    for prod in prod_l:
-        ean_prod_l.append(prod_n_to_barcode(prod))
-    # pprint.pprint(ean_prod_l)
-    return ean_prod_l
+    return temp_s
 
 
 def create_barcode_files():
     global p3_fields_rel_dir
-    for filename in generate_barcode_files():
-        shutil.copy(
-            os.path.join(p0_root_abs_dir + '/common', 'empty_bar_code_file.svg'),
-            os.path.join(p1.p1_cntrct_abs_dir + '/' + p3_fields_rel_dir, filename)
-        )
+
+    prod_l = list(p1.p1_cntrct_info_d['all_products_to_be_processed_set'])
+    brcd_tmplt = os.path.join(p0_root_abs_dir + '/common', 'barcode_template.svg')  # 'drawing.svg'
+
+    for prod_n in prod_l:
+        brcd_f = os.path.join(p1.p1_cntrct_abs_dir + '/' + p3_fields_rel_dir, prod_n + '.svg')  # 'drawing_o.svg'
+        command = f"./render_barcode.py " +\
+                  f"-t='Ean13' " +\
+                  f"-d='{prod_n_to_barcode(prod_n)}' " +\
+                  f"-l='20' " +\
+                  f"--output='{brcd_f}' " +\
+                  f"'{brcd_tmplt}' "
+        os.system(command)
 
 
 context_func_d = {

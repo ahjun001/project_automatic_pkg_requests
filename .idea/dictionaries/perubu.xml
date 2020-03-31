@@ -3,6 +3,7 @@
     <words>
       <w>acier</w>
       <w>barcodes</w>
+      <w>brcd</w>
       <w>cntrct</w>
       <w>dest</w>
       <w>dirname</w>
@@ -26,6 +27,7 @@
       <w>readlines</w>
       <w>shutil</w>
       <w>templ</w>
+      <w>tmplt</w>
       <w>tspan</w>
       <w>tuitos</w>
       <w>venv</w>
