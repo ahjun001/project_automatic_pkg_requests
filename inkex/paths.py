@@ -143,17 +143,17 @@ class PathCommand(object):
         """
         raise NotImplementedError("Bounding box is not implemented for {}".format(self.name))
 
-    def to_curve(self, prev, prev_prev=Vector2d()):  # type: (Vector2d, Optional[Vector2d]) -> Curve
+    def to_curve(self, prev, prev_prev = Vector2d()):  # type: (Vector2d, Optional[Vector2d]) -> Curve
         """Convert command to :py:class:`Curve`
         Curve().to_curve() returns a copy
         """
         raise NotImplementedError("To curve not supported for {}".format(self.name))
 
-    def to_curves(self, prev, prev_prev=Vector2d()):  # type: (Vector2d, Optional[Vector2d]) -> List[Curve]
+    def to_curves(self, prev, prev_prev = Vector2d()):  # type: (Vector2d, Optional[Vector2d]) -> List[Curve]
         """Convert command to list of :py:class:`Curve` commands """
         return [self.to_curve(prev, prev_prev)]
 
-    def to_line(self, prev=None):
+    def to_line(self, prev = None):
         """Converts this segment to a line (copies if already a line)"""
         return Line(*self.end_point(Vector2d(), prev))
 
@@ -186,10 +186,10 @@ class RelativePathCommand(PathCommand):
     def end_point(self, first, prev):  # type: (Vector2d, Vector2d) -> Vector2d
         return self.to_absolute(prev).end_point(first, prev)
 
-    def to_curve(self, prev, prev_prev=Vector2d()):  # type: (Vector2d, Optional[Vector2d]) -> "Curve"
+    def to_curve(self, prev, prev_prev = Vector2d()):  # type: (Vector2d, Optional[Vector2d]) -> "Curve"
         return self.to_absolute(prev).to_curve(prev, prev_prev)
 
-    def to_curves(self, prev, prev_prev=Vector2d()):  # type: (Vector2d, Optional[Vector2d]) -> List["Curve"]
+    def to_curves(self, prev, prev_prev = Vector2d()):  # type: (Vector2d, Optional[Vector2d]) -> List["Curve"]
         return self.to_absolute(prev).to_curves(prev, prev_prev)
 
 
@@ -223,18 +223,18 @@ class AbsolutePathCommand(PathCommand):
         :param degrees: rotation angle in degrees
         :param center: invariant point of rotation
         """
-        return self.transform(Transform(rotate=(degrees, center[0], center[1])))
+        return self.transform(Transform(rotate = (degrees, center[0], center[1])))
 
     def translate(self, dr):  # type: (T, Vector2d) -> T
         """Translate or scale this path command by dr"""
-        return self.transform(Transform(translate=dr))
+        return self.transform(Transform(translate = dr))
 
     def scale(self, factor):  # type: (T, Union[float, Tuple[float,float]]) -> T
         """Returns new transformed segment
 
         :param factor: scale or (scale_x, scale_y)
         """
-        return self.transform(Transform(scale=factor))
+        return self.transform(Transform(scale = factor))
 
 
 class Line(AbsolutePathCommand):
@@ -265,9 +265,8 @@ class Line(AbsolutePathCommand):
     def end_point(self, first, prev):  # type: (Vector2d, Vector2d) -> Vector2d
         return Vector2d(self.x, self.y)
 
-    def to_curve(self, prev, prev_prev=Vector2d()):  # type: (Vector2d, Optional[Vector2d]) -> Curve
+    def to_curve(self, prev, prev_prev = Vector2d()):  # type: (Vector2d, Optional[Vector2d]) -> Curve
         return Curve(prev.x, prev.y, self.x, self.y, self.x, self.y)
-
 
 
 class line(RelativePathCommand):  # pylint: disable=invalid-name
@@ -316,7 +315,7 @@ class Move(AbsolutePathCommand):
     def end_point(self, first, prev):  # type: (Vector2d, Vector2d) -> Vector2d
         return Vector2d(self.x, self.y)
 
-    def to_curve(self, prev, prev_prev=Vector2d()):  # type: (Vector2d, Optional[Vector2d]) -> Curve
+    def to_curve(self, prev, prev_prev = Vector2d()):  # type: (Vector2d, Optional[Vector2d]) -> Curve
         raise ValueError("Move segments can not be changed into curves.")
 
 
@@ -362,7 +361,7 @@ class ZoneClose(AbsolutePathCommand):
     def end_point(self, first, prev):  # type: (Vector2d, Vector2d) -> Vector2d
         return first
 
-    def to_curve(self, prev, prev_prev=Vector2d()):  # type: (Vector2d, Optional[Vector2d]) -> Curve
+    def to_curve(self, prev, prev_prev = Vector2d()):  # type: (Vector2d, Optional[Vector2d]) -> Curve
         raise ValueError("ZoneClose segments can not be changed into curves.")
 
 
@@ -406,11 +405,11 @@ class Horz(AbsolutePathCommand):
     def end_point(self, first, prev):  # type: (Vector2d, Vector2d) -> Vector2d
         return Vector2d(self.x, prev.y)
 
-    def to_curve(self, prev, prev_prev=Vector2d()):  # type: (Vector2d, Optional[Vector2d]) -> Curve
+    def to_curve(self, prev, prev_prev = Vector2d()):  # type: (Vector2d, Optional[Vector2d]) -> Curve
         """Convert a horizontal line into a curve"""
         return self.to_line(prev).to_curve(prev)
 
-    def to_line(self, prev): # type: (Vector2d) -> Line
+    def to_line(self, prev):  # type: (Vector2d) -> Line
         """Return this path command as a Line instead"""
         return Line(self.x, prev.y)
 
@@ -462,11 +461,11 @@ class Vert(AbsolutePathCommand):
     def end_point(self, first, prev):  # type: (Vector2d, Vector2d) -> Vector2d
         return Vector2d(prev.x, self.y)
 
-    def to_line(self, prev): # type: (Vector2d) -> Line
+    def to_line(self, prev):  # type: (Vector2d) -> Line
         """Return this path command as a line instead"""
         return Line(prev.x, self.y)
 
-    def to_curve(self, prev, prev_prev=Vector2d()):  # type: (Vector2d, Optional[Vector2d]) -> Curve
+    def to_curve(self, prev, prev_prev = Vector2d()):  # type: (Vector2d, Optional[Vector2d]) -> Curve
         """Convert a horizontal line into a curve"""
         return self.to_line(prev).to_curve(prev)
 
@@ -486,7 +485,7 @@ class vert(RelativePathCommand):  # pylint: disable=invalid-name
     def to_absolute(self, prev):  # type: (Vector2d) -> Vert
         return Vert(prev.y + self.dy)
 
-    def to_line(self, prev): # type: (Vector2d) -> Line
+    def to_line(self, prev):  # type: (Vector2d) -> Line
         """Return this path command as a line instead"""
         return Line(prev.x, prev.y + self.dy)
 
@@ -548,13 +547,14 @@ class Curve(AbsolutePathCommand):
     def end_point(self, first, prev):
         return Vector2d(self.x4, self.y4)
 
-    def to_curve(self, prev, prev_prev=Vector2d()):  # type: (Vector2d, Optional[Vector2d]) -> Curve
+    def to_curve(self, prev, prev_prev = Vector2d()):  # type: (Vector2d, Optional[Vector2d]) -> Curve
         """No conversion needed, pass-through, returns self"""
         return Curve(*self.args)
 
     def to_bez(self):
         """Returns the list of coords for SuperPath"""
         return [list(self.args[:2]), list(self.args[2:4]), list(self.args[4:6])]
+
 
 class curve(RelativePathCommand):  # pylint: disable=invalid-name
     """Relative curved line segment"""
@@ -591,7 +591,6 @@ class Smooth(AbsolutePathCommand):
         return self.x3, self.y3, self.x4, self.y4
 
     def __init__(self, x3, y3, x4, y4):
-
         self.x3 = x3
         self.y3 = y3
 
@@ -628,7 +627,7 @@ class Smooth(AbsolutePathCommand):
     def end_point(self, first, prev):
         return Vector2d(self.x4, self.y4)
 
-    def to_curve(self, prev, prev_prev=Vector2d()):  # type: (Vector2d, Optional[Vector2d]) -> Curve
+    def to_curve(self, prev, prev_prev = Vector2d()):  # type: (Vector2d, Optional[Vector2d]) -> Curve
         """
         Convert this Smooth curve to a regular curve by creating a mirror
         set of nodes based on the previous node. Previous should be a curve.
@@ -709,7 +708,7 @@ class Quadratic(AbsolutePathCommand):
     def end_point(self, first, prev):  # type: (Vector2d, Vector2d) -> Vector2d
         return Vector2d(self.x3, self.y3)
 
-    def to_curve(self, prev, prev_prev=Vector2d()):  # type: (Vector2d, Optional[Vector2d]) -> Curve
+    def to_curve(self, prev, prev_prev = Vector2d()):  # type: (Vector2d, Optional[Vector2d]) -> Curve
         """Attempt to convert a quadratic to a curve"""
         prev = Vector2d(prev)
         x1 = 1. / 3 * prev.x + 2. / 3 * self.x2
@@ -779,7 +778,7 @@ class TepidQuadratic(AbsolutePathCommand):
     def end_point(self, first, prev):  # type: (Vector2d, Vector2d) -> Vector2d
         return Vector2d(self.x3, self.y3)
 
-    def to_curve(self, prev, prev_prev=Vector2d()):  # type: (Vector2d, Optional[Vector2d]) -> Curve
+    def to_curve(self, prev, prev_prev = Vector2d()):  # type: (Vector2d, Optional[Vector2d]) -> Curve
         return self.to_quadratic(prev, prev_prev).to_curve(prev)
 
     def to_quadratic(self, prev, prev_prev):  # type: (Vector2d, Vector2d) -> Quadratic
@@ -827,16 +826,16 @@ class Arc(AbsolutePathCommand):
 
     def update_bounding_box(self, first, last_two_points, bbox):
         prev = last_two_points[-1]
-        for seg in self.to_curves(prev=prev):
+        for seg in self.to_curves(prev = prev):
             seg.update_bounding_box(first, [None, prev], bbox)
             prev = seg.end_point(first, prev)
 
     def control_points(self, first, prev, prev_prev):  # type: (Vector2d, Vector2d, Vector2d) -> List[Vector2d]
         yield Vector2d(self.x, self.y)
 
-    def to_curves(self, prev, prev_prev=Vector2d()):  # type: (Vector2d, Vector2d) -> List[Curve]
+    def to_curves(self, prev, prev_prev = Vector2d()):  # type: (Vector2d, Vector2d) -> List[Curve]
         """Convert this arc into bezier curves"""
-        path = CubicSuperPath([arc_to_path(list(prev), self.args)]).to_path(curves_only=True)
+        path = CubicSuperPath([arc_to_path(list(prev), self.args)]).to_path(curves_only = True)
         # Ignore the first move command from to_path()
         return list(path)[1:]
 
@@ -845,7 +844,7 @@ class Arc(AbsolutePathCommand):
 
         T = transform  # type: Transform
         if self.x_axis_rotation != 0:
-            T = T * Transform(rotate=self.x_axis_rotation)
+            T = T * Transform(rotate = self.x_axis_rotation)
         a, c, b, d, _, _ = list(T.to_hexad())
         # T = | a b |
         #     | c d |
@@ -885,7 +884,7 @@ class Arc(AbsolutePathCommand):
         if detT > 0:
             sweep = self.sweep
         else:
-            sweep = 0 if self.sweep>0 else 1
+            sweep = 0 if self.sweep > 0 else 1
 
         return Arc(rx_, ry_, theta_deg, self.large_arc, sweep, x_, y_)
 
@@ -1003,7 +1002,7 @@ class Path(list):
         def __repr__(self):
             return "<" + self.__class__.__name__ + ">" + repr(self.command)
 
-    def __init__(self, path_d=None):
+    def __init__(self, path_d = None):
         super(Path, self).__init__()
         if isinstance(path_d, str):
             # Returns a generator returning PathCommand objects
@@ -1060,15 +1059,15 @@ class Path(list):
         elif isinstance(cmd, PathCommand):
             super(Path, self).append(cmd)
 
-    def translate(self, x, y, inplace=False):  # pylint: disable=invalid-name
+    def translate(self, x, y, inplace = False):  # pylint: disable=invalid-name
         """Move all coords in this path by the given amount"""
-        return self.transform(Transform(translate=(x, y)), inplace=inplace)
+        return self.transform(Transform(translate = (x, y)), inplace = inplace)
 
-    def scale(self, x, y, inplace=False):  # pylint: disable=invalid-name
+    def scale(self, x, y, inplace = False):  # pylint: disable=invalid-name
         """Scale all coords in this path by the given amounts"""
-        return self.transform(Transform(scale=(x, y)), inplace=inplace)
+        return self.transform(Transform(scale = (x, y)), inplace = inplace)
 
-    def rotate(self, deg, center=None, inplace=False):
+    def rotate(self, deg, center = None, inplace = False):
         """Rotate the path around the given point"""
         if center is None:
             # Default center is center of bbox
@@ -1078,7 +1077,7 @@ class Path(list):
             else:
                 center = Vector2d()
         center = Vector2d(center)
-        return self.transform(Transform(rotate=(deg, center.x, center.y)), inplace=inplace)
+        return self.transform(Transform(rotate = (deg, center.x, center.y)), inplace = inplace)
 
     @property
     def control_points(self):
@@ -1107,7 +1106,7 @@ class Path(list):
             prev = end_point
             yield end_point
 
-    def transform(self, transform, inplace=False):
+    def transform(self, transform, inplace = False):
         """Convert to new path"""
         result = Path()
         previous = Vector2d()
@@ -1243,7 +1242,6 @@ class CubicSuperPath(list):
         self._prev = Vector2d()
         self._prev_prev = Vector2d()
 
-
         if isinstance(items, str):
             items = Path(items)
 
@@ -1335,11 +1333,11 @@ class CubicSuperPath(list):
         except IndexError:
             return Vector2d()
 
-    def to_path(self, curves_only=False):
+    def to_path(self, curves_only = False):
         """Convert the super path back to an svg path"""
         return Path(list(self.to_segments(curves_only)))
 
-    def to_segments(self, curves_only=False):
+    def to_segments(self, curves_only = False):
         """Generate a set of segments for this cubic super path"""
         for subpath in self:
             previous = []
@@ -1364,6 +1362,7 @@ class CubicSuperPath(list):
         """Check whether csp segment (two points) has retracted handles."""
         return Vector2d(previous[1]).is_close(previous[2]) and \
                Vector2d(segment[0]).is_close(segment[1])
+
 
 def arc_to_path(point, params):
     """Approximates an arc with cubic bezier segments.

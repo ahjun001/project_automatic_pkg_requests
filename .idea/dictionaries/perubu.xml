@@ -5,6 +5,7 @@
       <w>barcodes</w>
       <w>brcd</w>
       <w>cntrct</w>
+      <w>coef</w>
       <w>dest</w>
       <w>dirname</w>
       <w>doesn</w>
@@ -28,6 +29,7 @@
       <w>pytest</w>
       <w>readlines</w>
       <w>shutil</w>
+      <w>stpf</w>
       <w>templ</w>
       <w>tmplt</w>
       <w>tspan</w>

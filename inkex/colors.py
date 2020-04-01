@@ -183,6 +183,7 @@ SVG_COLOR = {
 }
 COLOR_SVG = dict([(value, name) for name, value in SVG_COLOR.items()])
 
+
 def is_color(color):
     """Determine if its a color we can use. If not, leave it unchanged."""
     try:
@@ -190,17 +191,21 @@ def is_color(color):
     except ColorError:
         return False
 
+
 def constrain(minim, value, maxim, channel):
     """Returns the value so long as it's between min and max values"""
-    if channel == 'h': # Hue
-        return value % maxim # Wrap around hue value
+    if channel == 'h':  # Hue
+        return value % maxim  # Wrap around hue value
     return min([maxim, max([minim, value])])
+
 
 class ColorError(KeyError):
     """Specific color parsing error"""
 
+
 class ColorIdError(ColorError):
     """Special color error for gradient and color stop ids"""
+
 
 class Color(list):
     """An RGB array for the color"""
@@ -219,7 +224,7 @@ class Color(list):
     lightness = property(lambda self: self.to_hsl()[2])
     lightness = lightness.setter(lambda self, value: self._set(2, value, ('hsl',)))
 
-    def __init__(self, color=None, space='rgb'):
+    def __init__(self, color = None, space = 'rgb'):
         super(Color, self).__init__()
         if isinstance(color, Color):
             space, color = color.space, list(color)
@@ -246,7 +251,7 @@ class Color(list):
         except ValueError:
             raise ColorError("Bad color list")
 
-    def _set(self, index, value, spaces=('rgb', 'rgba')):
+    def _set(self, index, value, spaces = ('rgb', 'rgba')):
         """Set the color value in place, limits setter to specific color space"""
         # Named colors are just rgb, so dump name memory
         if self.space == 'named':
@@ -277,7 +282,7 @@ class Color(list):
                 val = float(val)
 
         end_type = int
-        if len(self) == 3: # Alpha value
+        if len(self) == 3:  # Alpha value
             val = min([1.0, val])
             end_type = float
         elif isinstance(val, float) and val <= 1.0:
@@ -330,10 +335,10 @@ class Color(list):
         """Creates an rgb or rgba from a long int"""
         space = 'rgb'
         color = [
-            ((color >> 24) & 255), # red
-            ((color >> 16) & 255), # green
-            ((color >> 8) & 255), # blue
-            ((color & 255) / 255.), # opacity
+            ((color >> 24) & 255),  # red
+            ((color >> 16) & 255),  # green
+            ((color >> 8) & 255),  # blue
+            ((color & 255) / 255.),  # opacity
         ]
         if color[-1] == 1.0:
             color.pop()
@@ -378,7 +383,7 @@ class Color(list):
         if self.space == 'hsl':
             return self
         elif self.space == 'rgb':
-            return Color(rgb_to_hsl(*self.to_floats()), space='hsl')
+            return Color(rgb_to_hsl(*self.to_floats()), space = 'hsl')
         raise ColorError("Unknown color conversion {}->hsl".format(self.space))
 
     def to_rgb(self):
@@ -388,12 +393,12 @@ class Color(list):
         if self.space == 'rgb':
             return self
         if self.space in ('rgba', 'named'):
-            return Color(self[:3], space='rgb')
+            return Color(self[:3], space = 'rgb')
         elif self.space == 'hsl':
-            return Color(hsl_to_rgb(*self.to_floats()), space='rgb')
+            return Color(hsl_to_rgb(*self.to_floats()), space = 'rgb')
         raise ColorError("Unknown color conversion {}->rgb".format(self.space))
 
-    def to_rgba(self, alpha=1.0):
+    def to_rgba(self, alpha = 1.0):
         """Turn this color isn't an RGB with Alpha colour space"""
         if self.space == 'rgba':
             return self

@@ -199,7 +199,7 @@ def load_o_create_mako_input_values_json(force_recreate = False):
                         if what_zh in ['clr_zh', 'gm_zh', 'io_zh', 'lr_zh', 'spec_zh', 'mat2_zh']:  # todo: externalize
                             what_fr = what_zh[:-2] + 'fr'
                             temp_d[indc_d['prod_nr']][what_fr] = zh_fr_d[indc_d['info']]
-                        elif p1.doc_setup_d['customized_processing']:
+                        elif p1.doc_setup_d['custom_indics']:
                             if what_zh == 'xl_prod_spec':
                                 dims = re.search(r"\d*x\d*\s*mm", indc_d['info']).group()
                                 largeur = re.search(r'(?<=x)\d*(?=\smm)', dims).group()
@@ -473,6 +473,44 @@ def horizontal_centering_offset(template_view_box_w, spacing_w):
     return result
 
 
+def prod_n_to_barcode(prod_nr):
+    temp_s = ''
+    for char in prod_nr:
+        if char.isnumeric():
+            temp_s += char
+    while len(temp_s) < 12:
+        if (12 - len(temp_s)) % 2 == 1:
+            temp_s = '3' + temp_s
+        else:
+            temp_s = '0' + temp_s
+    return temp_s
+
+
+def create_barcode_file(prod_n):
+    global p3_fields_rel_dir
+
+    brcd_tmplt = os.path.join(p0_root_abs_dir + '/common', 'barcode_template.svg')
+
+    brcd_f = os.path.join(p1.p1_cntrct_abs_dir + '/' + p3_fields_rel_dir, prod_n + '.svg')
+    command = f"./render_barcode.py " + \
+              f"-t='Ean13' " + \
+              f"-d='{prod_n_to_barcode(prod_n)}' " + \
+              f"-l='20' " + \
+              f"--output='{brcd_f}' " + \
+              f"'{brcd_tmplt}' "
+    os.system(command)
+    return brcd_f
+
+
+def create_barcode_files():
+    global p3_fields_rel_dir
+
+    prod_l = list(p1.p1_cntrct_info_d['all_products_to_be_processed_set'])
+
+    for prod_n in prod_l:
+        create_barcode_file(prod_n)
+
+
 def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = False):
     """
 
@@ -543,7 +581,7 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
             if not oy:  # vertical positioning in page_view_box_h
                 oy = - spacing_h
                 if page == 1:
-                    oy = p1.doc_setup_d['page_1_vert_start'] + spacing_h
+                    oy = p1.doc_setup_d['page_1_vert_offset'] + spacing_h
 
             fw.write(
                 f'<svg width="{page_view_box_w}" height="{p3_d["header_height"]}" x="0" y="{oy}">\n'
@@ -572,15 +610,32 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
                         p3_selected_fields_values_by_prod_d[str(i)]['prod_n'] + '.svg'
                     )
                     # if such a barcode file exists, then insert it  #  todo: make those places out of program
-                    if pathlib.Path(barcode_f).exists():
-                        fw.write("<g transform = 'translate(41,17)'>\n")
-                        with open(barcode_f) as f:
-                            fw.write(f.read())
-                        fw.write("</g>\n")
-                        fw.write("<g transform = 'translate(41,55)'>\n")
-                        with open(barcode_f) as f:
-                            fw.write(f.read())
-                        fw.write("</g>\n")
+
+                    brcd_d = dict(p3_d['barcode_d']) if 'barcode_d' in p3_d.keys() else {}
+
+                    if brcd_d:
+                        if pathlib.Path(create_barcode_file(
+                            p3_selected_fields_values_by_prod_d[str(i)]['prod_n']
+                        )).exists():
+                            fw.write(
+                                f"<g transform = 'matrix("
+                                f"{brcd_d['coef']},0,0,{brcd_d['coef']},"
+                                f"{brcd_d['x1']},{brcd_d['y1']}"
+                                f")'>\n"
+                            )
+                            with open(barcode_f) as f:
+                                fw.write(f.read())
+                            fw.write("</g>\n")
+                            fw.write(
+                                f"<g transform = 'matrix("
+                                f"{brcd_d['coef']},0,0,{brcd_d['coef']},"
+                                f"{brcd_d['x2']},{brcd_d['y2']}"
+                                f")'>\n"
+                            )
+                            with open(barcode_f) as f:
+                                fw.write(f.read())
+                            fw.write("</g>\n")
+
                     # print(  # for debug purposes
                     #     p3_selected_fields_values_by_prod_d[str(i)]['i'],
                     #     p3_selected_fields_values_by_prod_d[str(i)]['prod_n']
@@ -877,36 +932,6 @@ def edit_paragraph_headers():
         return
 
 
-def prod_n_to_barcode(prod_nr):
-    temp_s = ''
-    for char in prod_nr:
-        if char.isnumeric():
-            temp_s += char
-    while len(temp_s) < 12:
-        if (12 - len(temp_s)) % 2 == 1:
-            temp_s = '3' + temp_s
-        else:
-            temp_s = '0' + temp_s
-    return temp_s
-
-
-def create_barcode_files():
-    global p3_fields_rel_dir
-
-    prod_l = list(p1.p1_cntrct_info_d['all_products_to_be_processed_set'])
-    brcd_tmplt = os.path.join(p0_root_abs_dir + '/common', 'barcode_template.svg')  # 'drawing.svg'
-
-    for prod_n in prod_l:
-        brcd_f = os.path.join(p1.p1_cntrct_abs_dir + '/' + p3_fields_rel_dir, prod_n + '.svg')  # 'drawing_o.svg'
-        command = f"./render_barcode.py " +\
-                  f"-t='Ean13' " +\
-                  f"-d='{prod_n_to_barcode(prod_n)}' " +\
-                  f"-l='20' " +\
-                  f"--output='{brcd_f}' " +\
-                  f"'{brcd_tmplt}' "
-        os.system(command)
-
-
 context_func_d = {
     'select_specific_fields': select_specific_fields_context_func,
     'select_a_template_for_editing': select_specific_fields_context_func,
@@ -934,6 +959,7 @@ def step_3__select_fields_to_print_for_each_template_选择每种标签类型的
             '44': render_svg_1_template_1_product,
             '55': render_cover_page,
             '66': svg_s_to_pdf_deliverable,
+            '77': create_barcode_files,
             '1': select_a_template_for_editing,
             '2': render_svg_all_templates_all_products,
             '3': display_all,
@@ -943,7 +969,6 @@ def step_3__select_fields_to_print_for_each_template_选择每种标签类型的
             'd': p.debug,
         },
         'select_a_template_for_editing': {
-            '55': create_barcode_files,
             '44': edit_label_template_svg,
             '0': scrap_template_for_fields,
             '1': check_if_template_requirements_are_met,

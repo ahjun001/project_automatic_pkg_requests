@@ -45,21 +45,21 @@ class InkscapeExtension(object):
     The base class extension, provides argument parsing and basic
     variable handling features.
     """
-    multi_inx = False # Set to true if this class is used by multiple inx files.
+    multi_inx = False  # Set to true if this class is used by multiple inx files.
 
     def __init__(self):
         self.file_io = None
         self.options = None
         self.document = None
-        self.arg_parser = ArgumentParser(description=self.__doc__)
+        self.arg_parser = ArgumentParser(description = self.__doc__)
 
         self.arg_parser.add_argument(
-            "input_file", nargs="?", metavar="INPUT_FILE", type=filename_arg,
-            help="Filename of the input file (default is stdin)", default=None)
+            "input_file", nargs = "?", metavar = "INPUT_FILE", type = filename_arg,
+            help = "Filename of the input file (default is stdin)", default = None)
 
         self.arg_parser.add_argument(
-            "--output", type=str, default=None,
-            help="Optional output filename for saving the result (default is stdout).")
+            "--output", type = str, default = None,
+            help = "Optional output filename for saving the result (default is stdout).")
 
         self.add_arguments(self.arg_parser)
 
@@ -78,7 +78,7 @@ class InkscapeExtension(object):
         """Parse the given arguments and set 'self.options'"""
         self.options = self.arg_parser.parse_args(args)
 
-    def arg_method(self, prefix='method'):
+    def arg_method(self, prefix = 'method'):
         """Used by add_argument to match a tab selection with an object method
 
         pars.add_argument("--tab", type=self.arg_method(), default="foo")
@@ -88,12 +88,14 @@ class InkscapeExtension(object):
         def method_foo(self, arguments):
             # do something
         """
+
         def _inner(value):
             name = '{}_{}'.format(prefix, value.strip('"').lower()).replace('-', '_')
             try:
                 return getattr(self, name)
             except AttributeError:
                 raise AbortExtension("Can not find method {}".format(name))
+
         return _inner
 
     def debug(self, msg):
@@ -105,7 +107,7 @@ class InkscapeExtension(object):
         """Write a non-error message"""
         errormsg(msg)
 
-    def run(self, args=None, output=None):
+    def run(self, args = None, output = None):
         """Main entrypoint for any Inkscape Extension"""
         try:
             if args is None:
@@ -157,7 +159,7 @@ class InkscapeExtension(object):
         """Apply some effects on the document or local context"""
         raise NotImplementedError("No effect handle for {}".format(self.name))
 
-    def has_changed(self, ret): # pylint: disable=no-self-use
+    def has_changed(self, ret):  # pylint: disable=no-self-use
         """Return true if the output should be saved"""
         return ret is not False
 
@@ -180,7 +182,7 @@ class InkscapeExtension(object):
         """Return the folder the extension script is in"""
         return os.path.dirname(sys.modules[cls.__module__].__file__)
 
-    def absolute_href(self, filename, default='~/'):
+    def absolute_href(self, filename, default = '~/'):
         """
         Process the filename such that it's turned into an absolute filename
         with the working directory being the directory of the loaded svg.
@@ -234,12 +236,12 @@ class SvgInputMixin(object):  # pylint: disable=too-few-public-methods
         super(SvgInputMixin, self).__init__()
 
         self.arg_parser.add_argument(
-            "--id", action="append", type=str, dest="ids", default=[],
-            help="id attribute of object to manipulate")
+            "--id", action = "append", type = str, dest = "ids", default = [],
+            help = "id attribute of object to manipulate")
 
         self.arg_parser.add_argument(
-            "--selected-nodes", action="append", type=str, dest="selected_nodes", default=[],
-            help="id:subpath:position of selected nodes, if any")
+            "--selected-nodes", action = "append", type = str, dest = "selected_nodes", default = [],
+            help = "id:subpath:position of selected nodes, if any")
 
     def load(self, stream):
         """Load the stream as an svg xml etree and make a backup"""
@@ -281,20 +283,21 @@ class SvgOutputMixin(object):  # pylint: disable=too-few-public-methods
             # isinstance can't be used here because etree is broken
             document = self.document.getroot().tostring()
         else:
-            raise ValueError("Unknown type of document: {} can not save."\
-                .format(type(self.document).__name__))
+            raise ValueError("Unknown type of document: {} can not save." \
+                             .format(type(self.document).__name__))
 
         try:
             stream.write(document)
         except TypeError:
             stream.write(document.encode('utf-8'))
 
+
 class SvgThroughMixin(SvgInputMixin, SvgOutputMixin):
     """
     Combine the input and output svg document handling (usually for effects.
     """
 
-    def has_changed(self, ret): # pylint: disable=unused-argument
+    def has_changed(self, ret):  # pylint: disable=unused-argument
         """Return true if the svg document has changed"""
         original = etree.tostring(self.original_document)
         result = etree.tostring(self.document)

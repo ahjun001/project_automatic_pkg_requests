@@ -58,30 +58,37 @@ NSS = {
 }
 SSN = dict((b, a) for (a, b) in NSS.items())
 
+
 class KeyDict(dict):
     """
     A normal dictionary, except asking for anything not in the dictionary
     always returns the key itself. This is used for translation dictionaries.
     """
+
     def __getitem__(self, key):
         try:
             return super(KeyDict, self).__getitem__(key)
         except KeyError:
             return key
 
-class TemporaryDirectory(object): # pylint: disable=too-few-public-methods
+
+class TemporaryDirectory(object):  # pylint: disable=too-few-public-methods
     """Tiny replacement for python3's version."""
-    def __init__(self, suffix="", prefix="tmp"):
+
+    def __init__(self, suffix = "", prefix = "tmp"):
         self.suffix = suffix
         self.prefix = prefix
         self.path = None
+
     def __enter__(self):
         from tempfile import mkdtemp
         self.path = mkdtemp(self.suffix, self.prefix, None)
         return self.path
+
     def __exit__(self, exc, value, traceback):
         if os.path.isdir(self.path):
             shutil.rmtree(self.path)
+
 
 def Boolean(value):
     """ArgParser function to turn a boolean string into a python boolean"""
@@ -90,6 +97,7 @@ def Boolean(value):
     elif value.upper() == 'FALSE':
         return False
     return None
+
 
 def debug(what):
     """Print debug message if debugging is switched on"""
@@ -134,7 +142,7 @@ def errormsg(msg):
 class AbortExtension(Exception):
     """Raised to print a message to the user without backtrace"""
 
-    def __init__(self, message=""):
+    def __init__(self, message = ""):
         self.message = message
 
     def write(self):
@@ -145,17 +153,21 @@ class AbortExtension(Exception):
 class DependencyError(NotImplementedError):
     """Raised when we need an external python module that isn't available"""
 
+
 class FragmentError(Exception):
     """Raised when trying to do rooty things on an xml fragment"""
+
 
 # TODO: Remove when python2 support is dropped
 class InitSubClassPy3(type):
     """Provide a poly-fill for python3 __init_subclass__()"""
+
     def __init__(cls, name, bases, dct):
         if '__metaclass__' not in cls.__dict__:
             if hasattr(cls, '__init_subclass__'):
                 cls.__init_subclass__()
         super(InitSubClassPy3, cls).__init__(name, bases, dct)
+
 
 def to(kind):  # pylint: disable=invalid-name
     """
@@ -171,12 +183,12 @@ def to(kind):  # pylint: disable=invalid-name
     return _inner
 
 
-def strargs(string, kind=float):
+def strargs(string, kind = float):
     """Returns a list of floats from a string with commas or space separators"""
     return [kind(val) for val in string.replace(',', ' ').split()]
 
 
-def addNS(tag, ns=None):  # pylint: disable=invalid-name
+def addNS(tag, ns = None):  # pylint: disable=invalid-name
     """Add a known namespace to a name for use with lxml"""
     if tag.startswith('{') and ns:
         _, tag = removeNS(tag)
@@ -191,7 +203,7 @@ def addNS(tag, ns=None):  # pylint: disable=invalid-name
     return tag
 
 
-def removeNS(name, url=False):  # pylint: disable=invalid-name
+def removeNS(name, url = False):  # pylint: disable=invalid-name
     """The reverse of addNS, finds any namespace and returns tuple (ns, tag)"""
     if name:
         if name[0] == '{':
@@ -220,13 +232,15 @@ def filename_arg(name):
         raise ArgumentTypeError("File not found: {}".format(name))
     return filename
 
-def pairwise(iterable, start=True):
+
+def pairwise(iterable, start = True):
     "Iterate over a list with overlapping pairs (see itertools recipes)"
     first, then = tee(iterable)
     starter = [(None, next(then, None))]
     if not start:
         starter = []
     return starter + list(zip(first, then))
+
 
 class CloningVat(object):
     """
@@ -235,19 +249,20 @@ class CloningVat(object):
 
     This tracks the def elements, their promises and creates clones if needed.
     """
+
     def __init__(self, svg):
         self.svg = svg
         self.tracks = defaultdict(set)
         self.set_ids = defaultdict(list)
 
-    def track(self, elem, parent, set_id=None, **kwargs):
+    def track(self, elem, parent, set_id = None, **kwargs):
         """Track the element and connected parent"""
         elem_id = elem.get('id')
         parent_id = parent.get('id')
         self.tracks[elem_id].add(parent_id)
         self.set_ids[elem_id].append((set_id, kwargs))
 
-    def process(self, process, types=(), make_clones=True, **kwargs):
+    def process(self, process, types = (), make_clones = True, **kwargs):
         """
         Process each tracked item if the backlinks match the parents
 

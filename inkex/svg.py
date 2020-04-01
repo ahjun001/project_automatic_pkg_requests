@@ -36,11 +36,11 @@ from .transforms import BoundingBox, Vector2d
 from .elements import BaseElement, StyleElement, NamedView, Defs
 from .styles import StyleSheets
 
-if False: # pylint: disable=using-constant-test
-    import typing # pylint: disable=unused-import
+if False:  # pylint: disable=using-constant-test
+    import typing  # pylint: disable=unused-import
 
 
-class SvgDocumentElement(BaseElement): # pylint: disable=too-many-public-methods
+class SvgDocumentElement(BaseElement):  # pylint: disable=too-many-public-methods
     """Provide access to the document level svg functionality"""
     tag_name = 'svg'
 
@@ -60,7 +60,7 @@ class SvgDocumentElement(BaseElement): # pylint: disable=too-many-public-methods
             self.ids = set(self.xpath('//@id'))
         return self.ids
 
-    def get_unique_id(self, prefix, size=4):
+    def get_unique_id(self, prefix, size = 4):
         """Generate a new id from an existing old_id"""
         ids = self.get_ids()
         new_id = None
@@ -117,10 +117,10 @@ class SvgDocumentElement(BaseElement): # pylint: disable=too-many-public-methods
         """
         if self.selected:
             for node in self.get_selected(*types):
-                yield node # yield from when py3 only
+                yield node  # yield from when py3 only
         else:
             for node in self.descendants(*types):
-                yield node # yield from when py3 only
+                yield node  # yield from when py3 only
 
     def get_selected_bbox(self):
         """
@@ -156,18 +156,18 @@ class SvgDocumentElement(BaseElement): # pylint: disable=too-many-public-methods
         """Gets a single element from the given xpath or returns None"""
         return self.findone(xpath)
 
-    def getElementById(self, eid, elm='*'):  # pylint: disable=invalid-name
+    def getElementById(self, eid, elm = '*'):  # pylint: disable=invalid-name
         """Get an element in this svg document by it's ID attribute"""
         if eid is not None:
             eid = eid.strip()[4:-1] if eid.startswith('url(') else eid
             eid = eid.lstrip('#')
         return self.getElement('//{}[@id="{}"]'.format(elm, eid))
 
-    def getElementsByHref(self, eid): # pylint: disable=invalid-name
+    def getElementsByHref(self, eid):  # pylint: disable=invalid-name
         """Get elements by their href xlink attribute"""
         return self.xpath('//*[@xlink:href="#{}"]'.format(eid))
 
-    def getElementsByStyleUrl(self, eid, style=None): # pylint: disable=invalid-name
+    def getElementsByStyleUrl(self, eid, style = None):  # pylint: disable=invalid-name
         """Get elements by a style attribute url"""
         url = "url(#{})".format(eid)
         if style is not None:
@@ -231,7 +231,7 @@ class SvgDocumentElement(BaseElement): # pylint: disable=too-many-public-methods
         Defaults to 'px' units."""
         viewbox = self.get_viewbox()
         if viewbox and set(viewbox) != {0}:
-            return discover_unit(self.get('width'), viewbox[2], default='px')
+            return discover_unit(self.get('width'), viewbox[2], default = 'px')
         return 'px'  # Default is px
 
     def unittouu(self, value):

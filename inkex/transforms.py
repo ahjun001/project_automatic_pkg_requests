@@ -159,7 +159,7 @@ class ImmutableVector2d(object):
         other = Vector2d(other)
         return self.x * other.x + self.y * other.y
 
-    def is_close(self, other, rtol=1e-5, atol=1e-8
+    def is_close(self, other, rtol = 1e-5, atol = 1e-8
                  ):  # type: (Union[VectorLike,Tuple[float,float]], Optional[float], Optional[float]) -> float
         other = Vector2d(other)
         delta = (self - other).length
@@ -227,7 +227,6 @@ class Vector2d(ImmutableVector2d):
         self.x, self.y = Vector2d(*args)
 
 
-
 class Transform(object):
     """A transformation object which will always reduce to a matrix and can
     then be used in combination with other transformations for reducing
@@ -251,7 +250,7 @@ class Transform(object):
     TRM = re.compile(r'(translate|scale|rotate|skewX|skewY|matrix)\s*\(([^)]*)\)\s*,?')
     absolute_tolerance = 1e-5
 
-    def __init__(self, matrix=None, callback=None, **extra):
+    def __init__(self, matrix = None, callback = None, **extra):
         self.callback = None
         self.matrix = ((1.0, 0.0, 0.0), (0.0, 1.0, 0.0))
         if matrix is not None:
@@ -309,7 +308,7 @@ class Transform(object):
         pass
 
     @overload
-    def add_translate(self, tr_x, tr_y=0.0):  # type: (float, Optional[float]) -> None
+    def add_translate(self, tr_x, tr_y = 0.0):  # type: (float, Optional[float]) -> None
         pass
 
     def add_translate(self, *args):
@@ -319,7 +318,7 @@ class Transform(object):
             tr_x, tr_y = Vector2d(*args)
         self.__imul__(((1.0, 0.0, tr_x), (0.0, 1.0, tr_y)))
 
-    def add_scale(self, sc_x, sc_y=None):
+    def add_scale(self, sc_x, sc_y = None):
         """Add scale to this transformation"""
         sc_y = sc_x if sc_y is None else sc_y
         self.__imul__(((sc_x, 0.0, 0.0), (0.0, sc_y, 0.0)))
@@ -351,26 +350,26 @@ class Transform(object):
         """Returns the transform as a hexad matrix (used in svg)"""
         return (val for lst in zip(*self.matrix) for val in lst)
 
-    def is_translate(self, exactly=False):
+    def is_translate(self, exactly = False):
         """Returns True if this transformation is ONLY translate"""
         tol = self.absolute_tolerance if not exactly else 0.0
         return fabs(self.a - 1) <= tol and abs(self.d - 1) <= tol and fabs(self.b) <= tol and fabs(self.c) <= tol
 
-    def is_scale(self, exactly=False):
+    def is_scale(self, exactly = False):
         """Returns True if this transformation is ONLY scale"""
         tol = self.absolute_tolerance if not exactly else 0.0
         return (fabs(self.e) <= tol and fabs(self.f) <= tol and
                 fabs(self.b) <= tol and fabs(self.c) <= tol)
 
-    def is_rotate(self, exactly=False):
+    def is_rotate(self, exactly = False):
         """Returns True if this transformation is ONLY rotate"""
         tol = self.absolute_tolerance if not exactly else 0.0
-        return self._is_URT(exactly=exactly) and \
+        return self._is_URT(exactly = exactly) and \
                fabs(self.e) <= tol and fabs(self.f) <= tol and fabs(self.a ** 2 + self.b ** 2 - 1) <= tol
 
     def rotation_degrees(self):
         """Return the amount of rotation in this transform"""
-        if not self._is_URT(exactly=False):
+        if not self._is_URT(exactly = False):
             raise ValueError("Rotation angle is undefined for non-uniformly scaled or skewed matrices")
         return atan2(self.b, self.a) * 180 / pi
 
@@ -440,7 +439,7 @@ class Transform(object):
         return Vector2d(self.a * point.x + self.c * point.y + self.e,
                         self.b * point.x + self.d * point.y + self.f)
 
-    def _is_URT(self, exactly=False):
+    def _is_URT(self, exactly = False):
         """
         Checks that transformation can be decomposed into product of
         Uniform scale (U), Rotation around origin (R) and translation (T)
@@ -470,7 +469,7 @@ class BoundingInterval(object):  # pylint: disable=too-few-public-methods
     def __init__(self, x, y):  # type: (float, float) -> None
         pass
 
-    def __init__(self, x, y=None):
+    def __init__(self, x, y = None):
         if y is not None:
             if isinstance(x, (int, float, Decimal)) and isinstance(y, (int, float, Decimal)):
                 self.minimum = x
@@ -580,7 +579,7 @@ class BoundingBox(object):  # pylint: disable=too-few-public-methods
     def __init__(self, x, y):  # type: (BoundingIntervalArgs, BoundingIntervalArgs) -> None
         pass
 
-    def __init__(self, x, y=None):
+    def __init__(self, x, y = None):
         if y is None:
             if isinstance(x, BoundingBox):
                 x, y = x.x, x.y
@@ -654,13 +653,13 @@ class BoundingBox(object):  # pylint: disable=too-few-public-methods
         """Returns the middle of the bounding box"""
         return Vector2d(self.x.center, self.y.center)
 
-    def get_anchor(self, xanchor, yanchor, direction=None, selbox=None):
+    def get_anchor(self, xanchor, yanchor, direction = None, selbox = None):
         """Calls get_distance with the given anchor options"""
         return self.anchor_distance(getattr(self, XAN[xanchor]), getattr(self, YAN[yanchor]),
-                                    direction=direction, selbox=selbox)
+                                    direction = direction, selbox = selbox)
 
     @staticmethod
-    def anchor_distance(x, y, direction=0, selbox=None):
+    def anchor_distance(x, y, direction = 0, selbox = None):
         """Using the x,y returns a single sortable value based on direction and angle
 
         direction - int (custom angle), tb/bt (top/bottom), lr/rl (left/right), ri/ro (radial)

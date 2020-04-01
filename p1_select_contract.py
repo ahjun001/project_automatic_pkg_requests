@@ -69,14 +69,20 @@ def step_1__select_a_contract_选择合同号():
                 shutil.copy(p1_d['fpath_init_xls'], p1_cntrct_abs_dir)
 
             dump_program_info_json()
-            process_selected_contract()
-            # also copy template directories, svg and json files that might exists
+            # copy setup file if exists
+            stpf_rel_f = p1_d['cntrct_nr'] + '_doc_setup.json'
+            stpf_abs_dest = os.path.join(p1_cntrct_abs_dir, stpf_rel_f)
+            if not pathlib.Path(stpf_abs_dest).exists():
+                shutil.copy(os.path.join(path, stpf_rel_f), p1_cntrct_abs_dir)
+
+                # also copy template directories, svg and json files that might exists
             _, dirs, _ = next(os.walk(path))
             if dirs:
                 for some_dir in dirs:
                     dest_dir = p1_cntrct_abs_dir + '/' + some_dir
                     if not pathlib.Path(dest_dir).exists():
                         shutil.copytree(path + '/' + some_dir, dest_dir)
+            process_selected_contract()
             return True
         else:  # the prefix has not been checked
             print('A prefix could not be read from filename ext')
@@ -128,7 +134,13 @@ def load_o_create_program_info_d():
                     shutil.copy(p1_d['fpath_init_xls'], p1_cntrct_abs_dir)
                     path, filename_ext = os.path.split(p1_d['fpath_init_xls'])
                     p1_d['fpath_file_xls'] = os.path.join(p1_cntrct_abs_dir, filename_ext)
-                    process_selected_contract()
+
+                    # copy setup file if exists
+                    stpf_rel_f = p1_d['cntrct_nr'] + '_doc_setup.json'
+                    stpf_abs_dest = os.path.join(p1_cntrct_abs_dir, stpf_rel_f)
+                    if not pathlib.Path(stpf_abs_dest).exists():
+                        shutil.copy(os.path.join(path, stpf_rel_f), p1_cntrct_abs_dir)
+
                     # also copy template directories, svg and json files that might exists
                     _, dirs, _ = next(os.walk(path))
                     if dirs:
@@ -137,6 +149,7 @@ def load_o_create_program_info_d():
                     doc_setup_f_ini = os.path.join(path, p1_d['cntrct_nr'] + '_doc_setup.json')
                     if pathlib.Path(doc_setup_f_ini).exists():
                         shutil.copy(doc_setup_f_ini, p1_cntrct_abs_dir)
+                    process_selected_contract()
                     return True  # (ii) re-create from initial file as per contract-info.json
                 else:
                     print(
@@ -327,8 +340,8 @@ def load_o_create_doc_set_up():
         doc_setup_d['margin_w'] = 15
         doc_setup_d['margin_h'] = 15
         doc_setup_d['cover_page'] = True
-        doc_setup_d['page_1_vert_start'] = 0
-        doc_setup_d['customized_processing'] = False
+        doc_setup_d['page_1_vert_offset'] = 0
+        doc_setup_d['custom_indics'] = False
         with open(filename, 'w') as f:
             json.dump(doc_setup_d, f, ensure_ascii = False)
 
