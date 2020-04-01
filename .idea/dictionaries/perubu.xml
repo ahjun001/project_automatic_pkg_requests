@@ -13,6 +13,7 @@
       <w>indcs</w>
       <w>indctrs</w>
       <w>infos</w>
+      <w>inkex</w>
       <w>inkscape</w>
       <w>isoplane</w>
       <w>largeur</w>
@@ -23,6 +24,7 @@
       <w>poil</w>
       <w>prfx</w>
       <w>prog</w>
+      <w>pylint</w>
       <w>pytest</w>
       <w>readlines</w>
       <w>shutil</w>
