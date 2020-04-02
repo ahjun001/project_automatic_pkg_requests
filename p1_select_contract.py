@@ -71,9 +71,11 @@ def step_1__select_a_contract_选择合同号():
             dump_program_info_json()
             # copy setup file if exists
             stpf_rel_f = p1_d['cntrct_nr'] + '_doc_setup.json'
+            stpf_abs_src = os.path.join(path, stpf_rel_f)
             stpf_abs_dest = os.path.join(p1_cntrct_abs_dir, stpf_rel_f)
-            if not pathlib.Path(stpf_abs_dest).exists():
-                shutil.copy(os.path.join(path, stpf_rel_f), p1_cntrct_abs_dir)
+            if pathlib.Path(stpf_abs_src).exists():
+                if not pathlib.Path(stpf_abs_dest).exists():
+                    shutil.copy(stpf_abs_dest, p1_cntrct_abs_dir)
 
                 # also copy template directories, svg and json files that might exists
             _, dirs, _ = next(os.walk(path))

@@ -52,7 +52,7 @@ def save_template_info_json():
         json.dump(p3_d, f, ensure_ascii = False)
 
 
-def if_not_exists_build_template_header_n_body(some_rel_dir):
+def create_template_header_n_body_if_not_exist(some_rel_dir):
     """
     copy header, also template if necessary, build body from template.svg copy that is in repository directory
     """
@@ -139,16 +139,16 @@ def check_if_template_requirements_are_met():
     for x in ['t', 'i', 'prod_n']:
         if x in template_fields_set:
             template_fields_set.remove(x)
-    print(f'Template in {p3_fields_rel_dir} uses {template_fields_set}')
-    print(f'Fields selected to feed data are  {p3_d["selected_fields"]}')
+    # print(f'Template in {p3_fields_rel_dir} uses {template_fields_set}')
+    # print(f'Fields selected to feed data are  {p3_d["selected_fields"]}')
     diff_set = template_fields_set - set(p3_d['selected_fields'])
     if diff_set:
         missing_in_template_l = []
         for f in template_fields_set:
             if f not in p3_d['selected_fields']:
                 missing_in_template_l.append(f)
-        print('The template requires the following fields but those\n'
-              'were not found in the data requisition list: ', missing_in_template_l)
+        # print('The template requires the following fields but those\n'
+        #       'were not found in the data requisition list: ', missing_in_template_l)
     else:
         print('Template fields and requested data match.  The template is operational.')
         # template_f = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir), 'label_template.svg')
@@ -485,7 +485,7 @@ def open_svg_for_output(header, page, only_1_temp, only_1_prod, family, size, st
         if only_1_prod:
             svg_out = os.path.join(p3_fields_abs_dir, '.1_product.svg')
         else:
-            svg_out = os.path.join(p3_fields_abs_dir, '.1_template.svg')
+            svg_out = os.path.join(p3_fields_abs_dir, f'.1_template_{page}.svg')
     else:
         svg_out = os.path.join(p1.p1_cntrct_abs_dir, f'page_{page}.svg')
     fw = open(svg_out, 'w')
@@ -531,7 +531,7 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
 
     # read existing templates
     drs = [p3_fields_rel_dir] if only_1_temp else p2.p2_load_templates_info_l()
-    oy = None
+    oy = 0
     if drs:
         svg_out = ''  # svg output filename
         fw = None  # and its file handler
@@ -539,7 +539,7 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
         page = 1  # nr of page being built
         for p3_fields_rel_dir in drs:  # looping on templates
             p3_fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir)  # dir for header & body
-            if_not_exists_build_template_header_n_body(p3_fields_rel_dir)
+            create_template_header_n_body_if_not_exist(p3_fields_rel_dir)
             with open(os.path.join(p3_fields_abs_dir, '.label_template_header.svg')) as h:
                 header = h.read()
             template_nr += 1
@@ -581,10 +581,8 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
                 'write_templates: ! template height + spacing height don\'t fit in the page'
 
             # write the header for this template
-            if not oy:  # vertical positioning in page_view_box_h
-                oy = - spacing_h
-                if page == 1:
-                    oy = p1.doc_setup_d['page_1_vert_offset'] - spacing_h
+            if page == 1:
+                oy = p1.doc_setup_d['page_1_vert_offset'] - spacing_h
 
             fw.write(
                 f'<svg width="{page_view_box_w}" height="{p3_d["header_height"]}" '
@@ -639,10 +637,12 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
                                 fw.write(f.read())
                             fw.write("</g>\n")
 
-                    # print(  # for debug purposes
-                    #     p3_selected_fields_values_by_prod_d[str(i)]['i'],
-                    #     p3_selected_fields_values_by_prod_d[str(i)]['prod_n']
-                    # )
+                    print(  # for debug purposes
+                        f'{p3_fields_rel_dir} page: {page} ',
+                        f'ox: {ox:3.1f}, oy: {oy:3.1f}',
+                        f"idx: {p3_selected_fields_values_by_prod_d[str(i)]['i']}",
+                        f"prod_nr: {p3_selected_fields_values_by_prod_d[str(i)]['prod_n']}"
+                    )
                     fw.write(mako_template.render(
                         contract_n = p1.p1_d["cntrct_nr"],
                         t = template_nr,
@@ -653,20 +653,21 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
                     i += 1
                 ox = - spacing_w + horizontal_centering_offset(template_view_box_w, spacing_w)
                 oy += template_view_box_h + spacing_h
+                print(f'ox: {ox:3.1f} ox: {oy:3.1f}  test: {oy + template_view_box_h + spacing_h} > {page_view_box_h}')
                 # check if there is still space to write the next one, if not open a new page
                 if oy + template_view_box_h + spacing_h > page_view_box_h:
-                    if i != lngth or template_nr != len(drs):  # to avoid printing a blank page when no data left
-                        if i < (1 if only_1_prod else lngth):
-                            close_svg_for_output(fw, svg_out)
-                            page += 1
-                            fw, svg_out = open_svg_for_output(
-                                header, page, only_1_temp, only_1_prod,
-                                family, size, style
-                            )
-                            if i == lngth:  # if at end of a list, then oy = 0
-                                oy = 0
-                            else:
-                                oy = - spacing_h
+                    # to avoid printing a blank page when no data left
+                    if i < (1 if only_1_prod else lngth) or template_nr != len(drs):
+                        close_svg_for_output(fw, svg_out)
+                        page += 1
+                        fw, svg_out = open_svg_for_output(
+                            header, page, only_1_temp, only_1_prod,
+                            family, size, style
+                        )
+                        if i == lngth:  # if at end of a list, then oy = 0
+                            oy = 0
+                        else:
+                            oy = - spacing_h
             # after last item is written, write the next header if needed
         close_svg_for_output(fw, svg_out)  # close the last file without opening a new one
     else:
@@ -689,6 +690,11 @@ def render_svg_1_template_all_products():
         drs = p1.read_dirs(p1.p1_cntrct_abs_dir)
         p3_fields_rel_dir = drs[0]
     render_svg_all_templates_all_products(only_1_temp = True)
+
+
+def render_svg_all_n_print():
+    render_svg_all_templates_all_products()
+    svg_s_to_pdf_deliverable()
 
 
 def render_cover_page():
@@ -809,7 +815,7 @@ def edit_fields():
             print(f'{s} is not an option, try again')
 
     save_template_info_json()
-    # if_not_exists_build_template_header_n_body(p3_fields_rel_dir)
+    # create_template_header_n_body_if_not_exist(p3_fields_rel_dir)
     load_o_create_mako_input_values_json(force_recreate = True)
     # render_svg_1_template_1_product()
 
@@ -928,7 +934,7 @@ def edit_paragraph_headers():
                     print('|\n| That\'s not an integer, try again\n|')
 
         save_template_info_json()
-        if_not_exists_build_template_header_n_body(p3_fields_rel_dir)
+        create_template_header_n_body_if_not_exist(p3_fields_rel_dir)
         load_o_create_mako_input_values_json()
         render_svg_1_template_1_product()
     else:
@@ -968,12 +974,14 @@ def step_3__select_fields_to_print_for_each_template_选择每种标签类型的
         p.main_menu = p.menu
     p.menus = {
         p.menu: {
-            '77': create_barcode_files,
-            '55': render_svg_1_template_1_product,
-            '44': test_mako,
+            '33': render_svg_1_template_1_product,
+            '44': render_cover_page,
+            '55': render_svg_1_template_all_products,
+            '66': render_svg_all_n_print,
+            '77': display_all,
             '1': select_a_template_for_editing,
-            '2': render_svg_all_templates_all_products,
-            '3': display_all,
+            '2': test_mako,
+            '3': create_barcode_files,
             '4': check_all_templates_have_correct_fields,
             'b': p.back_to_main_退到主程序,
             'q': p.normal_exit_正常出口,
@@ -986,7 +994,6 @@ def step_3__select_fields_to_print_for_each_template_选择每种标签类型的
             '2': edit_fields,
             '3': p1.process_selected_contract,
             '4': edit_paragraph_headers,
-            '7': render_svg_1_template_all_products,
             'b': p.back_后退,
             'q': p.normal_exit_正常出口,
         },
