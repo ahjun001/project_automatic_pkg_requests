@@ -243,7 +243,9 @@ def load_p1_all_products_to_be_processed_set():
         p1_cntrct_info_f = os.path.join(p1_cntrct_abs_dir, '.' + p1_d['cntrct_nr'] + '_contract-info.json')
         with open(p1_cntrct_info_f) as f1:
             p1_cntrct_info_d = json.load(f1)
-    all_products_to_be_processed_set = p1_cntrct_info_d['all_products_to_be_processed_set']
+
+    all_products_to_be_processed_set = sorted(p1_cntrct_info_d['all_products_to_be_processed_set'])
+    print(all_products_to_be_processed_set)
     if all_products_to_be_processed_set:
         return True
 

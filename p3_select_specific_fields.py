@@ -932,6 +932,15 @@ def edit_paragraph_headers():
         return
 
 
+def test_mako():
+    load_o_create_mako_input_values_json(force_recreate = True)
+    filename = os.path.join(p1.p1_cntrct_abs_dir + '/' + p3_fields_rel_dir, '.mako_input.json')
+    subprocess.call(['jq', '.', filename])
+    # subprocess.call(['/usr/bin/xed', filename])
+    # with open(filename) as f:
+    #     pprint.pprint(f.read())
+
+
 context_func_d = {
     'select_specific_fields': select_specific_fields_context_func,
     'select_a_template_for_editing': select_specific_fields_context_func,
@@ -956,10 +965,8 @@ def step_3__select_fields_to_print_for_each_template_选择每种标签类型的
         p.main_menu = p.menu
     p.menus = {
         p.menu: {
-            '44': render_svg_1_template_1_product,
-            '55': render_cover_page,
-            '66': svg_s_to_pdf_deliverable,
             '77': create_barcode_files,
+            '44': test_mako,
             '1': select_a_template_for_editing,
             '2': render_svg_all_templates_all_products,
             '3': display_all,
@@ -970,6 +977,7 @@ def step_3__select_fields_to_print_for_each_template_选择每种标签类型的
         },
         'select_a_template_for_editing': {
             '44': edit_label_template_svg,
+            '55': render_svg_1_template_1_product,
             '0': scrap_template_for_fields,
             '1': check_if_template_requirements_are_met,
             '2': edit_fields,
@@ -980,6 +988,8 @@ def step_3__select_fields_to_print_for_each_template_选择每种标签类型的
             'q': p.normal_exit_正常出口,
         },
         'debug': {
+            '55': render_cover_page,
+            '66': svg_s_to_pdf_deliverable,
             '2': display_or_load_output_overview,
             '6': p1.display_p1_cntrct_info_d,
             '7': p1.display_p1_cntrct_info_f,
