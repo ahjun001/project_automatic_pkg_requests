@@ -446,6 +446,9 @@ def open_svg_for_output(header, page, only_1_temp, only_1_prod, family, size, st
     fw.write(f'<rect x="0" y="0"\n'
              f'width="210" height="297"\n'
              f'style="fill:none;stroke-width:0.5;stroke-opacity:1;stroke:#ff00ff" />\n')
+    fw.write(f'<rect x="{p1.doc_setup_d["margin_w"]}" y="{p1.doc_setup_d["margin_h"]}"\n'
+             f'width="{210 - 2 * p1.doc_setup_d["margin_w"]}" height="{297 - 2 * p1.doc_setup_d["margin_h"]}"\n'
+             f'style="fill:none;stroke-width:0.5;stroke-opacity:1;stroke:#ff00ff" />\n')
     page_x = 100  # page middle - 5mm to center text, assuming A4
     page_y = int(page_view_box_h + 3 * (297 - page_view_box_h) / 4)
     fw.write(
@@ -581,10 +584,11 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
             if not oy:  # vertical positioning in page_view_box_h
                 oy = - spacing_h
                 if page == 1:
-                    oy = p1.doc_setup_d['page_1_vert_offset'] + spacing_h
+                    oy = p1.doc_setup_d['page_1_vert_offset'] - spacing_h
 
             fw.write(
-                f'<svg width="{page_view_box_w}" height="{p3_d["header_height"]}" x="0" y="{oy}">\n'
+                f'<svg width="{page_view_box_w}" height="{p3_d["header_height"]}" '
+                f'x="0" y="{oy + spacing_h}">\n'
                 f'<rect x="0" y="0"\n'
                 f'width="100%" height="100%"\n'
                 f'style="fill:none;stroke-width:0.5;stroke-opacity:1;stroke:#ff00ff" />\n'
@@ -597,12 +601,11 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
             oy += p3_d['header_height']
             lngth = len(p3_selected_fields_values_by_prod_d)  # nr of products in the contract
             i = 0  # index of the template to print
+
             while i < (1 if only_1_prod else lngth):
                 # writing horizontally while there templates to print
                 while ox + template_view_box_w <= page_view_box_w and i < (1 if only_1_prod else lngth):
-                    offset_x = ox + spacing_w
-                    offset_y = oy + spacing_h
-                    fw.write(r"<g transform = 'translate(" + f"{offset_x}, {offset_y})'>\n")
+                    fw.write(r"<g transform = 'translate(" + f"{ox + spacing_w}, {oy + spacing_h})'>\n")
 
                     # create the path to a potential barcode file
                     barcode_f = os.path.join(
@@ -966,6 +969,7 @@ def step_3__select_fields_to_print_for_each_template_选择每种标签类型的
     p.menus = {
         p.menu: {
             '77': create_barcode_files,
+            '55': render_svg_1_template_1_product,
             '44': test_mako,
             '1': select_a_template_for_editing,
             '2': render_svg_all_templates_all_products,
@@ -977,7 +981,6 @@ def step_3__select_fields_to_print_for_each_template_选择每种标签类型的
         },
         'select_a_template_for_editing': {
             '44': edit_label_template_svg,
-            '55': render_svg_1_template_1_product,
             '0': scrap_template_for_fields,
             '1': check_if_template_requirements_are_met,
             '2': edit_fields,
