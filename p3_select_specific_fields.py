@@ -427,46 +427,6 @@ def svg_s_to_pdf_deliverable():
     os.chdir(p0_root_abs_dir)
 
 
-def open_svg_for_output(header, page, only_1_temp, only_1_prod, family, size, style):
-    global p3_d
-    global page_view_box_h
-    # assert fw == fw
-    # assert svg_out == svg_out
-
-    p3_fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir)
-    if only_1_temp:
-        if only_1_prod:
-            svg_out = os.path.join(p3_fields_abs_dir, '.1_product.svg')
-        else:
-            svg_out = os.path.join(p3_fields_abs_dir, '.1_template.svg')
-    else:
-        svg_out = os.path.join(p1.p1_cntrct_abs_dir, f'page_{page}.svg')
-    fw = open(svg_out, 'w')
-    fw.write(header)
-    fw.write(f'<rect x="0" y="0"\n'
-             f'width="210" height="297"\n'
-             f'style="fill:none;stroke-width:0.5;stroke-opacity:1;stroke:#ff00ff" />\n')
-    fw.write(f'<rect x="{p1.doc_setup_d["margin_w"]}" y="{p1.doc_setup_d["margin_h"]}"\n'
-             f'width="{210 - 2 * p1.doc_setup_d["margin_w"]}" height="{297 - 2 * p1.doc_setup_d["margin_h"]}"\n'
-             f'style="fill:none;stroke-width:0.5;stroke-opacity:1;stroke:#ff00ff" />\n')
-    page_x = 100  # page middle - 5mm to center text, assuming A4
-    page_y = int(page_view_box_h + 3 * (297 - page_view_box_h) / 4)
-    fw.write(
-        f"<g>\n<text transform='translate({page_x}, {page_y})' "
-        f"style='font-family:{family};font-size:{size};font-style:{style}'>-- {page} --</text>\n</g>\n"
-    )
-    # assuming A4
-    fw.write(f"<g transform='translate({p1.doc_setup_d['margin_w']}, {p1.doc_setup_d['margin_h']} )'>\n")
-    return fw, svg_out
-
-
-def close_svg_for_output(fw, svg_out):
-    fw.write('\n</g>\n</svg>\n')
-    fw.close()
-    webbrowser.get('firefox').open_new_tab(svg_out)
-    # subprocess.Popen(['inkscape', svg_out])
-
-
 def horizontal_centering_offset(template_view_box_w, spacing_w):
     global page_view_box_w
 
@@ -512,6 +472,46 @@ def create_barcode_files():
 
     for prod_n in prod_l:
         create_barcode_file(prod_n)
+
+
+def open_svg_for_output(header, page, only_1_temp, only_1_prod, family, size, style):
+    global p3_d
+    global page_view_box_h
+    # assert fw == fw
+    # assert svg_out == svg_out
+
+    p3_fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir)
+    if only_1_temp:
+        if only_1_prod:
+            svg_out = os.path.join(p3_fields_abs_dir, '.1_product.svg')
+        else:
+            svg_out = os.path.join(p3_fields_abs_dir, '.1_template.svg')
+    else:
+        svg_out = os.path.join(p1.p1_cntrct_abs_dir, f'page_{page}.svg')
+    fw = open(svg_out, 'w')
+    fw.write(header)
+    fw.write(f'<rect x="0" y="0"\n'
+             f'width="210" height="297"\n'
+             f'style="fill:none;stroke-width:0.5;stroke-opacity:1;stroke:#ff00ff" />\n')
+    fw.write(f'<rect x="{p1.doc_setup_d["margin_w"]}" y="{p1.doc_setup_d["margin_h"]}"\n'
+             f'width="{210 - 2 * p1.doc_setup_d["margin_w"]}" height="{297 - 2 * p1.doc_setup_d["margin_h"]}"\n'
+             f'style="fill:none;stroke-width:0.5;stroke-opacity:1;stroke:#ff00ff" />\n')
+    page_x = 100  # page middle - 5mm to center text, assuming A4
+    page_y = int(page_view_box_h + 3 * (297 - page_view_box_h) / 4)
+    fw.write(
+        f"<g>\n<text transform='translate({page_x}, {page_y})' "
+        f"style='font-family:{family};font-size:{size};font-style:{style}'>-- {page} --</text>\n</g>\n"
+    )
+    # assuming A4
+    fw.write(f"<g transform='translate({p1.doc_setup_d['margin_w']}, {p1.doc_setup_d['margin_h']} )'>\n")
+    return fw, svg_out
+
+
+def close_svg_for_output(fw, svg_out):
+    fw.write('\n</g>\n</svg>\n')
+    fw.close()
+    webbrowser.get('firefox').open_new_tab(svg_out)
+    # subprocess.Popen(['inkscape', svg_out])
 
 
 def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = False):
