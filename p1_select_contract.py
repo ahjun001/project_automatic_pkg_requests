@@ -75,7 +75,7 @@ def step_1__select_a_contract_选择合同号():
             stpf_abs_dest = os.path.join(p1_cntrct_abs_dir, stpf_rel_f)
             if pathlib.Path(stpf_abs_src).exists():
                 if not pathlib.Path(stpf_abs_dest).exists():
-                    shutil.copy(stpf_abs_dest, p1_cntrct_abs_dir)
+                    shutil.copy(stpf_abs_src, p1_cntrct_abs_dir)
 
                 # also copy template directories, svg and json files that might exists
             _, dirs, _ = next(os.walk(path))
