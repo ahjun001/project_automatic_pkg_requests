@@ -126,7 +126,8 @@ def load_o_create_program_info_d():
                 print(f"|\n| Cannot access {p1_cntrct_abs_dir} directory as in 'program-info.json', creating one\n|")
                 os.mkdir(p1_cntrct_abs_dir, mode = 0o700)
             if 'fpath_file_xls' in p1_d.keys():
-                if pathlib.Path(p1_d['fpath_file_xls']).exists():
+                filename = p1_d['fpath_file_xls']
+                if pathlib.Path(filename).exists():
                     return True  # (i) json and file already in repository
                 else:
                     buf = p1_d['fpath_file_xls']
