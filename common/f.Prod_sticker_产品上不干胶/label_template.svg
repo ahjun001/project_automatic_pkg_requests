@@ -8,29 +8,26 @@
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    sodipodi:docname="label_template.svg"
-   inkscape:version="1.1-dev (1:0.92.0+devel+202002251828+2fde448)"
+   inkscape:version="1.1-dev (1:0.92.0+devel+202004021948+628e9a3)"
    id="svg8"
    version="1.1"
-   viewBox="0 0 59.999999 40"
-   height="40mm"
-   width="60mm">
+   viewBox="0 0 210 297"
+   height="297mm"
+   width="210mm">
   <defs
      id="defs2" />
   <sodipodi:namedview
-     showborder="true"
-     showguides="true"
-     units="mm"
      inkscape:window-maximized="1"
      inkscape:window-y="40"
      inkscape:window-x="0"
      inkscape:window-height="1015"
      inkscape:window-width="1920"
      showgrid="false"
-     inkscape:current-layer="g1848"
+     inkscape:current-layer="layer1"
      inkscape:document-units="mm"
-     inkscape:cy="122.35135"
-     inkscape:cx="20.639995"
-     inkscape:zoom="3.0096309"
+     inkscape:cy="560"
+     inkscape:cx="400"
+     inkscape:zoom="0.33987269"
      inkscape:pageshadow="2"
      inkscape:pageopacity="0.0"
      borderopacity="1.0"
@@ -45,193 +42,12 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
   <g
-     transform="translate(4.2475492,209.88532)"
      id="layer1"
      inkscape:groupmode="layer"
-     inkscape:label="Layer 1">
-    <g
-       transform="matrix(0.60307999,0,0,0.60307999,-1.6859373,-67.430882)"
-       id="g1848">
-      <rect
-         style="fill:none;fill-opacity:1;stroke:red;stroke-width:0.5;stroke-linecap:square;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         id="rect815"
-         width="81.631615"
-         height="60.178356"
-         x="-1.7800467"
-         y="-230.31367"
-         ry="2.978261" />
-      <text
-         transform="scale(1.008648,0.99142615)"
-         xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.56886px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.267665"
-         x="49.866646"
-         y="-227.01021"
-         id="text905"><tspan
-           sodipodi:role="line"
-           x="49.866646"
-           y="-227.01021"
-           id="tspan903"
-           style="stroke-width:0.267665"><tspan
-             x="49.866646"
-             y="-227.01021"
-             id="tspan901"
-             style="stroke-width:0.267665">Made in China</tspan></tspan></text>
-      <text
-         transform="scale(1.008648,0.99142615)"
-         xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.56886px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.267665"
-         x="57.15947"
-         y="-222.57063"
-         id="text899"><tspan
-           sodipodi:role="line"
-           x="57.15947"
-           y="-222.57063"
-           id="tspan897"
-           style="stroke-width:0.267665"><tspan
-             x="57.15947"
-             y="-222.57063"
-             id="tspan895"
-             style="stroke-width:0.267665">PI/911004</tspan></tspan></text>
-      <text
-         transform="scale(1.008648,0.99142615)"
-         xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.5687px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0;stroke-miterlimit:4;stroke-dasharray:none"
-         x="-4.6032004"
-         y="-235.34076"
-         id="text941-2"><tspan
-           sodipodi:role="line"
-           id="tspan55"
-           x="-4.6032004"
-           y="-235.34076"><tspan
-   style="fill:#000000;stroke:#ffffff"
-   id="tspan57">${t}.${i}.我司货号</tspan>${prod_n} ${xl_prod_spec} <tspan
-   style="fill:#000000"
-   id="tspan874">双一字槽瓦楞钉</tspan></tspan></text>
-      <text
-         transform="scale(1.008648,0.99142615)"
-         xml:space="preserve"
-         style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.21198px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Italic';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.267665"
-         x="16.690475"
-         y="-209.8035"
-         id="text947"><tspan
-           sodipodi:role="line"
-           x="16.690475"
-           y="-209.8035"
-           id="tspan945"
-           style="stroke-width:0.267665"><tspan
-             x="16.690475"
-             y="-209.8035"
-             id="tspan943"
-             style="stroke-width:0.267665">Stove bolts</tspan></tspan></text>
-      <text
-         transform="scale(1.008648,0.99142615)"
-         xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.56886px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.267665"
-         x="16.359032"
-         y="-213.45061"
-         id="text941"><tspan
-           sodipodi:role="line"
-           x="16.359032"
-           y="-213.45061"
-           id="tspan939"
-           style="stroke-width:0.267665"><tspan
-             x="16.359032"
-             y="-213.45061"
-             id="tspan937"
-             style="stroke-width:0.267665">Boulons poêliers 4.8</tspan></tspan></text>
-      <text
-         transform="scale(1.008648,0.99142615)"
-         xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.56886px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.267665"
-         x="16.413052"
-         y="-204.34906"
-         id="text935"><tspan
-           sodipodi:role="line"
-           x="16.413052"
-           y="-204.34906"
-           id="tspan933"
-           style="stroke-width:0.267665"><tspan
-             x="16.413052"
-             y="-204.34906"
-             id="tspan931"
-             style="stroke-width:0.267665">${xl_prod_spec}</tspan></tspan></text>
-      <text
-         transform="scale(1.008648,0.99142615)"
-         xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.56886px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.267665"
-         x="16.508896"
-         y="-176.60951"
-         id="text929"><tspan
-           sodipodi:role="line"
-           x="16.508896"
-           y="-176.60951"
-           id="tspan927"
-           style="stroke-width:0.267665"><tspan
-             x="16.508896"
-             y="-176.60951"
-             id="tspan925"
-             style="stroke-width:0.267665">Quantité : ${u_parc} </tspan></tspan></text>
-      <text
-         transform="scale(1.008648,0.99142615)"
-         xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.56886px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.267665"
-         x="16.359032"
-         y="-190.44354"
-         id="text923"><tspan
-           sodipodi:role="line"
-           x="16.359032"
-           y="-190.44354"
-           id="tspan921"
-           style="stroke-width:0.267665"><tspan
-             x="16.359032"
-             y="-190.44354"
-             id="tspan919"
-             style="stroke-width:0.267665">Réf. ${prod_n}</tspan></tspan></text>
-      <text
-         transform="scale(1.008648,0.99142615)"
-         xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.56886px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.267665"
-         x="16.508896"
-         y="-185.50816"
-         id="text917"><tspan
-           sodipodi:role="line"
-           x="16.508896"
-           y="-185.50816"
-           id="tspan915"
-           style="stroke-width:0.267665"><tspan
-             x="16.508896"
-             y="-185.50816"
-             id="tspan913"
-             style="stroke-width:0.267665">Coloris : acier </tspan></tspan></text>
-      <text
-         transform="scale(1.008648,0.99142615)"
-         xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.56886px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.267665"
-         x="16.508896"
-         y="-181.13382"
-         id="text911"><tspan
-           sodipodi:role="line"
-           x="16.508896"
-           y="-181.13382"
-           id="tspan909"
-           style="stroke-width:0.267665"><tspan
-             x="16.508896"
-             y="-181.13382"
-             id="tspan907"
-             style="stroke-width:0.267665">Conditionnement : ${u_parc} x plastic# pc(s)</tspan></tspan></text>
-    </g>
-    <rect
-       y="27.320257"
-       x="0.3202526"
-       height="39.359493"
-       width="59.359497"
-       id="rect231"
-       style="display:inline;opacity:0.5;fill:none;fill-opacity:1;stroke:fuchsia;stroke-width:0.64050573;stroke-linecap:square;stroke-linejoin:bevel;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       transform="translate(-4.2475492,-236.88532)" />
-  </g>
+     inkscape:label="Layer 1" />
 </svg>

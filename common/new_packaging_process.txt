@@ -1,0 +1,2 @@
+1. Run program 3 steps: (i) Select contract, (ii) Select which templates to build, (iii) Select fields for each template
+

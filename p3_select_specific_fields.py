@@ -182,7 +182,7 @@ def load_o_create_mako_input_values_json(force_recreate = False):
             # make a skeleton for p3_selected_fields_values_by_prod_d with key = prod
             idx = 0
             temp_d = {}
-            for prod in p1.all_products_to_be_processed_set:
+            for prod in sorted(p1.all_products_to_be_processed_set):
                 temp_d[prod] = {'i': str(idx + 1), 'prod_n': prod, 'gm_zh': '', 'gm_fr': ''}  # todo: externalize
                 idx += 1
 
