@@ -66,6 +66,7 @@ def step_1__select_a_contract_选择合同号():
     p3.reset_globals()
     p1.step_1__select_a_contract_选择合同号()
 
+
 def init():
     os.system('clear')
     # assign a program

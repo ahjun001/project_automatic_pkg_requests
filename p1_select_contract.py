@@ -45,7 +45,7 @@ def step_1__select_a_contract_选择合同号():
     global p1_cntrct_abs_dir
     global p1_d
 
-    # (p1_d['cntrct_nr'], p1_d['fpath_init_xls'], p1_d["fpath_file_xls"]) = (None, None, None)
+    # (p1_d['cntrct_nr'], p1_d['fpath_init_xls'], p1_d['file_xls']) = (None, None, None)
     print('~~~ Step 1: Selecting a contract ~~~')
     print('~~~ Select a contract xls file in the graphic file browser -- mind the browser window could be hidden')
     ini_xls = askopenfilename()
@@ -66,9 +66,10 @@ def step_1__select_a_contract_选择合同号():
             if not pathlib.Path(p1_cntrct_abs_dir).exists():
                 os.mkdir(p1_cntrct_abs_dir, mode = 0o700)
                 # do not overwrite an existing contract file
-            p1_d["fpath_file_xls"] = os.path.join(p1_cntrct_abs_dir, filename_ext)
+            p1_d['file_xls'] = filename_ext
             p1_d['fpath_init_xls'] = ini_xls
-            if not pathlib.Path(p1_d["fpath_file_xls"]).exists():
+            filename = os.path.join(p0_root_abs_dir + '/data/' + p1_d['cntrct_nr'], p1_d['file_xls'])
+            if not pathlib.Path(filename).exists():
                 shutil.copy(p1_d['fpath_init_xls'], p1_cntrct_abs_dir)
 
             dump_program_info_json()
@@ -99,7 +100,7 @@ def step_1__select_a_contract_选择合同号():
 
 def load_o_create_program_info_d():
     """
-    Loads p1_d['cntrct_nr'], p1_d["fpath_file_xls"], and p1_cntrct_abs_dir from program-info.json
+    Loads p1_d['cntrct_nr'], p1_d['file_xls'], and p1_cntrct_abs_dir from program-info.json
     Test:
     (i) json and file already in repository
     (ii) re-create from initial file as per contract-info.json
@@ -125,21 +126,26 @@ def load_o_create_program_info_d():
             if not pathlib.Path(p1_cntrct_abs_dir).exists():
                 print(f"|\n| Cannot access {p1_cntrct_abs_dir} directory as in 'program-info.json', creating one\n|")
                 os.mkdir(p1_cntrct_abs_dir, mode = 0o700)
-            if 'fpath_file_xls' in p1_d.keys():
-                filename = p1_d['fpath_file_xls']
-                if pathlib.Path(filename).exists():
-                    return True  # (i) json and file already in repository
+            if 'file_xls' in p1_d.keys():
+                file_xls = os.path.join(p0_root_abs_dir + '/data/' + p1_d['cntrct_nr'], p1_d['file_xls'])
+                if pathlib.Path(file_xls).exists():
+                    file_json = os.path.join(
+                        p0_root_abs_dir + '/data/' + p1_d['cntrct_nr'],
+                        p1_d['cntrct_nr'] + '_doc_setup.json'
+                                             )
+                    if pathlib.Path(file_json).exists():
+                        return True  # (i) json and file already in repository
+                    else:
+                        print(f"|\n| {p1_d['cntrct_nr']}_doc_setup.json not setup\n|")  # Todo: automatize
                 else:
-                    buf = p1_d['fpath_file_xls']
-                    print(f"|\n| Cannot access '{buf}'\n|")
+                    print(f"|\n| Cannot access '{file_xls}'\n|")
             else:
                 print(f'program-info.json does not contain {p1_cntrct_abs_dir} data')
             print('| Trying to build from fpath_init_xls file in program-info.json')
             if 'fpath_init_xls' in p1_d.keys():
                 if pathlib.Path(p1_d['fpath_init_xls']).exists():
                     shutil.copy(p1_d['fpath_init_xls'], p1_cntrct_abs_dir)
-                    path, filename_ext = os.path.split(p1_d['fpath_init_xls'])
-                    p1_d['fpath_file_xls'] = os.path.join(p1_cntrct_abs_dir, filename_ext)
+                    path, p1_d['file_xls'] = os.path.split(p1_d['fpath_init_xls'])
 
                     # copy setup file if exists
                     stpf_rel_f = p1_d['cntrct_nr'] + '_doc_setup.json'
@@ -161,7 +167,7 @@ def load_o_create_program_info_d():
                     print(
                         f"|\n| Cannot access '{p1_d['fpath_init_xls']}' as in 'program-info.json, no such file'\n|")
             else:
-                print(f'program-info.json does not contain {p1_d["fpath_init_xls"]} data')
+                print(f"program-info.json does not contain {p1_d['fpath_init_xls']} data")
 
         else:
             print(f'program-info.json does not contain {p1_d["cntrct_nr"]} data')
@@ -453,7 +459,8 @@ def process_selected_contract():
     rel_path_contract_json_f = '.p1a_' + p1_d['cntrct_nr'] + '-contract.json'
 
     # Creating the json file from the local xls file: opening the xl file
-    book = xlrd.open_workbook(p1_d["fpath_file_xls"])
+    book = xlrd.open_workbook(
+        os.path.join(p1_cntrct_abs_dir, p1_d['file_xls']))
     sheet = book.sheet_by_index(0)
 
     row = 0
