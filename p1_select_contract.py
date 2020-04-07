@@ -12,22 +12,25 @@ from tkinter.filedialog import askopenfilename
 
 import xlrd
 
-import p0_menus as p
+import m_menus as m
 
+# globals that don't need to be reset when a new contract is processed
 p0_root_abs_dir = os.path.dirname(os.path.abspath(__file__))  # root directory where the program is located
-prog_info_json_f = ''
-p1_d = {}
+indicators_csv = os.path.join(p0_root_abs_dir + '/common', 'indicators.csv')
+
+# globals that need to be reset when a new contract is processed
+all_products_to_be_processed_set = set()
+doc_setup_d = {}
 p1_cntrct_abs_dir = ''  # directory where a copy of the xls contract file and contract extracted data is
 p1_cntrct_info_d = {}
 p1_cntrct_info_f = ''
-doc_setup_d = {}
+p1_d = {}
 p1_search_reg_ex_l = []
-indicators_csv = os.path.join(p0_root_abs_dir + '/common', 'indicators.csv')
-all_products_to_be_processed_set = set()
 p1b_indics_from_contract_l = []
 p1c_prods_w_same_key_set = {}  # make a dictionary key= info, value = sets of prods with that key
 p1d_common_indics_l = []
 p1e_specific_fields_d_of_d = {}
+prog_info_json_f = ''
 
 
 def dump_program_info_json():
@@ -635,16 +638,16 @@ def init():
     load_o_create_program_info_d()
 
     # initializing menus last, so that context functions display most recent information
-    p.menu = 'init'
-    if not p.main_menu:
-        p.main_menu = p.menu
-    p.menus = {
-        p.menu: {
+    m.menu = 'init'
+    if not m.main_menu:
+        m.main_menu = m.menu
+    m.menus = {
+        m.menu: {
             '1': step_1__select_a_contract_选择合同号,
             '2': delete_all_data_on_selected_contract,
-            'b': p.back_to_main_退到主程序,
-            'q': p.normal_exit_正常出口,
-            'd': p.debug,
+            'b': m.back_to_main_退到主程序,
+            'q': m.normal_exit_正常出口,
+            'd': m.debug,
         },
         'debug': {
             '1': display_p1_program_info_d,
@@ -657,22 +660,22 @@ def init():
             '8': display_p1c_all_relevant_data,
             '9': display_p1d_common_indics_l,
             'a': display_p1e_specific_fields_d_of_d,
-            'b': p.back_后退,
-            'q': p.normal_exit_正常出口,
+            'b': m.back_后退,
+            'q': m.normal_exit_正常出口,
         },
     }
-    if not p.main_menus:
-        p.main_menus = p.menus
+    if not m.main_menus:
+        m.main_menus = m.menus
     if __name__ == '__main__':
-        p.mod_lev_1_menu = p.menu
-        p.mod_lev_1_menus = p.menus
-    p.context_func_d = {**p.context_func_d, **context_func_d}
+        m.mod_lev_1_menu = m.menu
+        m.mod_lev_1_menus = m.menus
+    m.context_func_d = {**m.context_func_d, **context_func_d}
 
 
 def main():
     """ Driver """
     init()
-    p.run()
+    m.run()
 
 
 if __name__ == '__main__':

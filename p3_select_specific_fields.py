@@ -10,23 +10,24 @@ import webbrowser
 
 from mako.template import Template
 
-import p0_menus as p
+import m_menus as m
 import p1_select_contract as p1
 import p2_select_templates as p2
 
 p0_root_abs_dir = os.path.dirname(os.path.abspath(__file__))  # root directory
-p3_fields_rel_dir = ''  # currently working fields directory
+
 p3_all_specific_fields_l = []  # list of fields from p1e_specific_fields_d_of_d
-p3_selected_fields_values_by_prod_d = {}  # field values as in .mako_input.json
 p3_body_svg = ''  # contents of label_template_body.svg
 
-p3_default_fields_l = ['xl_prod_spec', 'u_parc', 'plstc_bg']
-p3_f = ''  # None  # info on fields directory currently being edited
+p3_default_fields_l = ['xl_prod_spec', 'u_parc']
 p3_d = {
     "selected_fields": list(p3_default_fields_l),
     "template_header": '',
     "header_height": 7,
 }
+p3_f = ''  # None  # info on fields directory currently being edited
+p3_fields_rel_dir = ''  # currently working fields directory
+p3_selected_fields_values_by_prod_d = {}  # field values as in .mako_input.json
 page_view_box_w = 0
 page_view_box_h = 0
 
@@ -108,11 +109,12 @@ def load_o_create_p3_fields_info_f():
         p3_f = os.path.join(p1.p1_cntrct_abs_dir + '/' + p3_fields_rel_dir, 'template-info.json')
         if pathlib.Path(p3_f).exists():
             with open(p3_f) as f:
-                p3_d = json.load(f)
+                p3_d = json.load(f)  # loads selected_fields, template_header, header_height, barcode_d
         # or populate missing fields with default information relative to the directory
         # other default information is set at variable initialization
         else:
             p3_d['template_header'] = p3_fields_rel_dir[p3_fields_rel_dir.rfind('_') + 1:] + '唛头'
+            # todo: include barcode info here
         save_template_info_json()
         return True
     else:
@@ -150,7 +152,9 @@ def check_if_template_requirements_are_met():
         # print('The template requires the following fields but those\n'
         #       'were not found in the data requisition list: ', missing_in_template_l)
     else:
-        print('Template fields and requested data match.  The template is operational.')
+        pass
+        # print('Template fields and requested data match.  The template is operational.')
+
         # template_f = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir), 'label_template.svg')
         # subprocess.Popen([
         #     'inkscape',
@@ -159,12 +163,11 @@ def check_if_template_requirements_are_met():
 
 
 def load_o_create_mako_input_values_json(force_recreate = False):
-    global p3_fields_rel_dir
     """
     Creates a json file with variables and values necessary to mako rendering
     :return:
     """
-    # will be set in this function
+    global p3_fields_rel_dir
     global p3_selected_fields_values_by_prod_d
 
     check_if_template_requirements_are_met()
@@ -178,7 +181,7 @@ def load_o_create_mako_input_values_json(force_recreate = False):
             p1.load_p1b_indics_from_contract_l()
         if not p1.all_products_to_be_processed_set:
             p1.load_p1_all_products_to_be_processed_set()
-        if load_o_create_p3_fields_info_f():
+        if load_o_create_p3_fields_info_f():  # todo: already run, maybe redundant
             # make a skeleton for p3_selected_fields_values_by_prod_d with key = prod
             idx = 0
             temp_d = {}
@@ -349,14 +352,14 @@ def display_specific_fields_for_all_products():
             tmp_l.append(spec_by_prod[prod][value])
         dsp_l.append(tmp_l)
 
-    m = 0
+    length = 0
     for l_l in dsp_l:
         for ls in l_l:
-            m = max(m, len(str(ls)))
+            length = max(length, len(str(ls)))
     s = ''
     for l_l in dsp_l:
         for ls in l_l:
-            s += (m - len(str(ls))) * ' ' + str(ls)
+            s += (length - len(str(ls))) * ' ' + str(ls)
         s += '\n'
     print(s)
 
@@ -465,15 +468,6 @@ def create_barcode_file(prod_n):
     return brcd_f
 
 
-def create_barcode_files():
-    global p3_fields_rel_dir
-
-    prod_l = list(p1.p1_cntrct_info_d['all_products_to_be_processed_set'])
-
-    for prod_n in prod_l:
-        create_barcode_file(prod_n)
-
-
 def open_svg_for_output(header, page, only_1_temp, only_1_prod, family, size, style):
     global p3_d
     global page_view_box_h
@@ -567,12 +561,12 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
                     input_encoding = 'utf-8'
                 )
                 contents = f.read()
-                m = re.search(r'(?<=viewBox=")(\d) (\d) (\d+.*\d*) (\d+\.*\d*)', contents)
-                if m.groups()[0] != '0' or m.groups()[1] != '0':
+                measures = re.search(r'(?<=viewBox=")(\d) (\d) (\d+.*\d*) (\d+\.*\d*)', contents)
+                if measures.groups()[0] != '0' or measures.groups()[1] != '0':
                     print("Error in building 'label_template.svg': origin is not (0, 0), exiting program ...")
                     exit()
-                template_view_box_w = float(m.groups()[2])
-                template_view_box_h = float(m.groups()[3])
+                template_view_box_w = float(measures.groups()[2])
+                template_view_box_h = float(measures.groups()[3])
             spacing_w = suggest_spacing_calc(page_view_box_w, template_view_box_w)
             spacing_h = suggest_spacing_calc(page_view_box_h - p3_d['header_height'], template_view_box_h)
             assert template_view_box_w + spacing_w <= page_view_box_w, \
@@ -637,12 +631,22 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
                                 fw.write(f.read())
                             fw.write("</g>\n")
 
-                    print(  # for debug purposes
-                        f'{p3_fields_rel_dir} page: {page} ',
-                        f'ox: {ox:3.1f}, oy: {oy:3.1f}',
-                        f"idx: {p3_selected_fields_values_by_prod_d[str(i)]['i']}",
-                        f"prod_nr: {p3_selected_fields_values_by_prod_d[str(i)]['prod_n']}"
-                    )
+                    # print(  # for debug purposes
+                    #     f'{p3_fields_rel_dir} page: {page} ',
+                    #     f'ox: {ox:3.1f}, oy: {oy:3.1f}',
+                    #     f"idx: {p3_selected_fields_values_by_prod_d[str(i)]['i']}",
+                    #     f"prod_nr: {p3_selected_fields_values_by_prod_d[str(i)]['prod_n']}"
+                    # )
+                    # print(  # for debug purposes
+                    #     p1.p1_d['cntrct_nr'], template_nr, i, end = ', '
+                    # )
+                    # tmp_l = [k for k in list(p3_selected_fields_values_by_prod_d[str(i)].keys())[:8]]
+                    # for k in tmp_l:
+                    #     print(  # for debug purposes
+                    #         ', ', k, p3_selected_fields_values_by_prod_d[str(i)][k], end = ''
+                    #     )
+                    # print()
+
                     fw.write(mako_template.render(
                         contract_n = p1.p1_d["cntrct_nr"],
                         t = template_nr,
@@ -653,7 +657,9 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
                     i += 1
                 ox = - spacing_w + horizontal_centering_offset(template_view_box_w, spacing_w)
                 oy += template_view_box_h + spacing_h
-                print(f'ox: {ox:3.1f} ox: {oy:3.1f}  test: {oy + template_view_box_h + spacing_h} > {page_view_box_h}')
+                # print(  # for debug purposes
+                #     f'ox: {ox:3.1f} ox: {oy:3.1f}  test: {oy + template_view_box_h + spacing_h} > {page_view_box_h}'
+                # )
                 # check if there is still space to write the next one, if not open a new page
                 if oy + template_view_box_h + spacing_h > page_view_box_h:
                     # to avoid printing a blank page when no data left
@@ -707,9 +713,12 @@ def render_cover_page():
     load_o_create_p3_fields_info_f()
     load_p3_all_specific_fields_l()
 
-    print(f"From '..._doc_setup.json': cover_page = {p1.doc_setup_d['cover_page']}")
-    if p1.doc_setup_d['cover_page']:
-        print("The label used for the cover page is from the layer 'label' in label_template.svg")
+    # print(  # for debug purposes
+    #     f"From '..._doc_setup.json': cover_page = {p1.doc_setup_d['cover_page']}"
+    # )
+    # if p1.doc_setup_d['cover_page']:
+    #     print("The label used for the cover page is from the layer 'label' in label_template.svg")
+
     # copy first label on cover page template
     p3_fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir)
     svg_in = os.path.join(p3_fields_abs_dir, '.1_product.svg')
@@ -782,12 +791,15 @@ def display_all():
         for p3_fields_rel_dir in drs_l:
             # use data on disk, if not on disk create with default values
             if load_o_create_p3_fields_info_f():
+                print('Rendering 1 template, 1 product')
                 render_svg_1_template_1_product()
                 if p1.doc_setup_d['cover_page'] and p3_fields_rel_dir == drs_l[0]:
+                    print('Rendering cover page')
                     render_cover_page()
+                print('Rendering 1 template, all products')
                 render_svg_1_template_all_products()
-    render_svg_all_templates_all_products()
-    svg_s_to_pdf_deliverable()
+    print('Rendering all templates, all products, and print')
+    render_svg_all_n_print()
 
 
 def edit_fields():
@@ -824,8 +836,8 @@ def select_a_template_for_editing():
     global p3_fields_rel_dir
 
     print('~~~ select a template to edit ~~~')
-    p.mod_lev_1_menu = p.menu
-    p.menu = 'select_a_template_for_editing'
+    m.mod_lev_1_menu = m.menu
+    m.menu = 'select_a_template_for_editing'
     # select_specific_fields_context_func()
     drs = p1.read_dirs(p1.p1_cntrct_abs_dir)
     if drs:
@@ -835,7 +847,7 @@ def select_a_template_for_editing():
             s = input('\nEnter nr of template to be edited, \'b\' to return : ')
             if s == 'b':
                 os.system('clear')
-                p.menu = p.mod_lev_1_menu
+                m.menu = m.mod_lev_1_menu
                 break
             else:
                 try:
@@ -957,6 +969,32 @@ context_func_d = {
 }
 
 
+def reset_globals():
+    global p3_all_specific_fields_l
+    global p3_body_svg
+    global p3_d
+    global p3_default_fields_l
+    global p3_f
+    global p3_fields_rel_dir
+    global p3_selected_fields_values_by_prod_d
+    global page_view_box_h
+    global page_view_box_w
+
+    p3_all_specific_fields_l = []
+    p3_body_svg = ''
+    p3_default_fields_l = ['xl_prod_spec', 'u_parc']
+    p3_d = {
+        "selected_fields": list(p3_default_fields_l),
+        "template_header": '',
+        "header_height": 7,
+    }
+    p3_f = ''
+    p3_fields_rel_dir = ''
+    p3_selected_fields_values_by_prod_d = {}
+    page_view_box_h = 0
+    page_view_box_w = 0
+
+
 def step_3__select_fields_to_print_for_each_template_选择每种标签类型的资料():
     global p3_fields_rel_dir
     # make sure p1 infrastructure is in place
@@ -969,23 +1007,22 @@ def step_3__select_fields_to_print_for_each_template_选择每种标签类型的
         p3_fields_rel_dir = drs[0]
 
     # initializing menus last, so that context functions display most recent information
-    p.menu = 'select_specific_fields'
-    if not p.main_menu:
-        p.main_menu = p.menu
-    p.menus = {
-        p.menu: {
-            '33': render_svg_1_template_1_product,
-            '44': render_cover_page,
-            '55': render_svg_1_template_all_products,
-            '66': render_svg_all_n_print,
-            '77': display_all,
-            '1': select_a_template_for_editing,
-            '2': test_mako,
-            '3': create_barcode_files,
-            '4': check_all_templates_have_correct_fields,
-            'b': p.back_to_main_退到主程序,
-            'q': p.normal_exit_正常出口,
-            'd': p.debug,
+    m.menu = 'select_specific_fields'
+    if not m.main_menu:
+        m.main_menu = m.menu
+    m.menus = {
+        m.menu: {
+            '1': render_svg_1_template_1_product,
+            '2': render_svg_1_template_all_products,
+            '3': render_svg_all_n_print,
+            '4': display_all,
+            '5': render_cover_page,
+            '11': select_a_template_for_editing,
+            '22': test_mako,
+            '33': check_all_templates_have_correct_fields,
+            'b': m.back_to_main_退到主程序,
+            'q': m.normal_exit_正常出口,
+            'd': m.debug,
         },
         'select_a_template_for_editing': {
             '44': edit_label_template_svg,
@@ -994,8 +1031,8 @@ def step_3__select_fields_to_print_for_each_template_选择每种标签类型的
             '2': edit_fields,
             '3': p1.process_selected_contract,
             '4': edit_paragraph_headers,
-            'b': p.back_后退,
-            'q': p.normal_exit_正常出口,
+            'b': m.back_后退,
+            'q': m.normal_exit_正常出口,
         },
         'debug': {
             '55': render_cover_page,
@@ -1005,22 +1042,22 @@ def step_3__select_fields_to_print_for_each_template_选择每种标签类型的
             '7': p1.display_p1_cntrct_info_f,
             '8': display_p3_fields_info_d,
             '9': display_p3_fields_info_f,
-            'b': p.back_后退,
-            'q': p.normal_exit_正常出口,
+            'b': m.back_后退,
+            'q': m.normal_exit_正常出口,
         }
     }
-    if not p.main_menus:
-        p.main_menus = p.menus
+    if not m.main_menus:
+        m.main_menus = m.menus
     if __name__ == '__main__':
-        p.mod_lev_1_menu = p.menu
-        p.mod_lev_1_menus = p.menus
-    p.context_func_d = {**p.context_func_d, **context_func_d}
+        m.mod_lev_1_menu = m.menu
+        m.mod_lev_1_menus = m.menus
+    m.context_func_d = {**m.context_func_d, **context_func_d}
 
 
 def main():
     """ Driver """
     step_3__select_fields_to_print_for_each_template_选择每种标签类型的资料()
-    p.run()
+    m.run()
 
 
 if __name__ == '__main__':

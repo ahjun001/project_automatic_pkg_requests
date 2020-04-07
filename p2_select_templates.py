@@ -5,7 +5,7 @@ import pathlib
 import shutil
 from tkinter.filedialog import askopenfilename
 
-import p0_menus as p
+import m_menus as m
 import p1_select_contract as p1
 
 p0_root_abs_dir = os.path.dirname(os.path.abspath(__file__))  # root directory where the program is located
@@ -161,37 +161,37 @@ def step_2__select_templates_to_print_选择_编辑标签类型():
         print('p1 has not run successfully')
 
     # initializing menus last, so that context functions display most recent information
-    p.menu = 'p2_select_templates'
-    # p.mod_lev_1_menu = p.menu
-    if not p.main_menu:
-        p.main_menu = p.menu
-    p.menus = {
-        p.menu: {
+    m.menu = 'p2_select_templates'
+    # m.mod_lev_1_menu = m.menu
+    if not m.main_menu:
+        m.main_menu = m.menu
+    m.menus = {
+        m.menu: {
             '1': create_default_templates,
             '2': add_new_template,
             '3': delete_existing_template,
-            'b': p.back_to_main_退到主程序,
-            'q': p.normal_exit_正常出口,
-            'd': p.debug,
+            'b': m.back_to_main_退到主程序,
+            'q': m.normal_exit_正常出口,
+            'd': m.debug,
         },
         'debug': {
             '2': load_n_display,
-            'b': p.back_后退,
-            'q': p.normal_exit_正常出口,
+            'b': m.back_后退,
+            'q': m.normal_exit_正常出口,
         },
     }
-    if not p.main_menus:
-        p.main_menus = p.menus
+    if not m.main_menus:
+        m.main_menus = m.menus
     if __name__ == '__main__':
-        p.mod_lev_1_menu = p.menu
-        p.mod_lev_1_menus = p.menus
-    p.context_func_d = {**p.context_func_d, **context_func_d}
+        m.mod_lev_1_menu = m.menu
+        m.mod_lev_1_menus = m.menus
+    m.context_func_d = {**m.context_func_d, **context_func_d}
 
 
 def main():
     """ Driver """
     step_2__select_templates_to_print_选择_编辑标签类型()
-    p.run()
+    m.run()
 
 
 if __name__ == '__main__':

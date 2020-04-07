@@ -5,7 +5,7 @@ import pathlib
 import shutil
 from datetime import datetime
 
-import p0_menus as p
+import m_menus as m
 import p1_select_contract as p1
 import p2_select_templates as p2
 import p3_select_specific_fields as p3
@@ -61,40 +61,45 @@ def save_selected_contract():
             shutil.copy(os.path.join(p1.p1_cntrct_abs_dir + '/' + dr, 'label_template.svg'), main_dir + '/' + dr)
 
 
+def step_1__select_a_contract_选择合同号():
+    # p1.reset_globals()
+    p3.reset_globals()
+    p1.step_1__select_a_contract_选择合同号()
+
 def init():
     os.system('clear')
     # assign a program
     p1.load_o_create_program_info_d()
     # menus
-    p.menu = 'root_menu'
-    # p.mod_lev_1_menu = p.menu
-    if not p.main_menu:
-        p.main_menu = p.menu
-    p.menus = {
-        p.menu: {
+    m.menu = 'root_menu'
+    # m.mod_lev_1_menu = m.menu
+    if not m.main_menu:
+        m.main_menu = m.menu
+    m.menus = {
+        m.menu: {
             '0': run_full_demo_with_selected_or_default_values_运行完整演示,
-            '1': p1.step_1__select_a_contract_选择合同号,
+            '1': step_1__select_a_contract_选择合同号,
             '2': p2.step_2__select_templates_to_print_选择_编辑标签类型,
             '3': p3.step_3__select_fields_to_print_for_each_template_选择每种标签类型的资料,
             '4': save_selected_contract,
             '5': p1.process_selected_contract,
-            'q': p.normal_exit_正常出口,
-            'd': p.debug,
+            'q': m.normal_exit_正常出口,
+            'd': m.debug,
         },
         'debug': {
             'u': pu.u_maintain_set_of_indicators_regex_to_be_searched,
-            'b': p.back_后退,
-            'q': p.normal_exit_正常出口,
+            'b': m.back_后退,
+            'q': m.normal_exit_正常出口,
         },
     }
-    # p.mod_lev_1_menus = p.menus
-    if not p.main_menus:
-        p.main_menus = p.menus
+    # m.mod_lev_1_menus = m.menus
+    if not m.main_menus:
+        m.main_menus = m.menus
 
     if __name__ == '__main__':
-        p.mod_lev_1_menu = p.menu
-        p.mod_lev_1_menus = p.menus
-    p.context_func_d = {**p.context_func_d, **context_func_d}
+        m.mod_lev_1_menu = m.menu
+        m.mod_lev_1_menus = m.menus
+    m.context_func_d = {**m.context_func_d, **context_func_d}
 
     # If the data directory does not exist, process_selected_contract it
     data_adir = os.path.join(p0_root_abs_dir, 'data')
@@ -105,7 +110,7 @@ def init():
 def main():
     """ Driver """
     init()
-    p.run()
+    m.run()
 
 
 if __name__ == '__main__':
