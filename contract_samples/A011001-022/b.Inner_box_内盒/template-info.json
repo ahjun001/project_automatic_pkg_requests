@@ -1,17 +1,1 @@
-{
-  "selected_fields": [
-    "xl_prod_spec",
-    "u_parc",
-    "mat2_zh",
-    "plstc_bg"
-  ],
-  "template_header": "内盒唛头",
-  "header_height": 7,
-  "barcode_d": {
-    "coef": 0.14,
-    "x1": 38,
-    "y1": 18,
-    "x2": 38,
-    "y2": 56
-  }
-}
+{"selected_fields": ["xl_prod_spec", "u_parc", "mat2_zh", "plstc_bg"], "template_header": "内盒唛头", "header_height": 7, "barcode_d": {"coef": 0.14, "x1": 38, "y1": 18, "x2": 38, "y2": 56}}

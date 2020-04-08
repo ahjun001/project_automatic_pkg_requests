@@ -12,7 +12,7 @@
    viewBox="0 0 84.999999 83.333001"
    version="1.1"
    id="svg8"
-   inkscape:version="1.1-dev (1:0.92.0+devel+202002261828+6d973a2)"
+   inkscape:version="1.1-dev (1:0.92.0+devel+202004071914+530a203)"
    sodipodi:docname="label_template.svg">
   <defs
      id="defs2" />
@@ -24,7 +24,7 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2.0832437"
+     inkscape:zoom="1.9644298"
      inkscape:cx="242.04507"
      inkscape:cy="165.67437"
      inkscape:document-units="mm"
@@ -191,7 +191,7 @@
              x="16.508896"
              y="-176.60951"
              id="tspan925"
-             style="stroke-width:0.267665">Quantité : ${u_parc} </tspan></tspan></text>
+             style="stroke-width:0.267665">Quantité : ${u_parc} boîte(s) </tspan></tspan></text>
       <text
          xml:space="preserve"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.56886px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:start;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.267665"
@@ -223,7 +223,7 @@
              x="16.508896"
              y="-185.50816"
              id="tspan913"
-             style="stroke-width:0.267665">Coloris : acier </tspan></tspan></text>
+             style="stroke-width:0.267665">Coloris : ${mat2_fr} </tspan></tspan></text>
       <g
          id="g976"
          transform="matrix(0.26458333,0,0,0.26458333,-13.001011,-43.676739)">
@@ -2574,7 +2574,7 @@
              x="16.508896"
              y="-181.13382"
              id="tspan907"
-             style="stroke-width:0.267665">Conditionnement : plastic bags</tspan></tspan></text>
+             style="stroke-width:0.267665">Conditionnement : ${u_parc} x ${plstc_bg} pc(s)</tspan></tspan></text>
     </g>
   </g>
 </svg>
