@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import json
+import math
 import os
 import pathlib
 import pprint
@@ -114,7 +115,13 @@ def load_o_create_p3_fields_info_f():
         # other default information is set at variable initialization
         else:
             p3_d['template_header'] = p3_fields_rel_dir[p3_fields_rel_dir.rfind('_') + 1:] + '唛头'
-            # todo: include barcode info here
+            p3_d['barcode_d'] = {
+                "coef": 0.0,
+                "x1": 0,
+                "y1": 0,
+                "x2": 0,
+                "y2": 0
+            }
         save_template_info_json()
         return True
     else:
@@ -604,9 +611,10 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
                         os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir),
                         p3_selected_fields_values_by_prod_d[str(i)]['prod_n'] + '.svg'
                     )
-                    # if such a barcode file exists, then insert it  #  todo: make those places out of program
 
-                    brcd_d = dict(p3_d['barcode_d']) if 'barcode_d' in p3_d.keys() else {}
+                    brcd_d = dict(p3_d['barcode_d']) if math.isclose(
+                        p3_d['barcode_d']['coef'], 0.0, abs_tol = 0.001
+                    ) in p3_d.keys() else {}
 
                     if brcd_d:
                         if pathlib.Path(create_barcode_file(
