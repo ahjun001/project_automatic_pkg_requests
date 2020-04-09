@@ -21,7 +21,6 @@ def run_full_demo_with_selected_or_default_values_运行完整演示():
 
 
 def main_menu_context_func():
-    # todo: put a context higher to calculate only once
     c_nr = p1.p1_d['cntrct_nr'] if 'cntrct_nr' in p1.p1_d.keys() else ''
     print(f'Step 1 selected contract: ' + f'{c_nr if c_nr else "None"}')
     templ_l, default = p1.read_dirs(p1.p1_cntrct_abs_dir), ''

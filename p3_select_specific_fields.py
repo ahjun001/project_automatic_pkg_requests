@@ -20,7 +20,7 @@ p0_root_abs_dir = os.path.dirname(os.path.abspath(__file__))  # root directory
 p3_all_specific_fields_l = []  # list of fields from p1e_specific_fields_d_of_d
 p3_body_svg = ''  # contents of label_template_body.svg
 
-p3_default_fields_l = ['xl_prod_spec', 'u_parc']
+# p3_default_fields_l = ['xl_prod_spec', 'u_parc']
 p3_d = {}
 p3_f = ''
 p3_fields_rel_dir = ''  # currently working fields directory
@@ -93,7 +93,7 @@ def load_o_create_p3_fields_info_f():
     global p3_f
     global p3_d
     global p3_fields_rel_dir
-    global p3_default_fields_l
+    # global p3_default_fields_l
     global page_view_box_w
     global page_view_box_h
 
@@ -111,8 +111,7 @@ def load_o_create_p3_fields_info_f():
         # other default information is set at variable initialization
 
         if 'selected_fields' not in p3_d.keys():
-            p3_d['selected_fields'] = p3_default_fields_l  # todo: check which should be tested first
-            pass
+            p3_d['selected_fields'] = ['xl_prod_spec', 'u_parc']
         if 'header_height' not in p3_d.keys():
             p3_d['header_height'] = 7
         if 'template_header' not in p3_d.keys():
@@ -983,7 +982,7 @@ def reset_globals():
     global p3_all_specific_fields_l
     global p3_body_svg
     global p3_d
-    global p3_default_fields_l
+    # global p3_default_fields_l
     global p3_f
     global p3_fields_rel_dir
     global p3_selected_fields_values_by_prod_d
@@ -992,12 +991,13 @@ def reset_globals():
 
     p3_all_specific_fields_l = []
     p3_body_svg = ''
-    p3_default_fields_l = ['xl_prod_spec', 'u_parc']
-    p3_d = {
-        "selected_fields": list(p3_default_fields_l),
-        "template_header": '',
-        "header_height": 7,
-    }
+    # p3_default_fields_l = ['xl_prod_spec', 'u_parc']
+    # p3_d = {
+    #     "selected_fields": list(p3_default_fields_l),
+    #     "template_header": '',
+    #     "header_height": 7,
+    # }
+    p3_d = {}
     p3_f = ''
     p3_fields_rel_dir = ''
     p3_selected_fields_values_by_prod_d = {}

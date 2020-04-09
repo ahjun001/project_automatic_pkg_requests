@@ -136,7 +136,9 @@ def load_o_create_program_info_d():
                     if pathlib.Path(file_json).exists():
                         return True  # (i) json and file already in repository
                     else:
-                        print(f"|\n| {p1_d['cntrct_nr']}_doc_setup.json not setup\n|")  # Todo: automatize
+                        # create a _doc_setup.json with default values
+                        print(f"|\n| {p1_d['cntrct_nr']}_doc_setup.json not found, creating one with default values\n|")
+                        load_o_create_doc_set_up()
                 else:
                     print(f"|\n| Cannot access '{file_xls}'\n|")
             else:
