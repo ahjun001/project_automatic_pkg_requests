@@ -151,9 +151,10 @@ def load_o_create_program_info_d():
 
                     # copy setup file if exists
                     stpf_rel_f = p1_d['cntrct_nr'] + '_doc_setup.json'
+                    stpf_abs_src = os.path.join(path, stpf_rel_f)
                     stpf_abs_dest = os.path.join(p1_cntrct_abs_dir, stpf_rel_f)
-                    if not pathlib.Path(stpf_abs_dest).exists():
-                        shutil.copy(os.path.join(path, stpf_rel_f), p1_cntrct_abs_dir)
+                    if pathlib.Path(stpf_abs_src).exists() and pathlib.Path(stpf_abs_dest).exists():
+                        shutil.copy(stpf_abs_src, p1_cntrct_abs_dir)
 
                     # also copy template directories, svg and json files that might exists
                     _, dirs, _ = next(os.walk(path))

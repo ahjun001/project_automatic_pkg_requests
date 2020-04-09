@@ -21,6 +21,7 @@ def run_full_demo_with_selected_or_default_values_运行完整演示():
 
 
 def main_menu_context_func():
+    temp_f = []
     c_nr = p1.p1_d['cntrct_nr'] if 'cntrct_nr' in p1.p1_d.keys() else ''
     print(f'Step 1 selected contract: ' + f'{c_nr if c_nr else "None"}')
     templ_l, default = p1.read_dirs(p1.p1_cntrct_abs_dir), ''
@@ -33,7 +34,8 @@ def main_menu_context_func():
             p3_d = json.load(f)
         temp_f = p3_d['selected_fields']
     else:
-        temp_f = f'{p3.p3_default_fields_l} (Defaults)'
+        if 'selected_fields' in p3.p3_d.keys():
+            temp_f = f'{p3.p3_d["selected_fields"]} (Defaults)'
         # either read data,
     print(f'Step 3 selected fields to print for each template: {temp_f}')
     print(60 * '-', '\n\n')
