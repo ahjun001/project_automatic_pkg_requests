@@ -612,7 +612,7 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
                         p3_selected_fields_values_by_prod_d[str(i)]['prod_n'] + '.svg'
                     )
 
-                    brcd_d = dict(p3_d['barcode_d']) if math.isclose(
+                    brcd_d = dict(p3_d['barcode_d']) if not math.isclose(
                         p3_d['barcode_d']['coef'], 0.0, abs_tol = 0.001
                     ) in p3_d.keys() else {}
 
