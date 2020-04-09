@@ -189,43 +189,40 @@ def load_o_create_mako_input_values_json(force_recreate = False):
             p1.load_p1b_indics_from_contract_l()
         if not p1.all_products_to_be_processed_set:
             p1.load_p1_all_products_to_be_processed_set()
-        if load_o_create_p3_fields_info_f():  # todo: already run, maybe redundant
-            # make a skeleton for p3_selected_fields_values_by_prod_d with key = prod
-            idx = 0
-            temp_d = {}
-            for prod in sorted(p1.all_products_to_be_processed_set):
-                temp_d[prod] = {'i': str(idx + 1), 'prod_n': prod, 'gm_zh': '', 'gm_fr': ''}  # todo: externalize
-                idx += 1
+        # make a skeleton for p3_selected_fields_values_by_prod_d with key = prod
+        idx = 0
+        temp_d = {}
+        for prod in sorted(p1.all_products_to_be_processed_set):
+            temp_d[prod] = {'i': str(idx + 1), 'prod_n': prod, 'gm_zh': '', 'gm_fr': ''}  # todo: externalize
+            idx += 1
 
-            # prepare to insert translations if needed
-            with open(os.path.join(p0_root_abs_dir + '/common', 'zh_fr.json')) as f:
-                zh_fr_d = json.load(f)
+        # prepare to insert translations if needed
+        with open(os.path.join(p0_root_abs_dir + '/common', 'zh_fr.json')) as f:
+            zh_fr_d = json.load(f)
 
-            # populate the skeleton
-            for indc_d in p1.p1b_indics_from_contract_l:  # loop over the big one once
-                if indc_d['prod_nr'] in p1.all_products_to_be_processed_set:
-                    if indc_d['what'] in p3_d['selected_fields']:  # loop over the smaller more
-                        temp_d[indc_d['prod_nr']][indc_d['what']] = indc_d['info']
-                        what_zh = indc_d['what']
-                        if what_zh in ['clr_zh', 'gm_zh', 'io_zh', 'lr_zh', 'spec_zh', 'mat2_zh']:  # todo: externalize
-                            what_fr = what_zh[:-2] + 'fr'
-                            temp_d[indc_d['prod_nr']][what_fr] = zh_fr_d[indc_d['info']]
-                        elif p1.doc_setup_d['custom_indics']:
-                            if what_zh == 'xl_prod_spec':
-                                dims = re.search(r"\d*x\d*\s*mm", indc_d['info']).group()
-                                largeur = re.search(r'(?<=x)\d*(?=\smm)', dims).group()
-                                temp_d[indc_d['prod_nr']]['dim'] = f'H. 2050 x l. {largeur} mm'
-                                model = re.search(r"JC-\w*", indc_d['info'])
-                                temp_d[indc_d['prod_nr']]['model'] = model.group() if model else 'ISOPLANE'
+        # populate the skeleton
+        for indc_d in p1.p1b_indics_from_contract_l:  # loop over the big one once
+            if indc_d['prod_nr'] in p1.all_products_to_be_processed_set:
+                if indc_d['what'] in p3_d['selected_fields']:  # loop over the smaller more
+                    temp_d[indc_d['prod_nr']][indc_d['what']] = indc_d['info']
+                    what_zh = indc_d['what']
+                    if what_zh in ['clr_zh', 'gm_zh', 'io_zh', 'lr_zh', 'spec_zh', 'mat2_zh']:  # todo: externalize
+                        what_fr = what_zh[:-2] + 'fr'
+                        temp_d[indc_d['prod_nr']][what_fr] = zh_fr_d[indc_d['info']]
+                    elif p1.doc_setup_d['custom_indics']:
+                        if what_zh == 'xl_prod_spec':
+                            dims = re.search(r"\d*x\d*\s*mm", indc_d['info']).group()
+                            largeur = re.search(r'(?<=x)\d*(?=\smm)', dims).group()
+                            temp_d[indc_d['prod_nr']]['dim'] = f'H. 2050 x l. {largeur} mm'
+                            model = re.search(r"JC-\w*", indc_d['info'])
+                            temp_d[indc_d['prod_nr']]['model'] = model.group() if model else 'ISOPLANE'
 
-            # build the dictionary p3_selected_fields_values_by_prod_d with key = i - 1
-            for v in temp_d.values():
-                p3_selected_fields_values_by_prod_d[str(int(v['i']) - 1)] = v
+        # build the dictionary p3_selected_fields_values_by_prod_d with key = i - 1
+        for v in temp_d.values():
+            p3_selected_fields_values_by_prod_d[str(int(v['i']) - 1)] = v
 
-            with open(filename, 'w') as f:
-                json.dump(p3_selected_fields_values_by_prod_d, f, ensure_ascii = False)
-        else:
-            print('|\n| No template has been selected for display\n|')
+        with open(filename, 'w') as f:
+            json.dump(p3_selected_fields_values_by_prod_d, f, ensure_ascii = False)
 
 
 def suggest_spacing_calc(lgth, template_view_box):
