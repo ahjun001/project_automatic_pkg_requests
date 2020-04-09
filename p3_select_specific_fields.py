@@ -21,12 +21,8 @@ p3_all_specific_fields_l = []  # list of fields from p1e_specific_fields_d_of_d
 p3_body_svg = ''  # contents of label_template_body.svg
 
 p3_default_fields_l = ['xl_prod_spec', 'u_parc']
-p3_d = {
-    "selected_fields": list(p3_default_fields_l),
-    "template_header": '',
-    "header_height": 7,
-}
-p3_f = ''  # None  # info on fields directory currently being edited
+p3_d = {}
+p3_f = ''
 p3_fields_rel_dir = ''  # currently working fields directory
 p3_selected_fields_values_by_prod_d = {}  # field values as in .mako_input.json
 page_view_box_w = 0
@@ -108,20 +104,26 @@ def load_o_create_p3_fields_info_f():
     if p3_fields_rel_dir:
         # either read data,
         p3_f = os.path.join(p1.p1_cntrct_abs_dir + '/' + p3_fields_rel_dir, 'template-info.json')
-        if pathlib.Path(p3_f).exists():
+        if pathlib.Path(p3_f).exists():  # file exists, check that all default value are present, if not print a msg
             with open(p3_f) as f:
                 p3_d = json.load(f)  # loads selected_fields, template_header, header_height, barcode_d
         # or populate missing fields with default information relative to the directory
         # other default information is set at variable initialization
-        else:
+
+        if 'selected_fields' not in p3_d.keys():
+            p3_d['selected_fields'] = p3_default_fields_l  # todo: check which should be tested first
+            pass
+        if 'header_height' not in p3_d.keys():
+            p3_d['header_height'] = 7
+        if 'template_header' not in p3_d.keys():
             p3_d['template_header'] = p3_fields_rel_dir[p3_fields_rel_dir.rfind('_') + 1:] + '唛头'
+        if 'barcode_d' not in p3_d.keys():
             p3_d['barcode_d'] = {
                 "coef": 0.0,
-                "x1": 0,
-                "y1": 0,
-                "x2": 0,
-                "y2": 0
+                "x1": 0, "y1": 0,
+                "x2": 0, "y2": 0
             }
+
         save_template_info_json()
         return True
     else:
@@ -614,7 +616,7 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
 
                     brcd_d = dict(p3_d['barcode_d']) if not math.isclose(
                         p3_d['barcode_d']['coef'], 0.0, abs_tol = 0.001
-                    ) in p3_d.keys() else {}
+                    ) else {}
 
                     if brcd_d:
                         if pathlib.Path(create_barcode_file(
@@ -1010,9 +1012,12 @@ def step_3__select_fields_to_print_for_each_template_选择每种标签类型的
         print('p1 has not run successfully')
     if not p1.read_dirs(p1.p1_cntrct_abs_dir):
         p2.create_default_templates()
+    # read existing p3 infrastructure
     if not p3_fields_rel_dir:
         drs = p1.read_dirs(p1.p1_cntrct_abs_dir)
         p3_fields_rel_dir = drs[0]
+    if not p3_d:
+        load_o_create_p3_fields_info_f()
 
     # initializing menus last, so that context functions display most recent information
     m.menu = 'select_specific_fields'
