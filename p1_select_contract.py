@@ -41,14 +41,25 @@ def dump_program_info_json():
         json.dump(p1_d, fw, ensure_ascii = False)
 
 
-def step_1__select_a_contract_选择合同号():
+def step_1__select_a_contract_选择合同号(test_contract_nr = ''):
     global p1_cntrct_abs_dir
     global p1_d
 
+    ini_xls = ''
     # (p1_d['cntrct_nr'], p1_d['fpath_init_xls'], p1_d['file_xls']) = (None, None, None)
     print('~~~ Step 1: Selecting a contract ~~~')
     print('~~~ Select a contract xls file in the graphic file browser -- mind the browser window could be hidden')
-    ini_xls = askopenfilename()
+    if test_contract_nr:
+        path = './contract_samples/' + test_contract_nr
+        _, _, files = next(os.walk(path))
+        for file in files:
+            path_f, file_ext = os.path.split(file)
+            _, ext = os.path.splitext(file_ext)
+            if ext == '.xls':
+                ini_xls = os.path.join('./contract_samples/' + test_contract_nr, file)
+        pass
+    else:
+        ini_xls = askopenfilename()
     if not ini_xls:
         return False
     # split path and filename
@@ -132,7 +143,7 @@ def load_o_create_program_info_d():
                     file_json = os.path.join(
                         p0_root_abs_dir + '/data/' + p1_d['cntrct_nr'],
                         p1_d['cntrct_nr'] + '_doc_setup.json'
-                                             )
+                    )
                     if pathlib.Path(file_json).exists():
                         return True  # (i) json and file already in repository
                     else:

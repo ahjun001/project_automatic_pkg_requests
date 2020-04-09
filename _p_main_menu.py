@@ -14,6 +14,13 @@ import pu_maintain_set_of_indicators_regex_to_be_searched as pu
 p0_root_abs_dir = os.path.dirname(os.path.abspath(__file__))  # root directory where the program is located
 
 
+def general_test():
+    tests_l = ['A006043-001', 'A011001-022', 'A911008-008']
+    for test_contract_nr in tests_l:
+        step_1__select_a_contract_选择合同号(test_contract_nr = test_contract_nr)
+        run_full_demo_with_selected_or_default_values_运行完整演示()
+
+
 def run_full_demo_with_selected_or_default_values_运行完整演示():
     p1.process_selected_contract()
     p2.create_default_templates()
@@ -62,10 +69,10 @@ def save_selected_contract():
             shutil.copy(os.path.join(p1.p1_cntrct_abs_dir + '/' + dr, 'label_template.svg'), main_dir + '/' + dr)
 
 
-def step_1__select_a_contract_选择合同号():
+def step_1__select_a_contract_选择合同号(test_contract_nr = ''):
     # p1.reset_globals()
     p3.reset_globals()
-    p1.step_1__select_a_contract_选择合同号()
+    p1.step_1__select_a_contract_选择合同号(test_contract_nr)
 
 
 def init():
@@ -79,6 +86,7 @@ def init():
         m.main_menu = m.menu
     m.menus = {
         m.menu: {
+            '44': general_test,
             '0': run_full_demo_with_selected_or_default_values_运行完整演示,
             '1': step_1__select_a_contract_选择合同号,
             '2': p2.step_2__select_templates_to_print_选择_编辑标签类型,
