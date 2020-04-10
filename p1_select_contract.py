@@ -594,7 +594,7 @@ def process_selected_contract():
     for k, v in p1c_prods_w_same_key_set.items():
         # indic is not a  packing quantity and is common to all products
         if k[0] != 'pack_qty' and v == all_products_to_be_processed_set:
-            if k[3]:
+            if k[3]: # todo: check why this sometimes does not happen
                 p1d_common_indics_l.append(k)
         else:
             for prod in v:
