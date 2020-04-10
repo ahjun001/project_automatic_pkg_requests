@@ -112,6 +112,8 @@ def load_o_create_p3_fields_info_f():
 
         if 'selected_fields' not in p3_d.keys():
             p3_d['selected_fields'] = ['xl_prod_spec', 'u_parc']
+        if 'partially_populated_fields' not in p3_d.keys():
+            p3_d['partially_populated_fields'] = ['gm_zh']
         if 'header_height' not in p3_d.keys():
             p3_d['header_height'] = 7
         if 'template_header' not in p3_d.keys():
@@ -193,7 +195,12 @@ def load_o_create_mako_input_values_json(force_recreate = False):
         idx = 0
         temp_d = {}
         for prod in sorted(p1.all_products_to_be_processed_set):
-            temp_d[prod] = {'i': str(idx + 1), 'prod_n': prod, 'gm_zh': '', 'gm_fr': ''}  # todo: externalize
+            # temp_d[prod] = {'i': str(idx + 1), 'prod_n': prod, 'gm_zh': '', 'gm_fr': ''}  # todo: externalize
+            temp_d[prod] = {'i': str(idx + 1), 'prod_n': prod}
+            for field in p3_d['partially_populated_fields']:
+                temp_d[prod][field] = ''
+                if field[-3:] == '_zh':
+                    temp_d[prod][field[:-2] + 'fr'] = ''
             idx += 1
 
         # prepare to insert translations if needed
@@ -206,7 +213,9 @@ def load_o_create_mako_input_values_json(force_recreate = False):
                 if indc_d['what'] in p3_d['selected_fields']:  # loop over the smaller more
                     temp_d[indc_d['prod_nr']][indc_d['what']] = indc_d['info']
                     what_zh = indc_d['what']
-                    if what_zh in ['clr_zh', 'gm_zh', 'io_zh', 'lr_zh', 'spec_zh', 'mat2_zh']:  # todo: externalize
+                    # internal convetion: all indics with name finishing with _zh will be translated into French
+                    # with ./common/zh_fr.json
+                    if what_zh[-3:] == '_zh':
                         what_fr = what_zh[:-2] + 'fr'
                         temp_d[indc_d['prod_nr']][what_fr] = zh_fr_d[indc_d['info']]
                     elif p1.doc_setup_d['custom_indics']:

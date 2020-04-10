@@ -19,6 +19,7 @@ def general_test():
     for test_contract_nr in tests_l:
         step_1__select_a_contract_选择合同号(test_contract_nr = test_contract_nr)
         run_full_demo_with_selected_or_default_values_运行完整演示()
+        # save_selected_contract()  # use when a new field has been added to template-info.json
 
 
 def run_full_demo_with_selected_or_default_values_运行完整演示():
