@@ -124,6 +124,14 @@ def load_o_create_p3_fields_info_f():
                 "x1": 0, "y1": 0,
                 "x2": 0, "y2": 0
             }
+        if 'mako_pre_proc_l' not in p3_d.keys():
+            p3_d['mako_pre_proc_l'] = {
+                "empty_new_indic": {
+                    "field": "",
+                    "regex": "",
+                    "default": ""
+                }
+            }
 
         save_template_info_json()
         return True
@@ -182,9 +190,9 @@ def load_o_create_mako_input_values_json(force_recreate = False):
 
     check_if_template_requirements_are_met()
     # make sure global variables are initialized in all situations, outside the loop to do it once only
-    filename = os.path.join(p1.p1_cntrct_abs_dir + '/' + p3_fields_rel_dir, '.mako_input.json')
-    if pathlib.Path(filename).exists() and not force_recreate:
-        with open(filename) as fr:
+    mako_input_json_s = os.path.join(p1.p1_cntrct_abs_dir + '/' + p3_fields_rel_dir, '.mako_input.json')
+    if pathlib.Path(mako_input_json_s).exists() and not force_recreate:
+        with open(mako_input_json_s) as fr:
             p3_selected_fields_values_by_prod_d = json.load(fr)
     else:
         if not p1.p1b_indics_from_contract_l:
@@ -213,24 +221,32 @@ def load_o_create_mako_input_values_json(force_recreate = False):
                 if indc_d['what'] in p3_d['selected_fields']:  # loop over the smaller more
                     temp_d[indc_d['prod_nr']][indc_d['what']] = indc_d['info']
                     what_zh = indc_d['what']
-                    # internal convetion: all indics with name finishing with _zh will be translated into French
+                    # internal convention: all indics with name finishing with _zh will be translated into French
                     # with ./common/zh_fr.json
                     if what_zh[-3:] == '_zh':
                         what_fr = what_zh[:-2] + 'fr'
                         temp_d[indc_d['prod_nr']][what_fr] = zh_fr_d[indc_d['info']]
-                    elif p1.doc_setup_d['custom_indics']:
-                        if what_zh == 'xl_prod_spec':
-                            dims = re.search(r"\d*x\d*\s*mm", indc_d['info']).group()
-                            largeur = re.search(r'(?<=x)\d*(?=\smm)', dims).group()
-                            temp_d[indc_d['prod_nr']]['dim'] = f'H. 2050 x l. {largeur} mm'
-                            model = re.search(r"JC-\w*", indc_d['info'])
-                            temp_d[indc_d['prod_nr']]['model'] = model.group() if model else 'ISOPLANE'
 
         # build the dictionary p3_selected_fields_values_by_prod_d with key = i - 1
         for v in temp_d.values():
             p3_selected_fields_values_by_prod_d[str(int(v['i']) - 1)] = v
 
-        with open(filename, 'w') as f:
+        # save results before adding new fields being derived from existing ones
+        # mako_pre_proc_json_s = os.path.join(p1.p1_cntrct_abs_dir + '/' + p3_fields_rel_dir, '.mako_preproc.json')
+        # with open(mako_pre_proc_json_s, 'w') as f:
+        #     json.dump(p3_selected_fields_values_by_prod_d, f, ensure_ascii = False)
+
+        # adding new fields being derived from existing ones, as defined in template-info.json
+        if not 'empty_new_indic' in p3_d['mako_pre_proc_l'].keys():
+            for new_field in p3_d['mako_pre_proc_l'].keys():
+                for k in p3_selected_fields_values_by_prod_d.keys():
+                    regex = p3_d['mako_pre_proc_l'][new_field]['regex']
+                    string = p3_selected_fields_values_by_prod_d[k][p3_d['mako_pre_proc_l'][new_field]['field']]
+                    out_field = re.search(regex, string)
+                    default = p3_d['mako_pre_proc_l'][new_field]['default']
+                    p3_selected_fields_values_by_prod_d[k][new_field] = out_field.group() if out_field else default
+
+        with open(mako_input_json_s, 'w') as f:
             json.dump(p3_selected_fields_values_by_prod_d, f, ensure_ascii = False)
 
 

@@ -2,6 +2,5 @@
   "margin_w": 15,
   "margin_h": 15,
   "cover_page": false,
-  "page_1_vert_offset": 150,
-  "custom_indics": true
+  "page_1_vert_offset": 150
 }
