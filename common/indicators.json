@@ -1,0 +1,182 @@
+[
+  {
+    "what": "pack",
+    "how": "(?<=外包数：)\\d+\\.\\d+"
+  },
+  {
+    "what": "parc",
+    "how": "(?<=总件数：)\\d+\\b"
+  },
+  {
+    "what": "u_parc",
+    "how": "(?<=\\d\\.\\d\\d/)\\d+\\b"
+  },
+  {
+    "what": "u_parc",
+    "how": "(?<=\\d\\d\\.\\d\\d/)\\d+\\b"
+  },
+  {
+    "what": "u_parc",
+    "how": "(?<=\\d\\\\d\\d.\\d\\d/)\\d+\\b"
+  },
+  {
+    "what": "u_parc",
+    "how": "(?<=\\d\\\\d\\d/)\\d+\\b"
+  },
+  {
+    "what": "plstc_bg",
+    "how": "\\d+(?=个/牢固透明塑料袋)"
+  },
+  {
+    "what": "plstc_bg",
+    "how": "\\d+(?=PCS/透明牢固尼龙袋)"
+  },
+  {
+    "what": "bg_pr_crgtd_bx",
+    "how": "\\d+(?=袋/瓦楞盒)"
+  },
+  {
+    "what": "bg_pr_o_bx",
+    "how": "\\d+(?=盒/外*箱)"
+  },
+  {
+    "what": "brandk",
+    "how": "Konfort\\+s\\*牌"
+  },
+  {
+    "what": "brandd",
+    "how": "DETOPLUS\\s*牌"
+  },
+  {
+    "what": "branddp",
+    "how": "DETO\\s*牌"
+  },
+  {
+    "what": "kg",
+    "how": "\\d*\\.*\\d+(?=\\s*[(kg)|(KG)])"
+  },
+  {
+    "what": "mm",
+    "how": "\\d*\\.*\\d+\\s*mm"
+  },
+  {
+    "what": "v_Hz",
+    "how": "(?<=额定电压/频率：).+(?=\\n)"
+  },
+  {
+    "what": "r_power",
+    "how": "(?<=额定功率：).+(?=\\n)"
+  },
+  {
+    "what": "l_flux",
+    "how": "(?<=光通量：).+(?=\\n)"
+  },
+  {
+    "what": "c_tmp",
+    "how": "(?<=色温：).+(?=\\n)"
+  },
+  {
+    "what": "c_idx",
+    "how": "(?<=显色指数：).+(?=\\n)"
+  },
+  {
+    "what": "b_ang",
+    "how": "(?<=光束角：).+(?=\\n)"
+  },
+  {
+    "what": "p_size",
+    "how": "(?<=产品尺寸：).+(?=\\n):"
+  },
+  {
+    "what": "prot_lev",
+    "how": "(?<=防护等级：).+(?=\\n)"
+  },
+  {
+    "what": "serv_lif",
+    "how": "(?<=使用寿命：).+(?=\\n)"
+  },
+  {
+    "what": "q_ass",
+    "how": ".+(?=品质保证\\n)"
+  },
+  {
+    "what": "mat1_zh",
+    "how": "\\w+(?=材料)"
+  },
+  {
+    "what": "mat1_zh",
+    "how": "\\w*钢"
+  },
+  {
+    "what": "mat2_zh",
+    "how": "表*面*镀*白*锌"
+  },
+  {
+    "what": "mat2_zh",
+    "how": "发黑"
+  },
+  {
+    "what": "mat2_zh",
+    "how": "本色"
+  },
+  {
+    "what": "nut_grade",
+    "how": "\\d+\\.*\\d*(?=级)"
+  },
+  {
+    "what": "nut_norm",
+    "how": "\\w+(?=螺母)"
+  },
+  {
+    "what": "nut_spec",
+    "how": "全丝"
+  },
+  {
+    "what": "clr_zh",
+    "how": "黑胡桃"
+  },
+  {
+    "what": "clr_zh",
+    "how": "黑色"
+  },
+  {
+    "what": "clr_zh",
+    "how": "白色"
+  },
+  {
+    "what": "gm_zh",
+    "how": "亚光"
+  },
+  {
+    "what": "gm_zh",
+    "how": "亮光"
+  },
+  {
+    "what": "io_zh",
+    "how": "内开(?=门)"
+  },
+  {
+    "what": "io_zh",
+    "how": "外开(?=门)"
+  },
+  {
+    "what": "lr_zh",
+    "how": "右开"
+  },
+  {
+    "what": "lr_zh",
+    "how": "左开"
+  },
+  {
+    "what": "spec_zh",
+    "how": "单门"
+  },
+  {
+    "what": "spec_zh",
+    "how": "子母防盗门"
+  },
+  {
+    "what": "spec_zh",
+    "how": "对开防盗门"
+  }
+]

@@ -9,7 +9,7 @@ import m_menus as m
 import p1_select_contract as p1
 import p2_select_templates as p2
 import p3_select_specific_fields as p3
-import pu_maintain_set_of_indicators_regex_to_be_searched as pu
+# import pu_maintain_set_of_indicators_regex_to_be_searched as pu
 
 p0_root_abs_dir = os.path.dirname(os.path.abspath(__file__))  # root directory where the program is located
 
@@ -98,7 +98,6 @@ def init():
             'd': m.debug,
         },
         'debug': {
-            'u': pu.u_maintain_set_of_indicators_regex_to_be_searched,
             'b': m.back_后退,
             'q': m.normal_exit_正常出口,
         },

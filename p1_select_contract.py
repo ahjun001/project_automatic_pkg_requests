@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 # p1_select_contract.py
-import csv
 import json
 import os
 import pathlib
@@ -281,16 +280,17 @@ def display_p1_all_products_to_be_processed_set():
 
 
 def load_p1_search_reg_ex_l():
-    with open(os.path.join(p0_root_abs_dir + '/common', 'indicators.csv')) as f:
-        my_dict_reader = csv.DictReader(f)
-        for row in my_dict_reader:
-            temp_dict = dict(row)
-            p1_search_reg_ex_l.append(temp_dict)
+    global p1_search_reg_ex_l
+
+    with open(os.path.join(p0_root_abs_dir + '/common', 'indicators.json')) as f:
+        p1_search_reg_ex_l = json.load(f)
     if p1_search_reg_ex_l:
         return True
 
 
 def display_p1_search_reg_ex_l():
+    global p1_search_reg_ex_l
+
     if load_p1_search_reg_ex_l():
         pprint.pprint(p1_search_reg_ex_l)
 
@@ -514,18 +514,14 @@ def process_selected_contract():
     # populate p1_cntrct_info_d: a structure to store template information, and its corresponding json file
     p1_cntrct_info_d['p1a_contract_json'] = rel_path_contract_json_f
 
-    # def create_2():
-    # reading info from ./common/indicators.csv, which was kept in csv format to make human input easier
     load_p1_search_reg_ex_l()
 
     # p1b_indics_from_contract_l: harvesting all indicators possibly available in the contract_json_d
     for row_indic in p1_search_reg_ex_l:
         what = row_indic['what']
-        info_kind = row_indic['info_kind']
         how = row_indic['how']
         for prod in contract_json_d['l_i']:  # inspecting products one by one
             tmp_dct = {  # adding 03.Prod_spec-产品规则 info
-                'info_kind': 'spec',
                 'what': 'xl_prod_spec',
                 'where': 'xl_quantity-数量',
                 'prod_nr': prod['01.TST_prod_#-需方产品编号'],
@@ -533,7 +529,6 @@ def process_selected_contract():
             }
             p1b_indics_from_contract_l.append(tmp_dct)
             tmp_dct = {  # adding 05.Quantity-数量 info
-                'info_kind': 'pack_qty',
                 'what': 'total_qty',
                 'where': 'xl_quantity-数量',
                 'prod_nr': prod['01.TST_prod_#-需方产品编号'],
@@ -549,8 +544,7 @@ def process_selected_contract():
                             srch.append(s.strip())  # strip the search result
                         for indication in srch:
                             tmp_dct = {
-                                'info_kind': info_kind,  # from indicators.csv: pack_qty, logo, spec, pack_spec
-                                'what': what,  # from indicators.csv : pack, kg, mm, 牌, v_Hz, plstc_bg
+                                'what': what,  # from indicators.json : pack, kg, mm, 牌, v_Hz, plstc_bg
                                 'where': key,  # xl cell: 10.Tech_spec-技术参数_2
                                 'info': indication,  # 1.00    = indic
                                 'prod_nr': prod["01.TST_prod_#-需方产品编号"],  # 1050205001#
@@ -569,10 +563,9 @@ def process_selected_contract():
         # p1c_prods_w_same_key_set = {}  # make a dictionary key= info, value = sets of prods with that key
         for row in p1b_indics_from_contract_l:
             # for index, row in c_df.iterrows():  # index is not used
-            if (row['info_kind'], row['what'], row['where'], row['info']) not in p1c_prods_w_same_key_set.keys():
-                p1c_prods_w_same_key_set[(row['info_kind'], row['what'], row['where'], row['info'])] = set()
-            p1c_prods_w_same_key_set[(row['info_kind'], row['what'], row['where'], row['info'])].add(
-                row['prod_nr'])
+            if (row['what'], row['where'], row['info']) not in p1c_prods_w_same_key_set.keys():
+                p1c_prods_w_same_key_set[(row['what'], row['where'], row['info'])] = set()
+            p1c_prods_w_same_key_set[(row['what'], row['where'], row['info'])].add(row['prod_nr'])
 
             # document in all_relevant_data_json
     p1c_file_out_f = '.p1c_' + p1_d['cntrct_nr'] + '_all_relevant_data.txt'
@@ -592,13 +585,13 @@ def process_selected_contract():
     # p6_split_between p6_common_indics and p6_specific_indics
     for k, v in p1c_prods_w_same_key_set.items():
         # indic is not a  packing quantity and is common to all products
-        if k[0] != 'pack_qty' and v == all_products_to_be_processed_set:
+        if k[0] not in ['pack', 'parc', 'u_parc'] and v == all_products_to_be_processed_set:
             p1d_common_indics_l.append(k)
         else:
             for prod in v:
                 if p1e_specific_fields_d_of_d.get(prod) is None:
                     p1e_specific_fields_d_of_d[prod] = {}
-                p1e_specific_fields_d_of_d[prod][k[1]] = k[3]  # prod_n : 'what' = indic
+                p1e_specific_fields_d_of_d[prod][k[0]] = k[2]  # prod_n : 'what' = indic
 
     # Checking that numbers are coherent before storing or displaying
     for k, v in p1e_specific_fields_d_of_d.items():
@@ -664,6 +657,7 @@ def init():
         m.menu: {
             '1': step_1__select_a_contract_选择合同号,
             '2': delete_all_data_on_selected_contract,
+            '3': process_selected_contract,
             'b': m.back_to_main_退到主程序,
             'q': m.normal_exit_正常出口,
             'd': m.debug,
@@ -672,7 +666,6 @@ def init():
             '1': display_p1_program_info_d,
             '2': display_p1_program_info_f,
             '3': load_o_create_program_info_d,
-            '4': process_selected_contract,
             '5': display_p1_search_reg_ex_l,
             '6': display_p1_all_products_to_be_processed_set,
             '7': display_p1b_indics_from_contract_l,
