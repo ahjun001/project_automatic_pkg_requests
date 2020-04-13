@@ -16,7 +16,6 @@ import m_menus as m
 
 # globals that don't need to be reset when a new contract is processed
 p0_root_abs_dir = os.path.dirname(os.path.abspath(__file__))  # root directory where the program is located
-indicators_csv = os.path.join(p0_root_abs_dir + '/common', 'indicators.csv')
 
 # globals that need to be reset when a new contract is processed
 all_products_to_be_processed_set = set()
@@ -282,7 +281,7 @@ def display_p1_all_products_to_be_processed_set():
 
 
 def load_p1_search_reg_ex_l():
-    with open(indicators_csv) as f:
+    with open(os.path.join(p0_root_abs_dir + '/common', 'indicators.csv')) as f:
         my_dict_reader = csv.DictReader(f)
         for row in my_dict_reader:
             temp_dict = dict(row)
@@ -594,8 +593,7 @@ def process_selected_contract():
     for k, v in p1c_prods_w_same_key_set.items():
         # indic is not a  packing quantity and is common to all products
         if k[0] != 'pack_qty' and v == all_products_to_be_processed_set:
-            if k[3]: # todo: check why this sometimes does not happen
-                p1d_common_indics_l.append(k)
+            p1d_common_indics_l.append(k)
         else:
             for prod in v:
                 if p1e_specific_fields_d_of_d.get(prod) is None:
