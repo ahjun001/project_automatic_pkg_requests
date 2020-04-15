@@ -24,8 +24,10 @@
       <w>lgth</w>
       <w>lngth</w>
       <w>noir</w>
+      <w>pathlib</w>
       <w>pdfunite</w>
       <w>poil</w>
+      <w>preproc</w>
       <w>prfx</w>
       <w>prog</w>
       <w>pylint</w>
@@ -39,6 +41,7 @@
       <w>tuitos</w>
       <w>venv</w>
       <w>webbrowser</w>
+      <w>xlink</w>
       <w>xreader</w>
       <w>zingué</w>
     </words>

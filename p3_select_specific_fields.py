@@ -124,14 +124,29 @@ def load_o_create_p3_fields_info_f():
                 "x1": 0, "y1": 0,
                 "x2": 0, "y2": 0
             }
-        if 'mako_pre_proc_l' not in p3_d.keys():
-            p3_d['mako_pre_proc_l'] = {
+        if 'mako_pre_proc_d' not in p3_d.keys():
+            p3_d['mako_pre_proc_d'] = {
                 "empty_new_indic": {
                     "field": "",
                     "regex": "",
                     "default": ""
                 }
             }
+        if 'pics_d' not in p3_d.keys():
+            p3_d['pics_d'] = False
+        else:
+            if p3_d['pics_d'] is True:
+                if not p1.all_products_to_be_processed_set:
+                    p1.load_p1_all_products_to_be_processed_set()
+                p3_d['pics_d'] = {}
+                for prod_nr in list(p1.all_products_to_be_processed_set):
+                    p3_d['pics_d'][prod_nr] = {
+                            'file': 'pic_0.png',
+                            'x': 0,
+                            'y': 0,
+                            'width': 0,
+                            'height': 0
+                        }
 
         save_template_info_json()
         return True
@@ -237,13 +252,13 @@ def load_o_create_mako_input_values_json(force_recreate = False):
         #     json.dump(p3_selected_fields_values_by_prod_d, f, ensure_ascii = False)
 
         # adding new fields being derived from existing ones, as defined in template-info.json
-        if not 'empty_new_indic' in p3_d['mako_pre_proc_l'].keys():
-            for new_field in p3_d['mako_pre_proc_l'].keys():
+        if 'empty_new_indic' not in p3_d['mako_pre_proc_d'].keys():
+            for new_field in p3_d['mako_pre_proc_d'].keys():
                 for k in p3_selected_fields_values_by_prod_d.keys():
-                    regex = p3_d['mako_pre_proc_l'][new_field]['regex']
-                    string = p3_selected_fields_values_by_prod_d[k][p3_d['mako_pre_proc_l'][new_field]['field']]
+                    regex = p3_d['mako_pre_proc_d'][new_field]['regex']
+                    string = p3_selected_fields_values_by_prod_d[k][p3_d['mako_pre_proc_d'][new_field]['field']]
                     out_field = re.search(regex, string)
-                    default = p3_d['mako_pre_proc_l'][new_field]['default']
+                    default = p3_d['mako_pre_proc_d'][new_field]['default']
                     p3_selected_fields_values_by_prod_d[k][new_field] = out_field.group() if out_field else default
 
         with open(mako_input_json_s, 'w') as f:
@@ -562,7 +577,20 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
         template_nr = 0  # number templates so as to make headers
         page = 1  # nr of page being built
         for p3_fields_rel_dir in drs:  # looping on templates
+
+            # check that, if pictures need to be inserted, a directory for picture files does exist
+            load_o_create_p3_fields_info_f()
             p3_fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir)  # dir for header & body
+            # if type(p3_d['pics_d']) != 'bool' and p3_d['pics_d']:
+            #     dir_s = os.path.join(p3_fields_abs_dir, 'pics')
+            #     if not pathlib.Path(dir_s).exists():
+            #         print(
+            #             f'|\n| Cannot access {dir_s} : No such directory\n| '
+            #             'Create one manually and put picture files as indicated by template-info.json\n| '
+            #             'Exiting program ...\n|'
+            #         )
+            #         exit()
+
             create_template_header_n_body_if_not_exist(p3_fields_rel_dir)
             with open(os.path.join(p3_fields_abs_dir, '.label_template_header.svg')) as h:
                 header = h.read()
@@ -629,12 +657,39 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
                 while ox + template_view_box_w <= page_view_box_w and i < (1 if only_1_prod else lngth):
                     fw.write(r"<g transform = 'translate(" + f"{ox + spacing_w}, {oy + spacing_h})'>\n")
 
+                    # link a picture file if there is one to link
+                    if type(p3_d['pics_d']) != 'bool' and p3_d['pics_d']:
+                        prod_nr = p3_selected_fields_values_by_prod_d[str(i)]['prod_n']
+                        if prod_nr in p3_d['pics_d'].keys():
+                            filename = os.path.join(
+                                p3_fields_abs_dir, p3_d['pics_d'][prod_nr]['file']
+                            )
+                            if pathlib.Path(filename).exists():
+                                fw.write(
+                                    f"<svg x='{p3_d['pics_d'][prod_nr]['x']}' "
+                                    f"y='{p3_d['pics_d'][prod_nr]['y']}' "
+                                    f"width='{p3_d['pics_d'][prod_nr]['width']}' "
+                                    f"height='{p3_d['pics_d'][prod_nr]['height']}' >\n"
+                                    f"<image xlink:href='{p3_d['pics_d'][prod_nr]['file']}' "
+                                    "x='0' y='0' width='100%' height='100%' />\n"
+                                    f"</svg>\n"
+                                )
+                            else:
+                                print(
+                                    f'|\n| Cannot access {filename}: No such file \n'
+                                    '| Make sure it exists as indicated by template-info.json'
+                                )
+                                exit()
+
                     # create the path to a potential barcode file
                     barcode_f = os.path.join(
                         os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir),
                         p3_selected_fields_values_by_prod_d[str(i)]['prod_n'] + '.svg'
                     )
 
+                    # todo: change barcode files to nr_bc.svg then pics file to nr_....png and include in temp-info.json
+                    # a blank template to write barcodes is systematically in template-info.json
+                    # so check if blank fields have been populated.
                     brcd_d = dict(p3_d['barcode_d']) if not math.isclose(
                         p3_d['barcode_d']['coef'], 0.0, abs_tol = 0.001
                     ) else {}
