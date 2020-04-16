@@ -50,6 +50,20 @@ def save_template_info_json():
         json.dump(p3_d, f, ensure_ascii = False)
 
 
+def extract_svg_for_inserting(inkscape_filename, insert_filename):
+    # body_svg = ''
+    with open(inkscape_filename) as fr, open(insert_filename, 'w') as fw:
+        write_b = False
+        lines = fr.readlines()
+        for i in range(len(lines) - 1):
+            if r'</metadata>' in lines[i]:
+                write_b = True
+                continue
+            if write_b:
+                # body_svg += lines[i]
+                fw.write(lines[i])
+
+
 def create_template_header_n_body_if_not_exist(some_rel_dir):
     """
     copy header, also template if necessary, build body from template.svg copy that is in repository directory
@@ -141,12 +155,13 @@ def load_o_create_p3_fields_info_f():
                 p3_d['pics_d'] = {}
                 for prod_nr in list(p1.all_products_to_be_processed_set):
                     p3_d['pics_d'][prod_nr] = {
-                            'file': 'pic_0.png',
-                            'x': 0,
-                            'y': 0,
-                            'width': 0,
-                            'height': 0
-                        }
+                        'file': 'pic_0.png',
+                        'x': 0,
+                        'y': 0,
+                        'coef': 0,
+                        'width': 0,
+                        'height': 0
+                    }
 
         save_template_info_json()
         return True
@@ -661,19 +676,34 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
                     if type(p3_d['pics_d']) != 'bool' and p3_d['pics_d']:
                         prod_nr = p3_selected_fields_values_by_prod_d[str(i)]['prod_n']
                         if prod_nr in p3_d['pics_d'].keys():
-                            filename = os.path.join(
-                                p3_fields_abs_dir, p3_d['pics_d'][prod_nr]['file']
-                            )
+                            filename = os.path.join(p3_fields_abs_dir, p3_d['pics_d'][prod_nr]['file'])
                             if pathlib.Path(filename).exists():
-                                fw.write(
-                                    f"<svg x='{p3_d['pics_d'][prod_nr]['x']}' "
-                                    f"y='{p3_d['pics_d'][prod_nr]['y']}' "
-                                    f"width='{p3_d['pics_d'][prod_nr]['width']}' "
-                                    f"height='{p3_d['pics_d'][prod_nr]['height']}' >\n"
-                                    f"<image xlink:href='{p3_d['pics_d'][prod_nr]['file']}' "
-                                    "x='0' y='0' width='100%' height='100%' />\n"
-                                    f"</svg>\n"
-                                )
+                                _, ext = os.path.splitext(filename)
+                                if ext == '.svg':
+                                    i_filename = os.path.join(p3_fields_abs_dir, '.' + p3_d['pics_d'][prod_nr]['file'])
+                                    if not pathlib.Path(i_filename).exists():
+                                        extract_svg_for_inserting(filename, i_filename)
+                                    with open(i_filename) as f:
+                                        fw.write(  # todo: change into a list
+                                            f"<g transform = 'matrix("
+                                            f"{p3_d['pics_d'][prod_nr]['coef']},0,0,{p3_d['pics_d'][prod_nr]['coef']},"
+                                            f"{p3_d['pics_d'][prod_nr]['x']},{p3_d['pics_d'][prod_nr]['y']}"
+                                            ")'>\n")
+                                        fw.write(f.read())
+                                        fw.write(
+                                            f"</g>\n"
+                                        )
+                                        # os.remove(i_filename)
+                                else:
+                                    fw.write(
+                                        f"<svg x='{p3_d['pics_d'][prod_nr]['x']}' "
+                                        f"y='{p3_d['pics_d'][prod_nr]['y']}' "
+                                        f"width='{p3_d['pics_d'][prod_nr]['width']}' "
+                                        f"height='{p3_d['pics_d'][prod_nr]['height']}' >\n"
+                                        f"<image xlink:href='{p3_d['pics_d'][prod_nr]['file']}' "
+                                        "x='0' y='0' width='100%' height='100%' />\n"
+                                        f"</svg>\n"
+                                    )
                             else:
                                 print(
                                     f'|\n| Cannot access {filename}: No such file \n'
@@ -698,24 +728,22 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
                         if pathlib.Path(create_barcode_file(
                             p3_selected_fields_values_by_prod_d[str(i)]['prod_n']
                         )).exists():
-                            fw.write(
-                                f"<g transform = 'matrix("
-                                f"{brcd_d['coef']},0,0,{brcd_d['coef']},"
-                                f"{brcd_d['x1']},{brcd_d['y1']}"
-                                f")'>\n"
-                            )
                             with open(barcode_f) as f:
+                                fw.write(  # todo: change into a list
+                                    f"<g transform = 'matrix("
+                                    f"{brcd_d['coef']},0,0,{brcd_d['coef']},"
+                                    f"{brcd_d['x1']},{brcd_d['y1']}"
+                                    ")'>\n")
                                 fw.write(f.read())
-                            fw.write("</g>\n")
-                            fw.write(
-                                f"<g transform = 'matrix("
-                                f"{brcd_d['coef']},0,0,{brcd_d['coef']},"
-                                f"{brcd_d['x2']},{brcd_d['y2']}"
-                                f")'>\n"
-                            )
-                            with open(barcode_f) as f:
+                                fw.write(
+                                    "</g>\n"
+                                    f"<g transform = 'matrix("
+                                    f"{brcd_d['coef']},0,0,{brcd_d['coef']},"
+                                    f"{brcd_d['x2']},{brcd_d['y2']}"
+                                    f")'>\n"
+                                )
                                 fw.write(f.read())
-                            fw.write("</g>\n")
+                                fw.write("</g>\n")
 
                     # print(  # for debug purposes
                     #     f'{p3_fields_rel_dir} page: {page} ',
