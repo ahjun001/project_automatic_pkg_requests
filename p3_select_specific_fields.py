@@ -233,7 +233,6 @@ def load_o_create_mako_input_values_json(force_recreate = False):
         idx = 0
         temp_d = {}
         for prod in sorted(p1.all_products_to_be_processed_set):
-            # temp_d[prod] = {'i': str(idx + 1), 'prod_n': prod, 'gm_zh': '', 'gm_fr': ''}  # todo: externalize
             temp_d[prod] = {'i': str(idx + 1), 'prod_n': prod}
             for field in p3_d['partially_populated_fields']:
                 temp_d[prod][field] = ''
@@ -693,14 +692,15 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
                                         fw.write(
                                             f"</g>\n"
                                         )
-                                        # os.remove(i_filename)
+                                        os.remove(i_filename)
                                 else:
                                     fw.write(
                                         f"<svg x='{p3_d['pics_d'][prod_nr]['x']}' "
                                         f"y='{p3_d['pics_d'][prod_nr]['y']}' "
                                         f"width='{p3_d['pics_d'][prod_nr]['width']}' "
                                         f"height='{p3_d['pics_d'][prod_nr]['height']}' >\n"
-                                        f"<image xlink:href='{p3_d['pics_d'][prod_nr]['file']}' "
+                                        f"<image xlink:href='{f'{p3_fields_abs_dir}/'}"
+                                        f"{p3_d['pics_d'][prod_nr]['file']}' "
                                         "x='0' y='0' width='100%' height='100%' />\n"
                                         f"</svg>\n"
                                     )
@@ -717,7 +717,6 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
                         p3_selected_fields_values_by_prod_d[str(i)]['prod_n'] + '.svg'
                     )
 
-                    # todo: change barcode files to nr_bc.svg then pics file to nr_....png and include in temp-info.json
                     # a blank template to write barcodes is systematically in template-info.json
                     # so check if blank fields have been populated.
                     brcd_d = dict(p3_d['barcode_d']) if not math.isclose(
