@@ -678,7 +678,8 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
                     if type(p3_d['pics_d']) != 'bool' and p3_d['pics_d']:
                         prod_nr = p3_selected_fields_values_by_prod_d[str(i)]['prod_n']
                         if prod_nr in p3_d['pics_d'].keys():
-                            filename = os.path.join(p3_fields_abs_dir + '/pics', p3_d['pics_d'][prod_nr]['file'])
+                            # filename = os.path.join(p3_fields_abs_dir + '/pics', p3_d['pics_d'][prod_nr]['file'])
+                            filename = os.path.join(p3_fields_abs_dir, p3_d['pics_d'][prod_nr]['file'])
                             if pathlib.Path(filename).exists():
                                 _, ext = os.path.splitext(filename)
                                 if ext == '.svg':

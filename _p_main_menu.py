@@ -9,17 +9,23 @@ import m_menus as m
 import p1_select_contract as p1
 import p2_select_templates as p2
 import p3_select_specific_fields as p3
+
 # import pu_maintain_set_of_indicators_regex_to_be_searched as pu
 
 p0_root_abs_dir = os.path.dirname(os.path.abspath(__file__))  # root directory where the program is located
 
 
-def general_test():
+def run_full_demo_for_a_selection_of_contracts(save = False):
     tests_l = ['A006043-001', 'A011001-022', 'A911008-008']
     for test_contract_nr in tests_l:
         step_1__select_a_contract_选择合同号(test_contract_nr = test_contract_nr)
         run_full_demo_with_selected_or_default_values_运行完整演示()
-        # save_selected_contract()  # use when a new field has been added to template-info.json
+        if save:
+            save_selected_contract()  # use when a new field has been added to template-info.json
+
+
+def run_full_demo_and_save_a_selection_of_contracts():
+    run_full_demo_for_a_selection_of_contracts(save = True)
 
 
 def run_full_demo_with_selected_or_default_values_运行完整演示():
@@ -87,12 +93,13 @@ def init():
         m.main_menu = m.menu
     m.menus = {
         m.menu: {
-            '44': general_test,
+            '00': run_full_demo_for_a_selection_of_contracts,
             '0': run_full_demo_with_selected_or_default_values_运行完整演示,
             '1': step_1__select_a_contract_选择合同号,
             '2': p2.step_2__select_templates_to_print_选择_编辑标签类型,
             '3': p3.step_3__select_fields_to_print_for_each_template_选择每种标签类型的资料,
             '4': save_selected_contract,
+            '44': run_full_demo_and_save_a_selection_of_contracts,
             '5': p1.process_selected_contract,
             'q': m.normal_exit_正常出口,
             'd': m.debug,
