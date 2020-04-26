@@ -42,7 +42,10 @@ def main_menu_context_func():
     if not templ_l:
         templ_l, default = p2.p2_default_templates_l, ' (Default)'
     print(f'Step 2 selected templates to print: {templ_l} {default}')
-    p3_f = os.path.join(p1.p1_cntrct_abs_dir + '/' + templ_l[0], 'template-info.json')
+    p3_f = os.path.join(
+        os.path.join(p1.p1_cntrct_abs_dir, templ_l[0]),
+        'template-info.json'
+    )
     if pathlib.Path(p3_f).exists():
         with open(p3_f) as f:
             p3_d = json.load(f)
@@ -63,17 +66,45 @@ context_func_d = {
 
 
 def save_selected_contract():
-    main_dir = p0_root_abs_dir + '/contract_samples/' + p1.p1_d['cntrct_nr']
-    copy_dir = main_dir + '_' + str(datetime.timestamp(datetime.now()))
+    # main_dir = p0_root_abs_dir + '/contract_samples/' + p1.p1_d['cntrct_nr']
+    main_dir = os.path.join(
+        os.path.join(
+            p0_root_abs_dir,
+            'contract_samples'
+        ),
+        p1.p1_d['cntrct_nr']
+    )
+
+    # copy_dir = main_dir + '_' + str(datetime.timestamp(datetime.now()))
+    copy_dir = os.path.join(
+        os.path.join(
+            main_dir,
+            '_'
+        ),
+        str(datetime.timestamp(datetime.now()))
+    )
     shutil.copytree(main_dir, copy_dir)
 
-    shutil.copy(os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['cntrct_nr'] + '_doc_setup.json'), main_dir)
+    shutil.copy(
+        os.path.join(
+            os.path.join(
+                p1.p1_cntrct_abs_dir, p1.p1_d['cntrct_nr'],
+                '_doc_setup.json'
+            )
+        ), main_dir
+    )
 
     drs = p1.read_dirs(p1.p1_cntrct_abs_dir)
     if drs:
         for dr in drs:
-            shutil.copy(os.path.join(p1.p1_cntrct_abs_dir + '/' + dr, 'template-info.json'), main_dir + '/' + dr)
-            shutil.copy(os.path.join(p1.p1_cntrct_abs_dir + '/' + dr, 'label_template.svg'), main_dir + '/' + dr)
+            shutil.copy(
+                os.path.join(os.path.join(p1.p1_cntrct_abs_dir, dr), 'template-info.json'),
+                os.path.join(main_dir, dr)
+            )
+            shutil.copy(
+                os.path.join(os.path.join(p1.p1_cntrct_abs_dir, dr), 'label_template.svg'),
+                os.path.join(main_dir, dr)
+            )
 
 
 def step_1__select_a_contract_选择合同号(test_contract_nr = ''):

@@ -35,7 +35,7 @@ def dump_program_info_json():
     global prog_info_json_f
     global p1_d
     # document the info in program-info.json
-    with open(prog_info_json_f, 'w', encoding='utf8') as fw:
+    with open(prog_info_json_f, 'w', encoding = 'utf8') as fw:
         # json.dump(p1_d, fw, ensure_ascii = False).encode('utf8')
         json.dump(p1_d, fw, ensure_ascii = False)
 
@@ -49,13 +49,14 @@ def step_1__select_a_contract_选择合同号(test_contract_nr = ''):
     print('~~~ Step 1: Selecting a contract ~~~')
     print('~~~ Select a contract xls file in the graphic file browser -- mind the browser window could be hidden')
     if test_contract_nr:
-        path = './contract_samples/' + test_contract_nr
+        # path = './contract_samples/' + test_contract_nr
+        path = os.path.join('contract_samples', test_contract_nr)
         _, _, files = next(os.walk(path))
         for file in files:
             path_f, file_ext = os.path.split(file)
             _, ext = os.path.splitext(file_ext)
             if ext == '.xls':
-                ini_xls = os.path.join('./contract_samples/' + test_contract_nr, file)
+                ini_xls = os.path.join(os.path.join('contract_samples', test_contract_nr), file)
         pass
     else:
         ini_xls = askopenfilename()
@@ -72,13 +73,15 @@ def step_1__select_a_contract_选择合同号(test_contract_nr = ''):
         if s:
             print(f"Processing {s}")
             p1_d['cntrct_nr'] = s
-            p1_cntrct_abs_dir = os.path.join(p0_root_abs_dir + '/data/' + p1_d['cntrct_nr'])
+            p1_cntrct_abs_dir = os.path.join(os.path.join(p0_root_abs_dir, 'data'), p1_d['cntrct_nr'])
             if not pathlib.Path(p1_cntrct_abs_dir).exists():
                 os.mkdir(p1_cntrct_abs_dir, mode = 0o700)
                 # do not overwrite an existing contract file
             p1_d['file_xls'] = filename_ext
             p1_d['fpath_init_xls'] = ini_xls
-            filename = os.path.join(p0_root_abs_dir + '/data/' + p1_d['cntrct_nr'], p1_d['file_xls'])
+            filename = os.path.join(os.path.join(os.path.join(p0_root_abs_dir, 'data'), p1_d['cntrct_nr']),
+                                    p1_d['file_xls']
+                                    )
             if not pathlib.Path(filename).exists():
                 shutil.copy(p1_d['fpath_init_xls'], p1_cntrct_abs_dir)
 
@@ -95,9 +98,9 @@ def step_1__select_a_contract_选择合同号(test_contract_nr = ''):
             _, dirs, _ = next(os.walk(path))
             if dirs:
                 for some_dir in dirs:
-                    dest_dir = p1_cntrct_abs_dir + '/' + some_dir
+                    dest_dir = os.path.join(p1_cntrct_abs_dir, some_dir)
                     if not pathlib.Path(dest_dir).exists():
-                        shutil.copytree(path + '/' + some_dir, dest_dir)
+                        shutil.copytree(os.path.join(path, some_dir), dest_dir)
             process_selected_contract()
             return True
         else:  # the prefix has not been checked
@@ -129,20 +132,19 @@ def load_o_create_program_info_d():
     if pathlib.Path(prog_info_json_f).exists():
         # then load the info from (i) the repository
         # or (ii) re-create it from the initial file
-        with open(prog_info_json_f, encoding='utf8') as f:
+        with open(prog_info_json_f, encoding = 'utf8') as f:
             p1_d = json.load(f)
         if 'cntrct_nr' in p1_d.keys():
-            p1_cntrct_abs_dir = p0_root_abs_dir + f'/data/{p1_d["cntrct_nr"]}'
+            p1_cntrct_abs_dir = os.path.join(os.path.join(p0_root_abs_dir, 'data'), f'{p1_d["cntrct_nr"]}')
             if not pathlib.Path(p1_cntrct_abs_dir).exists():
                 print(f"|\n| Cannot access {p1_cntrct_abs_dir} directory as in 'program-info.json', creating one\n|")
                 os.mkdir(p1_cntrct_abs_dir, mode = 0o700)
             if 'file_xls' in p1_d.keys():
-                file_xls = os.path.join(p0_root_abs_dir + '/data/' + p1_d['cntrct_nr'], p1_d['file_xls'])
+                file_xls = os.path.join(os.path.join(os.path.join(p0_root_abs_dir, 'data'), p1_d['cntrct_nr']),
+                                        p1_d['file_xls'])
                 if pathlib.Path(file_xls).exists():
-                    file_json = os.path.join(
-                        p0_root_abs_dir + '/data/' + p1_d['cntrct_nr'],
-                        p1_d['cntrct_nr'] + '_doc_setup.json'
-                    )
+                    file_json = os.path.join(os.path.join(os.path.join(p0_root_abs_dir, 'data'), p1_d['cntrct_nr']),
+                                             p1_d['cntrct_nr'] + '_doc_setup.json')
                     if pathlib.Path(file_json).exists():
                         return True  # (i) json and file already in repository
                     else:
@@ -170,7 +172,9 @@ def load_o_create_program_info_d():
                     _, dirs, _ = next(os.walk(path))
                     if dirs:
                         for some_dir in dirs:
-                            shutil.copytree(path + '/' + some_dir, p1_cntrct_abs_dir + '/' + some_dir)
+                            shutil.copytree(os.path.join(path, some_dir),
+                                            os.path.join(p1_cntrct_abs_dir, some_dir)
+                                            )
                     doc_setup_f_ini = os.path.join(path, p1_d['cntrct_nr'] + '_doc_setup.json')
                     if pathlib.Path(doc_setup_f_ini).exists():
                         shutil.copy(doc_setup_f_ini, p1_cntrct_abs_dir)
@@ -205,7 +209,8 @@ def load_contract_info_d():
     else:
         if not p1_cntrct_abs_dir or 'cntrct_nr' not in p1_d.keys():
             process_selected_contract()
-    with open(os.path.join(p1_cntrct_abs_dir, '.' + p1_d['cntrct_nr'] + '_contract-info.json'), encoding='utf8') as fi:
+    with open(os.path.join(os.path.join(p1_cntrct_abs_dir, p1_d['cntrct_nr']), '_contract-info.json'),
+              encoding = 'utf8') as fi:
         p1_cntrct_info_d = json.load(fi)
     return True
 
@@ -229,7 +234,7 @@ def delete_all_data_on_selected_contract():
     global p1_d
     global p0_root_abs_dir
     print('~~~ deleting non-empty directories ~~~')
-    drs = read_dirs(p0_root_abs_dir + '/data/')
+    drs = read_dirs(os.path.join(p0_root_abs_dir, 'data'))
     if not drs:
         return
     for i in range(len(drs)):
@@ -252,7 +257,7 @@ def delete_all_data_on_selected_contract():
                         )
                         os.remove(os.path.join(p0_root_abs_dir, 'program-info.json'))
                         p1_d = {'cntrct_nr': ''}
-                    shutil.rmtree(p0_root_abs_dir + '/data/' + drs[int(s)])
+                    shutil.rmtree(os.path.join(os.path.join(p0_root_abs_dir, 'data'), drs[int(s)]))
                     break
                 else:
                     print('Integer, but not an option, try again')
@@ -265,8 +270,8 @@ def load_p1_all_products_to_be_processed_set():
     global p1_cntrct_info_f
     global all_products_to_be_processed_set
     if not p1_cntrct_info_d:
-        p1_cntrct_info_f = os.path.join(p1_cntrct_abs_dir, '.' + p1_d['cntrct_nr'] + '_contract-info.json')
-        with open(p1_cntrct_info_f, encoding='utf8') as f1:
+        p1_cntrct_info_f = os.path.join(os.path.join(p1_cntrct_abs_dir, p1_d['cntrct_nr']), '_contract-info.json')
+        with open(p1_cntrct_info_f, encoding = 'utf8') as f1:
             p1_cntrct_info_d = json.load(f1)
 
     all_products_to_be_processed_set = sorted(p1_cntrct_info_d['all_products_to_be_processed_set'])
@@ -283,7 +288,7 @@ def display_p1_all_products_to_be_processed_set():
 def load_p1_search_reg_ex_l():
     global p1_search_reg_ex_l
 
-    with open(os.path.join(p0_root_abs_dir + '/common', 'indicators.json'), encoding='utf8') as f:
+    with open(os.path.join(os.path.join(p0_root_abs_dir, 'common'), 'indicators.json'), encoding = 'utf8') as f:
         p1_search_reg_ex_l = json.load(f)
     if p1_search_reg_ex_l:
         return True
@@ -303,7 +308,7 @@ def load_p1b_indics_from_contract_l():
         if not load_contract_info_d():
             print('p1 has not run successfully')
     filename = p1_cntrct_info_d['p1b_indics_from_contract_l']
-    with open(os.path.join(p1_cntrct_abs_dir, filename), encoding='utf8') as f1b:
+    with open(os.path.join(p1_cntrct_abs_dir, filename), encoding = 'utf8') as f1b:
         p1b_indics_from_contract_l = json.load(f1b)
         return True
 
@@ -320,7 +325,7 @@ def display_p1c_all_relevant_data():
         if not load_contract_info_d():
             print('p1 has not run successfully')
     filename = p1_cntrct_info_d['p1c_all_relevant_data']
-    with open(os.path.join(p1_cntrct_abs_dir, filename), encoding='utf8') as f1c:
+    with open(os.path.join(p1_cntrct_abs_dir, filename), encoding = 'utf8') as f1c:
         p1c_prods_w_same_key_set = f1c.read()
     print(p1c_prods_w_same_key_set)
 
@@ -332,7 +337,7 @@ def display_p1d_common_indics_l():
         if not load_contract_info_d():
             print('p1 has not run successfully')
     filename = p1_cntrct_info_d['p1d_extract_common']
-    with open(os.path.join(p1_cntrct_abs_dir, filename), encoding='utf8') as f1d:
+    with open(os.path.join(p1_cntrct_abs_dir, filename), encoding = 'utf8') as f1d:
         p1d_common_indics_l = json.load(f1d)
     pprint.pprint(p1d_common_indics_l)
 
@@ -344,7 +349,7 @@ def load_p1e_specific_fields_d_of_d_n_p3_needed_vars():
         if not load_contract_info_d():
             print('p1 has not run successfully')
     filename = p1_cntrct_info_d['p1e_extract_specifics']
-    with open(os.path.join(p1_cntrct_abs_dir, filename), encoding='utf8') as f1e:
+    with open(os.path.join(p1_cntrct_abs_dir, filename), encoding = 'utf8') as f1e:
         p1e_specific_fields_d_of_d = json.load(f1e)
     if p1e_specific_fields_d_of_d:
         return True
@@ -362,14 +367,14 @@ def load_o_create_doc_set_up():
 
     filename = os.path.join(p1_cntrct_abs_dir, p1_d['cntrct_nr'] + '_doc_setup.json')
     if pathlib.Path(filename).exists():
-        with open(filename, encoding='utf8') as f:
+        with open(filename, encoding = 'utf8') as f:
             doc_setup_d = json.load(f)
     else:
         doc_setup_d['margin_w'] = 15
         doc_setup_d['margin_h'] = 15
         doc_setup_d['cover_page'] = True
         doc_setup_d['page_1_vert_offset'] = 0
-        with open(filename, 'w', encoding='utf8') as f:
+        with open(filename, 'w', encoding = 'utf8') as f:
             json.dump(doc_setup_d, f, ensure_ascii = False)
 
 
@@ -386,7 +391,7 @@ def display_p1_cntrct_info_f():
     if p1_cntrct_info_f:
         if os.path.isfile(p1_cntrct_info_f):
             print('~~~ Reading contract-info.json file contents ~~~')
-            with open(p1_cntrct_info_f, encoding='utf8') as f:
+            with open(p1_cntrct_info_f, encoding = 'utf8') as f:
                 # print(f.read_program_info())
                 pprint.pprint(f.read())
             print('~~~ File contract-info.json closed ~~~')
@@ -404,9 +409,10 @@ def display_p1_program_info_d():
 def display_p1_program_info_f():
     global prog_info_json_f
     print('~~~ Reading program-info.json file contents')
-    with open(prog_info_json_f, encoding='utf8') as f:
+    with open(prog_info_json_f, encoding = 'utf8') as f:
         pprint.pprint(f.read())
     print('File program-info.json closed ~~~')
+
 
 def read_dirs(walk_abs_dir):
     global p1_cntrct_abs_dir
@@ -435,7 +441,7 @@ def dump_contract_info_json(key, filename):
     global p1_cntrct_abs_dir
     p1_cntrct_info_d[key] = filename
     f = os.path.join(p1_cntrct_abs_dir, p1_cntrct_info_f)
-    with open(f, 'w', encoding='utf8') as fi:
+    with open(f, 'w', encoding = 'utf8') as fi:
         json.dump(p1_cntrct_info_d, fi, ensure_ascii = False)
 
 
@@ -462,7 +468,7 @@ def process_selected_contract():
     p1_cntrct_info_f = '.' + p1_d['cntrct_nr'] + '_contract-info.json'
     filename = os.path.join(p1_cntrct_abs_dir, p1_cntrct_info_f)
     if pathlib.Path(filename).exists():
-        with open(filename, encoding='utf8') as fi:
+        with open(filename, encoding = 'utf8') as fi:
             p1_cntrct_info_d = json.load(fi)
     else:
         p1_cntrct_info_d = {}
@@ -509,7 +515,7 @@ def process_selected_contract():
         contract_json_d['l_i'].append(dict(tmp_dict))
         row += 3
 
-    with open(os.path.join(p1_cntrct_abs_dir, rel_path_contract_json_f), 'w', encoding='utf8') as fc:
+    with open(os.path.join(p1_cntrct_abs_dir, rel_path_contract_json_f), 'w', encoding = 'utf8') as fc:
         json.dump(contract_json_d, fc, ensure_ascii = False)
     # populate p1_cntrct_info_d: a structure to store template information, and its corresponding json file
     p1_cntrct_info_d['p1a_contract_json'] = rel_path_contract_json_f
@@ -557,7 +563,7 @@ def process_selected_contract():
         dump_contract_info_json('p1b_indics_from_contract_l', file_indics)
 
         f = os.path.join(p1_cntrct_abs_dir, file_indics)
-        with open(f, 'w', encoding='utf8') as f:
+        with open(f, 'w', encoding = 'utf8') as f:
             json.dump(p1b_indics_from_contract_l, f, ensure_ascii = False)
 
         # p1c_prods_w_same_key_set = {}  # make a dictionary key= info, value = sets of prods with that key
@@ -570,7 +576,7 @@ def process_selected_contract():
             # document in all_relevant_data_json
     p1c_file_out_f = '.p1c_' + p1_d['cntrct_nr'] + '_all_relevant_data.txt'
     f = os.path.join(p1_cntrct_abs_dir, p1c_file_out_f)
-    with open(f, 'w', encoding='utf8') as f1c:
+    with open(f, 'w', encoding = 'utf8') as f1c:
         # json.dump(p1c_prods_w_same_key_set, f1c, ensure_ascii = False) won't work
         # f1c.write(p1c_prods_w_same_key_set.__str__()) doesn't look pretty
         pprint.PrettyPrinter(indent = 2, stream = f1c).pprint(p1c_prods_w_same_key_set)
@@ -608,7 +614,7 @@ def process_selected_contract():
     # indicators common to all products: write to file
     filename = '.p1d_' + p1_d['cntrct_nr'] + '_extract_common.json'
     f = os.path.join(p1_cntrct_abs_dir, filename)
-    with open(f, 'w', encoding='utf8') as p1d_f:
+    with open(f, 'w', encoding = 'utf8') as p1d_f:
         json.dump(p1d_common_indics_l, p1d_f, ensure_ascii = False)
 
     dump_contract_info_json('p1d_extract_common', filename)
@@ -616,7 +622,7 @@ def process_selected_contract():
     # indicators specific to one or more products, but not to all: print p1e_specific_fields_d_of_d
     filename = '.p1e_' + p1_d['cntrct_nr'] + '_extract_specifics.json'
     f = os.path.join(p1_cntrct_abs_dir, filename)
-    with open(f, 'w', encoding='utf8') as p1e_f:
+    with open(f, 'w', encoding = 'utf8') as p1e_f:
         json.dump(p1e_specific_fields_d_of_d, p1e_f, ensure_ascii = False)
 
     dump_contract_info_json('p1e_extract_specifics', filename)
@@ -626,7 +632,7 @@ def process_selected_contract():
 
     # document in A1234-456_contract-info.json
     filename = os.path.join(p1_cntrct_abs_dir, p1_cntrct_info_f)
-    with open(filename, 'w', encoding='utf8') as fi:
+    with open(filename, 'w', encoding = 'utf8') as fi:
         json.dump(p1_cntrct_info_d, fi, ensure_ascii = False)
 
 
@@ -636,7 +642,7 @@ def select_contract_main_context_func():
 
 
 def select_contract_debug_func():
-    display_dirs(p0_root_abs_dir + '/data/')
+    display_dirs(os.path.join(p0_root_abs_dir, 'data'))
     print('~~~ Select contract / Display ~~~')
 
 
