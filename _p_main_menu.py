@@ -16,7 +16,7 @@ p0_root_abs_dir = os.path.dirname(os.path.abspath(__file__))  # root directory w
 
 
 def run_full_demo_for_a_selection_of_contracts(save = False):
-    tests_l = ['A006043-001', 'A011001-022', 'A911008-008']
+    tests_l = ['A006043-001', 'A011001-022', 'A911008-008', 'A006045-001']
     for test_contract_nr in tests_l:
         step_1__select_a_contract_选择合同号(test_contract_nr = test_contract_nr)
         run_full_demo_with_selected_or_default_values_运行完整演示()

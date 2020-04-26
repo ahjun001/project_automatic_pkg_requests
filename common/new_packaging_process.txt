@@ -1,7 +1,0 @@
-Packaging process:
-
-. Just use Inkscape / Excel or use automatic_pkg
-
-
-1. Run program 3 steps: (i) Select contract, (ii) Select which templates to build, (iii) Select fields for each template
-

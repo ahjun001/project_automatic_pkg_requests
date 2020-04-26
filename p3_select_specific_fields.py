@@ -678,8 +678,8 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
                     if type(p3_d['pics_d']) != 'bool' and p3_d['pics_d']:
                         prod_nr = p3_selected_fields_values_by_prod_d[str(i)]['prod_n']
                         if prod_nr in p3_d['pics_d'].keys():
-                            # filename = os.path.join(p3_fields_abs_dir + '/pics', p3_d['pics_d'][prod_nr]['file'])
-                            filename = os.path.join(p3_fields_abs_dir, p3_d['pics_d'][prod_nr]['file'])
+                            filename = os.path.join(p3_fields_abs_dir + '/pics', p3_d['pics_d'][prod_nr]['file'])
+                            # filename = os.path.join(p3_fields_abs_dir, p3_d['pics_d'][prod_nr]['file'])
                             if pathlib.Path(filename).exists():
                                 _, ext = os.path.splitext(filename)
                                 if ext == '.svg':
@@ -754,15 +754,15 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
                     #     f"idx: {p3_selected_fields_values_by_prod_d[str(i)]['i']}",
                     #     f"prod_nr: {p3_selected_fields_values_by_prod_d[str(i)]['prod_n']}"
                     # )
-                    # print(  # for debug purposes
-                    #     p1.p1_d['cntrct_nr'], template_nr, i, end = ', '
-                    # )
-                    # tmp_l = [k for k in list(p3_selected_fields_values_by_prod_d[str(i)].keys())[:8]]
-                    # for k in tmp_l:
-                    #     print(  # for debug purposes
-                    #         ', ', k, p3_selected_fields_values_by_prod_d[str(i)][k], end = ''
-                    #     )
-                    # print()
+                    print(  # for debug purposes
+                        p1.p1_d['cntrct_nr'], template_nr, i, end = ', '
+                    )
+                    tmp_l = [k for k in list(p3_selected_fields_values_by_prod_d[str(i)].keys())[:8]]
+                    for k in tmp_l:
+                        print(  # for debug purposes
+                            ', ', k, p3_selected_fields_values_by_prod_d[str(i)][k], end = ''
+                        )
+                    print()
 
                     fw.write(mako_template.render(
                         contract_n = p1.p1_d["cntrct_nr"],
