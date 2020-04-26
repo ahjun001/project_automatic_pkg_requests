@@ -46,13 +46,13 @@ def save_template_info_json():
     p3_f = os.path.join(p1.p1_cntrct_abs_dir
                         + '/'
                         + p3_fields_rel_dir, 'template-info.json')
-    with open(p3_f, 'w') as f:
+    with open(p3_f, 'w', encoding='utf8') as f:
         json.dump(p3_d, f, ensure_ascii = False)
 
 
 def extract_svg_for_inserting(inkscape_filename, insert_filename):
     # body_svg = ''
-    with open(inkscape_filename) as fr, open(insert_filename, 'w') as fw:
+    with open(inkscape_filename, encoding='utf8') as fr, open(insert_filename, 'w', encoding='utf8') as fw:
         write_b = False
         lines = fr.readlines()
         for i in range(len(lines) - 1):
@@ -84,10 +84,10 @@ def create_template_header_n_body_if_not_exist(some_rel_dir):
     # create label_template_body.svg if necessary
     body_fw = os.path.join(to_abs_dir, '.label_template_body.svg')
     if pathlib.Path(body_fw).exists():
-        with open(body_fw) as fr:
+        with open(body_fw, encoding='utf8') as fr:
             p3_body_svg = fr.read()
     else:
-        with open(template_fr) as fr, open(body_fw, 'w') as fw:
+        with open(template_fr, encoding='utf8') as fr, open(body_fw, 'w', encoding='utf8') as fw:
             write_b = False
             lines = fr.readlines()
             for i in range(len(lines) - 1):
@@ -119,7 +119,7 @@ def load_o_create_p3_fields_info_f():
         # either read data,
         p3_f = os.path.join(p1.p1_cntrct_abs_dir + '/' + p3_fields_rel_dir, 'template-info.json')
         if pathlib.Path(p3_f).exists():  # file exists, check that all default value are present, if not print a msg
-            with open(p3_f) as f:
+            with open(p3_f, encoding='utf8') as f:
                 p3_d = json.load(f)  # loads selected_fields, template_header, header_height, barcode_d
         # or populate missing fields with default information relative to the directory
         # other default information is set at variable initialization
@@ -222,7 +222,7 @@ def load_o_create_mako_input_values_json(force_recreate = False):
     # make sure global variables are initialized in all situations, outside the loop to do it once only
     mako_input_json_s = os.path.join(p1.p1_cntrct_abs_dir + '/' + p3_fields_rel_dir, '.mako_input.json')
     if pathlib.Path(mako_input_json_s).exists() and not force_recreate:
-        with open(mako_input_json_s) as fr:
+        with open(mako_input_json_s, encoding='utf8') as fr:
             p3_selected_fields_values_by_prod_d = json.load(fr)
     else:
         if not p1.p1b_indics_from_contract_l:
@@ -241,7 +241,7 @@ def load_o_create_mako_input_values_json(force_recreate = False):
             idx += 1
 
         # prepare to insert translations if needed
-        with open(os.path.join(p0_root_abs_dir + '/common', 'zh_fr.json')) as f:
+        with open(os.path.join(p0_root_abs_dir + '/common', 'zh_fr.json'), encoding='utf8') as f:
             zh_fr_d = json.load(f)
 
         # populate the skeleton
@@ -262,7 +262,7 @@ def load_o_create_mako_input_values_json(force_recreate = False):
 
         # save results before adding new fields being derived from existing ones
         # mako_pre_proc_json_s = os.path.join(p1.p1_cntrct_abs_dir + '/' + p3_fields_rel_dir, '.mako_preproc.json')
-        # with open(mako_pre_proc_json_s, 'w') as f:
+        # with open(mako_pre_proc_json_s, 'w', encoding='utf8') as f:
         #     json.dump(p3_selected_fields_values_by_prod_d, f, ensure_ascii = False)
 
         # adding new fields being derived from existing ones, as defined in template-info.json
@@ -275,7 +275,7 @@ def load_o_create_mako_input_values_json(force_recreate = False):
                     default = p3_d['mako_pre_proc_d'][new_field]['default']
                     p3_selected_fields_values_by_prod_d[k][new_field] = out_field.group() if out_field else default
 
-        with open(mako_input_json_s, 'w') as f:
+        with open(mako_input_json_s, 'w', encoding='utf8') as f:
             json.dump(p3_selected_fields_values_by_prod_d, f, ensure_ascii = False)
 
 
@@ -303,7 +303,7 @@ def fields_from_template():
     template_s = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir), 'label_template.svg')
     if not pathlib.Path(template_s).exists():
         print(f"|\n| Cannot access '{os.path.join(p3_fields_rel_dir, 'label_template.svg')}': no such file\n|")
-    with open(template_s) as fr:
+    with open(template_s, encoding='utf8') as fr:
         lines = fr.readlines()
     template_fields_set = set()
     for line in lines:
@@ -341,7 +341,7 @@ def add_fields():
         print('~~~')
         s = input('Enter nr of indicator to add, \'b\' to return : ')
         if s == 'b':
-            os.system('clear')
+            os.system('clear' if os.name == 'posix' else 'cls')
             break
         else:
             try:
@@ -366,7 +366,7 @@ def del_fields():
         print(f'~~~')
         s = input('Enter nr of indicator to delete, \'b\' to return : ')
         if s == 'b':
-            os.system('clear')
+            os.system('clear' if os.name == 'posix' else 'cls')
             break
         else:
             try:
@@ -438,7 +438,7 @@ def display_p3_fields_info_f():
     if p3_d:
         if pathlib.Path(p3_f).exists():
             print('~~~ Reading template-info.json file contents ~~~')
-            with open(p3_f) as f:
+            with open(p3_f, encoding='utf8') as f:
                 pprint.pprint(f.read())
             print('~~~ File template-info.json closed ~~~')
     else:
@@ -449,7 +449,7 @@ def display_pdf():
     # os.chdir(p1.p1_cntrct_abs_dir)
     # output_s = p1.p1_d["cntrct_nr"] + '.pdf'
     output_s = os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d["cntrct_nr"] + '.pdf')
-    subprocess.Popen(['xreader', output_s, ])
+    subprocess.Popen(['xreader', output_s, ], encoding='utf8')
     # os.chdir(p0_root_abs_dir)
 
 
@@ -460,7 +460,7 @@ def svg_s_to_pdf_deliverable():
                    and f[0] != '.']
 
     for file in print_svg_l:
-        with open(file) as fr, open('.' + file, 'w') as fw:
+        with open(file, encoding='utf8') as fr, open('.' + file, 'w', encoding='utf8') as fw:
             for line in fr:
                 fw.write(line.replace('fuchsia', 'none').replace('#ff00ff', 'none'))
 
@@ -541,7 +541,7 @@ def open_svg_for_output(header, page, only_1_temp, only_1_prod, family, size, st
             svg_out = os.path.join(p3_fields_abs_dir, f'.1_template_{page}.svg')
     else:
         svg_out = os.path.join(p1.p1_cntrct_abs_dir, f'page_{page}.svg')
-    fw = open(svg_out, 'w')
+    fw = open(svg_out, 'w', encoding='utf8')
     fw.write(header)
     fw.write(f'<rect x="0" y="0"\n'
              f'width="210" height="297"\n'
@@ -563,7 +563,8 @@ def open_svg_for_output(header, page, only_1_temp, only_1_prod, family, size, st
 def close_svg_for_output(fw, svg_out):
     fw.write('\n</g>\n</svg>\n')
     fw.close()
-    webbrowser.get('firefox').open_new_tab(svg_out)
+    browser = 'firefox' if os.name == 'posix' else "C:\Program Files (x86)\Mozilla Firefox\firefox.exe %s"
+    webbrowser.get(browser).open_new_tab(svg_out)
     # subprocess.Popen(['inkscape', svg_out])
 
 
@@ -606,7 +607,7 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
             #         exit()
 
             create_template_header_n_body_if_not_exist(p3_fields_rel_dir)
-            with open(os.path.join(p3_fields_abs_dir, '.label_template_header.svg')) as h:
+            with open(os.path.join(p3_fields_abs_dir, '.label_template_header.svg'), encoding='utf8') as h:
                 header = h.read()
             template_nr += 1
             # loading data previously used with this template
@@ -630,7 +631,7 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
             load_o_create_mako_input_values_json(force_recreate = True)
             # read view box values from template_body so as to compute spacings
             to_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir)
-            with open(os.path.join(to_abs_dir, 'label_template.svg')) as f:
+            with open(os.path.join(to_abs_dir, 'label_template.svg'), encoding='utf8') as f:
                 mako_template = Template(
                     filename = os.path.join(p3_fields_abs_dir, '.label_template_body.svg'),
                     input_encoding = 'utf-8'
@@ -686,7 +687,7 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
                                     i_filename = os.path.join(p3_fields_abs_dir, '.' + p3_d['pics_d'][prod_nr]['file'])
                                     if not pathlib.Path(i_filename).exists():
                                         extract_svg_for_inserting(filename, i_filename)
-                                    with open(i_filename) as f:
+                                    with open(i_filename, encoding='utf8') as f:
                                         fw.write(  # todo: change into a list
                                             f"<g transform = 'matrix("
                                             f"{p3_d['pics_d'][prod_nr]['coef']},0,0,{p3_d['pics_d'][prod_nr]['coef']},"
@@ -731,7 +732,7 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
                         if pathlib.Path(create_barcode_file(
                             p3_selected_fields_values_by_prod_d[str(i)]['prod_n']
                         )).exists():
-                            with open(barcode_f) as f:
+                            with open(barcode_f, encoding='utf8') as f:
                                 fw.write(  # todo: change into a list
                                     f"<g transform = 'matrix("
                                     f"{brcd_d['coef']},0,0,{brcd_d['coef']},"
@@ -840,7 +841,7 @@ def render_cover_page():
     p3_fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir)
     svg_in = os.path.join(p3_fields_abs_dir, '.1_product.svg')
     if svg_in:
-        with open(svg_in) as fr:
+        with open(svg_in, encoding='utf8') as fr:
             lines = fr.readlines()
         balance = 0
         keep_l = []
@@ -862,10 +863,10 @@ def render_cover_page():
                 balance -= 1
             if 'label="label"' in line:
                 good_n = i
-        with open(os.path.join(p0_root_abs_dir + '/common/.cover_page_template.svg')) as fr:
+        with open(os.path.join(p0_root_abs_dir + '/common/.cover_page_template.svg'), encoding='utf8') as fr:
             lines = fr.readlines()
         svg_out = os.path.join(p1.p1_cntrct_abs_dir, '.cover_page_template.svg')
-        with open(svg_out, 'w') as fw:
+        with open(svg_out, 'w', encoding='utf8') as fw:
             for i in range(len(lines) - 1):
                 fw.writelines(lines[i])
             fw.write('<g transform="matrix(1,0,0,1,15,45)">\n')
@@ -889,12 +890,13 @@ def render_cover_page():
         if not p3_selected_fields_values_by_prod_d:
             load_o_create_mako_input_values_json()
         cover_s = os.path.join(p1.p1_cntrct_abs_dir, 'page_0.svg')
-        with open(cover_s, 'w') as fw:
+        with open(cover_s, 'w', encoding='utf8') as fw:
             fw.write(mako_template.render(
                 contract_n = p1.p1_d["cntrct_nr"],
                 **p3_selected_fields_values_by_prod_d['0']
             ))
-        webbrowser.get('Firefox').open_new_tab(cover_s)
+        browser = 'firefox' if os.name == 'posix' else "C:\Program Files (x86)\Mozilla Firefox\firefox.exe %s"
+        webbrowser.get(browser).open_new_tab(cover_s)
     else:
         print(f'{svg_in}: no such file, should be build before cover page')
 
@@ -934,7 +936,7 @@ def edit_fields():
                   '\'b\' to go back_后退\n'
                   '~~~\n')
         if s == 'b':
-            os.system('clear')
+            os.system('clear' if os.name == 'posix' else 'cls')
             break
         elif s == 'a':
             add_fields()
@@ -963,14 +965,14 @@ def select_a_template_for_editing():
         while True:
             s = input('\nEnter nr of template to be edited, \'b\' to return : ')
             if s == 'b':
-                os.system('clear')
+                os.system('clear' if os.name == 'posix' else 'cls')
                 m.menu = m.mod_lev_1_menu
                 break
             else:
                 try:
                     s_i = int(s)
                     if s_i in range(len(drs)):
-                        os.system('clear')
+                        os.system('clear' if os.name == 'posix' else 'cls')
                         p3_fields_rel_dir = drs[s_i]
                         # load fields already selected for template as they are on file
                         load_o_create_p3_fields_info_f()
@@ -1019,13 +1021,13 @@ def edit_paragraph_headers():
         while True:
             s = input('\nEnter nr of template to be edited, \'b\' to return : ')
             if s == 'b':
-                os.system('clear')
+                os.system('clear' if os.name == 'posix' else 'cls')
                 break
             else:
                 try:
                     s_i = int(s)
                     if s_i in range(len(drs)):
-                        os.system('clear')
+                        os.system('clear' if os.name == 'posix' else 'cls')
                         p3_fields_rel_dir = drs[s_i]
                         # load fields already selected for template as they are on file
                         if load_o_create_p3_fields_info_f():
@@ -1037,7 +1039,7 @@ def edit_paragraph_headers():
                                       '\'b\' to go back_后退\n'
                                       '~~~\n')
                             if s == 'b':
-                                os.system('clear')
+                                os.system('clear' if os.name == 'posix' else 'cls')
                                 break
                             elif s == 'm':
                                 # multi-lines header
@@ -1075,7 +1077,7 @@ def test_mako():
     filename = os.path.join(p1.p1_cntrct_abs_dir + '/' + p3_fields_rel_dir, '.mako_input.json')
     subprocess.call(['jq', '.', filename])
     # subprocess.call(['/usr/bin/xed', filename])
-    # with open(filename) as f:
+    # with open(filename, encoding='utf8') as f:
     #     pprint.pprint(f.read())
 
 

@@ -83,7 +83,7 @@ def step_1__select_a_contract_选择合同号(test_contract_nr = ''):
 
 
 def init():
-    os.system('clear')
+    os.system('clear' if os.name == 'posix' else 'cls')
     # assign a program
     p1.load_o_create_program_info_d()
     # menus

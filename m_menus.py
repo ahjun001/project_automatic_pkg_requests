@@ -64,7 +64,7 @@ def run():
             # for each menu entry: key to execute, function to be executed (name should be explicit)
             print(f'{k}. {v.__name__}')
         selection = input("\nEnter selection: ")
-        os.system('clear')
+        os.system('clear' if os.name == 'posix' else 'cls')
         print(f'Option {selection} selected')
         # getting the function name from the key entered
         selection_func_name = menus[menu].get(selection)
