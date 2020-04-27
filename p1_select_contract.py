@@ -288,7 +288,7 @@ def display_p1_all_products_to_be_processed_set():
 def load_p1_search_reg_ex_l():
     global p1_search_reg_ex_l
 
-    with open(os.path.join(os.path.join(p0_root_abs_dir, 'common'), 'indicators.json'), encoding = 'utf8') as f:
+    with open(os.path.join(os.path.join(p0_root_abs_dir, 'common'), 'regular_expressions.json'), encoding = 'utf8') as f:
         p1_search_reg_ex_l = json.load(f)
     if p1_search_reg_ex_l:
         return True
@@ -550,7 +550,7 @@ def process_selected_contract():
                             srch.append(s.strip())  # strip the search result
                         for indication in srch:
                             tmp_dct = {
-                                'what': what,  # from indicators.json : pack, kg, mm, 牌, v_Hz, plstc_bg
+                                'what': what,  # from regular_expressions.json : pack, kg, mm, 牌, v_Hz, plstc_bg
                                 'where': key,  # xl cell: 10.Tech_spec-技术参数_2
                                 'info': indication,  # 1.00    = indic
                                 'prod_nr': prod["01.TST_prod_#-需方产品编号"],  # 1050205001#
