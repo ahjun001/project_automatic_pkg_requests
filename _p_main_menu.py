@@ -34,6 +34,14 @@ def run_full_demo_with_selected_or_default_values_运行完整演示():
     p3.display_all()
 
 
+def test_environment():
+    print('Test environment: start')
+    os.system('clear')
+    print('Test environment: cleared')
+    print('TERM = ', os.environ["TERM"])
+    print('Test environment: end')
+
+
 def main_menu_context_func():
     temp_f = []
     c_nr = p1.p1_d['cntrct_nr'] if 'cntrct_nr' in p1.p1_d.keys() else ''
@@ -117,6 +125,7 @@ def init():
             'd': m.debug,
         },
         'debug': {
+            't': test_environment,
             'b': m.back_后退,
             'q': m.normal_exit_正常出口,
         },
