@@ -8,14 +8,10 @@ import re
 import shutil
 import subprocess
 import webbrowser
-
 from mako.template import Template
-
 import m_menus as m
 import p1_select_contract as p1
 import p2_select_templates as p2
-
-p0_root_abs_dir = os.path.dirname(os.path.abspath(__file__))  # root directory
 
 p3_all_specific_fields_l = []  # list of fields from p1e_specific_fields_d_of_d
 p3_body_svg = ''  # contents of label_template_body.svg
@@ -29,11 +25,11 @@ page_view_box_w = 0
 page_view_box_h = 0
 
 
-def load_p3_all_specific_fields_l():
+def p3_all_specific_fields_l_load():
     global p3_all_specific_fields_l
 
     if not p1.p1e_specific_fields_d_of_d:
-        p1.load_p1e_specific_fields_d_of_d_n_p3_needed_vars()
+        p1.p1e_specific_fields_d_of_d_n_p3_needed_vars_load()
     p3_all_specific_fields_l = list(
         next(iter(p1.p1e_specific_fields_d_of_d.values()))
     )
@@ -68,7 +64,7 @@ def create_template_header_n_body_if_not_exist(some_rel_dir):
     """
     global p3_body_svg
 
-    from_abs_dir = os.path.join(os.path.join(p0_root_abs_dir, 'common'), some_rel_dir)
+    from_abs_dir = os.path.join(os.path.join(m.root_abs_dir, 'common'), some_rel_dir)
     to_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, some_rel_dir)
 
     # copy the label_template if necessary
@@ -98,10 +94,10 @@ def create_template_header_n_body_if_not_exist(some_rel_dir):
 
     # and copy the label_template_header there
     if not pathlib.Path(os.path.join(to_abs_dir, '.label_template_header.svg')).exists():
-        shutil.copy(os.path.join(os.path.join(p0_root_abs_dir, 'common'), '.label_template_header.svg'), to_abs_dir)
+        shutil.copy(os.path.join(os.path.join(m.root_abs_dir, 'common'), '.label_template_header.svg'), to_abs_dir)
 
 
-def load_o_create_p3_fields_info_f():
+def p3_fields_info_f_load_o_create():
     global p3_f
     global p3_d
     global p3_fields_rel_dir
@@ -109,7 +105,7 @@ def load_o_create_p3_fields_info_f():
     global page_view_box_w
     global page_view_box_h
 
-    p1.load_o_create_doc_set_up()
+    p1.doc_set_up_load_o_create()
     page_view_box_w = 210 - 2 * p1.doc_setup_d['margin_w']  # Assuming A4
     page_view_box_h = 297 - 2 * p1.doc_setup_d['margin_h']  # Assuming A4
 
@@ -149,7 +145,7 @@ def load_o_create_p3_fields_info_f():
         else:
             if p3_d['pics_d'] is True:
                 if not p1.all_products_to_be_processed_set:
-                    p1.load_p1_all_products_to_be_processed_set()
+                    p1.p1_all_products_to_be_processed_set_load()
                 p3_d['pics_d'] = {}
                 for prod_nr in list(p1.all_products_to_be_processed_set):
                     p3_d['pics_d'][prod_nr] = {
@@ -224,9 +220,9 @@ def load_o_create_mako_input_values_json(force_recreate = False):
             p3_selected_fields_values_by_prod_d = json.load(fr)
     else:
         if not p1.p1b_indics_from_contract_l:
-            p1.load_p1b_indics_from_contract_l()
+            p1.p1b_indics_from_contract_l_load()
         if not p1.all_products_to_be_processed_set:
-            p1.load_p1_all_products_to_be_processed_set()
+            p1.p1_all_products_to_be_processed_set_load()
         # make a skeleton for p3_selected_fields_values_by_prod_d with key = prod
         idx = 0
         temp_d = {}
@@ -239,7 +235,7 @@ def load_o_create_mako_input_values_json(force_recreate = False):
             idx += 1
 
         # prepare to insert translations if needed
-        with open(os.path.join(os.path.join(p0_root_abs_dir, 'common'), 'zh_fr.json'), encoding = 'utf8') as f:
+        with open(os.path.join(os.path.join(m.root_abs_dir, 'common'), 'zh_fr.json'), encoding = 'utf8') as f:
             zh_fr_d = json.load(f)
 
         # populate the skeleton
@@ -291,7 +287,7 @@ def display_or_load_output_overview():
     for dr in drs:
         print(dr)
         p3_fields_rel_dir = dr
-        if load_o_create_p3_fields_info_f():
+        if p3_fields_info_f_load_o_create():
             print('\t', p3_d['selected_fields'])
     print('~~~')
 
@@ -315,7 +311,7 @@ def check_all_templates_have_correct_fields():
     global p3_fields_rel_dir
     _, drs, _ = next(os.walk(p1.p1_cntrct_abs_dir))
     for p3_fields_rel_dir in drs:
-        load_o_create_p3_fields_info_f()
+        p3_fields_info_f_load_o_create()
         check_if_template_requirements_are_met()
 
 
@@ -325,7 +321,7 @@ def add_fields():
     global p3_all_specific_fields_l
 
     if not p1.p1e_specific_fields_d_of_d:
-        p1.load_p1e_specific_fields_d_of_d_n_p3_needed_vars()
+        p1.p1e_specific_fields_d_of_d_n_p3_needed_vars_load()
     p3_all_specific_fields_l = list(next(iter(p1.p1e_specific_fields_d_of_d.values())))
     # select from p3_all_specific_fields_l and put in p3_d['selected_fields']
     while True:
@@ -383,12 +379,12 @@ def del_fields():
 def display_specific_fields_for_all_products():
     # make sure global variables are set in all situations, outside the loop to do it once only
     if not p1.all_products_to_be_processed_set:
-        p1.load_p1_all_products_to_be_processed_set()
+        p1.p1_all_products_to_be_processed_set_load()
     if not p1.p1b_indics_from_contract_l:
-        p1.load_p1b_indics_from_contract_l()
+        p1.p1b_indics_from_contract_l_load()
 
     if not p1.p1e_specific_fields_d_of_d:
-        p1.load_p1e_specific_fields_d_of_d_n_p3_needed_vars()
+        p1.p1e_specific_fields_d_of_d_n_p3_needed_vars_load()
     p1e_l = list(next(iter(p1.p1e_specific_fields_d_of_d.values())))
 
     # building the header
@@ -484,7 +480,7 @@ def svg_s_to_pdf_deliverable():
 
     os.system('pdfunite .page_?.pdf ' + output_s)
     subprocess.Popen(['xreader', output_s, ])
-    os.chdir(p0_root_abs_dir)
+    os.chdir(m.root_abs_dir)
 
 
 def horizontal_centering_offset(template_view_box_w, spacing_w):
@@ -512,7 +508,7 @@ def prod_n_to_barcode(prod_nr):
 def create_barcode_file(prod_n):
     global p3_fields_rel_dir
 
-    brcd_tmplt = os.path.join(os.path.join(p0_root_abs_dir, 'common'), 'barcode_template.svg')
+    brcd_tmplt = os.path.join(os.path.join(m.root_abs_dir, 'common'), 'barcode_template.svg')
 
     # put a directory for barcodes
     brcd_f = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir), prod_n + '.svg')
@@ -580,7 +576,7 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
     global page_view_box_w
 
     # load p1.p1e_specific_fields_d_of_d, put in a list of dicts
-    load_p3_all_specific_fields_l()
+    p3_all_specific_fields_l_load()
 
     # read existing templates
     drs = [p3_fields_rel_dir] if only_1_temp else p2.p2_load_templates_info_l()
@@ -593,7 +589,7 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
         for p3_fields_rel_dir in drs:  # looping on templates
 
             # check that, if pictures need to be inserted, a directory for picture files does exist
-            load_o_create_p3_fields_info_f()
+            p3_fields_info_f_load_o_create()
             p3_fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir)  # dir for header & body
             # if type(p3_d['pics_d']) != 'bool' and p3_d['pics_d']:
             #     dir_s = os.path.join(p3_fields_abs_dir, 'pics')
@@ -610,7 +606,7 @@ def render_svg_all_templates_all_products(only_1_temp = False, only_1_prod = Fal
                 header = h.read()
             template_nr += 1
             # loading data previously used with this template
-            load_o_create_p3_fields_info_f()
+            p3_fields_info_f_load_o_create()
 
             # opening a new page, printing header template in 'page_#.svg'
             # printing body template in page_# svg
@@ -802,7 +798,7 @@ def render_svg_1_template_1_product():
     global p3_fields_rel_dir
 
     if not p3_fields_rel_dir:
-        drs = p1.read_dirs(p1.p1_cntrct_abs_dir)
+        drs = p2.read_dirs(p1.p1_cntrct_abs_dir)
         p3_fields_rel_dir = drs[0]
     render_svg_all_templates_all_products(only_1_temp = True, only_1_prod = True)
 
@@ -811,7 +807,7 @@ def render_svg_1_template_all_products():
     global p3_fields_rel_dir
 
     if not p3_fields_rel_dir:
-        drs = p1.read_dirs(p1.p1_cntrct_abs_dir)
+        drs = p2.read_dirs(p1.p1_cntrct_abs_dir)
         p3_fields_rel_dir = drs[0]
     render_svg_all_templates_all_products(only_1_temp = True)
 
@@ -828,8 +824,8 @@ def render_cover_page():
 
     # load data from p1.p1e_specific_fields_d_of_d, put in a list of dicts
     p3_fields_rel_dir = p2.p2_load_templates_info_l()[0]
-    load_o_create_p3_fields_info_f()
-    load_p3_all_specific_fields_l()
+    p3_fields_info_f_load_o_create()
+    p3_all_specific_fields_l_load()
 
     # print(  # for debug purposes
     #     f"From '..._doc_setup.json': cover_page = {p1.doc_setup_d['cover_page']}"
@@ -863,7 +859,7 @@ def render_cover_page():
                 balance -= 1
             if 'label="label"' in line:
                 good_n = i
-        with open(os.path.join(os.path.join(p0_root_abs_dir, 'common'), '.cover_page_template.svg'),
+        with open(os.path.join(os.path.join(m.root_abs_dir, 'common'), '.cover_page_template.svg'),
                   encoding = 'utf8') as fr:
             lines = fr.readlines()
         svg_out = os.path.join(p1.p1_cntrct_abs_dir, '.cover_page_template.svg')
@@ -910,7 +906,7 @@ def display_all():
         # for each template that has been created as a subdir to p1.p1_cntrct_abs_dir
         for p3_fields_rel_dir in drs_l:
             # use data on disk, if not on disk create with default values
-            if load_o_create_p3_fields_info_f():
+            if p3_fields_info_f_load_o_create():
                 print('Rendering 1 template, 1 product')
                 render_svg_1_template_1_product()
                 if p1.doc_setup_d['cover_page'] and p3_fields_rel_dir == drs_l[0]:
@@ -959,7 +955,7 @@ def select_a_template_for_editing():
     m.mod_lev_1_menu = m.menu
     m.menu = 'select_a_template_for_editing'
     # select_specific_fields_context_func()
-    drs = p1.read_dirs(p1.p1_cntrct_abs_dir)
+    drs = p2.read_dirs(p1.p1_cntrct_abs_dir)
     if drs:
         for i in range(len(drs)):
             print(str(i) + '. ' + drs[i][2:])
@@ -976,7 +972,7 @@ def select_a_template_for_editing():
                         os.system('clear' if os.name == 'posix' else 'cls')
                         p3_fields_rel_dir = drs[s_i]
                         # load fields already selected for template as they are on file
-                        load_o_create_p3_fields_info_f()
+                        p3_fields_info_f_load_o_create()
                         break
                     else:
                         print('|\n| Integer, but not an option, try again\n|')
@@ -1010,7 +1006,7 @@ def edit_paragraph_headers():
     global p3_fields_rel_dir
 
     # list existing directories, each containing a template
-    drs = p1.read_dirs(p1.p1_cntrct_abs_dir)
+    drs = p2.read_dirs(p1.p1_cntrct_abs_dir)
     if drs:
         # giving a default directory if none has been set before
         if not p3_fields_rel_dir:
@@ -1031,7 +1027,7 @@ def edit_paragraph_headers():
                         os.system('clear' if os.name == 'posix' else 'cls')
                         p3_fields_rel_dir = drs[s_i]
                         # load fields already selected for template as they are on file
-                        if load_o_create_p3_fields_info_f():
+                        if p3_fields_info_f_load_o_create():
                             print(f'now ready to work on {p3_fields_rel_dir}')
                         while True:
                             select_specific_fields_context_func()
@@ -1119,16 +1115,16 @@ def reset_globals():
 def step_3__select_fields_to_print_for_each_template_选择每种标签类型的资料():
     global p3_fields_rel_dir
     # make sure p1 infrastructure is in place
-    if not p1.load_contract_info_d():
+    if not p1.contract_info_d_load():
         print('p1 has not run successfully')
-    if not p1.read_dirs(p1.p1_cntrct_abs_dir):
+    if not p2.read_dirs(p1.p1_cntrct_abs_dir):
         p2.create_default_templates()
     # read existing p3 infrastructure
     if not p3_fields_rel_dir:
-        drs = p1.read_dirs(p1.p1_cntrct_abs_dir)
+        drs = p2.read_dirs(p1.p1_cntrct_abs_dir)
         p3_fields_rel_dir = drs[0]
     if not p3_d:
-        load_o_create_p3_fields_info_f()
+        p3_fields_info_f_load_o_create()
 
     # initializing menus last, so that context functions display most recent information
     m.menu = 'select_specific_fields'
@@ -1162,8 +1158,6 @@ def step_3__select_fields_to_print_for_each_template_选择每种标签类型的
             '55': render_cover_page,
             '66': svg_s_to_pdf_deliverable,
             '2': display_or_load_output_overview,
-            '6': p1.display_p1_cntrct_info_d,
-            '7': p1.display_p1_cntrct_info_f,
             '8': display_p3_fields_info_d,
             '9': display_p3_fields_info_f,
             'b': m.back_后退,

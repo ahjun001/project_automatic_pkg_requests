@@ -10,10 +10,6 @@ import p1_select_contract as p1
 import p2_select_templates as p2
 import p3_select_specific_fields as p3
 
-# import pu_maintain_set_of_indicators_regex_to_be_searched as pu
-
-p0_root_abs_dir = os.path.dirname(os.path.abspath(__file__))  # root directory where the program is located
-
 
 def run_full_demo_for_a_selection_of_contracts(save = False):
     tests_l = ['A006043-001', 'A011001-022', 'A006045-001', 'A911008-008']
@@ -46,7 +42,7 @@ def main_menu_context_func():
     temp_f = []
     c_nr = p1.p1_d['cntrct_nr'] if 'cntrct_nr' in p1.p1_d.keys() else ''
     print(f'Step 1 selected contract: ' + f'{c_nr if c_nr else "None"}')
-    templ_l, default = p1.read_dirs(p1.p1_cntrct_abs_dir), ''
+    templ_l, default = p2.read_dirs(p1.p1_cntrct_abs_dir), ''
     if not templ_l:
         templ_l, default = p2.p2_default_templates_l, ' (Default)'
     print(f'Step 2 selected templates to print: {templ_l} {default}')
@@ -74,8 +70,7 @@ context_func_d = {
 
 
 def save_selected_contract():
-    # main_dir = p0_root_abs_dir + '/contract_samples/' + p1.p1_d['cntrct_nr']
-    main_dir = os.path.join(os.path.join(p0_root_abs_dir, 'contract_samples'), p1.p1_d['cntrct_nr'])
+    main_dir = os.path.join(os.path.join(m.root_abs_dir, 'contract_samples'), p1.p1_d['cntrct_nr'])
 
     # copy_dir = main_dir + '_' + str(datetime.timestamp(datetime.now()))
     copy_dir = main_dir + '_' + str(datetime.timestamp(datetime.now()))
@@ -83,7 +78,7 @@ def save_selected_contract():
 
     shutil.copy(os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['cntrct_nr'] + '_doc_setup.json'), main_dir)
 
-    drs = p1.read_dirs(p1.p1_cntrct_abs_dir)
+    drs = p2.read_dirs(p1.p1_cntrct_abs_dir)
     if drs:
         for dr in drs:
             shutil.copy(
@@ -105,7 +100,7 @@ def step_1__select_a_contract_选择合同号(test_contract_nr = ''):
 def init():
     os.system('clear' if os.name == 'posix' else 'cls')
     # assign a program
-    p1.load_o_create_program_info_d()
+    p1.program_info_d_load_o_create()
     # menus
     m.menu = 'root_menu'
     # m.mod_lev_1_menu = m.menu
@@ -140,7 +135,7 @@ def init():
     m.context_func_d = {**m.context_func_d, **context_func_d}
 
     # If the data directory does not exist, process_selected_contract it
-    data_adir = os.path.join(p0_root_abs_dir, 'data')
+    data_adir = os.path.join(m.root_abs_dir, 'data')
     if not pathlib.Path(data_adir).exists():
         os.mkdir(data_adir, mode = 0o700)
 

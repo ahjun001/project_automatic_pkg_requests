@@ -8,8 +8,6 @@ from tkinter.filedialog import askopenfilename
 import m_menus as m
 import p1_select_contract as p1
 
-p0_root_abs_dir = os.path.dirname(os.path.abspath(__file__))  # root directory where the program is located
-
 p2_templates_l = [
     'a.Outer_box_外箱',
     'b.Inner_box_内盒',
@@ -28,7 +26,7 @@ p2_default_templates_l = [
 def add_templates_from_list(list_l, ask_questions):
     new_temp_abs_dir = ''
     # read existing templates
-    drs = p1.read_dirs(p1.p1_cntrct_abs_dir)
+    drs = read_dirs(p1.p1_cntrct_abs_dir)
     # make a candidate set of templates to be added
     candidates_l = []
     if drs:
@@ -87,20 +85,40 @@ def add_templates_from_list(list_l, ask_questions):
 
 
 def create_default_templates():
-    drs = p1.read_dirs(p1.p1_cntrct_abs_dir)
+    drs = read_dirs(p1.p1_cntrct_abs_dir)
     if not drs:
         add_templates_from_list(p2_default_templates_l, ask_questions = False)
 
 
+def read_dirs(walk_abs_dir):
+    if walk_abs_dir:
+        _, dirs, _ = next(os.walk(walk_abs_dir))
+        if dirs:
+            dirs.sort()
+            dirs[:] = [d for d in dirs if d[0] not in ['.', '_']]
+            return dirs
+    return None
+
+
+def display_dirs(walk_abs_dir):
+    drs = read_dirs(walk_abs_dir)
+    if drs:
+        for dr in drs:
+            print(dr)
+        return True
+    else:
+        return False
+
+
 def load_n_display():
-    p1.display_dirs(p1.p1_cntrct_abs_dir)
+    display_dirs(p1.p1_cntrct_abs_dir)
 
 
 def p2_load_templates_info_l():  # used in p3
     """
     :return: list of label subdirectories to the main contract directory
     """
-    return p1.read_dirs(p1.p1_cntrct_abs_dir)
+    return read_dirs(p1.p1_cntrct_abs_dir)
 
 
 def add_new_template():
@@ -109,7 +127,7 @@ def add_new_template():
 
 def delete_existing_template():
     print('~~~ Deleting templates non-empty directory data')
-    drs = p1.read_dirs(p1.p1_cntrct_abs_dir)
+    drs = read_dirs(p1.p1_cntrct_abs_dir)
     if not drs:
         return
     for i in range(len(drs)):
@@ -142,7 +160,7 @@ def select_templates_context_func(prompt = True):
     print('~~~ Step 2: Selecting templates to print ~~~')
     print('Editing contract #: ', p1.p1_d["cntrct_nr"] if p1.p1_d["cntrct_nr"] else None)
     print('\nTemplates already added:')
-    if not p1.display_dirs(p1.p1_cntrct_abs_dir):
+    if not display_dirs(p1.p1_cntrct_abs_dir):
         print('None added yet')
     print(60 * '-', '\n\n')
     if prompt:
@@ -157,7 +175,7 @@ context_func_d = {
 
 def step_2__select_templates_to_print_选择_编辑标签类型():
     # make sure p1 has been run
-    if not p1.load_contract_info_d():
+    if not p1.contract_info_d_load():
         print('p1 has not run successfully')
 
     # initializing menus last, so that context functions display most recent information
