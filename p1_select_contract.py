@@ -204,7 +204,7 @@ def contract_info_d_load():
     else:
         if not p1_cntrct_abs_dir or 'cntrct_nr' not in p1_d.keys():
             process_selected_contract()
-    with open(os.path.join(os.path.join(p1_cntrct_abs_dir, p1_d['cntrct_nr']), '_contract-info.json'),
+    with open(os.path.join(p1_cntrct_abs_dir, '.' + p1_d['cntrct_nr'] + '_contract-info.json'),
               encoding = 'utf8') as fi:
         p1_cntrct_info_d = json.load(fi)
     return True
