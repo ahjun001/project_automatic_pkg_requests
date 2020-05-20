@@ -14,12 +14,12 @@ p2_templates_l = [
     'c.Inside_box_中箱',
     'd.Prod_packaging_产品包装',
     'e.Plastic_bag_塑料袋',
-    'f.Prod_sticker_产品上不干胶',
+    'f.Prod_sticker_塑料上不干胶',
 ]
 
 p2_default_templates_l = [
     'a.Outer_box_外箱',
-    'f.Prod_sticker_产品上不干胶',
+    'f.Prod_sticker_塑料上不干胶',
 ]
 
 

@@ -42,7 +42,7 @@ def p3_fields_info_f_load_o_create():
     if p3_fields_rel_dir:
         # either read data,
         p3_f = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir), 'template-info.json')
-        if pathlib.Path(p3_f).exists():  # file exists, check that all default value are present, if not print a msg
+        if os.path.exists(p3_f):  # file exists, check that all default value are present, if not print a msg
             with open(p3_f, encoding = 'utf8') as f:
                 p3_d = json.load(f)  # loads selected_fields, template_header, header_height, barcode_d
         # or populate missing fields with default information relative to the directory
@@ -188,7 +188,7 @@ def create_barcode_file(prod_n):
 def fields_from_template():
     global p3_fields_rel_dir
     template_s = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir), 'label_template.svg')
-    if not pathlib.Path(template_s).exists():
+    if not os.path.exists(template_s):
         print(f"|\n| Cannot access '{os.path.join(p3_fields_rel_dir, 'label_template.svg')}': no such file\n|")
     with open(template_s, encoding = 'utf8') as fr:
         lines = fr.readlines()
@@ -376,10 +376,10 @@ def edit_label_template_svg():
     global p3_fields_rel_dir
 
     body_file = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir), '.label_template_body.svg')
-    if pathlib.Path(body_file).exists():
+    if os.path.exists(body_file):
         os.remove(os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir), '.label_template_body.svg'))
     label_template_file = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir), 'label_template.svg')
-    if pathlib.Path(label_template_file).exists():
+    if os.path.exists(label_template_file):
         subprocess.Popen(['inkscape', label_template_file]).wait()
 
 
