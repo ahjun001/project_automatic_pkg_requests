@@ -81,14 +81,11 @@ def save_selected_contract():
     drs = p2.read_dirs(p1.p1_cntrct_abs_dir)
     if drs:
         for dr in drs:
-            shutil.copy(
-                os.path.join(os.path.join(p1.p1_cntrct_abs_dir, dr), 'template-info.json'),
-                os.path.join(main_dir, dr)
-            )
-            shutil.copy(
-                os.path.join(os.path.join(p1.p1_cntrct_abs_dir, dr), 'label_template.svg'),
-                os.path.join(main_dir, dr)
-            )
+            filename = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, dr), 'template-info.json')
+            if os.path.exists(filename):
+                shutil.copy( filename, os.path.join(main_dir, dr) )
+            filename = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, dr), 'label_template.svg')
+            shutil.copy( filename, os.path.join(main_dir, dr) )
 
 
 def step_1__select_a_contract_选择合同号(test_contract_nr = ''):
