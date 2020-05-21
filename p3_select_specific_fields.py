@@ -16,7 +16,6 @@ import p2_select_templates as p2
 
 p3_all_specific_fields_l = []  # list of fields from p1e_specific_fields_d_of_d
 p3_body_svg = ''  # contents of label_template_body.svg
-
 # p3_default_fields_l = ['xl_prod_spec', 'u_parc']
 p3_d = {}
 p3_f = ''
@@ -94,19 +93,6 @@ def p3_fields_info_f_load_o_create():
         return False
 
 
-def scrap_template_for_fields():
-    global p3_fields_rel_dir
-    template_fields = fields_from_template()
-    for x in ['t', 'i', 'prod_n']:
-        if x in template_fields:
-            template_fields.remove(x)
-    for f in template_fields:
-        if f not in p3_d['selected_fields']:
-            p3_d['selected_fields'].append(f)
-    print(f'Template scrapped, selected_fields: {p3_d["selected_fields"]}')
-    save_template_info_json()
-
-
 def save_template_info_json():
     global p3_f
     global p3_d
@@ -119,8 +105,8 @@ def save_template_info_json():
 def reset_globals():
     global p3_all_specific_fields_l
     global p3_body_svg
-    global p3_d
     # global p3_default_fields_l
+    global p3_d
     global p3_f
     global p3_fields_rel_dir
     global p3_selected_fields_values_by_prod_d
@@ -313,12 +299,7 @@ def display_specific_fields_for_all_products():
 def edit_fields():
     global p3_fields_rel_dir
 
-    # select_specific_fields_context_func(prompt = False)
-    # print('\n>>> Select template to edit: ')
-
     while True:
-        # select_specific_fields_context_func(prompt = False)
-        # print('\n>>> Select template to edit: ')
         print('~~~ Now working on template: ', p3_fields_rel_dir if p3_fields_rel_dir else 'None selected')
         s = input('\'a\' to add a field\n'
                   '\'d\' to delete a field\n'
@@ -335,7 +316,6 @@ def edit_fields():
             print(f'{s} is not an option, try again')
 
     save_template_info_json()
-    # create_template_header_n_body_if_not_exist(p3_fields_rel_dir)
     mako_input_values_json_load_o_create(force_recreate = True)
     # svg_1_template_1_product_w_watermarks()
 
@@ -346,7 +326,6 @@ def select_a_template_for_editing():
     print('~~~ select a template to edit ~~~')
     m.mod_lev_1_menu = m.menu
     m.menu = 'select_a_template_for_editing'
-    # select_specific_fields_context_func()
     drs = p2.read_dirs(p1.p1_cntrct_abs_dir)
     if drs:
         for i in range(len(drs)):
@@ -411,7 +390,7 @@ def edit_paragraph_headers():
                         if p3_fields_info_f_load_o_create():
                             print(f'now ready to work on {p3_fields_rel_dir}')
                         while True:
-                            select_specific_fields_context_func()
+                            # select_specific_fields_context_func()
                             s = input('\'m\' to use a multi-lines header\n'
                                       '\'d\' to use a single line default header\n'
                                       '\'b\' to go back_后退\n'
@@ -443,7 +422,7 @@ def edit_paragraph_headers():
                     print('|\n| That\'s not an integer, try again\n|')
 
         save_template_info_json()
-        create_template_header_n_body_if_not_exist(p3_fields_rel_dir)
+        # create_template_header_n_body_if_not_exist(p3_fields_rel_dir)
         mako_input_values_json_load_o_create()
         svg_1_template_1_product_w_watermarks()
     else:
@@ -595,73 +574,6 @@ def test_mako():
     #     pprint.pprint(f.read())
 
 
-def suggest_spacing_calc(lgth, template_view_box):
-    n_of_templates_per_dim = int(lgth // template_view_box)
-    return min(20, int((lgth - n_of_templates_per_dim * template_view_box) / max(1, (n_of_templates_per_dim - 1))))
-
-
-def horizontal_centering_offset(template_view_box_w, spacing_w):
-    global page_view_box_w
-
-    n_of_templates_per_row = int(page_view_box_w // template_view_box_w)
-    result = (page_view_box_w - n_of_templates_per_row * template_view_box_w - (
-        n_of_templates_per_row - 1) * spacing_w) / 2
-    return result
-
-
-def open_svg_for_output(header, page, only_1_temp, only_1_prod, family, size, style):
-    global p3_d
-    global page_view_box_h
-    # assert fw == fw
-    # assert svg_out == svg_out
-
-    p3_fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir)
-    if only_1_temp:
-        if only_1_prod:
-            svg_out = os.path.join(p3_fields_abs_dir, '.1_product.svg')
-        else:
-            svg_out = os.path.join(p3_fields_abs_dir, f'.1_template_{page}.svg')
-    else:
-        svg_out = os.path.join(p1.p1_cntrct_abs_dir, f'page_{page}.svg')
-    fw = open(svg_out, 'w', encoding = 'utf8')
-    fw.write(header)
-    fw.write(f'<rect x="0" y="0"\n'
-             f'width="210" height="297"\n'
-             f'style="fill:none;stroke-width:0.5;stroke-opacity:1;stroke:#ff00ff" />\n')
-    fw.write(f'<rect x="{p1.doc_setup_d["margin_w"]}" y="{p1.doc_setup_d["margin_h"]}"\n'
-             f'width="{210 - 2 * p1.doc_setup_d["margin_w"]}" height="{297 - 2 * p1.doc_setup_d["margin_h"]}"\n'
-             f'style="fill:none;stroke-width:0.5;stroke-opacity:1;stroke:#ff00ff" />\n')
-    page_x = 100  # page middle - 5mm to center text, assuming A4
-    page_y = int(page_view_box_h + 3 * (297 - page_view_box_h) / 4)
-    fw.write(
-        f"<g>\n<text transform='translate({page_x}, {page_y})' "
-        f"style='font-family:{family};font-size:{size};font-style:{style}'>-- {page} --</text>\n</g>\n"
-    )
-    # assuming A4
-    fw.write(f"<g transform='translate({p1.doc_setup_d['margin_w']}, {p1.doc_setup_d['margin_h']} )'>\n")
-    return fw, svg_out
-
-
-def close_svg_for_output(fw, svg_out):
-    fw.write('\n</g>\n</svg>\n')
-    fw.close()
-    browser = 'firefox' if os.name == 'posix' else "C:\\Program Files (x86)\\Mozilla Firefox\\firefox.exe %s"
-    webbrowser.get(browser).open_new_tab(svg_out)
-    # subprocess.Popen(['inkscape', svg_out])
-
-
-def extract_svg_for_inserting(inkscape_filename, insert_filename):
-    with open(inkscape_filename, encoding = 'utf8') as fr, open(insert_filename, 'w', encoding = 'utf8') as fw:
-        write_b = False
-        lines = fr.readlines()
-        for i in range(len(lines) - 1):
-            if r'</metadata>' in lines[i]:
-                write_b = True
-                continue
-            if write_b:
-                fw.write(lines[i])
-
-
 def svg_all_templates_all_products_w_watermarks(only_1_temp = False, only_1_prod = False):
     """
 
@@ -673,6 +585,68 @@ def svg_all_templates_all_products_w_watermarks(only_1_temp = False, only_1_prod
     global p3_body_svg
     global page_view_box_h
     global page_view_box_w
+
+    p3_fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir)
+
+    def suggest_spacing_calc(lgth, template_view_box):
+        n_of_templates_per_dim = int(lgth // template_view_box)
+        return min(20, int((lgth - n_of_templates_per_dim * template_view_box) / max(1, (n_of_templates_per_dim - 1))))
+
+    def horizontal_centering_offset():
+        global page_view_box_w
+
+        n_of_templates_per_row = int(page_view_box_w // template_view_box_w)
+        result = (page_view_box_w - n_of_templates_per_row * template_view_box_w - (
+            n_of_templates_per_row - 1) * spacing_w) / 2
+        return result
+
+    def open_svg_for_output():
+        global p3_d
+        global page_view_box_h
+
+        # p3_fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir)
+        if only_1_temp:
+            if only_1_prod:
+                svg_out3 = os.path.join(p3_fields_abs_dir, '.1_product.svg')
+            else:
+                svg_out3 = os.path.join(p3_fields_abs_dir, f'.1_template_{page}.svg')
+        else:
+            svg_out3 = os.path.join(p1.p1_cntrct_abs_dir, f'page_{page}.svg')
+        fw1 = open(svg_out3, 'w', encoding = 'utf8')
+        fw1.write(header)
+        fw1.write(f'<rect x="0" y="0"\n'
+                  f'width="210" height="297"\n'
+                  f'style="fill:none;stroke-width:0.5;stroke-opacity:1;stroke:#ff00ff" />\n')
+        fw1.write(f'<rect x="{p1.doc_setup_d["margin_w"]}" y="{p1.doc_setup_d["margin_h"]}"\n'
+                  f'width="{210 - 2 * p1.doc_setup_d["margin_w"]}" height="{297 - 2 * p1.doc_setup_d["margin_h"]}"\n'
+                  f'style="fill:none;stroke-width:0.5;stroke-opacity:1;stroke:#ff00ff" />\n')
+        page_x = 100  # page middle - 5mm to center text, assuming A4
+        page_y = int(page_view_box_h + 3 * (297 - page_view_box_h) / 4)
+        fw1.write(
+            f"<g>\n<text transform='translate({page_x}, {page_y})' "
+            f"style='font-family:{family};font-size:{size};font-style:{style}'>-- {page} --</text>\n</g>\n"
+        )
+        # assuming A4
+        fw1.write(f"<g transform='translate({p1.doc_setup_d['margin_w']}, {p1.doc_setup_d['margin_h']} )'>\n")
+        return fw1, svg_out3
+
+    def close_svg_for_output(fw2, svg_out2):
+        fw2.write('\n</g>\n</svg>\n')
+        fw2.close()
+        browser = 'firefox' if os.name == 'posix' else "C:\\Program Files (x86)\\Mozilla Firefox\\firefox.exe %s"
+        webbrowser.get(browser).open_new_tab(svg_out2)
+        # subprocess.Popen(['inkscape', svg_out])
+
+    def extract_svg_for_inserting(inkscape_filename, insert_filename):
+        with open(inkscape_filename, encoding = 'utf8') as fr, open(insert_filename, 'w', encoding = 'utf8') as fwe:
+            write_b = False
+            lines = fr.readlines()
+            for idx in range(len(lines) - 1):
+                if r'</metadata>' in lines[idx]:
+                    write_b = True
+                    continue
+                if write_b:
+                    fwe.write(lines[idx])
 
     # load p1.p1e_specific_fields_d_of_d, put in a list of dicts
     p3_all_specific_fields_l_load()
@@ -689,7 +663,7 @@ def svg_all_templates_all_products_w_watermarks(only_1_temp = False, only_1_prod
 
             # check that, if pictures need to be inserted, a directory for picture files does exist
             p3_fields_info_f_load_o_create()
-            p3_fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir)  # dir for header & body
+            # p3_fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir)  # dir for header & body
             # if type(p3_d['pics_d']) != 'bool' and p3_d['pics_d']:
             #     dir_s = os.path.join(p3_fields_abs_dir, 'pics')
             #     if not pathlib.Path(dir_s).exists():
@@ -705,7 +679,7 @@ def svg_all_templates_all_products_w_watermarks(only_1_temp = False, only_1_prod
                 header = h.read()
             template_nr += 1
             # loading data previously used with this template
-            p3_fields_info_f_load_o_create()
+            # p3_fields_info_f_load_o_create()
 
             # opening a new page, printing header template in 'page_#.svg'
             # printing body template in page_# svg
@@ -717,10 +691,7 @@ def svg_all_templates_all_products_w_watermarks(only_1_temp = False, only_1_prod
             style = 'normal'
             if page == 1:
                 # open the first web page, it will be closed when there is no space left, then a new one will be opened
-                fw, svg_out = open_svg_for_output(
-                    header, page, only_1_temp, only_1_prod,
-                    family, size, style
-                )
+                fw, svg_out = open_svg_for_output()
             # from the editable template, build the 'label_template.svg' that will be used to multiply templates
             mako_input_values_json_load_o_create(force_recreate = True)
             # read view box values from template_body so as to compute spacings
@@ -759,7 +730,7 @@ def svg_all_templates_all_products_w_watermarks(only_1_temp = False, only_1_prod
                 f'{template_nr}. {p3_d["template_header"]}</text>\n</svg>\n'
             )
             # run mako.template.Template
-            ox = - spacing_w + horizontal_centering_offset(template_view_box_w, spacing_w)
+            ox = - spacing_w + horizontal_centering_offset()
             oy += p3_d['header_height']
             lngth = len(p3_selected_fields_values_by_prod_d)  # nr of products in the contract
             i = 0  # index of the template to print
@@ -878,7 +849,7 @@ def svg_all_templates_all_products_w_watermarks(only_1_temp = False, only_1_prod
                     fw.write('</g>\n')
                     ox += template_view_box_w + spacing_w
                     i += 1
-                ox = - spacing_w + horizontal_centering_offset(template_view_box_w, spacing_w)
+                ox = - spacing_w + horizontal_centering_offset()
                 oy += template_view_box_h + spacing_h
                 # print(  # for debug purposes
                 #     f'ox: {ox:3.1f} ox: {oy:3.1f}  test: {oy + template_view_box_h + spacing_h} > {page_view_box_h}'
@@ -889,10 +860,7 @@ def svg_all_templates_all_products_w_watermarks(only_1_temp = False, only_1_prod
                     if i < (1 if only_1_prod else lngth) or template_nr != len(drs):
                         close_svg_for_output(fw, svg_out)
                         page += 1
-                        fw, svg_out = open_svg_for_output(
-                            header, page, only_1_temp, only_1_prod,
-                            family, size, style
-                        )
+                        fw, svg_out = open_svg_for_output()
                         if i == lngth:  # if at end of a list, then oy = 0
                             oy = 0
                         else:
@@ -1075,26 +1043,37 @@ def display_all():
 
 
 # Shell interface data & functions #####################################################################################
-def select_specific_fields_context_func(prompt = True):
-    print('~~~ Step 3: Selecting fields to print for each template ~~~\n')
-    display_specific_fields_for_all_products()
-    print('~~~ Now processing contract #: ', p1.p1_d["cntrct_nr"] if p1.p1_d["cntrct_nr"] else None)
-    print('~~~ Now working on template: ', p3_fields_rel_dir if p3_fields_rel_dir else 'None selected')
-    print('~~~ Specific fields selected so far:', p3_d['selected_fields'])
-    print(60 * '-', '\n\n')
-    if prompt:
-        print('\n>>> Select an action: ')
-
-
-context_func_d = {
-    'select_specific_fields': select_specific_fields_context_func,
-    'select_a_template_for_editing': select_specific_fields_context_func,
-    'debug': select_specific_fields_context_func,
-}
-
-
 def step_3__select_fields_to_print_for_each_template_选择每种标签类型的资料():
     global p3_fields_rel_dir
+
+    def scrap_template_for_fields():
+        global p3_fields_rel_dir
+        template_fields = fields_from_template()
+        for x in ['t', 'i', 'prod_n']:
+            if x in template_fields:
+                template_fields.remove(x)
+        for f in template_fields:
+            if f not in p3_d['selected_fields']:
+                p3_d['selected_fields'].append(f)
+        print(f'Template scrapped, selected_fields: {p3_d["selected_fields"]}')
+        save_template_info_json()
+
+    def select_specific_fields_context_func(prompt = True):
+        print('~~~ Step 3: Selecting fields to print for each template ~~~\n')
+        display_specific_fields_for_all_products()
+        print('~~~ Now processing contract #: ', p1.p1_d["cntrct_nr"] if p1.p1_d["cntrct_nr"] else None)
+        print('~~~ Now working on template: ', p3_fields_rel_dir if p3_fields_rel_dir else 'None selected')
+        print('~~~ Specific fields selected so far:', p3_d['selected_fields'])
+        print(60 * '-', '\n\n')
+        if prompt:
+            print('\n>>> Select an action: ')
+
+    context_func_d = {
+        'select_specific_fields': select_specific_fields_context_func,
+        'select_a_template_for_editing': select_specific_fields_context_func,
+        'debug': select_specific_fields_context_func,
+    }
+
     # make sure p1 infrastructure is in place
     if not p1.contract_info_d_load():
         print('p1 has not run successfully')
