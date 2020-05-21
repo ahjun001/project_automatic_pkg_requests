@@ -650,6 +650,20 @@ def close_svg_for_output(fw, svg_out):
     # subprocess.Popen(['inkscape', svg_out])
 
 
+def extract_svg_for_inserting(inkscape_filename, insert_filename):
+    # body_svg = ''
+    with open(inkscape_filename, encoding = 'utf8') as fr, open(insert_filename, 'w', encoding = 'utf8') as fw:
+        write_b = False
+        lines = fr.readlines()
+        for i in range(len(lines) - 1):
+            if r'</metadata>' in lines[i]:
+                write_b = True
+                continue
+            if write_b:
+                # body_svg += lines[i]
+                fw.write(lines[i])
+
+
 def svg_all_templates_all_products_w_watermarks(only_1_temp = False, only_1_prod = False):
     """
 
@@ -769,17 +783,18 @@ def svg_all_templates_all_products_w_watermarks(only_1_temp = False, only_1_prod
                                 if ext == '.svg':
                                     i_filename = os.path.join(p3_fields_abs_dir, '.' + p3_d['pics_d'][prod_nr]['file'])
                                     if not pathlib.Path(i_filename).exists():
-                                        with open(filename, encoding = 'utf8') as fr,\
-                                                open(i_filename, 'w', encoding = 'utf8') as fw:
-                                            write_b = False
-                                            lines = fr.readlines()
-                                            for i in range(len(lines) - 1):
-                                                if r'</metadata>' in lines[i]:
-                                                    write_b = True
-                                                    continue
-                                                if write_b:
-                                                    # body_svg += lines[i]
-                                                    fw.write(lines[i])
+                                        extract_svg_for_inserting(filename, i_filename)
+                                        # with open(filename, encoding = 'utf8') as fr,\
+                                        #         open(i_filename, 'w', encoding = 'utf8') as fw2:
+                                        #     write_b = False
+                                        #     lines = fr.readlines()
+                                        #     for i in range(len(lines) - 1):
+                                        #         if r'</metadata>' in lines[i]:
+                                        #             write_b = True
+                                        #             continue
+                                        #         if write_b:
+                                        #             # body_svg += lines[i]
+                                        #             fw2.write(lines[i])
                                     with open(i_filename, encoding = 'utf8') as f:
                                         fw.write(  # todo: change into a list
                                             f"<g transform = 'matrix("
