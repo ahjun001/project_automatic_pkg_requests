@@ -651,7 +651,6 @@ def close_svg_for_output(fw, svg_out):
 
 
 def extract_svg_for_inserting(inkscape_filename, insert_filename):
-    # body_svg = ''
     with open(inkscape_filename, encoding = 'utf8') as fr, open(insert_filename, 'w', encoding = 'utf8') as fw:
         write_b = False
         lines = fr.readlines()
@@ -660,7 +659,6 @@ def extract_svg_for_inserting(inkscape_filename, insert_filename):
                 write_b = True
                 continue
             if write_b:
-                # body_svg += lines[i]
                 fw.write(lines[i])
 
 
@@ -793,7 +791,6 @@ def svg_all_templates_all_products_w_watermarks(only_1_temp = False, only_1_prod
                                         #             write_b = True
                                         #             continue
                                         #         if write_b:
-                                        #             # body_svg += lines[i]
                                         #             fw2.write(lines[i])
                                     with open(i_filename, encoding = 'utf8') as f:
                                         fw.write(  # todo: change into a list
