@@ -27,7 +27,7 @@ def run_full_demo_and_save_a_selection_of_contracts():
 def run_full_demo_with_selected_or_default_values_运行完整演示():
     p1.process_selected_contract()
     p2.create_default_templates()
-    p3.display_all()
+    p3.try_all_processing_options_n_print()
 
 
 def test_environment():

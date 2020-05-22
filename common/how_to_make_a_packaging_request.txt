@@ -1,0 +1,3 @@
+1. Copy & edit or Create template svg files with mock data and without fields
+2. Add ${fields} that have been searched with RegEx
+3. Add photos & barcodes if necessary
