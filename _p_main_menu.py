@@ -105,13 +105,13 @@ def init():
         m.main_menu = m.menu
     m.menus = {
         m.menu: {
+            '00': run_full_demo_for_a_selection_of_contracts,
+            '0': run_full_demo_with_selected_or_default_values_运行完整演示,
             '1': step_1__select_a_contract_选择合同号,
             '2': p2.step_2__select_templates_to_print_选择_编辑标签类型,
             '3': p3.step_3__select_fields_to_print_for_each_template_选择每种标签类型的资料,
             '4': save_selected_contract,
             '5': p1.process_selected_contract,
-            '0': run_full_demo_with_selected_or_default_values_运行完整演示,
-            '00': run_full_demo_for_a_selection_of_contracts,
             's': run_full_demo_and_save_a_selection_of_contracts,
             'q': m.normal_exit_正常出口,
             'd': m.debug,
