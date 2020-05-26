@@ -50,7 +50,7 @@ def step_1__select_a_contract_选择合同号(test_contract_nr = ''):
                 ini_xls = os.path.join(os.path.join('contract_samples', test_contract_nr), file)
         pass
     else:
-        ini_xls = askopenfilename()
+        ini_xls = askopenfilename(initialdir = 'contract_samples')
     if not ini_xls:
         return False
     # split path and filename

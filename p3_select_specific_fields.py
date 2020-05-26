@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import json
+from tkinter.filedialog import askopenfilename
 import math
 import os
 import pathlib
@@ -8,6 +9,7 @@ import shutil
 import subprocess
 import webbrowser
 
+from lxml import etree
 from mako.template import Template
 
 import m_menus as m
@@ -318,12 +320,18 @@ def edit_fields():
     # svg_w_watermarks_1_template_1_product()
 
 
-def select_a_template_for_editing():
+def edit_a_template():
     global p3_fields_rel_dir
 
     print('~~~ select a template to edit ~~~')
     m.mod_lev_1_menu = m.menu
-    m.menu = 'select_a_template_for_editing'
+    m.menu = 'edit_a_template'
+    select_a_template()
+
+
+def select_a_template():
+    global p3_fields_rel_dir
+
     drs = p2.read_dirs(p1.p1_cntrct_abs_dir)
     if drs:
         for i in range(len(drs)):
@@ -420,7 +428,6 @@ def edit_paragraph_headers():
                     print('|\n| That\'s not an integer, try again\n|')
 
         save_template_info_json()
-        # create_template_header_n_body_if_not_exist(p3_fields_rel_dir)
         mako_input_json_load_o_create()
         svg_w_watermarks_1_template_1_product()
     else:
@@ -428,45 +435,6 @@ def edit_paragraph_headers():
 
 
 # process svg_w_watermarks and its utility functions ###################################################################
-def create_template_header_n_body_if_not_exist(some_rel_dir):
-    """
-    copy header, also template if necessary, build body from template.svg copy that is in repository directory
-    """
-    global p3_body_svg
-
-    from_abs_dir = os.path.join(os.path.join(m.root_abs_dir, 'common'), some_rel_dir)
-    to_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, some_rel_dir)
-
-    # copy the label_template if necessary
-    template_fr = os.path.join(to_abs_dir, 'label_template.svg')
-    if not pathlib.Path(template_fr).exists():
-        shutil.copy(
-            os.path.join(from_abs_dir, 'label_template.svg'),
-            to_abs_dir
-        )
-
-    # create label_template_body.svg if necessary
-    body_fw = os.path.join(to_abs_dir, '.label_template_body.svg')
-    if pathlib.Path(body_fw).exists():
-        with open(body_fw, encoding = 'utf8') as fr:
-            p3_body_svg = fr.read()
-    else:
-        with open(template_fr, encoding = 'utf8') as fr, open(body_fw, 'w', encoding = 'utf8') as fw3:
-            write_b = False
-            lines = fr.readlines()
-            for i in range(len(lines) - 1):
-                if r'</metadata>' in lines[i]:
-                    write_b = True
-                    continue
-                if write_b:
-                    p3_body_svg += lines[i]
-                    fw3.write(lines[i])
-
-    # and copy the label_template_header there
-    if not pathlib.Path(os.path.join(to_abs_dir, '.label_template_header.svg')).exists():
-        shutil.copy(os.path.join(os.path.join(m.root_abs_dir, 'common'), '.label_template_header.svg'), to_abs_dir)
-
-
 def check_if_template_requirements_are_met():
     global p3_fields_rel_dir
     template_fields_set = fields_from_template()
@@ -572,6 +540,22 @@ def test_mako():
     #     pprint.pprint(f.read())
 
 
+def util_print_svg_tags():
+    global p3_fields_rel_dir
+
+    p3_fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir)
+    filename = askopenfilename(initialdir = p3_fields_abs_dir)
+    tree = etree.parse(filename)
+    root = tree.getroot()
+
+    tags = set()
+    for element in root.iter():
+        tag = element.tag.split("}")[1]
+        tags.add(tag)
+        print(tag)
+    print(f'tags: {tags}')
+
+
 def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod = False):
     """
 
@@ -597,6 +581,34 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
         result = (page_view_box_w - n_of_templates_per_row * template_view_box_w - (
             n_of_templates_per_row - 1) * spacing_w) / 2
         return result
+
+    def create_template_body():
+        """
+        copy header, also template if necessary, build body from template.svg copy that is in repository directory
+        """
+        global p3_body_svg
+        global p3_fields_rel_dir
+
+        from_abs_dir = os.path.join(os.path.join(m.root_abs_dir, 'common'), p3_fields_rel_dir)
+
+        # copy the label_template intro the repertory if necessary
+        template_fr = os.path.join(p3_fields_abs_dir, 'label_template.svg')
+        if not pathlib.Path(template_fr).exists():
+            shutil.copy(
+                os.path.join(from_abs_dir, 'label_template.svg'),
+                p3_fields_abs_dir
+            )
+
+        # create label_template_body.svg
+        tree = etree.parse(template_fr)
+        root = tree.getroot()
+        for element in root.iter():
+            if element.tag.split("}")[1] == 'svg':
+                for attribute in element.attrib:
+                    element.attrib.pop(attribute)
+            if element.tag.split("}")[1] in ['guide', 'namedview']:
+                element.getparent().remove(element)
+        tree.write(os.path.join(p3_fields_abs_dir, '.label_template_body.svg'))
 
     def open_svg_for_output():
         global p3_d
@@ -660,24 +672,16 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
 
         # looping on template directories
         for p3_fields_rel_dir in drs:
-
             p3_fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir)
+
             # check that, if pictures need to be inserted, a directory for picture files does exist
             p3_d_load_o_create()
 
-            # p3_fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir)  # dir for header & body
-            # if type(p3_d['pics_d']) != 'bool' and p3_d['pics_d']:
-            #     dir_s = os.path.join(p3_fields_abs_dir, 'pics')
-            #     if not pathlib.Path(dir_s).exists():
-            #         print(
-            #             f'|\n| Cannot access {dir_s} : No such directory\n| '
-            #             'Create one manually and put picture files as indicated by template-info.json\n| '
-            #             'Exiting program ...\n|'
-            #         )
-            #         exit()
-
-            create_template_header_n_body_if_not_exist(p3_fields_rel_dir)
-            with open(os.path.join(p3_fields_abs_dir, '.label_template_header.svg'), encoding = 'utf8') as h:
+            create_template_body()
+            with open(
+                os.path.join(
+                    os.path.join(m.root_abs_dir, 'common'), '.label_template_header.svg'),
+                encoding = 'utf8') as h:
                 header = h.read()
             template_nr += 1
             # loading data previously used with this template
@@ -691,6 +695,7 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
             family = 'sans-serif'
             size = '3.6px'
             style = 'normal'
+            # todo: replace with lxml search
 
             # open the first web page, it will be closed when there is no space left, then a new one will be opened
             if page == 1:
@@ -700,8 +705,7 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
             mako_input_json_load_o_create(force_recreate = True)
 
             # read view box values from template_body so as to compute spacings
-            to_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir)
-            with open(os.path.join(to_abs_dir, 'label_template.svg'), encoding = 'utf8') as f:
+            with open(os.path.join(p3_fields_abs_dir, 'label_template.svg'), encoding = 'utf8') as f:
                 mako_template = Template(
                     filename = os.path.join(p3_fields_abs_dir, '.label_template_body.svg'),
                     input_encoding = 'utf-8'
@@ -725,6 +729,7 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
                 oy = p1.doc_setup_d['page_1_vert_offset'] - spacing_h
 
             fw.write(
+                f'<g>'
                 f'<svg width="{page_view_box_w}" height="{p3_d["header_height"]}" '
                 f'x="0" y="{oy + spacing_h}">\n'
                 f'<rect x="0" y="0"\n'
@@ -733,6 +738,7 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
                 f'<text x="0%" y="100%" dominant-baseline="text-after-edge" '
                 f'style="font-family:{family};font-size:{size};font-style:{style}">'
                 f'{template_nr}. {p3_d["template_header"]}</text>\n</svg>\n'
+                f'</g>'
             )
 
             # run mako.template.Template
@@ -741,7 +747,7 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
             lngth = len(p3_selected_fields_values_by_prod_d)  # nr of products in the contract
             i = 0  # index of the product to print
 
-            # as long as there will be products to print
+            # looping on products
             while i < (1 if only_1_prod else lngth):
 
                 # writing horizontally while there templates to print
@@ -1094,7 +1100,7 @@ def step_3__select_fields_to_print_for_each_template_选择每种标签类型的
 
     context_func_d = {
         'select_specific_fields': select_specific_fields_context_func,
-        'select_a_template_for_editing': select_specific_fields_context_func,
+        'edit_a_template': select_specific_fields_context_func,
         'debug': select_specific_fields_context_func,
     }
 
@@ -1119,8 +1125,10 @@ def step_3__select_fields_to_print_for_each_template_选择每种标签类型的
     # todo: check if template requirements are met
     m.menus = {
         m.menu: {
+            '0': select_a_template,
+            '01': test_mako,
+            '02': util_print_svg_tags,
             '1': svg_w_watermarks_1_template_1_product,
-            '11': select_a_template_for_editing,
             '2': svg_no_watermarks_cover_page,
             '3': svg_w_watermarks_1_template_all_products,
             '4': svg_w_watermarks_all_templates_all_products,
@@ -1128,12 +1136,12 @@ def step_3__select_fields_to_print_for_each_template_选择每种标签类型的
             '5': produce_all_svg_n_print,
             '6': try_all_processing_options_n_print,
             '66': remove_watermarks_n_produce_pdf_deliverable,
+            'e': edit_a_template,
             'b': m.back_to_main_退到主程序,
             'q': m.normal_exit_正常出口,
             'd': m.debug,
         },
-        'select_a_template_for_editing': {
-            '12': test_mako,
+        'edit_a_template': {
             '44': edit_label_template_svg,
             '0': scrap_template_for_fields,
             '1': check_if_template_requirements_are_met,
