@@ -641,7 +641,7 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
         return fw1, svg_out3
 
     def close_svg_for_output(fw2, svg_out2):
-        fw2.write('\n</g>\n</svg>\n')
+        fw2.write('</g>\n</svg>\n')
         fw2.close()
         browser = 'firefox' if os.name == 'posix' else "C:\\Program Files (x86)\\Mozilla Firefox\\firefox.exe %s"
         webbrowser.get(browser).open_new_tab(svg_out2)
@@ -738,7 +738,7 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
                 f'<text x="0%" y="100%" dominant-baseline="text-after-edge" '
                 f'style="font-family:{family};font-size:{size};font-style:{style}">'
                 f'{template_nr}. {p3_d["template_header"]}</text>\n</svg>\n'
-                f'</g>'
+                f'</g>\n'
             )
 
             # run mako.template.Template
@@ -786,7 +786,7 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
                                             ")'>\n")
                                         fw.write(f.read())
                                         fw.write(
-                                            f"</g>\n"
+                                            f"\n</g>\n"
                                         )
                                         os.remove(i_filename)
                                 else:
@@ -831,14 +831,14 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
                                     ")'>\n")
                                 fw.write(f.read())
                                 fw.write(
-                                    "</g>\n"
+                                    "\n</g>\n"
                                     f"<g transform = 'matrix("
                                     f"{brcd_d['coef']},0,0,{brcd_d['coef']},"
                                     f"{brcd_d['x2']},{brcd_d['y2']}"
                                     f")'>\n"
                                 )
                                 fw.write(f.read())
-                                fw.write("</g>\n")
+                                fw.write("\n</g>\n")
 
                     # print(  # for debug purposes
                     #     f'{p3_fields_rel_dir} page: {page} ',
@@ -861,7 +861,7 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
                         t = template_nr,
                         **p3_selected_fields_values_by_prod_d[str(i)])
                     )
-                    fw.write('</g>\n')
+                    fw.write('\n</g>\n')
                     ox += template_view_box_w + spacing_w
                     i += 1
                 ox = - spacing_w + horizontal_centering_offset()
@@ -949,12 +949,12 @@ def svg_no_watermarks_cover_page():
             for good in keep_l[good_n]:
                 fw.write(good)
             # fw.writelines(keep_l[good_n])
-            fw.write('</g>\n')
+            fw.write('\n</g>\n')
             fw.write('<g transform="matrix(.25,0,0,.25,22,167)">\n')
             for good in keep_l[good_n]:
                 fw.write(good)
             # fw.writelines(keep_l[good_n])
-            fw.write('</g>\n')
+            fw.write('\n</g>\n')
             fw.writelines(lines[len(lines) - 1])
 
         # run mako.template.Template
