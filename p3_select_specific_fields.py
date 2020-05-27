@@ -21,7 +21,7 @@ p3_body_svg = ''  # contents of label_template_body.svg
 # p3_default_fields_l = ['xl_prod_spec', 'u_parc']
 p3_d = {}
 p3_f = ''
-p3_fields_rel_dir = ''  # currently working fields directory
+p1.p1_d['fields_rel_dir'] = ''  # currently working fields directory
 p3_selected_fields_values_by_prod_d = {}  # field values as in .mako_input.json
 page_view_box_w = 0
 page_view_box_h = 0
@@ -31,7 +31,6 @@ page_view_box_h = 0
 def p3_d_load_o_create():
     global p3_f
     global p3_d
-    global p3_fields_rel_dir
     # global p3_default_fields_l
     global page_view_box_w
     global page_view_box_h
@@ -40,9 +39,9 @@ def p3_d_load_o_create():
     page_view_box_w = 210 - 2 * p1.doc_setup_d['margin_w']  # Assuming A4
     page_view_box_h = 297 - 2 * p1.doc_setup_d['margin_h']  # Assuming A4
 
-    if p3_fields_rel_dir:
+    if p1.p1_d['fields_rel_dir']:
         # either read data,
-        p3_f = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir), 'template-info.json')
+        p3_f = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir']), 'template-info.json')
         if os.path.exists(p3_f):  # file exists, check that all default value are present, if not print a msg
             with open(p3_f, encoding = 'utf8') as f:
                 p3_d = json.load(f)  # loads selected_fields, template_header, header_height, barcode_d
@@ -56,7 +55,7 @@ def p3_d_load_o_create():
         if 'header_height' not in p3_d.keys():
             p3_d['header_height'] = 7
         if 'template_header' not in p3_d.keys():
-            p3_d['template_header'] = p3_fields_rel_dir[p3_fields_rel_dir.rfind('_') + 1:] + '唛头'
+            p3_d['template_header'] = p1.p1_d['fields_rel_dir'][p1.p1_d['fields_rel_dir'].rfind('_') + 1:] + '唛头'
         if 'barcode_d' not in p3_d.keys():
             p3_d['barcode_d'] = {
                 "coef": 0.0,
@@ -99,7 +98,7 @@ def save_template_info_json():
     global p3_f
     global p3_d
 
-    p3_f = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir), 'template-info.json')
+    p3_f = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir']), 'template-info.json')
     with open(p3_f, 'w', encoding = 'utf8') as f:
         json.dump(p3_d, f, ensure_ascii = False)
 
@@ -110,7 +109,6 @@ def reset_globals():
     # global p3_default_fields_l
     global p3_d
     global p3_f
-    global p3_fields_rel_dir
     global p3_selected_fields_values_by_prod_d
     global page_view_box_h
     global page_view_box_w
@@ -125,7 +123,7 @@ def reset_globals():
     # }
     p3_d = {}
     p3_f = ''
-    p3_fields_rel_dir = ''
+    p1.p1_d['fields_rel_dir'] = ''
     p3_selected_fields_values_by_prod_d = {}
     page_view_box_h = 0
     page_view_box_w = 0
@@ -154,12 +152,10 @@ def prod_n_to_barcode(prod_nr):
 
 
 def create_barcode_file(prod_n):
-    global p3_fields_rel_dir
-
     brcd_tmplt = os.path.join(os.path.join(m.root_abs_dir, 'common'), 'barcode_template.svg')
 
     # put a directory for barcodes
-    brcd_f = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir), prod_n + '.svg')
+    brcd_f = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir']), prod_n + '.svg')
     command = f"./render_barcode.py " + \
               f"-t='Ean13' " + \
               f"-d='{prod_n_to_barcode(prod_n)}' " + \
@@ -172,10 +168,9 @@ def create_barcode_file(prod_n):
 
 # Edit template and field structures ###################################################################################
 def fields_from_template():
-    global p3_fields_rel_dir
-    template_s = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir), 'label_template.svg')
+    template_s = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir']), 'label_template.svg')
     if not os.path.exists(template_s):
-        print(f"|\n| Cannot access '{os.path.join(p3_fields_rel_dir, 'label_template.svg')}': no such file\n|")
+        print(f"|\n| Cannot access '{os.path.join(p1.p1_d['fields_rel_dir'], 'label_template.svg')}': no such file\n|")
     with open(template_s, encoding = 'utf8') as fr:
         lines = fr.readlines()
     template_fields_set = set()
@@ -187,16 +182,15 @@ def fields_from_template():
 
 
 def check_all_templates_have_correct_fields():
-    global p3_fields_rel_dir
     _, drs, _ = next(os.walk(p1.p1_cntrct_abs_dir))
-    for p3_fields_rel_dir in drs:
+    for p1.p1_d['fields_rel_dir'] in drs:
+        dump_fields_rel_dir()
         p3_d_load_o_create()
         check_if_template_requirements_are_met()
 
 
 def add_fields():
     global p3_f
-    global p3_fields_rel_dir
     global p3_all_specific_fields_l
 
     if not p1.p1e_specific_fields_d_of_d:
@@ -297,10 +291,8 @@ def display_specific_fields_for_all_products():
 
 
 def edit_fields():
-    global p3_fields_rel_dir
-
     while True:
-        print('~~~ Now working on template: ', p3_fields_rel_dir if p3_fields_rel_dir else 'None selected')
+        print('~~~ Now working on template: ', p1.p1_d['fields_rel_dir'] if p1.p1_d['fields_rel_dir'] else 'None')
         s = input('\'a\' to add a field\n'
                   '\'d\' to delete a field\n'
                   '\'b\' to go back_后退\n'
@@ -321,8 +313,6 @@ def edit_fields():
 
 
 def edit_a_template():
-    global p3_fields_rel_dir
-
     print('~~~ select a template to edit ~~~')
     m.mod_lev_1_menu = m.menu
     m.menu = 'edit_a_template'
@@ -330,8 +320,6 @@ def edit_a_template():
 
 
 def select_a_template():
-    global p3_fields_rel_dir
-
     drs = p2.read_dirs(p1.p1_cntrct_abs_dir)
     if drs:
         for i in range(len(drs)):
@@ -347,7 +335,8 @@ def select_a_template():
                     s_i = int(s)
                     if s_i in range(len(drs)):
                         os.system('clear' if os.name == 'posix' else 'cls')
-                        p3_fields_rel_dir = drs[s_i]
+                        p1.p1_d['fields_rel_dir'] = drs[s_i]
+                        dump_fields_rel_dir()
                         # load fields already selected for template as they are on file
                         p3_d_load_o_create()
                         break
@@ -358,25 +347,26 @@ def select_a_template():
 
 
 def edit_label_template_svg():
-    global p3_fields_rel_dir
-
-    body_file = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir), '.label_template_body.svg')
+    body_file = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir']), '.label_template_body.svg')
     if os.path.exists(body_file):
-        os.remove(os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir), '.label_template_body.svg'))
-    label_template_file = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir), 'label_template.svg')
+        os.remove(
+            os.path.join(
+                os.path.join(
+                    p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir']), '.label_template_body.svg'))
+    label_template_file = os.path.join(
+        os.path.join(
+            p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir']), 'label_template.svg')
     if os.path.exists(label_template_file):
         subprocess.Popen(['inkscape', label_template_file]).wait()
 
 
 def edit_paragraph_headers():
-    global p3_fields_rel_dir
-
     # list existing directories, each containing a template
     drs = p2.read_dirs(p1.p1_cntrct_abs_dir)
     if drs:
         # giving a default directory if none has been set before
-        if not p3_fields_rel_dir:
-            p3_fields_rel_dir = drs[0]
+        if not p1.p1_d['fields_rel_dir']:
+            p1.p1_d['fields_rel_dir'] = drs[0]
         print(f'~~~ Now processing contract #: {p1.p1_d["cntrct_nr"]}')
         print('>>> Select template to edit:\n')
         for i in range(len(drs)):
@@ -391,10 +381,11 @@ def edit_paragraph_headers():
                     s_i = int(s)
                     if s_i in range(len(drs)):
                         os.system('clear' if os.name == 'posix' else 'cls')
-                        p3_fields_rel_dir = drs[s_i]
+                        p1.p1_d['fields_rel_dir'] = drs[s_i]
+                        dump_fields_rel_dir()
                         # load fields already selected for template as they are on file
                         if p3_d_load_o_create():
-                            print(f'now ready to work on {p3_fields_rel_dir}')
+                            print(f"now ready to work on {p1.p1_d['fields_rel_dir']}")
                         while True:
                             # select_specific_fields_context_func()
                             s = input('\'m\' to use a multi-lines header\n'
@@ -417,7 +408,8 @@ def edit_paragraph_headers():
                                 p3_d['header_height'] = 20
                             elif s == 'd':
                                 # single line header
-                                p3_d['template_header'] = p3_fields_rel_dir[p3_fields_rel_dir.rfind('_') + 1:] + '唛头'
+                                p3_d['template_header'] = p1.p1_d['fields_rel_dir'][p1.p1_d['fields_rel_dir'].rfind(
+                                    '_') + 1:] + '唛头'
                                 p3_d['header_height'] = 7
                             else:
                                 print(f'{s} is not an option, try again')
@@ -435,13 +427,18 @@ def edit_paragraph_headers():
 
 
 # process svg_w_watermarks and its utility functions ###################################################################
+def dump_fields_rel_dir():
+    prog_info_json_f = os.path.join(m.root_abs_dir, 'program-info.json')
+    with open(prog_info_json_f, 'w', encoding = 'utf8') as fw:
+        json.dump(p1.p1_d, fw, ensure_ascii = False)
+
+
 def check_if_template_requirements_are_met():
-    global p3_fields_rel_dir
     template_fields_set = fields_from_template()
     for x in ['t', 'i', 'prod_n']:
         if x in template_fields_set:
             template_fields_set.remove(x)
-    # print(f'Template in {p3_fields_rel_dir} uses {template_fields_set}')
+    # print(f'Template in {p1.p1_d['fields_rel_dir']} uses {template_fields_set}')
     # print(f'Fields selected to feed data are  {p3_d["selected_fields"]}')
     diff_set = template_fields_set - set(p3_d['selected_fields'])
     if diff_set:
@@ -455,7 +452,7 @@ def check_if_template_requirements_are_met():
         pass
         # print('Template fields and requested data match.  The template is operational.')
 
-        # template_f = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir), 'label_template.svg')
+        # template_f = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir']), 'label_template.svg')
         # subprocess.Popen([
         #     'inkscape',
         #     template_f,
@@ -467,12 +464,11 @@ def mako_input_json_load_o_create(force_recreate = False):
     Creates a json file with variables and values necessary to mako rendering
     :return:
     """
-    global p3_fields_rel_dir
     global p3_selected_fields_values_by_prod_d
 
     check_if_template_requirements_are_met()
     # make sure global variables are initialized in all situations, outside the loop to do it once only
-    mako_input_json_s = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir), '.mako_input.json')
+    mako_input_json_s = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir']), '.mako_input.json')
     if pathlib.Path(mako_input_json_s).exists() and not force_recreate:
         with open(mako_input_json_s, encoding = 'utf8') as fr:
             p3_selected_fields_values_by_prod_d = json.load(fr)
@@ -513,7 +509,8 @@ def mako_input_json_load_o_create(force_recreate = False):
             p3_selected_fields_values_by_prod_d[str(int(v['i']) - 1)] = v
 
         # save results before adding new fields being derived from existing ones
-        # mako_pre_proc_json_s = os.path.join(p1.p1_cntrct_abs_dir + '/' + p3_fields_rel_dir, '.mako_preproc.json')
+        # mako_pre_proc_json_s = os.path.join(p1.p1_cntrct_abs_dir + '/' + p1.p1_d['fields_rel_dir'],
+        # '.mako_preproc.json')
         # with open(mako_pre_proc_json_s, 'w', encoding='utf8') as f:
         #     json.dump(p3_selected_fields_values_by_prod_d, f, ensure_ascii = False)
 
@@ -533,7 +530,7 @@ def mako_input_json_load_o_create(force_recreate = False):
 
 def test_mako():
     mako_input_json_load_o_create(force_recreate = True)
-    filename = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir), '.mako_input.json')
+    filename = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir']), '.mako_input.json')
     subprocess.call(['jq', '.', filename])
     # subprocess.call(['/usr/bin/xed', filename])
     # with open(filename, encoding='utf8') as f:
@@ -541,9 +538,7 @@ def test_mako():
 
 
 def util_print_svg_tags():
-    global p3_fields_rel_dir
-
-    p3_fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir)
+    p3_fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir'])
     filename = askopenfilename(initialdir = p3_fields_abs_dir)
     tree = etree.parse(filename)
     root = tree.getroot()
@@ -560,7 +555,6 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
     """
 
     """
-    global p3_fields_rel_dir
     global p3_d
     global p3_all_specific_fields_l
     global p3_selected_fields_values_by_prod_d
@@ -568,11 +562,13 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
     global page_view_box_h
     global page_view_box_w
 
-    p3_fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir)
+    p3_fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir'])
 
     def suggest_spacing_calc(lgth, template_view_box):
-        n_of_templates_per_dim = int(lgth // template_view_box)
+        # if # of ranks exceeds length to print or unadjusted
+        n_of_templates_per_dim = int(lgth // template_view_box)  # // integer division
         return min(20, int((lgth - n_of_templates_per_dim * template_view_box) / max(1, (n_of_templates_per_dim - 1))))
+        # else or adjusted
 
     def horizontal_centering_offset():
         global page_view_box_w
@@ -587,9 +583,8 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
         copy header, also template if necessary, build body from template.svg copy that is in repository directory
         """
         global p3_body_svg
-        global p3_fields_rel_dir
 
-        from_abs_dir = os.path.join(os.path.join(m.root_abs_dir, 'common'), p3_fields_rel_dir)
+        from_abs_dir = os.path.join(os.path.join(m.root_abs_dir, 'common'), p1.p1_d['fields_rel_dir'])
 
         # copy the label_template intro the repertory if necessary
         template_fr = os.path.join(p3_fields_abs_dir, 'label_template.svg')
@@ -614,7 +609,7 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
         global p3_d
         global page_view_box_h
 
-        # p3_fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir)
+        # p3_fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir'])
         if only_1_temp:
             if only_1_prod:
                 svg_out3 = os.path.join(p3_fields_abs_dir, '.1_product.svg')
@@ -658,11 +653,17 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
                 if write_b:
                     fwe.write(lines[idx])
 
+    # get information good for all products
+    lngth = len(p1.all_products_to_be_processed_set)  # nr of products in the contract
+    if lngth == 0:
+        print('init lngth failed')
+        exit()
+
     # load p1.p1e_specific_fields_d_of_d, put in a list of dicts
     p3_all_specific_fields_l_load()
 
     # read existing templates
-    drs = [p3_fields_rel_dir] if only_1_temp else p2.p2_load_templates_info_l()
+    drs = [p1.p1_d['fields_rel_dir']] if only_1_temp else p2.p2_load_templates_info_l()
     oy = 0
     if drs:
         svg_out = ''  # svg output filename
@@ -671,8 +672,8 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
         page = 1  # nr of page being built
 
         # looping on template directories
-        for p3_fields_rel_dir in drs:
-            p3_fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir)
+        for p1.p1_d['fields_rel_dir'] in drs:
+            p3_fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir'])
 
             # check that, if pictures need to be inserted, a directory for picture files does exist
             p3_d_load_o_create()
@@ -717,12 +718,15 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
                     exit()
                 template_view_box_w = float(measures.groups()[2])
                 template_view_box_h = float(measures.groups()[3])
+
+            # compute spacings
             spacing_w = suggest_spacing_calc(page_view_box_w, template_view_box_w)
-            spacing_h = suggest_spacing_calc(page_view_box_h - p3_d['header_height'], template_view_box_h)
-            assert template_view_box_w + spacing_w <= page_view_box_w, \
-                "write_templates: ! template width + spacing width don't fit in the page"
-            assert template_view_box_h + spacing_h <= page_view_box_h, \
-                'write_templates: ! template height + spacing height don\'t fit in the page'
+
+            nr_rows = lngth // (page_view_box_w // template_view_box_w)
+            vert_length_needed = nr_rows * template_view_box_h
+            vert_length_avail = page_view_box_h - p3_d['header_height'] - p1.doc_setup_d['page_1_vert_offset']
+            spacing_h = suggest_spacing_calc(page_view_box_h - p3_d['header_height'], template_view_box_h) if \
+                vert_length_needed > vert_length_avail else 15
 
             # write the header for this template
             if page == 1:
@@ -744,7 +748,6 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
             # run mako.template.Template
             ox = - spacing_w + horizontal_centering_offset()
             oy += p3_d['header_height']
-            lngth = len(p3_selected_fields_values_by_prod_d)  # nr of products in the contract
             i = 0  # index of the product to print
 
             # looping on products
@@ -809,7 +812,7 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
 
                     # create the path to a potential barcode file
                     barcode_f = os.path.join(
-                        os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir),
+                        os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir']),
                         p3_selected_fields_values_by_prod_d[str(i)]['prod_n'] + '.svg'
                     )
 
@@ -841,7 +844,7 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
                                 fw.write("\n</g>\n")
 
                     # print(  # for debug purposes
-                    #     f'{p3_fields_rel_dir} page: {page} ',
+                    #     f'{p1.p1_d['fields_rel_dir']} page: {page} ',
                     #     f'ox: {ox:3.1f}, oy: {oy:3.1f}',
                     #     f"idx: {p3_selected_fields_values_by_prod_d[str(i)]['i']}",
                     #     f"prod_nr: {p3_selected_fields_values_by_prod_d[str(i)]['prod_n']}"
@@ -888,21 +891,19 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
 
 # Aggregate functions ##################################################################################################
 def svg_w_watermarks_1_template_1_product():
-    global p3_fields_rel_dir
-
-    if not p3_fields_rel_dir:
-        drs = p2.read_dirs(p1.p1_cntrct_abs_dir)
-        p3_fields_rel_dir = drs[0]
+    if not p1.p1_d['fields_rel_dir']:
+        p1.p1_d['fields_rel_dir'] = p2.read_dirs(p1.p1_cntrct_abs_dir)[0]
+        dump_fields_rel_dir()
     svg_w_watermarks_all_templates_all_products(only_1_temp = True, only_1_prod = True)
 
 
 def svg_no_watermarks_cover_page():
-    global p3_fields_rel_dir
     global p3_d
     global p3_selected_fields_values_by_prod_d
 
     # load data from p1.p1e_specific_fields_d_of_d, put in a list of dicts
-    p3_fields_rel_dir = p2.p2_load_templates_info_l()[0]
+    p1.p1_d['fields_rel_dir'] = p2.read_dirs(p1.p1_cntrct_abs_dir)[0]
+    dump_fields_rel_dir()
     p3_d_load_o_create()
     p3_all_specific_fields_l_load()
 
@@ -913,7 +914,7 @@ def svg_no_watermarks_cover_page():
     #     print("The label used for the cover page is from the layer 'label' in label_template.svg")
 
     # copy first label on cover page template
-    p3_fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p3_fields_rel_dir)
+    p3_fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir'])
     svg_in = os.path.join(p3_fields_abs_dir, '.1_product.svg')
     if svg_in:
         with open(svg_in, encoding = 'utf8') as fr:
@@ -978,11 +979,9 @@ def svg_no_watermarks_cover_page():
 
 
 def svg_w_watermarks_1_template_all_products():
-    global p3_fields_rel_dir
-
-    if not p3_fields_rel_dir:
+    if not p1.p1_d['fields_rel_dir']:
         drs = p2.read_dirs(p1.p1_cntrct_abs_dir)
-        p3_fields_rel_dir = drs[0]
+        p1.p1_d['fields_rel_dir'] = drs[0]
     svg_w_watermarks_all_templates_all_products(only_1_temp = True)
 
 
@@ -993,17 +992,17 @@ def produce_all_svg_n_print():
 
 
 def try_all_processing_options_n_print():
-    global p3_fields_rel_dir
     # read existing templates
     drs_l = p2.p2_load_templates_info_l()
     if drs_l:
         # for each template that has been created as a subdir to p1.p1_cntrct_abs_dir
-        for p3_fields_rel_dir in drs_l:
+        for p1.p1_d['fields_rel_dir'] in drs_l:
+            dump_fields_rel_dir()
             # use data on disk, if not on disk create with default values
             if p3_d_load_o_create():
                 print('Rendering 1 template, 1 product')
                 svg_w_watermarks_1_template_1_product()
-                if p1.doc_setup_d['cover_page'] and p3_fields_rel_dir == drs_l[0]:
+                if p1.doc_setup_d['cover_page'] and p1.p1_d['fields_rel_dir'] == drs_l[0]:
                     print('Rendering cover page')
                     svg_no_watermarks_cover_page()
                 print('Rendering 1 template, all products')
@@ -1074,10 +1073,7 @@ def remove_watermarks_n_produce_pdf_deliverable():
 
 # Shell interface data & functions #####################################################################################
 def step_3__select_fields_to_print_for_each_template_选择每种标签类型的资料():
-    global p3_fields_rel_dir
-
     def scrap_template_for_fields():
-        global p3_fields_rel_dir
         template_fields = fields_from_template()
         for x in ['t', 'i', 'prod_n']:
             if x in template_fields:
@@ -1092,7 +1088,8 @@ def step_3__select_fields_to_print_for_each_template_选择每种标签类型的
         print('~~~ Step 3: Selecting fields to print for each template ~~~\n')
         display_specific_fields_for_all_products()
         print('~~~ Now processing contract #: ', p1.p1_d["cntrct_nr"] if p1.p1_d["cntrct_nr"] else None)
-        print('~~~ Now working on template: ', p3_fields_rel_dir if p3_fields_rel_dir else 'None selected')
+        print('~~~ Now working on template: ', p1.p1_d['fields_rel_dir'] if p1.p1_d['fields_rel_dir'] else 'None '
+                                                                                                           'selected')
         print('~~~ Specific fields selected so far:', p3_d['selected_fields'])
         print(60 * '-', '\n\n')
         if prompt:
@@ -1110,9 +1107,9 @@ def step_3__select_fields_to_print_for_each_template_选择每种标签类型的
     if not p2.read_dirs(p1.p1_cntrct_abs_dir):
         p2.create_default_templates()
     # read existing p3 infrastructure
-    if not p3_fields_rel_dir:
-        drs = p2.read_dirs(p1.p1_cntrct_abs_dir)
-        p3_fields_rel_dir = drs[0]  # todo: get from json file
+    if 'fields_rel_dir' not in p1.p1_d or not p1.p1_d['fields_rel_dir']:
+        p1.p1_d['fields_rel_dir'] = p2.read_dirs(p1.p1_cntrct_abs_dir)[0]
+        dump_fields_rel_dir()
     if not p3_d:
         p3_d_load_o_create()
 
