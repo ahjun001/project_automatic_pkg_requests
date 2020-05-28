@@ -70,22 +70,29 @@ context_func_d = {
 
 
 def save_selected_contract():
-    main_dir = os.path.join(os.path.join(m.root_abs_dir, 'contract_samples'), p1.p1_d['cntrct_nr'])
+    to_main_dir = os.path.join(os.path.join(m.root_abs_dir, 'contract_samples'), p1.p1_d['cntrct_nr'])
 
-    # copy_dir = main_dir + '_' + str(datetime.timestamp(datetime.now()))
-    copy_dir = main_dir + '_' + str(datetime.timestamp(datetime.now()))
-    shutil.copytree(main_dir, copy_dir)
+    # copy_dir = to_main_dir + '_' + str(datetime.timestamp(datetime.now()))
+    copy_dir = to_main_dir + '_' + str(datetime.timestamp(datetime.now()))
+    shutil.copytree(to_main_dir, copy_dir)
 
-    shutil.copy(os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['cntrct_nr'] + '_doc_setup.json'), main_dir)
+    shutil.copy(os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['cntrct_nr'] + '_doc_setup.json'), to_main_dir)
 
     drs = p2.read_dirs(p1.p1_cntrct_abs_dir)
     if drs:
         for dr in drs:
-            filename = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, dr), 'template-info.json')
+            from_abs_dr = os.path.join(p1.p1_cntrct_abs_dir, dr)
+            to_abs_dr = os.path.join(to_main_dir, dr)
+            filename = os.path.join(from_abs_dr, 'template-info.json')
             if os.path.exists(filename):
-                shutil.copy( filename, os.path.join(main_dir, dr) )
-            filename = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, dr), 'label_template.svg')
-            shutil.copy( filename, os.path.join(main_dir, dr) )
+                shutil.copy(filename, to_abs_dr)
+            filename = os.path.join(from_abs_dr, 'label_template.svg')
+            shutil.copy(filename, os.path.join(to_main_dir, dr))
+            _, sub_dirs, _ = next(os.walk(os.path.join(to_main_dir, dr)))
+            for sub_dir in sub_dirs:
+                from_dir = os.path.join(from_abs_dr, sub_dir)
+                to_dir = os.path.join(to_abs_dr, sub_dir)
+                shutil.copytree(from_dir, to_dir, dirs_exist_ok = True)
 
 
 def step_1__select_a_contract_选择合同号(test_contract_nr = ''):
