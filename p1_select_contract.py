@@ -26,86 +26,6 @@ p1e_specific_fields_d_of_d = {}
 prog_info_json_f = ''
 
 
-########################################################################################################################
-# program-info_d
-
-
-def step_1__select_a_contract_选择合同号(test_contract_nr = ''):
-    """ Help function to build program-info_d"""
-    global p1_cntrct_abs_dir
-    global p1_d
-
-    ini_xls = ''
-    # (p1_d['cntrct_nr'], p1_d['fpath_init_xls'], p1_d['file_xls']) = (None, None, None)
-    print('~~~ Step 1: Selecting a contract ~~~')
-    print('~~~ Select a contract xls file in the graphic file browser -- mind the browser window could be hidden')
-    if test_contract_nr:
-        # path = './contract_samples/' + test_contract_nr
-        path = os.path.join('contract_samples', test_contract_nr)
-        _, _, files = next(os.walk(path))
-        for file in files:
-            path_f, file_ext = os.path.split(file)
-            _, ext = os.path.splitext(file_ext)
-            if ext == '.xls':
-                ini_xls = os.path.join(os.path.join('contract_samples', test_contract_nr), file)
-        pass
-    else:
-        ini_xls = askopenfilename(initialdir = 'contract_samples')
-    if not ini_xls:
-        return False
-    # split path and filename
-    path, filename_ext = os.path.split(ini_xls)
-    # split filename and extension
-    filename, ext = os.path.splitext(filename_ext)
-    # check extension indeed is '.xls'
-    if ext == '.xls':
-        # extract contract_nr
-        s = re.match(r'\w+-\d+', filename).group()
-        if s:
-            print(f"Processing {s}")
-            p1_d['cntrct_nr'] = s
-            p1_cntrct_abs_dir = os.path.join(os.path.join(m.root_abs_dir, 'data'), p1_d['cntrct_nr'])
-            if not pathlib.Path(p1_cntrct_abs_dir).exists():
-                os.mkdir(p1_cntrct_abs_dir)
-                # do not overwrite an existing contract file
-            p1_d['file_xls'] = filename_ext
-            p1_d['fpath_init_xls'] = ini_xls
-            filename = os.path.join(os.path.join(os.path.join(m.root_abs_dir, 'data'), p1_d['cntrct_nr']),
-                                    p1_d['file_xls']
-                                    )
-            if not pathlib.Path(filename).exists():
-                shutil.copy(p1_d['fpath_init_xls'], p1_cntrct_abs_dir)
-
-            # document the info in program-info.json
-            with open(prog_info_json_f, 'w', encoding = 'utf8') as fw:
-                # json.dump(p1_d, fw, ensure_ascii = False).encode('utf8')
-                json.dump(p1_d, fw, ensure_ascii = False)
-
-            # copy setup file if exists
-            stpf_rel_f = p1_d['cntrct_nr'] + '_doc_setup.json'
-            stpf_abs_src = os.path.join(path, stpf_rel_f)
-            stpf_abs_dest = os.path.join(p1_cntrct_abs_dir, stpf_rel_f)
-            if pathlib.Path(stpf_abs_src).exists():
-                if not pathlib.Path(stpf_abs_dest).exists():
-                    shutil.copy(stpf_abs_src, p1_cntrct_abs_dir)
-
-                # also copy template directories, svg and json files that might exists
-            _, dirs, _ = next(os.walk(path))
-            if dirs:
-                for some_dir in dirs:
-                    dest_dir = os.path.join(p1_cntrct_abs_dir, some_dir)
-                    if not pathlib.Path(dest_dir).exists():
-                        shutil.copytree(os.path.join(path, some_dir), dest_dir)
-            process_selected_contract()
-            return True
-        else:  # the prefix has not been checked
-            print('A prefix could not be read from filename ext')
-            return False
-    else:
-        print(f'\nSelected file {filename} extension is not \'.xls\'\n')
-        return False
-
-
 def program_info_d_load_o_create():
     """
     Loads p1_d['cntrct_nr'], p1_d['file_xls'], and p1_cntrct_abs_dir from program-info.json
@@ -225,16 +145,6 @@ def p1_all_products_to_be_processed_set_load():
         return True
 
 
-def p1_search_reg_ex_l_load():
-    global p1_search_reg_ex_l
-
-    with open(os.path.join(os.path.join(m.root_abs_dir, 'common'),
-                           'regular_expressions.json'), encoding = 'utf8') as f:
-        p1_search_reg_ex_l = json.load(f)
-    if p1_search_reg_ex_l:
-        return True
-
-
 def p1b_indics_from_contract_l_load():
     global p1b_indics_from_contract_l
     global p1_cntrct_info_d
@@ -288,6 +198,83 @@ def dump_contract_info_json(key, filename):
         json.dump(p1_cntrct_info_d, fi, ensure_ascii = False)
 
 
+# on the menu ##########################################################################################################
+def step_1__select_a_contract_选择合同号(test_contract_nr = ''):
+    """ Help function to build program-info_d"""
+    global p1_cntrct_abs_dir
+    global p1_d
+
+    ini_xls = ''
+    # (p1_d['cntrct_nr'], p1_d['fpath_init_xls'], p1_d['file_xls']) = (None, None, None)
+    print('~~~ Step 1: Selecting a contract ~~~')
+    print('~~~ Select a contract xls file in the graphic file browser -- mind the browser window could be hidden')
+    if test_contract_nr:
+        # path = './contract_samples/' + test_contract_nr
+        path = os.path.join('contract_samples', test_contract_nr)
+        _, _, files = next(os.walk(path))
+        for file in files:
+            path_f, file_ext = os.path.split(file)
+            _, ext = os.path.splitext(file_ext)
+            if ext == '.xls':
+                ini_xls = os.path.join(os.path.join('contract_samples', test_contract_nr), file)
+        pass
+    else:
+        ini_xls = askopenfilename(initialdir = 'contract_samples')
+    if not ini_xls:
+        return False
+    # split path and filename
+    path, filename_ext = os.path.split(ini_xls)
+    # split filename and extension
+    filename, ext = os.path.splitext(filename_ext)
+    # check extension indeed is '.xls'
+    if ext == '.xls':
+        # extract contract_nr
+        s = re.match(r'\w+-\d+', filename).group()
+        if s:
+            print(f"Processing {s}")
+            p1_d['cntrct_nr'] = s
+            p1_cntrct_abs_dir = os.path.join(os.path.join(m.root_abs_dir, 'data'), p1_d['cntrct_nr'])
+            if not pathlib.Path(p1_cntrct_abs_dir).exists():
+                os.mkdir(p1_cntrct_abs_dir)
+                # do not overwrite an existing contract file
+            p1_d['file_xls'] = filename_ext
+            p1_d['fpath_init_xls'] = ini_xls
+            filename = os.path.join(os.path.join(os.path.join(m.root_abs_dir, 'data'), p1_d['cntrct_nr']),
+                                    p1_d['file_xls']
+                                    )
+            if not pathlib.Path(filename).exists():
+                shutil.copy(p1_d['fpath_init_xls'], p1_cntrct_abs_dir)
+
+            # document the info in program-info.json
+            with open(prog_info_json_f, 'w', encoding = 'utf8') as fw:
+                # json.dump(p1_d, fw, ensure_ascii = False).encode('utf8')
+                json.dump(p1_d, fw, ensure_ascii = False)
+
+            # copy setup file if exists
+            stpf_rel_f = p1_d['cntrct_nr'] + '_doc_setup.json'
+            stpf_abs_src = os.path.join(path, stpf_rel_f)
+            stpf_abs_dest = os.path.join(p1_cntrct_abs_dir, stpf_rel_f)
+            if pathlib.Path(stpf_abs_src).exists():
+                if not pathlib.Path(stpf_abs_dest).exists():
+                    shutil.copy(stpf_abs_src, p1_cntrct_abs_dir)
+
+                # also copy template directories, svg and json files that might exists
+            _, dirs, _ = next(os.walk(path))
+            if dirs:
+                for some_dir in dirs:
+                    dest_dir = os.path.join(p1_cntrct_abs_dir, some_dir)
+                    if not pathlib.Path(dest_dir).exists():
+                        shutil.copytree(os.path.join(path, some_dir), dest_dir)
+            process_selected_contract()
+            return True
+        else:  # the prefix has not been checked
+            print('A prefix could not be read from filename ext')
+            return False
+    else:
+        print(f'\nSelected file {filename} extension is not \'.xls\'\n')
+        return False
+
+
 def process_selected_contract():
     global p1_cntrct_info_f
     global p1_cntrct_info_d
@@ -300,6 +287,7 @@ def process_selected_contract():
     global all_products_to_be_processed_set
     global p1d_common_indics_l
     global p1e_specific_fields_d_of_d
+
     # reset to zero if these had been loaded from disk before
     p1_search_reg_ex_l = []
     p1b_indics_from_contract_l = []
@@ -316,7 +304,7 @@ def process_selected_contract():
     else:
         p1_cntrct_info_d = {}
 
-    # the name of the -contract.json file can now be set
+    # setting the name of the -contract.json file
     rel_path_contract_json_f = '.p1a_' + p1_d['cntrct_nr'] + '-contract.json'
 
     # Creating the json file from the local xls file: opening the xl file
@@ -328,15 +316,15 @@ def process_selected_contract():
     while not sheet.col_values(0, 0)[row]:  # getting to last row before D1 in col. A
         row += 1
 
-    # get global info
+    # Read xls file into memory: p1a_contract_json_d, and disk: p1_cntrct_info_d['p1a_contract_json']
     if sheet.cell(1, 7).value[0:4] == '合同编号':
-        contract_json_d = {'合同编号': sheet.cell(1, 7).value[5:].strip()}  # select data from cell 'H2'
+        p1a_contract_json_d = {'合同编号': sheet.cell(1, 7).value[5:].strip()}  # select data from cell 'H2'
     else:
         sys.exit("Error reading contract XLS file:  expecting to select 合同编号 in cell 'H2'")
 
     non_decimal = re.compile(r'[^\d.]+')  # necessary to clean formatting characters in XLS cells
 
-    contract_json_d['l_i'] = []
+    p1a_contract_json_d['l_i'] = []
     while sheet.col_values(0, 0)[row]:  # looping while there is product information available
         prod_n = sheet.cell(row, 1).value  # correcting XL showing an int but passing a float,
         # all prod # are not numbers
@@ -355,21 +343,39 @@ def process_selected_contract():
             "10.Tech_spec-技术参数_2": sheet.cell(row + 1, 7).value,
             "11.Pack_spec-包装要求": sheet.cell(row + 2, 2).value
         }
-        contract_json_d['l_i'].append(dict(tmp_dict))
+        p1a_contract_json_d['l_i'].append(dict(tmp_dict))
         row += 3
 
     with open(os.path.join(p1_cntrct_abs_dir, rel_path_contract_json_f), 'w', encoding = 'utf8') as fc:
-        json.dump(contract_json_d, fc, ensure_ascii = False)
+        json.dump(p1a_contract_json_d, fc, ensure_ascii = False)
+
+    # also write into a text file to validate regex in www.regex101.com
+    contract_long_list = ""
+    for product in p1a_contract_json_d['l_i']:
+        for value in product.values():
+            # contract_long_list += (str(value)).strip()
+            # contract_long_list += (str(value)).replace(r'\r\n', r'\n')
+            contract_long_list += (str(value)).replace('\r', '')
+    with open(os.path.join(p1_cntrct_abs_dir, '.p1a_' + p1_d['cntrct_nr'] + '-contract.txt'), 'w') as fw:
+        fw.write(contract_long_list)
+
     # populate p1_cntrct_info_d: a structure to store template information, and its corresponding json file
     p1_cntrct_info_d['p1a_contract_json'] = rel_path_contract_json_f
 
-    p1_search_reg_ex_l_load()
+    with open(
+        os.path.join(
+            os.path.join(
+                m.root_abs_dir, 'common'), 'regular_expressions.json'), encoding = 'utf8'
+    ) as f:
+        p1_search_reg_ex_l = json.load(f)
 
-    # p1b_indics_from_contract_l: harvesting all indicators possibly available in the contract_json_d
+    # harvesting all indicators possibly available in p1a_contract_json_d
+    # Read xls file into memory: p1b_indics_from_contract_l,
+    #               and disk: p1_cntrct_info_d['p1b_indics_from_contract_l']
     for row_indic in p1_search_reg_ex_l:
         what = row_indic['what']
         how = row_indic['how']
-        for prod in contract_json_d['l_i']:  # inspecting products one by one
+        for prod in p1a_contract_json_d['l_i']:  # inspecting products one by one
             tmp_dct = {  # adding 03.Prod_spec-产品规则 info
                 'what': 'xl_prod_spec',
                 'where': 'xl_quantity-数量',
@@ -409,7 +415,9 @@ def process_selected_contract():
         with open(f, 'w', encoding = 'utf8') as f:
             json.dump(p1b_indics_from_contract_l, f, ensure_ascii = False)
 
-        # p1c_prods_w_same_key_set = {}  # make a dictionary key= info, value = sets of prods with that key
+        # p1c_prods_w_same_key_set: dictionary with key= info, value = sets of prods with that key
+        # organize data from p1b_indics_from_contract_l into memory: p1c_all_relevant_data
+        #               and disk: p1_cntrct_info_d['p1c_all_relevant_data']
         for row in p1b_indics_from_contract_l:
             # for index, row in c_df.iterrows():  # index is not used
             if (row['what'], row['where'], row['info']) not in p1c_prods_w_same_key_set.keys():
@@ -426,12 +434,16 @@ def process_selected_contract():
 
     dump_contract_info_json('p1c_all_relevant_data', p1c_file_out_f)
 
-    # p1c_build_set_of_all_products_to_be_processed
-    for prod in contract_json_d['l_i']:
+    # all_products_to_be_processed
+    # Read xls file into memory: all_products_to_be_processed_set,
+    #               and disk: p1_cntrct_info_d['all_products_to_be_processed_set']
+    for prod in p1a_contract_json_d['l_i']:
         all_products_to_be_processed_set.add(prod["01.TST_prod_#-需方产品编号"])
     dump_contract_info_json('all_products_to_be_processed_set', sorted(list(all_products_to_be_processed_set)))
 
-    # p6_split_between p6_common_indics and p6_specific_indics
+    # split info from p1c_all_relevant_data into
+    # p1d_extract_common
+    # p1e_extract_specifics
     for k, v in p1c_prods_w_same_key_set.items():
         # indic is not a  packing quantity and is common to all products
         if k[0] not in ['pack', 'parc', 'u_parc'] and v == all_products_to_be_processed_set:
@@ -479,8 +491,7 @@ def process_selected_contract():
         json.dump(p1_cntrct_info_d, fi, ensure_ascii = False)
 
 
-########################################################################################################################
-# Shell interface data & functions
+# Shell interface data & functions #####################################################################################
 def select_contract_main_context_func():
     print('~~~ Now editing contract #: ', p1_d['cntrct_nr'] if 'cntrct_nr' in p1_d.keys() else 'None selected')
     print('>>> Select action: ')
@@ -502,7 +513,7 @@ def init():
     m.menus = {
         m.menu: {
             '1': step_1__select_a_contract_选择合同号,
-            '3': process_selected_contract,
+            '2': process_selected_contract,
             'b': m.back_to_main_退到主程序,
             'q': m.normal_exit_正常出口,
             'd': m.debug,

@@ -587,15 +587,19 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
         from_abs_dir = os.path.join(os.path.join(m.root_abs_dir, 'common'), p1.p1_d['fields_rel_dir'])
 
         # copy the label_template intro the repertory if necessary
-        template_fr = os.path.join(p3_fields_abs_dir, 'label_template.svg')
-        if not pathlib.Path(template_fr).exists():
+        svg_readable_file_in = os.path.join(p3_fields_abs_dir, 'label_template.svg')
+        svg_insertable_file_out = os.path.join(p3_fields_abs_dir, '.label_template_body.svg')
+        if not pathlib.Path(svg_readable_file_in).exists():
             shutil.copy(
                 os.path.join(from_abs_dir, 'label_template.svg'),
                 p3_fields_abs_dir
             )
 
         # create label_template_body.svg
-        tree = etree.parse(template_fr)
+        strip_readable_svg_file_for_insert(svg_readable_file_in, svg_insertable_file_out)
+
+    def strip_readable_svg_file_for_insert(svg_readable_file_in, svg_insertable_file_out):
+        tree = etree.parse(svg_readable_file_in)
         root = tree.getroot()
         for element in root.iter():
             if element.tag.split("}")[1] == 'svg':
@@ -603,7 +607,7 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
                     element.attrib.pop(attribute)
             if element.tag.split("}")[1] in ['guide', 'namedview']:
                 element.getparent().remove(element)
-        tree.write(os.path.join(p3_fields_abs_dir, '.label_template_body.svg'))
+        tree.write(svg_insertable_file_out)
 
     def open_svg_for_output():
         global p3_d
@@ -642,16 +646,16 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
         webbrowser.get(browser).open_new_tab(svg_out2)
         # subprocess.Popen(['inkscape', svg_out])
 
-    def extract_svg_for_inserting(inkscape_filename, insert_filename):
-        with open(inkscape_filename, encoding = 'utf8') as fr, open(insert_filename, 'w', encoding = 'utf8') as fwe:
-            write_b = False
-            lines = fr.readlines()
-            for idx in range(len(lines) - 1):
-                if r'</metadata>' in lines[idx]:
-                    write_b = True
-                    continue
-                if write_b:
-                    fwe.write(lines[idx])
+    # def extract_svg_for_inserting(inkscape_filename, insert_filename):
+    #     with open(inkscape_filename, encoding = 'utf8') as fr, open(insert_filename, 'w', encoding = 'utf8') as fwe:
+    #         write_b = False
+    #         lines = fr.readlines()
+    #         for idx in range(len(lines) - 1):
+    #             if r'</metadata>' in lines[idx]:
+    #                 write_b = True
+    #                 continue
+    #             if write_b:
+    #                 fwe.write(lines[idx])
 
     # get information good for all products
     lngth = len(p1.all_products_to_be_processed_set)  # nr of products in the contract
@@ -770,7 +774,9 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
                                 if ext == '.svg':
                                     i_filename = os.path.join(p3_fields_abs_dir, '.' + p3_d['pics_d'][prod_nr]['file'])
                                     if not pathlib.Path(i_filename).exists():
-                                        extract_svg_for_inserting(filename, i_filename)
+
+                                        # extract_svg_for_inserting(filename, i_filename)
+                                        strip_readable_svg_file_for_insert(filename, i_filename)
                                         # with open(filename, encoding = 'utf8') as fr,\
                                         #         open(i_filename, 'w', encoding = 'utf8') as fw2:
                                         #     write_b = False
@@ -791,7 +797,7 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
                                         fw.write(
                                             f"\n</g>\n"
                                         )
-                                        os.remove(i_filename)
+                                        # os.remove(i_filename) # todo: remove comment
                                 else:
                                     fw.write(
                                         f"<svg x='{p3_d['pics_d'][prod_nr]['x']}' "
