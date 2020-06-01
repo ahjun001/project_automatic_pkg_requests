@@ -309,7 +309,6 @@ def edit_fields():
 
     save_template_info_json()
     mako_input_json_load_o_create(force_recreate = True)
-    # svg_w_watermarks_1_template_1_product_n_cover_page()
 
 
 def edit_a_template():
@@ -895,104 +894,21 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
 
 
 # Aggregate functions ##################################################################################################
-def svg_w_watermarks_1_template_1_product_1():
-    if not p1.p1_d['fields_rel_dir']:
-        p1.p1_d['fields_rel_dir'] = p2.read_dirs(p1.p1_cntrct_abs_dir)[0]
-        dump_fields_rel_dir()
-    svg_w_watermarks_all_templates_all_products(only_1_temp = True, only_1_prod = True)
-
-
-def svg_no_watermarks_cover_page_1():
-    global p3_d
-    global p3_selected_fields_values_by_prod_d
-
-    # load data from p1.p1e_specific_fields_d_of_d, put in a list of dicts
-    p1.p1_d['fields_rel_dir'] = p2.read_dirs(p1.p1_cntrct_abs_dir)[0]
-    dump_fields_rel_dir()
-    p3_d_load_o_create()
-    p3_all_specific_fields_l_load()
-
-    # print(  # for debug purposes
-    #     f"From '..._doc_setup.json': cover_page = {p1.doc_setup_d['cover_page']}"
-    # )
-    # if p1.doc_setup_d['cover_page']:
-    #     print("The label used for the cover page is from the layer 'label' in label_template.svg")
-
-    # copy first label on cover page template
-    p3_fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir'])
-    svg_in = os.path.join(p3_fields_abs_dir, '.1_product.svg')
-    if svg_in:
-        with open(svg_in, encoding = 'utf8') as fr:
-            lines = fr.readlines()
-        balance = 0
-        keep_l = []
-        tmp_l = []
-        i = 0
-        good_n = 0
-        for line in lines:
-            res1 = re.match(r'\s*<g', line)
-            if res1:
-                balance += 1
-            res2 = re.match(r'\s*</g>', line)
-            if balance >= 3:
-                tmp_l.append(line)
-            if res2:
-                if balance == 3:
-                    keep_l.append(tmp_l)
-                    i += 1
-                    tmp_l = []
-                balance -= 1
-            if 'label="label"' in line:
-                good_n = i
-        with open(os.path.join(os.path.join(m.root_abs_dir, 'common'), '.cover_page_template.svg'),
-                  encoding = 'utf8') as fr:
-            lines = fr.readlines()
-        svg_out = os.path.join(p1.p1_cntrct_abs_dir, '.cover_page_template.svg')
-        with open(svg_out, 'w', encoding = 'utf8') as fw:
-            for i in range(len(lines) - 1):
-                fw.writelines(lines[i])
-            fw.write('<g transform="matrix(1,0,0,1,15,45)">\n')
-            for good in keep_l[good_n]:
-                fw.write(good)
-            # fw.writelines(keep_l[good_n])
-            fw.write('\n</g>\n')
-            fw.write('<g transform="matrix(.25,0,0,.25,22,167)">\n')
-            for good in keep_l[good_n]:
-                fw.write(good)
-            # fw.writelines(keep_l[good_n])
-            fw.write('\n</g>\n')
-            fw.writelines(lines[len(lines) - 1])
-
-        # run mako.template.Template
-        mako_template = Template(
-            filename = svg_out,
-            input_encoding = 'utf-8'
-        )
-
-        if not p3_selected_fields_values_by_prod_d:
-            mako_input_json_load_o_create()
-        cover_s = os.path.join(p1.p1_cntrct_abs_dir, 'page_0.svg')
-        with open(cover_s, 'w', encoding = 'utf8') as fw:
-            fw.write(mako_template.render(
-                contract_n = p1.p1_d["cntrct_nr"],
-                **p3_selected_fields_values_by_prod_d['0']
-            ))
-        browser = 'firefox' if os.name == 'posix' else "C:\\Program Files (x86)\\Mozilla Firefox\\firefox.exe %s"
-        webbrowser.get(browser).open_new_tab(cover_s)
-    else:
-        print(f'{svg_in}: no such file, should be build before cover page')
-
-
 def svg_w_watermarks_1_template_1_product_n_cover_page():
     global p3_d
     global p3_selected_fields_values_by_prod_d
 
+    # if no template has been selected, select the first one in the list
+    cvr_pg_dir = p2.read_dirs(p1.p1_cntrct_abs_dir)[0]
     if not p1.p1_d['fields_rel_dir']:
-        p1.p1_d['fields_rel_dir'] = p2.read_dirs(p1.p1_cntrct_abs_dir)[0]
+        p1.p1_d['fields_rel_dir'] = cvr_pg_dir
         dump_fields_rel_dir()
+
+    # generate a svg with mako rendering on the first product
     svg_w_watermarks_all_templates_all_products(only_1_temp = True, only_1_prod = True)
 
-    if p1.doc_setup_d['cover_page']:
+    # if the cover page has been set and if this is the first template in the list then also create a cover page
+    if p1.doc_setup_d['cover_page'] and p1.p1_d['fields_rel_dir'] == cvr_pg_dir:
         p3_d_load_o_create()
         p3_all_specific_fields_l_load()
 
