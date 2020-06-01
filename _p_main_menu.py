@@ -42,22 +42,13 @@ def main_menu_context_func():
     temp_f = []
     c_nr = p1.p1_d['cntrct_nr'] if 'cntrct_nr' in p1.p1_d.keys() else ''
     print(f'Step 1 selected contract: ' + f'{c_nr if c_nr else "None"}')
-    templ_l, default = p2.read_dirs(p1.p1_cntrct_abs_dir), ''
-    if not templ_l:
-        templ_l, default = p2.p2_default_templates_l, ' (Default)'
-    print(f'Step 2 selected templates to print: {templ_l} {default}')
-    p3_f = os.path.join(
-        os.path.join(p1.p1_cntrct_abs_dir, templ_l[0]),
-        'template-info.json'
-    )
-    if pathlib.Path(p3_f).exists():
+    templ_l = p2.read_dirs(p1.p1_cntrct_abs_dir)
+    print(f'Step 2 selected templates to print: {templ_l}')
+    p3_f = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, templ_l[0]), 'template-info.json') if templ_l else ''
+    if os.path.exists('p3_f'):
         with open(p3_f) as f:
             p3_d = json.load(f)
         temp_f = p3_d['selected_fields']
-    else:
-        if 'selected_fields' in p3.p3_d.keys():
-            temp_f = f'{p3.p3_d["selected_fields"]} (Defaults)'
-        # either read data,
     print(f'Step 3 selected fields to print for each template: {temp_f}')
     print(60 * '-', '\n\n')
     print('>>> Main menu:')
