@@ -7,57 +7,57 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="82mm"
-   height="45.791672mm"
-   viewBox="0 0 82 45.791672"
-   version="1.1"
-   id="svg8"
+   sodipodi:docname="label_template.svg"
    inkscape:version="1.1-dev (1:0.92.0+devel+202005110039+9ce7266)"
-   sodipodi:docname="label_template.svg">
+   id="svg8"
+   version="1.1"
+   viewBox="0 0 82 45.791672"
+   height="45.791672mm"
+   width="82mm">
   <defs
      id="defs2">
     <rect
-       id="rect1606"
-       height="37.266201"
-       width="17.867941"
+       x="80.307869"
        y="51.094837"
-       x="80.307869" />
+       width="17.867941"
+       height="37.266201"
+       id="rect1606" />
   </defs>
   <sodipodi:namedview
-     width="82mm"
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="2.463815"
-     inkscape:cx="210.67644"
-     inkscape:cy="105.54823"
-     inkscape:document-units="mm"
-     inkscape:current-layer="layer1"
-     showgrid="false"
-     inkscape:window-width="1920"
-     inkscape:window-height="1015"
-     inkscape:window-x="0"
+     inkscape:window-maximized="1"
      inkscape:window-y="40"
-     inkscape:window-maximized="1">
+     inkscape:window-x="0"
+     inkscape:window-height="1015"
+     inkscape:window-width="1920"
+     showgrid="false"
+     inkscape:current-layer="layer1"
+     inkscape:document-units="mm"
+     inkscape:cy="105.54823"
+     inkscape:cx="176.1771"
+     inkscape:zoom="2.463815"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     borderopacity="1.0"
+     bordercolor="#666666"
+     pagecolor="#ffffff"
+     id="base"
+     width="82mm">
     <sodipodi:guide
-       id="guide824"
+       position="-1.8330188,35.523234"
        orientation="0,266.45669"
-       position="-1.8330188,35.523234" />
+       id="guide824" />
     <sodipodi:guide
-       id="guide826"
+       position="71.433777,3.4369251"
        orientation="153.07087,0"
-       position="71.433777,3.4369251" />
+       id="guide826" />
     <sodipodi:guide
-       id="guide828"
+       position="-1.3388916,5.546269"
        orientation="0,-266.45669"
-       position="-1.3388916,5.546269" />
+       id="guide828" />
     <sodipodi:guide
-       id="guide830"
+       position="11.290035,53.317673"
        orientation="-153.07087,0"
-       position="11.290035,53.317673" />
+       id="guide830" />
   </sodipodi:namedview>
   <metadata
      id="metadata5">
@@ -71,111 +71,124 @@
     </rdf:RDF>
   </metadata>
   <g
-     transform="translate(-28.433871,-40.569877)"
-     inkscape:label="Layer 1"
+     id="layer1"
      inkscape:groupmode="layer"
-     id="layer1">
+     inkscape:label="Layer 1"
+     transform="translate(-28.433871,-40.569877)">
     <rect
-       ry="2.5"
-       rx="2.5"
-       y="46.111549"
-       x="35.033875"
-       height="40"
-       width="70"
+       style="fill:none;stroke:#ff0000;stroke-width:0.5;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
        id="rect7"
-       style="fill:none;stroke:#ff0000;stroke-width:0.5;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000" />
+       width="70"
+       height="40"
+       x="35.033875"
+       y="46.111549"
+       rx="2.5"
+       ry="2.5" />
     <text
-       id="text847"
-       y="64.171844"
-       x="63.230186"
+       xml:space="preserve"
        style="font-size:4.9389px;line-height:1.25;font-family:'Noto Sans';-inkscape-font-specification:'Noto Sans';text-decoration:none;text-decoration-line:none;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;fill:none;stroke:#ff0000;stroke-width:0.499999;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
-       xml:space="preserve"><tspan
-         y="64.171844"
-         x="63.230186"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:'Noto Sans';-inkscape-font-specification:'Noto Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#0f100f;fill-opacity:1;stroke:none;stroke-width:0.5"
+       x="63.230186"
+       y="64.171844"
+       id="text847"><tspan
+         sodipodi:role="line"
          id="tspan845"
-         sodipodi:role="line">$Objet </tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;font-family:'Noto Sans';-inkscape-font-specification:'Noto Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#0f100f;fill-opacity:1;stroke:none;stroke-width:0.5"
+         x="63.230186"
+         y="64.171844">$Objet </tspan></text>
     <text
-       id="text1547"
-       y="68.853523"
+       xml:space="preserve"
+       style="font-size:2.82223px;line-height:0;font-family:'Noto Sans';-inkscape-font-specification:'Noto Sans';text-align:end;text-decoration:none;text-decoration-line:none;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-anchor:end;fill:none;stroke:#ff0000;stroke-width:0.499999;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
        x="99.720848"
-       style="font-size:2.82223px;line-height:0;font-family:'Noto Sans';-inkscape-font-specification:'Noto Sans';text-align:end;text-decoration:none;text-decoration-line:none;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-anchor:end;fill:none;stroke:#ff0000;stroke-width:0.499999;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
-       xml:space="preserve"><tspan
-         y="68.853523"
-         x="99.720848"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82223px;line-height:1;font-family:'Liberation Sans';-inkscape-font-specification:'Liberation Sans';fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.499999;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
+       y="68.853523"
+       id="text1547"><tspan
+         sodipodi:role="line"
          id="tspan1545"
-         sodipodi:role="line">${prod_n}</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82223px;line-height:1;font-family:'Liberation Sans';-inkscape-font-specification:'Liberation Sans';fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.499999;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
+         x="99.720848"
+         y="68.853523">${prod_n}</tspan></text>
     <text
-       xml:space="preserve"
-       style="font-size:2.82223px;line-height:0;font-family:'Noto Sans';-inkscape-font-specification:'Noto Sans';text-align:end;text-decoration:none;text-decoration-line:none;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-anchor:end;fill:none;stroke:#ff0000;stroke-width:0.499999;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
-       x="99.800774"
+       id="text1551"
        y="74.553604"
-       id="text1551"><tspan
-         sodipodi:role="line"
-         id="tspan1549"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82223px;line-height:1;font-family:'Liberation Sans';-inkscape-font-specification:'Liberation Sans';fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.499999;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
-         x="99.800774"
-         y="74.553604">$spec</tspan></text>
+       x="99.800774"
+       style="font-size:2.82223px;line-height:1;font-family:'Liberation Sans';-inkscape-font-specification:'Liberation Sans';text-align:end;text-decoration:none;text-decoration-line:none;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-anchor:end;fill:#000000;stroke:none;stroke-width:0.499999;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000;font-weight:normal;font-style:normal;font-stretch:normal;font-variant:normal;font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;font-variant-position:normal;font-variant-alternates:normal;font-feature-settings:normal;font-variation-settings:normal;text-indent:0;text-decoration-style:solid;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;white-space:normal;shape-padding:0;shape-margin:0;inline-size:0;opacity:1;vector-effect:none;fill-opacity:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-dashoffset:0;stop-opacity:1;"
+       xml:space="preserve"><tspan
+         id="tspan853"
+         sodipodi:role="line">${xl_prod_spec}</tspan></text>
     <text
-       id="text1555"
-       y="79.99601"
-       x="99.904129"
+       xml:space="preserve"
        style="font-size:2.82223px;line-height:0;font-family:'Noto Sans';-inkscape-font-specification:'Noto Sans';text-align:end;text-decoration:none;text-decoration-line:none;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-anchor:end;fill:none;stroke:#ff0000;stroke-width:0.499999;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
-       xml:space="preserve"><tspan
-         y="79.99601"
-         x="99.904129"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82223px;line-height:1;font-family:'Liberation Sans';-inkscape-font-specification:'Liberation Sans';fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.499999;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
+       x="99.904129"
+       y="79.99601"
+       id="text1555"><tspan
+         sodipodi:role="line"
          id="tspan1553"
-         sodipodi:role="line">${u_parc} pc(s)</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82223px;line-height:1;font-family:'Liberation Sans';-inkscape-font-specification:'Liberation Sans';fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.499999;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1"
+         x="99.904129"
+         y="79.99601">${u_parc} pc(s)</tspan></text>
     <text
-       xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82223px;line-height:1;font-family:'Noto Sans';-inkscape-font-specification:'Noto Sans';text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.499999;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
-       x="39.627483"
+       id="text1596"
        y="69.259697"
-       id="text1596"><tspan
-         sodipodi:role="line"
-         id="tspan1594"
-         style="stroke-width:0.5"
-         x="39.627483"
-         y="69.259697">Réf. :</tspan></text>
-    <text
-       transform="translate(13.782339,5.1724406)"
-       xml:space="preserve"
-       id="text1604"
-       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.11667px;line-height:1;font-family:'Noto Sans';-inkscape-font-specification:'Noto Sans Italic';text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;white-space:pre;shape-inside:url(#rect1606);fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.5;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000;" />
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82223px;line-height:1;font-family:'Noto Sans';-inkscape-font-specification:'Noto Sans';text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.499999;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
-       x="39.570339"
-       y="74.711937"
-       id="text1655"><tspan
-         sodipodi:role="line"
-         id="tspan1653"
-         style="stroke-width:0.499999"
-         x="39.570339"
-         y="74.711937">Spécification(s) :</tspan></text>
-    <text
-       id="text1677"
-       y="80.351898"
-       x="39.542118"
+       x="39.627483"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82223px;line-height:1;font-family:'Noto Sans';-inkscape-font-specification:'Noto Sans';text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.499999;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
        xml:space="preserve"><tspan
-         y="80.351898"
-         x="39.542118"
+         y="69.259697"
+         x="39.627483"
+         style="stroke-width:0.5"
+         id="tspan1594"
+         sodipodi:role="line">Réf. :</tspan></text>
+    <text
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.11667px;line-height:1;font-family:'Noto Sans';-inkscape-font-specification:'Noto Sans Italic';text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;white-space:pre;shape-inside:url(#rect1606);fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.5;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000;"
+       id="text1604"
+       xml:space="preserve"
+       transform="translate(13.782339,5.1724406)" />
+    <text
+       id="text1655"
+       y="74.711937"
+       x="39.570339"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82223px;line-height:1;font-family:'Noto Sans';-inkscape-font-specification:'Noto Sans';text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.499999;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
+       xml:space="preserve"><tspan
+         y="74.711937"
+         x="39.570339"
          style="stroke-width:0.499999"
-         id="tspan1675"
-         sodipodi:role="line">Quantité :</tspan></text>
+         id="tspan1653"
+         sodipodi:role="line">Spécification(s) :</tspan></text>
     <text
        xml:space="preserve"
-       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777px;line-height:1;font-family:'Noto Sans';-inkscape-font-specification:'Noto Sans Italic';text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-anchor:start;display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.499999;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
-       x="28.127659"
-       y="44.582733"
-       id="text1709-3"><tspan
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:2.82223px;line-height:1;font-family:'Noto Sans';-inkscape-font-specification:'Noto Sans';text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.499999;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
+       x="39.542118"
+       y="80.351898"
+       id="text1677"><tspan
          sodipodi:role="line"
-         id="tspan1707-6"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.9389px;font-family:'Noto Sans';-inkscape-font-specification:'Noto Sans';stroke-width:0.499999"
+         id="tspan1675"
+         style="stroke-width:0.499999"
+         x="39.542118"
+         y="80.351898">Quantité :</tspan></text>
+    <text
+       id="text1709-3"
+       y="44.582733"
+       x="28.127659"
+       style="font-style:italic;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.52777px;line-height:1;font-family:'Noto Sans';-inkscape-font-specification:'Noto Sans Italic';text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-anchor:start;display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.499999;stroke-miterlimit:10;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
+       xml:space="preserve"><tspan
+         y="44.582733"
          x="28.127659"
-         y="44.582733">${t}.${i} 我司货号为 ${prod_n} 内盒不干胶</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.9389px;font-family:'Noto Sans';-inkscape-font-specification:'Noto Sans';stroke-width:0.499999"
+         id="tspan1707-6"
+         sodipodi:role="line">${t}.${i} 我司货号为 ${prod_n} 内盒不干胶</tspan></text>
+    <rect
+       y="40.702934"
+       x="28.4363"
+       height="46.13509"
+       width="82.153488"
+       id="rect30"
+       style="fill:none;stroke-width:0.25;stop-color:#000000;stroke:#ff00ff;stroke-opacity:1;stroke-miterlimit:4;stroke-dasharray:none" />
+    <text
+       id="text849"
+       y="74.904861"
+       x="93.982819"
+       style="font-size:4.5861px;line-height:1.25;font-family:'Liberation Sans';-inkscape-font-specification:'Liberation Sans';text-decoration:none;text-decoration-line:none;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;fill:none;stroke:#ff00ff;stroke-width:0.25;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;stop-color:#000000"
+       xml:space="preserve"><tspan
+         style="stroke-width:0.25"
+         id="tspan847"
+         sodipodi:role="line"></tspan></text>
   </g>
 </svg>

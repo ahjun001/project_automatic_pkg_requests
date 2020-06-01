@@ -84,7 +84,7 @@ def add_templates_from_list(list_l, ask_questions):
             create_template_dir(c)
 
 
-def create_default_templates():
+def load_or_create_templates():
     drs = read_dirs(p1.p1_cntrct_abs_dir)
     if not drs:
         add_templates_from_list(p2_default_templates_l, ask_questions = False)
@@ -185,7 +185,7 @@ def step_2__select_templates_to_print_选择_编辑标签类型():
         m.main_menu = m.menu
     m.menus = {
         m.menu: {
-            '1': create_default_templates,
+            '1': load_or_create_templates,
             '2': add_new_template,
             '3': delete_existing_template,
             'b': m.back_to_main_退到主程序,

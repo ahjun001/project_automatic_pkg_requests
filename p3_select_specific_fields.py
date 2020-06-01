@@ -309,7 +309,7 @@ def edit_fields():
 
     save_template_info_json()
     mako_input_json_load_o_create(force_recreate = True)
-    # svg_w_watermarks_1_template_1_product()
+    # svg_w_watermarks_1_template_1_product_n_cover_page()
 
 
 def edit_a_template():
@@ -421,7 +421,7 @@ def edit_paragraph_headers():
 
         save_template_info_json()
         mako_input_json_load_o_create()
-        svg_w_watermarks_1_template_1_product()
+        svg_w_watermarks_1_template_1_product_n_cover_page()
     else:
         return
 
@@ -774,7 +774,6 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
                                 if ext == '.svg':
                                     i_filename = os.path.join(p3_fields_abs_dir, '.' + p3_d['pics_d'][prod_nr]['file'])
                                     if not pathlib.Path(i_filename).exists():
-
                                         # extract_svg_for_inserting(filename, i_filename)
                                         strip_readable_svg_file_for_insert(filename, i_filename)
                                         # with open(filename, encoding = 'utf8') as fr,\
@@ -850,7 +849,7 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
                                 fw.write("\n</g>\n")
 
                     # print(  # for debug purposes
-                    #     f'{p1.p1_d['fields_rel_dir']} page: {page} ',
+                    #     f'{p1.p1_d["fields_rel_dir"]} page: {page} ',
                     #     f'ox: {ox:3.1f}, oy: {oy:3.1f}',
                     #     f"idx: {p3_selected_fields_values_by_prod_d[str(i)]['i']}",
                     #     f"prod_nr: {p3_selected_fields_values_by_prod_d[str(i)]['prod_n']}"
@@ -896,14 +895,14 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
 
 
 # Aggregate functions ##################################################################################################
-def svg_w_watermarks_1_template_1_product():
+def svg_w_watermarks_1_template_1_product_1():
     if not p1.p1_d['fields_rel_dir']:
         p1.p1_d['fields_rel_dir'] = p2.read_dirs(p1.p1_cntrct_abs_dir)[0]
         dump_fields_rel_dir()
     svg_w_watermarks_all_templates_all_products(only_1_temp = True, only_1_prod = True)
 
 
-def svg_no_watermarks_cover_page():
+def svg_no_watermarks_cover_page_1():
     global p3_d
     global p3_selected_fields_values_by_prod_d
 
@@ -984,6 +983,90 @@ def svg_no_watermarks_cover_page():
         print(f'{svg_in}: no such file, should be build before cover page')
 
 
+def svg_w_watermarks_1_template_1_product_n_cover_page():
+    global p3_d
+    global p3_selected_fields_values_by_prod_d
+
+    if not p1.p1_d['fields_rel_dir']:
+        p1.p1_d['fields_rel_dir'] = p2.read_dirs(p1.p1_cntrct_abs_dir)[0]
+        dump_fields_rel_dir()
+    svg_w_watermarks_all_templates_all_products(only_1_temp = True, only_1_prod = True)
+
+    if p1.doc_setup_d['cover_page']:
+        p3_d_load_o_create()
+        p3_all_specific_fields_l_load()
+
+        # print(  # for debug purposes
+        #     f"From '..._doc_setup.json': cover_page = {p1.doc_setup_d['cover_page']}"
+        # )
+        # if p1.doc_setup_d['cover_page']:
+        #     print("The label used for the cover page is from the layer 'label' in label_template.svg")
+
+        # copy first label on cover page template
+        p3_fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir'])
+        svg_in = os.path.join(p3_fields_abs_dir, '.1_product.svg')
+        if svg_in:
+            with open(svg_in, encoding = 'utf8') as fr:
+                lines = fr.readlines()
+            balance = 0
+            keep_l = []
+            tmp_l = []
+            i = 0
+            good_n = 0
+            for line in lines:
+                res1 = re.match(r'\s*<g', line)
+                if res1:
+                    balance += 1
+                res2 = re.match(r'\s*</g>', line)
+                if balance >= 3:
+                    tmp_l.append(line)
+                if res2:
+                    if balance == 3:
+                        keep_l.append(tmp_l)
+                        i += 1
+                        tmp_l = []
+                    balance -= 1
+                if 'label="label"' in line:
+                    good_n = i
+            with open(os.path.join(os.path.join(m.root_abs_dir, 'common'), '.cover_page_template.svg'),
+                      encoding = 'utf8') as fr:
+                lines = fr.readlines()
+            svg_out = os.path.join(p1.p1_cntrct_abs_dir, '.cover_page_template.svg')
+            with open(svg_out, 'w', encoding = 'utf8') as fw:
+                for i in range(len(lines) - 1):
+                    fw.writelines(lines[i])
+                fw.write('<g transform="matrix(1,0,0,1,15,45)">\n')
+                for good in keep_l[good_n]:
+                    fw.write(good)
+                # fw.writelines(keep_l[good_n])
+                fw.write('\n</g>\n')
+                fw.write('<g transform="matrix(.25,0,0,.25,22,167)">\n')
+                for good in keep_l[good_n]:
+                    fw.write(good)
+                # fw.writelines(keep_l[good_n])
+                fw.write('\n</g>\n')
+                fw.writelines(lines[len(lines) - 1])
+
+            # run mako.template.Template
+            mako_template = Template(
+                filename = svg_out,
+                input_encoding = 'utf-8'
+            )
+
+            if not p3_selected_fields_values_by_prod_d:
+                mako_input_json_load_o_create()
+            cover_s = os.path.join(p1.p1_cntrct_abs_dir, 'page_0.svg')
+            with open(cover_s, 'w', encoding = 'utf8') as fw:
+                fw.write(mako_template.render(
+                    contract_n = p1.p1_d["cntrct_nr"],
+                    **p3_selected_fields_values_by_prod_d['0']
+                ))
+            browser = 'firefox' if os.name == 'posix' else "C:\\Program Files (x86)\\Mozilla Firefox\\firefox.exe %s"
+            webbrowser.get(browser).open_new_tab(cover_s)
+        else:
+            print(f'{svg_in}: no such file, should be build before cover page')
+
+
 def svg_w_watermarks_1_template_all_products():
     if not p1.p1_d['fields_rel_dir']:
         drs = p2.read_dirs(p1.p1_cntrct_abs_dir)
@@ -993,7 +1076,6 @@ def svg_w_watermarks_1_template_all_products():
 
 def produce_all_svg_n_print():
     svg_w_watermarks_all_templates_all_products()
-    svg_no_watermarks_cover_page()
     remove_watermarks_n_produce_pdf_deliverable()
 
 
@@ -1006,11 +1088,8 @@ def try_all_processing_options_n_print():
             dump_fields_rel_dir()
             # use data on disk, if not on disk create with default values
             if p3_d_load_o_create():
-                print('Rendering 1 template, 1 product')
-                svg_w_watermarks_1_template_1_product()
-                if p1.doc_setup_d['cover_page'] and p1.p1_d['fields_rel_dir'] == drs_l[0]:
-                    print('Rendering cover page')
-                    svg_no_watermarks_cover_page()
+                print('Rendering 1 template, 1 product & cover page')
+                svg_w_watermarks_1_template_1_product_n_cover_page()
                 print('Rendering 1 template, all products')
                 svg_w_watermarks_1_template_all_products()
     print('Rendering all templates, all products, and print')
@@ -1111,7 +1190,7 @@ def step_3__select_fields_to_print_for_each_template_选择每种标签类型的
     if not p1.contract_info_d_load():
         print('p1 has not run successfully')
     if not p2.read_dirs(p1.p1_cntrct_abs_dir):
-        p2.create_default_templates()
+        p2.load_or_create_templates()
     # read existing p3 infrastructure
     if 'fields_rel_dir' not in p1.p1_d or not p1.p1_d['fields_rel_dir']:
         p1.p1_d['fields_rel_dir'] = p2.read_dirs(p1.p1_cntrct_abs_dir)[0]
@@ -1131,14 +1210,13 @@ def step_3__select_fields_to_print_for_each_template_选择每种标签类型的
             '0': select_a_template,
             '01': test_mako,
             '02': util_print_svg_tags,
-            '1': svg_w_watermarks_1_template_1_product,
-            '2': svg_no_watermarks_cover_page,
-            '3': svg_w_watermarks_1_template_all_products,
-            '4': svg_w_watermarks_all_templates_all_products,
-            '41': check_all_templates_have_correct_fields,
-            '5': produce_all_svg_n_print,
-            '6': try_all_processing_options_n_print,
-            '66': remove_watermarks_n_produce_pdf_deliverable,
+            '1': svg_w_watermarks_1_template_1_product_n_cover_page,
+            '2': svg_w_watermarks_1_template_all_products,
+            '3': svg_w_watermarks_all_templates_all_products,
+            '31': check_all_templates_have_correct_fields,
+            '4': produce_all_svg_n_print,
+            '5': try_all_processing_options_n_print,
+            '55': remove_watermarks_n_produce_pdf_deliverable,
             'e': edit_a_template,
             'b': m.back_to_main_退到主程序,
             'q': m.normal_exit_正常出口,
