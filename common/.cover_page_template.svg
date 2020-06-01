@@ -683,12 +683,8 @@
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.58611px;line-height:1.25;font-family:Sans;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;inline-size:172.256;stroke-width:0.264583"
        xml:space="preserve"><tspan
          x="10.781866"
-         y="38.23962"><tspan>	</tspan><tspan> </tspan><tspan>1.1 </tspan><tspan>以我司产品编号</tspan><tspan
-           style="fill:#ff0000">${prod_n} ${xl_prod_spec}</tspan><tspan> </tspan><tspan>双一字槽瓦楞钉包装资料</tspan><tspan> </tspan><tspan>外箱</tspan><tspan>	</tspan><tspan> </tspan></tspan><tspan
-         x="10.781866"
-         y="43.985465"><tspan>上的不干胶尺寸：</tspan><tspan
-           style="fill:#ff0000">8 </tspan><tspan
-           style="fill:#ff0000">x 6 cm</tspan><tspan>。</tspan><tspan>红色边框是裁切线，不印刷。</tspan></tspan></text>
+         y="38.23962"><tspan>1.1 </tspan><tspan>以我司产品编号</tspan><tspan style="fill:#ff0000">${prod_n} ${xl_prod_spec}</tspan><tspan> 双一字槽瓦楞钉包装资料外箱</tspan><tspan></tspan></tspan>
+	<tspan x="10.781866" y="43.985465"><tspan>上的不干胶尺寸：</tspan><tspan style="fill:#ff0000">8 x 5 cm。</tspan><tspan>红色边框是裁切线，不印刷。</tspan></tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;line-height:1.25;font-family:'WenQuanYi Micro Hei';-inkscape-font-specification:'WenQuanYi Micro Hei Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;stroke-width:0.264583"
@@ -765,8 +761,8 @@
        transform="rotate(-30)"><tspan
          sodipodi:role="line"
          id="tspan335"
-         x="-25.80477"
-         y="112.0358"
+         x="-3"
+         y="103"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.12283px;font-family:'WenQuanYi Micro Hei';-inkscape-font-specification:'WenQuanYi Micro Hei Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#ff0000;stroke-width:0.264583">模板 SPECIMEN</tspan></text>
     <text
        xml:space="preserve"

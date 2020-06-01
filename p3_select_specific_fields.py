@@ -797,7 +797,7 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
                                         fw.write(
                                             f"\n</g>\n"
                                         )
-                                        # os.remove(i_filename) # todo: remove comment
+                                        os.remove(i_filename)
                                 else:
                                     fw.write(
                                         f"<svg x='{p3_d['pics_d'][prod_nr]['x']}' "
