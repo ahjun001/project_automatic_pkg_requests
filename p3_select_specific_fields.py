@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 import json
-from tkinter.filedialog import askopenfilename
-import math
 import os
 import pathlib
 import re
 import shutil
 import subprocess
 import webbrowser
+from tkinter.filedialog import askopenfilename
 
 from lxml import etree
 from mako.template import Template
@@ -50,26 +49,40 @@ def p3_d_load_o_create():
         # other default information is set at variable initialization
         if 'selected_fields' not in p3_d.keys():
             p3_d['selected_fields'] = ['xl_prod_spec', 'u_parc']
+
         if 'partially_populated_fields' not in p3_d.keys():
-            p3_d['partially_populated_fields'] = ['gm_zh']
+            p3_d['partially_populated_fields'] = False
+        else:
+            if p3_d['partially_populated_fields'] is True:
+                p3_d['partially_populated_fields'] = ['gm_zh']  # todo: just an example
+
         if 'header_height' not in p3_d.keys():
             p3_d['header_height'] = 7
         if 'template_header' not in p3_d.keys():
             p3_d['template_header'] = p1.p1_d['fields_rel_dir'][p1.p1_d['fields_rel_dir'].rfind('_') + 1:] + '唛头'
+
         if 'barcode_d' not in p3_d.keys():
-            p3_d['barcode_d'] = {
-                "coef": 0.0,
-                "x1": 0, "y1": 0,
-                "x2": 0, "y2": 0
-            }
-        if 'mako_pre_proc_d' not in p3_d.keys():
-            p3_d['mako_pre_proc_d'] = {
-                "empty_new_indic": {
-                    "field": "",
-                    "regex": "",
-                    "default": ""
+            p3_d['barcode_d'] = False
+        else:
+            if p3_d['barcode_d'] is True:
+                p3_d['barcode_d'] = {
+                    "coef": 0.0,
+                    "x1": 0, "y1": 0,
+                    "x2": 0, "y2": 0
                 }
-            }
+
+        if 'mako_pre_proc_d' not in p3_d.keys():
+            p3_d['mako_pre_proc_d'] = False
+        else:
+            if p3_d['mako_pre_proc_d'] is True:
+                p3_d['mako_pre_proc_d'] = {
+                    "empty_new_indic": {
+                        "field": "",
+                        "regex": "",
+                        "default": ""
+                    }
+                }
+
         if 'pics_d' not in p3_d.keys():
             p3_d['pics_d'] = False
         else:
@@ -476,15 +489,17 @@ def mako_input_json_load_o_create(force_recreate = False):
             p1.p1b_indics_from_contract_l_load()
         if not p1.all_products_to_be_processed_set:
             p1.p1_all_products_to_be_processed_set_load()
+
         # make a skeleton for p3_selected_fields_values_by_prod_d with key = prod
-        idx = 0
         temp_d = {}
+        idx = 0
         for prod in sorted(p1.all_products_to_be_processed_set):
             temp_d[prod] = {'i': str(idx + 1), 'prod_n': prod}
-            for field in p3_d['partially_populated_fields']:
-                temp_d[prod][field] = ''
-                if field[-3:] == '_zh':
-                    temp_d[prod][field[:-2] + 'fr'] = ''
+            if 'partially_populated_fields' in p3_d and p3_d['partially_populated_fields']:
+                for field in p3_d['partially_populated_fields']:
+                    temp_d[prod][field] = ''
+                    if field[-3:] == '_zh':
+                        temp_d[prod][field[:-2] + 'fr'] = ''
             idx += 1
 
         # prepare to insert translations if needed
@@ -514,14 +529,15 @@ def mako_input_json_load_o_create(force_recreate = False):
         #     json.dump(p3_selected_fields_values_by_prod_d, f, ensure_ascii = False)
 
         # adding new fields being derived from existing ones, as defined in template-info.json
-        if 'empty_new_indic' not in p3_d['mako_pre_proc_d'].keys():
-            for new_field in p3_d['mako_pre_proc_d'].keys():
-                for k in p3_selected_fields_values_by_prod_d.keys():
-                    regex = p3_d['mako_pre_proc_d'][new_field]['regex']
-                    string = p3_selected_fields_values_by_prod_d[k][p3_d['mako_pre_proc_d'][new_field]['field']]
-                    out_field = re.search(regex, string)
-                    default = p3_d['mako_pre_proc_d'][new_field]['default']
-                    p3_selected_fields_values_by_prod_d[k][new_field] = out_field.group() if out_field else default
+        if 'mako_pre_proc_d' in p3_d and p3_d['mako_pre_proc_d']:  # case True or dic()
+            if 'empty_new_indic' not in p3_d['mako_pre_proc_d'].keys():
+                for new_field in p3_d['mako_pre_proc_d'].keys():
+                    for k in p3_selected_fields_values_by_prod_d.keys():
+                        regex = p3_d['mako_pre_proc_d'][new_field]['regex']
+                        string = p3_selected_fields_values_by_prod_d[k][p3_d['mako_pre_proc_d'][new_field]['field']]
+                        out_field = re.search(regex, string)
+                        default = p3_d['mako_pre_proc_d'][new_field]['default']
+                        p3_selected_fields_values_by_prod_d[k][new_field] = out_field.group() if out_field else default
 
         with open(mako_input_json_s, 'w', encoding = 'utf8') as f:
             json.dump(p3_selected_fields_values_by_prod_d, f, ensure_ascii = False)
@@ -539,15 +555,17 @@ def test_mako():
 def util_print_svg_tags():
     p3_fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir'])
     filename = askopenfilename(initialdir = p3_fields_abs_dir)
-    tree = etree.parse(filename)
-    root = tree.getroot()
-
-    tags = set()
-    for element in root.iter():
-        tag = element.tag.split("}")[1]
-        tags.add(tag)
-        print(tag)
-    print(f'tags: {tags}')
+    if filename:
+        tree = etree.parse(filename)
+        root = tree.getroot()
+        tags = set()
+        for element in root.iter():
+            tag = element.tag.split("}")[1]
+            tags.add(tag)
+            print(tag)
+        print(f'tags: {tags}')
+    else:
+        print('|\n| No file selected\n|')
 
 
 def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod = False):
@@ -822,9 +840,14 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
 
                     # a blank template to write barcodes is systematically in template-info.json
                     # so check if blank fields have been populated.
-                    brcd_d = dict(p3_d['barcode_d']) if not math.isclose(
-                        p3_d['barcode_d']['coef'], 0.0, abs_tol = 0.001
-                    ) else {}
+                    # brcd_d = dict(p3_d['barcode_d']) if not math.isclose(  # todo: erase
+                    #     p3_d['barcode_d']['coef'], 0.0, abs_tol = 0.001
+                    # ) else {}
+
+                    if 'barcode_d' in p3_d and p3_d['barcode_d']:
+                        brcd_d = dict(p3_d['barcode_d'])
+                    else:
+                        brcd_d = {}
 
                     if brcd_d:
                         if pathlib.Path(create_barcode_file(
@@ -1023,7 +1046,6 @@ def remove_watermarks_n_produce_pdf_deliverable():
     #
     os.chdir(p1.p1_cntrct_abs_dir)
 
-    # todo: first remove all output files already present
     # Remove all output files that already may exists
     filtered_files = [f for f in os.listdir(p1.p1_cntrct_abs_dir) if os.path.isfile(f)
                       and f.endswith('pdf')
