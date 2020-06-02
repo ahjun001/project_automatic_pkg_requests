@@ -38,7 +38,6 @@ def test_environment():
 
 
 def main_menu_context_func():
-    temp_f = []
     c_nr = p1.p1_d['cntrct_nr'] if 'cntrct_nr' in p1.p1_d.keys() else ''
     print(f'Step 1 select a contract: ' + f'{c_nr if c_nr else "None"}')
     templ_l = p2.read_dirs(p1.p1_cntrct_abs_dir)
@@ -73,7 +72,7 @@ def save_selected_contract():
                 shutil.copy(filename, to_abs_dr)
             filename = os.path.join(from_abs_dr, 'label_template.svg')
             shutil.copy(filename, os.path.join(to_main_dir, dr))
-            _, sub_dirs, _ = next(os.walk(os.path.join(to_main_dir, dr)))
+            _, sub_dirs, _ = next(os.walk(from_abs_dr))
             for sub_dir in sub_dirs:
                 from_dir = os.path.join(from_abs_dr, sub_dir)
                 to_dir = os.path.join(to_abs_dr, sub_dir)

@@ -46,20 +46,31 @@ def p3_d_load_o_create():
                 p3_d = json.load(f)  # loads selected_fields, template_header, header_height, barcode_d
 
         # or populate missing fields with default information relative to the directory
-        # other default information is set at variable initialization
-        if 'selected_fields' not in p3_d.keys():
+        if 'selected_fields' not in p3_d:
             p3_d['selected_fields'] = ['xl_prod_spec', 'u_parc']
-
-        if 'partially_populated_fields' not in p3_d.keys():
-            p3_d['partially_populated_fields'] = False
-        else:
-            if p3_d['partially_populated_fields'] is True:
-                p3_d['partially_populated_fields'] = ['gm_zh']  # todo: just an example
 
         if 'header_height' not in p3_d.keys():
             p3_d['header_height'] = 7
+
         if 'template_header' not in p3_d.keys():
             p3_d['template_header'] = p1.p1_d['fields_rel_dir'][p1.p1_d['fields_rel_dir'].rfind('_') + 1:] + '唛头'
+
+        if 'pics_d' not in p3_d.keys():
+            p3_d['pics_d'] = False
+        else:
+            if p3_d['pics_d'] is True:
+                if not p1.all_products_to_be_processed_set:
+                    p1.p1_all_products_to_be_processed_set_load()
+                p3_d['pics_d'] = {}
+                for prod_nr in list(p1.all_products_to_be_processed_set):
+                    p3_d['pics_d'][prod_nr] = {
+                        'file': 'pic_0.png',
+                        'x': 0,
+                        'y': 0,
+                        'coef': 0,
+                        'width': 0,
+                        'height': 0
+                    }
 
         if 'barcode_d' not in p3_d.keys():
             p3_d['barcode_d'] = False
@@ -83,22 +94,11 @@ def p3_d_load_o_create():
                     }
                 }
 
-        if 'pics_d' not in p3_d.keys():
-            p3_d['pics_d'] = False
+        if 'partially_populated_fields' not in p3_d:
+            p3_d['partially_populated_fields'] = False
         else:
-            if p3_d['pics_d'] is True:
-                if not p1.all_products_to_be_processed_set:
-                    p1.p1_all_products_to_be_processed_set_load()
-                p3_d['pics_d'] = {}
-                for prod_nr in list(p1.all_products_to_be_processed_set):
-                    p3_d['pics_d'][prod_nr] = {
-                        'file': 'pic_0.png',
-                        'x': 0,
-                        'y': 0,
-                        'coef': 0,
-                        'width': 0,
-                        'height': 0
-                    }
+            if p3_d['partially_populated_fields'] is True:
+                p3_d['partially_populated_fields'] = ['gm_zh']  # todo: just an example
 
         save_template_info_json()
         return True
