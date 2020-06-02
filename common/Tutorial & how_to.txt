@@ -1,0 +1,52 @@
+Tutorial: Make a packaging request
+1. Copy & edit or Create template svg files with mock data and without fields
+2. Add ${fields} that have been searched with RegEx
+3. Add photos & barcodes if necessary
+
+
+How to select a field from the xls contract file and insert it as a field in a label template
+1. Run _p_main_menu.py
+2. Run  "1. step_1__select_a_contract_选择合同号": enter 1 Return
+     Double click A000001-001
+     Double click A000001-001.xls
+
+    Status of the selection should appear on line 'Step 1 select a contract:' above the next menu
+
+3. Run "3. step_3__select_fields_to_print_for_each_template_选择每种标签类型的资料": Enter 3 Return
+    If ~~~ Now working on template: is not 'a.Outer_box_外箱', then enter 0 Return and select it
+    a. Check if the desired field is already in the "~~~ Specific fields selected so far" list, then there is nothing more to do
+
+    b. Check if it appears in the matrix of fields to be selected from for example 'plstc_bg', then:
+    'e. edit_a_template'  e Return
+    '2. edit_fields' 2 Return
+    "'a' to add a field' a Return
+    Enter corresponding # for the field to be added, Return
+    'b' to go back
+    Verify that 'plstc_bg' is in the list of selected fields to far
+
+    c. If the desired field does not appear in the matrix, for example a field 'color' that would capt the '颜色' info
+    Copy all contract's contents from the file .../data/A000001-001/.p1a_A000001-001-contract.txt into
+          the https://regex101.com  TEST STRING box
+
+    In regex101.com check Flavor as Python  (Python should appear as bold characters and followed by a check sign)
+
+    In regular expression, text that \w颜色 has 8 matches (the number of products)
+           and that \w(?=颜色) matches 8 times with the color data needed for the field
+
+    In .../data/regular_expression.json, add a line formatted as:
+     { "what": "color", "how": "\\w(?=颜色)"}
+    DO MIND the \\ instead of the unique \ in regex101.com
+    If this line is the last one, there should not be a comma at the end
+
+    Back in _p_main_menu, run '5. process_selected_contract'
+    Go to '3. step_3__select_fields_to_print_for_each_template_选择每种标签类型的资料", check that the matrix has now a field 'color'
+    Process as in 3.b precedently
+
+
+4. In the .../data/A000001-001/a.Outer_box_外箱 directory, open the label_template.svg file with inkscape
+   Create a text field that will include ${plstc_bg}
+   Save
+
+5. In menu ~~~ Step 3: ...     check that the label now includes data from the newly added field:
+    1 Return , to check the first product prints correctly
+    2 Return ,  to check all products print correctly
