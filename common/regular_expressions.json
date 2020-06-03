@@ -35,8 +35,7 @@
   { "what": "clr_zh", "how": "黑胡桃" },
   { "what": "clr_zh", "how": "黑色" },
   { "what": "clr_zh", "how": "白色" },
-  { "what": "gm_zh", "how": "亚光" },
-  { "what": "gm_zh", "how": "亮光" },
+  { "what": "gm_zh", "how": "亚光|亮光" },
   { "what": "io_zh", "how": "内开(?=门)" },
   { "what": "io_zh", "how": "外开(?=门)" },
   { "what": "lr_zh", "how": "右开" },
@@ -55,5 +54,6 @@
   { "what": "ray_trsprt_zh", "how": "条纹(?=钢化玻璃)" },
   { "what": "ray_trsprt_zh", "how": "(?<=钢化)透明(?=玻璃)" },
   { "what": "ray_trsprt_zh", "how": "透明(?=钢化玻璃)" },
-  { "what": "glss_thck", "how": "\\d(?=\\smm\\w+玻璃)" }
+  { "what": "glss_thck", "how": "\\d(?=\\smm\\w+玻璃)" },
+  { "what": "color_zh", "how": "\\w(?=颜色)"}
 ]

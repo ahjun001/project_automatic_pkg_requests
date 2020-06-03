@@ -3,9 +3,10 @@ Tutorial: Make a packaging request
 2. Add ${fields} that have been searched with RegEx
 3. Add photos & barcodes if necessary
 
-
+########################################################################################################################
 How to select a field from the xls contract file and insert it as a field in a label template
 1. Run _p_main_menu.py
+
 2. Run  "1. step_1__select_a_contract_选择合同号": enter 1 Return
      Double click A000001-001
      Double click A000001-001.xls
@@ -24,7 +25,7 @@ How to select a field from the xls contract file and insert it as a field in a l
     'b' to go back
     Verify that 'plstc_bg' is in the list of selected fields to far
 
-    c. If the desired field does not appear in the matrix, for example a field 'color' that would capt the '颜色' info
+    c. If the desired field does not appear in the matrix, for example a field 'color_zh' that would capt the '颜色' info
     Copy all contract's contents from the file .../data/A000001-001/.p1a_A000001-001-contract.txt into
           the https://regex101.com  TEST STRING box
 
@@ -34,12 +35,12 @@ How to select a field from the xls contract file and insert it as a field in a l
            and that \w(?=颜色) matches 8 times with the color data needed for the field
 
     In .../data/regular_expression.json, add a line formatted as:
-     { "what": "color", "how": "\\w(?=颜色)"}
+     { "what": "color_zh", "how": "\\w(?=颜色)"}
     DO MIND the \\ instead of the unique \ in regex101.com
     If this line is the last one, there should not be a comma at the end
 
     Back in _p_main_menu, run '5. process_selected_contract'
-    Go to '3. step_3__select_fields_to_print_for_each_template_选择每种标签类型的资料", check that the matrix has now a field 'color'
+    Go to '3. step_3__select_fields_to_print_for_each_template_选择每种标签类型的资料", check that the matrix has now a field 'color_zh'
     Process as in 3.b precedently
 
 
@@ -50,3 +51,31 @@ How to select a field from the xls contract file and insert it as a field in a l
 5. In menu ~~~ Step 3: ...     check that the label now includes data from the newly added field:
     1 Return , to check the first product prints correctly
     2 Return ,  to check all products print correctly
+
+
+########################################################################################################################
+How to insert a field in French as translation of a Chinese field
+
+As a convention: all fields with name finishing with _zh will be translated into French according to the translation that
+is stored in .../common/zh_fr.json
+For example if my_field_zh is in the list of selected fields, then a field my_field_fr is available to be used in templates
+Translation of field data has to be provided in .../common/zh_fr.json
+
+########################################################################################################################
+How to modify data from the xls contract file and insert it as a field in a label template
+
+
+########################################################################################################################
+How to select a field that is not mentionned in all products in the xls contract file and insert it in a label template
+
+A. Simple option: consistenly fill the information for each product in SAP and in the xls contract file.
+If some information is not necessary for all, it can be mentionned as blank ''.
+
+B. Program option
+1. In .../data/A00001-001/a.Outer_box_外箱/template.json  add the field name in the "selected_fields" list
+and switch "partially_populated_fields" to true
+
+2. Run _p_main_menu.py 1 to select A000001-001, 3 to select the template
+   Observe that the file template.json has changed: "partially_populated_fields" is now a list of fields that
+   can be used in templates, even if their data is only partially populated.
+

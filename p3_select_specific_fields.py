@@ -98,7 +98,7 @@ def p3_d_load_o_create():
             p3_d['partially_populated_fields'] = False
         else:
             if p3_d['partially_populated_fields'] is True:
-                p3_d['partially_populated_fields'] = ['gm_zh']  # todo: just an example
+                p3_d['partially_populated_fields'] = ['my_partially_populated_field_name']
 
         save_template_info_json()
         return True
@@ -480,7 +480,8 @@ def mako_input_json_load_o_create(force_recreate = False):
 
     check_if_template_requirements_are_met()
     # make sure global variables are initialized in all situations, outside the loop to do it once only
-    mako_input_json_s = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir']), '.mako_input.json')
+    fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir'])
+    mako_input_json_s = os.path.join(fields_abs_dir, '.mako_input.json')
     if pathlib.Path(mako_input_json_s).exists() and not force_recreate:
         with open(mako_input_json_s, encoding = 'utf8') as fr:
             p3_selected_fields_values_by_prod_d = json.load(fr)
@@ -506,17 +507,32 @@ def mako_input_json_load_o_create(force_recreate = False):
         with open(os.path.join(os.path.join(m.root_abs_dir, 'common'), 'zh_fr.json'), encoding = 'utf8') as f:
             zh_fr_d = json.load(f)
 
+        # prepare to create files of 'mako_pre_proc_d' data if needed
+        pre_proc_data = {}
+        if 'mako_pre_proc_d' not in p3_d.keys() and p3_d['mako_pre_proc_d']:
+            pre_proc_data = {key: '' for key in p3_d['mako_pre_proc_d'].keys()}
+
         # populate the skeleton
         for indc_d in p1.p1b_indics_from_contract_l:  # loop over the big one once
-            if indc_d['prod_nr'] in p1.all_products_to_be_processed_set:
-                if indc_d['what'] in p3_d['selected_fields']:  # loop over the smaller more
-                    temp_d[indc_d['prod_nr']][indc_d['what']] = indc_d['info']
-                    what_zh = indc_d['what']
+            if indc_d['prod_nr'] in p1.all_products_to_be_processed_set:  # todo: possibly set products to be processed
+                what_zh = indc_d['what']
+                if what_zh in p3_d['selected_fields']:  # loop over the smaller more
+                    temp_d[indc_d['prod_nr']][what_zh] = indc_d['info']
                     # internal convention: all indics with name finishing with _zh will be translated into French
                     # with ./common/zh_fr.json
                     if what_zh[-3:] == '_zh':
                         what_fr = what_zh[:-2] + 'fr'
                         temp_d[indc_d['prod_nr']][what_fr] = zh_fr_d[indc_d['info']]
+
+                    # add fields data for fields that will be later re-processed
+                    if pre_proc_data and  what_zh in p3_d['mako_pre_proc_d']:
+                        pre_proc_data['what_z'] += indc_d['info']
+
+        # write data text files for fields that will be re-processed
+        if pre_proc_data:
+            for k, v in pre_proc_data.items():
+                with open(os.path.join(fields_abs_dir, k + '.txt'), 'w') as fw:
+                    fw.write(v)
 
         # build the dictionary p3_selected_fields_values_by_prod_d with key = i - 1
         for v in temp_d.values():
@@ -528,6 +544,7 @@ def mako_input_json_load_o_create(force_recreate = False):
         # with open(mako_pre_proc_json_s, 'w', encoding='utf8') as f:
         #     json.dump(p3_selected_fields_values_by_prod_d, f, ensure_ascii = False)
 
+        # todo: Start here
         # adding new fields being derived from existing ones, as defined in template-info.json
         if 'mako_pre_proc_d' in p3_d and p3_d['mako_pre_proc_d']:  # case True or dic()
             if 'empty_new_indic' not in p3_d['mako_pre_proc_d'].keys():
@@ -553,8 +570,8 @@ def test_mako():
 
 
 def util_print_svg_tags():
-    p3_fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir'])
-    filename = askopenfilename(initialdir = p3_fields_abs_dir)
+    fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir'])
+    filename = askopenfilename(initialdir = fields_abs_dir)
     if filename:
         tree = etree.parse(filename)
         root = tree.getroot()
@@ -579,7 +596,7 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
     global page_view_box_h
     global page_view_box_w
 
-    p3_fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir'])
+    fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir'])
 
     def suggest_spacing_calc(lgth, template_view_box):
         # if # of ranks exceeds length to print or unadjusted
@@ -604,12 +621,12 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
         from_abs_dir = os.path.join(os.path.join(m.root_abs_dir, 'common'), p1.p1_d['fields_rel_dir'])
 
         # copy the label_template intro the repertory if necessary
-        svg_readable_file_in = os.path.join(p3_fields_abs_dir, 'label_template.svg')
-        svg_insertable_file_out = os.path.join(p3_fields_abs_dir, '.label_template_body.svg')
+        svg_readable_file_in = os.path.join(fields_abs_dir, 'label_template.svg')
+        svg_insertable_file_out = os.path.join(fields_abs_dir, '.label_template_body.svg')
         if not pathlib.Path(svg_readable_file_in).exists():
             shutil.copy(
                 os.path.join(from_abs_dir, 'label_template.svg'),
-                p3_fields_abs_dir
+                fields_abs_dir
             )
 
         # create label_template_body.svg
@@ -630,12 +647,12 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
         global p3_d
         global page_view_box_h
 
-        # p3_fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir'])
+        # fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir'])
         if only_1_temp:
             if only_1_prod:
-                svg_out3 = os.path.join(p3_fields_abs_dir, '.1_product.svg')
+                svg_out3 = os.path.join(fields_abs_dir, '.1_product.svg')
             else:
-                svg_out3 = os.path.join(p3_fields_abs_dir, f'.1_template_{page}.svg')
+                svg_out3 = os.path.join(fields_abs_dir, f'.1_template_{page}.svg')
         else:
             svg_out3 = os.path.join(p1.p1_cntrct_abs_dir, f'page_{page}.svg')
         fw1 = open(svg_out3, 'w', encoding = 'utf8')
@@ -694,7 +711,7 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
 
         # looping on template directories
         for p1.p1_d['fields_rel_dir'] in drs:
-            p3_fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir'])
+            fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir'])
 
             # check that, if pictures need to be inserted, a directory for picture files does exist
             p3_d_load_o_create()
@@ -727,9 +744,9 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
             mako_input_json_load_o_create(force_recreate = True)
 
             # read view box values from template_body so as to compute spacings
-            with open(os.path.join(p3_fields_abs_dir, 'label_template.svg'), encoding = 'utf8') as f:
+            with open(os.path.join(fields_abs_dir, 'label_template.svg'), encoding = 'utf8') as f:
                 mako_template = Template(
-                    filename = os.path.join(p3_fields_abs_dir, '.label_template_body.svg'),
+                    filename = os.path.join(fields_abs_dir, '.label_template_body.svg'),
                     input_encoding = 'utf-8'
                 )
                 contents = f.read()
@@ -782,14 +799,14 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
                     if type(p3_d['pics_d']) != 'bool' and p3_d['pics_d']:
                         prod_nr = p3_selected_fields_values_by_prod_d[str(i)]['prod_n']
                         if prod_nr in p3_d['pics_d'].keys():
-                            filename = os.path.join(os.path.join(p3_fields_abs_dir, 'pics'),
+                            filename = os.path.join(os.path.join(fields_abs_dir, 'pics'),
                                                     p3_d['pics_d'][prod_nr]['file'])
 
-                            # filename = os.path.join(p3_fields_abs_dir, p3_d['pics_d'][prod_nr]['file'])
+                            # filename = os.path.join(fields_abs_dir, p3_d['pics_d'][prod_nr]['file'])
                             if pathlib.Path(filename).exists():
                                 _, ext = os.path.splitext(filename)
                                 if ext == '.svg':
-                                    i_filename = os.path.join(p3_fields_abs_dir, '.' + p3_d['pics_d'][prod_nr]['file'])
+                                    i_filename = os.path.join(fields_abs_dir, '.' + p3_d['pics_d'][prod_nr]['file'])
                                     if not pathlib.Path(i_filename).exists():
                                         # extract_svg_for_inserting(filename, i_filename)
                                         strip_readable_svg_file_for_insert(filename, i_filename)
@@ -820,7 +837,7 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
                                         f"y='{p3_d['pics_d'][prod_nr]['y']}' "
                                         f"width='{p3_d['pics_d'][prod_nr]['width']}' "
                                         f"height='{p3_d['pics_d'][prod_nr]['height']}' >\n"
-                                        f"<image xlink:href='{f'{p3_fields_abs_dir}/'}"
+                                        f"<image xlink:href='{f'{fields_abs_dir}/'}"
                                         f"{p3_d['pics_d'][prod_nr]['file']}' "
                                         "x='0' y='0' width='100%' height='100%' />\n"
                                         f"</svg>\n"
@@ -942,8 +959,8 @@ def svg_w_watermarks_1_template_1_product_n_cover_page():
         #     print("The label used for the cover page is from the layer 'label' in label_template.svg")
 
         # copy first label on cover page template
-        p3_fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir'])
-        svg_in = os.path.join(p3_fields_abs_dir, '.1_product.svg')
+        fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir'])
+        svg_in = os.path.join(fields_abs_dir, '.1_product.svg')
         if svg_in:
             with open(svg_in, encoding = 'utf8') as fr:
                 lines = fr.readlines()
