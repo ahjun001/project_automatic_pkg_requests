@@ -806,21 +806,10 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
                             # filename = os.path.join(fields_abs_dir, p3_d['pics_d'][prod_nr]['file'])
                             if pathlib.Path(filename).exists():
                                 _, ext = os.path.splitext(filename)
-                                if ext == '.svg':
+                                if ext == '.xxx':
                                     i_filename = os.path.join(fields_abs_dir, '.' + p3_d['pics_d'][prod_nr]['file'])
                                     if not pathlib.Path(i_filename).exists():
-                                        # extract_svg_for_inserting(filename, i_filename)
                                         strip_readable_svg_file_for_insert(filename, i_filename)
-                                        # with open(filename, encoding = 'utf8') as fr,\
-                                        #         open(i_filename, 'w', encoding = 'utf8') as fw2:
-                                        #     write_b = False
-                                        #     lines = fr.readlines()
-                                        #     for i in range(len(lines) - 1):
-                                        #         if r'</metadata>' in lines[i]:
-                                        #             write_b = True
-                                        #             continue
-                                        #         if write_b:
-                                        #             fw2.write(lines[i])
                                     with open(i_filename, encoding = 'utf8') as f:
                                         fw.write(  # todo: change into a list
                                             f"<g transform = 'matrix("
@@ -833,14 +822,18 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
                                         )
                                         os.remove(i_filename)
                                 else:
+                                    # pic_filepath_ = os.path.join(os.path.join(
+                                    #     fields_abs_dir, 'pics'), p3_d['pics_d'][prod_nr]['file'])
+                                    dim_ = str(float(p3_d['pics_d'][prod_nr]['coef']) * 100) + '%'
                                     fw.write(
                                         f"<svg x='{p3_d['pics_d'][prod_nr]['x']}' "
                                         f"y='{p3_d['pics_d'][prod_nr]['y']}' "
                                         f"width='{p3_d['pics_d'][prod_nr]['width']}' "
                                         f"height='{p3_d['pics_d'][prod_nr]['height']}' >\n"
-                                        f"<image xlink:href='{f'{fields_abs_dir}/'}"
-                                        f"{p3_d['pics_d'][prod_nr]['file']}' "
-                                        "x='0' y='0' width='100%' height='100%' />\n"
+                                        f"<image xlink:href='{f'{filename}'}' \n"
+                                        f"x='0' y='0' width='{dim_}' height='{dim_}' \n"
+                                        "preserveAspectRatio='xMidyMid' \n"
+                                        "style='image-rendering:optimizeQuality' />\n"
                                         f"</svg>\n"
                                     )
                             else:
