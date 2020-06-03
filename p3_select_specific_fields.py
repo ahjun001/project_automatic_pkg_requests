@@ -82,14 +82,15 @@ def p3_d_load_o_create():
                     "x2": 0, "y2": 0
                 }
 
-        if 'mako_pre_proc_d' not in p3_d.keys():
-            p3_d['mako_pre_proc_d'] = False
+        if 'pre_processing' not in p3_d.keys():
+            p3_d['pre_processing'] = False
         else:
-            if p3_d['mako_pre_proc_d'] is True:
-                p3_d['mako_pre_proc_d'] = {
-                    "empty_new_indic": {
+            if p3_d['pre_processing'] is True:
+                p3_d['pre_processing'] = {
+                    "new_field": {
                         "field": "",
                         "regex": "",
+                        "repl": "",
                         "default": ""
                     }
                 }
@@ -507,10 +508,10 @@ def mako_input_json_load_o_create(force_recreate = False):
         with open(os.path.join(os.path.join(m.root_abs_dir, 'common'), 'zh_fr.json'), encoding = 'utf8') as f:
             zh_fr_d = json.load(f)
 
-        # prepare to create files of 'mako_pre_proc_d' data if needed
-        pre_proc_data = {}
-        if 'mako_pre_proc_d' not in p3_d.keys() and p3_d['mako_pre_proc_d']:
-            pre_proc_data = {key: '' for key in p3_d['mako_pre_proc_d'].keys()}
+        # prepare to create files of 'pre_processing' data if needed
+        pre_proc_data_d = {}
+        if 'pre_processing' in p3_d.keys() and p3_d['pre_processing']:
+            pre_proc_data_d = {p3_d['pre_processing'][key]['field']: set() for key in p3_d['pre_processing'].keys()}
 
         # populate the skeleton
         for indc_d in p1.p1b_indics_from_contract_l:  # loop over the big one once
@@ -525,14 +526,14 @@ def mako_input_json_load_o_create(force_recreate = False):
                         temp_d[indc_d['prod_nr']][what_fr] = zh_fr_d[indc_d['info']]
 
                     # add fields data for fields that will be later re-processed
-                    if pre_proc_data and  what_zh in p3_d['mako_pre_proc_d']:
-                        pre_proc_data['what_z'] += indc_d['info']
+                    if pre_proc_data_d and what_zh in pre_proc_data_d:
+                        pre_proc_data_d[what_zh].add(indc_d['info'])
 
         # write data text files for fields that will be re-processed
-        if pre_proc_data:
-            for k, v in pre_proc_data.items():
-                with open(os.path.join(fields_abs_dir, k + '.txt'), 'w') as fw:
-                    fw.write(v)
+        if pre_proc_data_d:
+            for k, v in pre_proc_data_d.items():
+                with open(os.path.join(fields_abs_dir, '.' + k + '.txt'), 'w') as fw:
+                    fw.write(v.__str__())
 
         # build the dictionary p3_selected_fields_values_by_prod_d with key = i - 1
         for v in temp_d.values():
@@ -544,23 +545,23 @@ def mako_input_json_load_o_create(force_recreate = False):
         # with open(mako_pre_proc_json_s, 'w', encoding='utf8') as f:
         #     json.dump(p3_selected_fields_values_by_prod_d, f, ensure_ascii = False)
 
-        # todo: Start here
         # adding new fields being derived from existing ones, as defined in template-info.json
-        if 'mako_pre_proc_d' in p3_d and p3_d['mako_pre_proc_d']:  # case True or dic()
-            if 'empty_new_indic' not in p3_d['mako_pre_proc_d'].keys():
-                for new_field in p3_d['mako_pre_proc_d'].keys():
-                    for k in p3_selected_fields_values_by_prod_d.keys():
-                        regex = p3_d['mako_pre_proc_d'][new_field]['regex']
-                        string = p3_selected_fields_values_by_prod_d[k][p3_d['mako_pre_proc_d'][new_field]['field']]
-                        out_field = re.search(regex, string)
-                        default = p3_d['mako_pre_proc_d'][new_field]['default']
-                        p3_selected_fields_values_by_prod_d[k][new_field] = out_field.group() if out_field else default
+        if 'pre_processing' in p3_d and p3_d['pre_processing']:  # case True or dic()
+            for new_field in p3_d['pre_processing'].keys():
+                new_field_d = p3_d['pre_processing'][new_field]
+                for k in p3_selected_fields_values_by_prod_d.keys():
+                    string = p3_selected_fields_values_by_prod_d[k][new_field_d['field']]
+                    regex = new_field_d['regex']
+                    default = new_field_d['default']
+                    repl = new_field_d['repl']
+                    out_field = re.sub(regex, repl, string)
+                    p3_selected_fields_values_by_prod_d[k][new_field] = out_field if out_field else default
 
         with open(mako_input_json_s, 'w', encoding = 'utf8') as f:
             json.dump(p3_selected_fields_values_by_prod_d, f, ensure_ascii = False)
 
 
-def test_mako():
+def pre_process():
     mako_input_json_load_o_create(force_recreate = True)
     filename = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir']), '.mako_input.json')
     subprocess.call(['jq', '.', filename])
@@ -1163,7 +1164,7 @@ def step_3__select_fields_to_print_for_each_template_选择每种标签类型的
     m.menus = {
         m.menu: {
             '0': select_a_template,
-            '01': test_mako,
+            '01': pre_process,
             '02': util_print_svg_tags,
             '1': svg_w_watermarks_1_template_1_product_n_cover_page,
             '2': svg_w_watermarks_1_template_all_products,

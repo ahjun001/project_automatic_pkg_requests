@@ -31,7 +31,7 @@ How to select a field from the xls contract file and insert it as a field in a l
 
     In regex101.com check Flavor as Python  (Python should appear as bold characters and followed by a check sign)
 
-    In regular expression, text that \w颜色 has 8 matches (the number of products)
+    In regular expression, check that \w颜色 has 8 matches (the number of products)
            and that \w(?=颜色) matches 8 times with the color data needed for the field
 
     In .../data/regular_expression.json, add a line formatted as:
@@ -63,6 +63,33 @@ Translation of field data has to be provided in .../common/zh_fr.json
 
 ########################################################################################################################
 How to modify data from the xls contract file and insert it as a field in a label template
+
+A. Simple option: after performing all other edits, use a text editor to open the final .svg file to be turned into a pdf
+Do the search, replace as necessary, close and print.
+! These edits will not subsist if the program is to be ran again !
+
+B. Do these edits in SAP and generate a new xls contract file. These edits will remain.
+
+C. Program option
+1. In .../data/A00001-001/a.Outer_box_外箱/template.json switch "pre_processing" to true
+
+2. Run _p_main_menu.py 1 to select A000001-001, 3 to select the template
+   Observe that the file template.json has changed: "pre_processing" is now a list of new fields that
+   can be used in templates, their data being derived from existing selected fields as replacements 'repl' according to a regular expression 'regex'
+
+3. In 'template.json':
+    Replace 'new_field' with the name of the field you wish to create
+    Fill the 'field' name that will be the source of data for 'new_field'
+    Run pre_process again
+    In .../data/A00001-001/a.Outer_box_外箱, a new file named 'field'.txt now exists. It contains this field data for all products in the contract.
+
+4. Use a text editor to copy information from 'field'.txt, paste into www.regex101.com TEST STRING window
+    In regex101.com check Flavor as Python  (Python should appear as bold characters and followed by a check sign)
+    In the REGULAR EXPRESSION window, test a regex to seize the desired data
+    Open the SUBSTITUTION WINDOW at the bottom of the screen, test a regex that gives the expected result
+    Paste both expressions in template.json  .  Make sure that backslash characters '\' are now doubled '\\'
+
+5. Run 'pre_process' again and observed that a new field is now available in .mako_input.json to be used in templates
 
 
 ########################################################################################################################
