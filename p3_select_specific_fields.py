@@ -1032,6 +1032,7 @@ def svg_w_watermarks_1_template_all_products():
 
 
 def produce_all_svg_n_print():
+    svg_w_watermarks_1_template_1_product_n_cover_page()
     svg_w_watermarks_all_templates_all_products()
     remove_watermarks_n_produce_pdf_deliverable()
 
