@@ -37,6 +37,7 @@
       <w>pylint</w>
       <w>pytest</w>
       <w>readlines</w>
+      <w>repl</w>
       <w>shutil</w>
       <w>stpf</w>
       <w>templ</w>
