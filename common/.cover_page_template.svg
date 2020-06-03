@@ -16,335 +16,6 @@
    width="210mm">
   <defs
      id="defs2">
-    <marker
-       inkscape:stockid="Arrow1Lstart"
-       orient="auto"
-       refY="0.0"
-       refX="0.0"
-       id="Arrow1Lstart"
-       style="overflow:visible"
-       inkscape:isstock="true">
-      <path
-         id="path1715"
-         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
-         style="fill-rule:evenodd;stroke:#ff0000;stroke-width:1pt;stroke-opacity:1;fill:#ff0000;fill-opacity:1"
-         transform="scale(0.8) translate(12.5,0)" />
-    </marker>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath2306">
-      <path
-         d="M 0,0 V 1121.4399 H 792.64001 V 0 Z"
-         clip-rule="evenodd"
-         id="path2304"
-         inkscape:connector-curvature="0" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath2288">
-      <path
-         d="M -97.120003,-676 V 445.44 H 695.52002 V -676 Z"
-         clip-rule="evenodd"
-         id="path2286"
-         inkscape:connector-curvature="0" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath2266">
-      <path
-         d="M 0,0 V 1121.4399 H 792.64001 V 0 Z"
-         clip-rule="evenodd"
-         id="path2264"
-         inkscape:connector-curvature="0" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath2250">
-      <path
-         d="M -101.92,-663.52002 V 457.92001 H 690.71997 V -663.52002 Z"
-         clip-rule="evenodd"
-         id="path2248"
-         inkscape:connector-curvature="0" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath2218">
-      <path
-         d="M 0,0 V 1121.4399 H 792.64001 V 0 Z"
-         clip-rule="evenodd"
-         id="path2216"
-         inkscape:connector-curvature="0" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath2172">
-      <path
-         d="M 0,0 V 1121.4399 H 792.64001 V 0 Z"
-         clip-rule="evenodd"
-         id="path2170"
-         inkscape:connector-curvature="0" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath2126">
-      <path
-         d="M 0,0 V 1121.4399 H 792.64001 V 0 Z"
-         clip-rule="evenodd"
-         id="path2124"
-         inkscape:connector-curvature="0" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath2064">
-      <path
-         d="m -158.56,-703.67999 v 1121.44 h 792.64002 v -1121.44 z"
-         clip-rule="evenodd"
-         id="path2062"
-         inkscape:connector-curvature="0" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath1166">
-      <path
-         d="M 0,0 V 1121.4399 H 792.64001 V 0 Z"
-         clip-rule="evenodd"
-         id="path1164"
-         inkscape:connector-curvature="0" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath1148">
-      <path
-         d="m -108.16,-352.79999 v 1121.44 h 792.63998 v -1121.44 z"
-         clip-rule="evenodd"
-         id="path1146"
-         inkscape:connector-curvature="0" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath1126">
-      <path
-         d="M 0,0 V 1121.4399 H 792.64001 V 0 Z"
-         clip-rule="evenodd"
-         id="path1124"
-         inkscape:connector-curvature="0" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath1110">
-      <path
-         d="m -128.16,-297.76001 v 1121.44 h 792.63998 v -1121.44 z"
-         clip-rule="evenodd"
-         id="path1108"
-         inkscape:connector-curvature="0" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath1078">
-      <path
-         d="M 0,0 V 1121.4399 H 792.64001 V 0 Z"
-         clip-rule="evenodd"
-         id="path1076"
-         inkscape:connector-curvature="0" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath1032">
-      <path
-         d="M 0,0 V 1121.4399 H 792.64001 V 0 Z"
-         clip-rule="evenodd"
-         id="path1030"
-         inkscape:connector-curvature="0" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath986">
-      <path
-         d="M 0,0 V 1121.4399 H 792.64001 V 0 Z"
-         clip-rule="evenodd"
-         id="path984"
-         inkscape:connector-curvature="0" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath924">
-      <path
-         d="M -359.84,-466.07999 V 655.35998 H 432.79999 V -466.07999 Z"
-         clip-rule="evenodd"
-         id="path922"
-         inkscape:connector-curvature="0" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath914">
-      <path
-         d="m 186.08,321.44 v 61.91999 H 320.79999 V 321.44 Z"
-         clip-rule="evenodd"
-         id="path912"
-         inkscape:connector-curvature="0" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath904">
-      <path
-         d="m 115.84,363.67999 v 44.96002 h 66.24 v -44.96002 z"
-         clip-rule="evenodd"
-         id="path902"
-         inkscape:connector-curvature="0" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath848">
-      <path
-         d="M 0,0 V 1121.4399 H 792.64001 V 0 Z"
-         clip-rule="evenodd"
-         id="path846"
-         inkscape:connector-curvature="0" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath804">
-      <path
-         d="M 0,0 V 1121.4399 H 792.64001 V 0 Z"
-         clip-rule="evenodd"
-         id="path802"
-         inkscape:connector-curvature="0" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath734">
-      <path
-         d="M 0,0 V 1121.4399 H 792.64001 V 0 Z"
-         clip-rule="evenodd"
-         id="path732"
-         inkscape:connector-curvature="0" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath708">
-      <path
-         d="M 0,0 V 1121.4399 H 792.64001 V 0 Z"
-         clip-rule="evenodd"
-         id="path706"
-         inkscape:connector-curvature="0" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath650">
-      <path
-         d="M 0,0 V 1121.4399 H 792.64001 V 0 Z"
-         clip-rule="evenodd"
-         id="path648"
-         inkscape:connector-curvature="0" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath636">
-      <path
-         d="M 0,0 V 1121.4399 H 792.64001 V 0 Z"
-         clip-rule="evenodd"
-         id="path634"
-         inkscape:connector-curvature="0" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath604">
-      <path
-         d="M 0,0 V 1121.4399 H 792.64001 V 0 Z"
-         clip-rule="evenodd"
-         id="path602"
-         inkscape:connector-curvature="0" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath590">
-      <path
-         d="M 0,0 V 1121.4399 H 792.64001 V 0 Z"
-         clip-rule="evenodd"
-         id="path588"
-         inkscape:connector-curvature="0" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath530">
-      <path
-         d="M 0,0 V 1121.4399 H 792.64001 V 0 Z"
-         clip-rule="evenodd"
-         id="path528"
-         inkscape:connector-curvature="0" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath424">
-      <path
-         d="M 0,0 V 1121.4399 H 792.64001 V 0 Z"
-         clip-rule="evenodd"
-         id="path422"
-         inkscape:connector-curvature="0" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath410">
-      <path
-         d="M 0,0 V 1121.4399 H 792.64001 V 0 Z"
-         clip-rule="evenodd"
-         id="path408"
-         inkscape:connector-curvature="0" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath396">
-      <path
-         d="M 0,0 V 1121.4399 H 792.64001 V 0 Z"
-         clip-rule="evenodd"
-         id="path394"
-         inkscape:connector-curvature="0" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath382">
-      <path
-         d="M 0,0 V 1121.4399 H 792.64001 V 0 Z"
-         clip-rule="evenodd"
-         id="path380"
-         inkscape:connector-curvature="0" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath368">
-      <path
-         d="M 0,0 V 1121.4399 H 792.64001 V 0 Z"
-         clip-rule="evenodd"
-         id="path366"
-         inkscape:connector-curvature="0" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath354">
-      <path
-         d="M 0,0 V 1121.4399 H 792.64001 V 0 Z"
-         clip-rule="evenodd"
-         id="path352"
-         inkscape:connector-curvature="0" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath340">
-      <path
-         d="M 0,0 V 1121.4399 H 792.64001 V 0 Z"
-         clip-rule="evenodd"
-         id="path338"
-         inkscape:connector-curvature="0" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath326">
-      <path
-         d="M 0,0 V 1121.4399 H 792.64001 V 0 Z"
-         clip-rule="evenodd"
-         id="path324"
-         inkscape:connector-curvature="0" />
-    </clipPath>
     <clipPath
        clipPathUnits="userSpaceOnUse"
        id="clipPath312">
@@ -352,24 +23,6 @@
          d="M 0,0 V 1121.4399 H 792.64001 V 0 Z"
          clip-rule="evenodd"
          id="path310"
-         inkscape:connector-curvature="0" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath298">
-      <path
-         d="M 0,0 V 1121.4399 H 792.64001 V 0 Z"
-         clip-rule="evenodd"
-         id="path296"
-         inkscape:connector-curvature="0" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath264">
-      <path
-         d="M 0,0 V 1121.4399 H 792.64001 V 0 Z"
-         clip-rule="evenodd"
-         id="path262"
          inkscape:connector-curvature="0" />
     </clipPath>
     <clipPath
@@ -388,24 +41,6 @@
          d="M 0,0 V 1121.4399 H 792.64001 V 0 Z"
          clip-rule="evenodd"
          id="path158"
-         inkscape:connector-curvature="0" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath66">
-      <path
-         d="M 0,0 V 1121.4399 H 792.64001 V 0 Z"
-         clip-rule="evenodd"
-         id="path64"
-         inkscape:connector-curvature="0" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath44">
-      <path
-         d="M 0,0 V 1121.4399 H 792.64001 V 0 Z"
-         clip-rule="evenodd"
-         id="path42"
          inkscape:connector-curvature="0" />
     </clipPath>
     <clipPath
@@ -482,15 +117,32 @@
      inkscape:document-rotation="0"
      inkscape:current-layer="layer1"
      inkscape:document-units="mm"
-     inkscape:cy="551.33793"
-     inkscape:cx="403.36207"
-     inkscape:zoom="0.80571116"
+     inkscape:cy="177.77359"
+     inkscape:cx="270.76734"
+     inkscape:zoom="1.7851681"
      inkscape:pageshadow="2"
      inkscape:pageopacity="0.0"
      borderopacity="1.0"
      bordercolor="#666666"
      pagecolor="#ffffff"
-     id="base" />
+     id="base">
+    <sodipodi:guide
+       id="guide1089"
+       orientation="0,793.70079"
+       position="0,297" />
+    <sodipodi:guide
+       id="guide1091"
+       orientation="1122.5197,0"
+       position="193.07778,-11.924354" />
+    <sodipodi:guide
+       id="guide1093"
+       orientation="0,-793.70079"
+       position="210,0" />
+    <sodipodi:guide
+       id="guide1095"
+       orientation="-1122.5197,0"
+       position="0,0" />
+  </sodipodi:namedview>
   <metadata
      id="metadata5">
     <rdf:RDF>
@@ -499,7 +151,6 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -675,16 +326,15 @@
          sodipodi:role="line"
          id="tspan277"
          x="37.176365"
-         y="17.353191">合同<tspan style="fill:#ff0000">${contract_n}</tspan>双一字槽瓦楞钉 包装资料</tspan></text>
+         y="17.353191">合同<tspan
+   style="fill:#ff0000"
+   id="tspan145">${contract_n}</tspan>双一字槽瓦楞钉 包装资料</tspan></text>
     <text
        id="text513-8"
        y="38.23962"
        x="10.781866"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.58611px;line-height:1.25;font-family:Sans;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;inline-size:172.256;stroke-width:0.264583"
-       xml:space="preserve"><tspan
-         x="10.781866"
-         y="38.23962"><tspan>1.1 </tspan><tspan>以我司产品编号</tspan><tspan style="fill:#ff0000">${prod_n} ${xl_prod_spec}</tspan><tspan> 双一字槽瓦楞钉包装资料外箱</tspan><tspan></tspan></tspan>
-	<tspan x="10.781866" y="43.985465"><tspan>上的不干胶尺寸：</tspan><tspan style="fill:#ff0000">8 x 5 cm。</tspan><tspan>红色边框是裁切线，不印刷。</tspan></tspan></text>
+       xml:space="preserve" />
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;line-height:1.25;font-family:'WenQuanYi Micro Hei';-inkscape-font-specification:'WenQuanYi Micro Hei Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;stroke-width:0.264583"
@@ -1054,5 +704,25 @@
         </g>
       </g>
     </g>
+    <text
+       id="text270"
+       y="41.239998"
+       x="11.379766"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;line-height:1;font-family:'WenQuanYi Micro Hei';-inkscape-font-specification:'WenQuanYi Micro Hei';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;stroke:none;stroke-width:0.499999;stroke-miterlimit:10;stop-color:#000000"
+       xml:space="preserve"><tspan
+         id="tspan1097"
+         y="41.239998"
+         x="11.379766"
+         style="font-size:4.23333px;text-align:start;text-anchor:start"
+         sodipodi:role="line">1.1 以我司产品编号<tspan
+   id="tspan1103"
+   style="fill:#ff0000">${prod_n} ${xl_prod_spec}</tspan> 双一字槽瓦楞钉包装资料外箱</tspan><tspan
+         id="tspan1101"
+         y="45.473328"
+         x="11.379766"
+         style="font-size:4.23333px;text-align:start;text-anchor:start"
+         sodipodi:role="line">上的不干胶尺寸：<tspan
+   id="tspan1105"
+   style="fill:#ff0000">8 x 5 cm</tspan>。红色边框是裁切线，不印刷。</tspan></text>
   </g>
 </svg>
