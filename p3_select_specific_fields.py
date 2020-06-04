@@ -651,7 +651,8 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
             #     'rect',
             #     'defs',
             # ]:
-                print(f'Removing {element.tag.split("}")[1]}')
+
+            #     print(f'Removing {element.tag.split("}")[1]}')
                 element.getparent().remove(element)
         tree.write(svg_insertable_file_out)
 
@@ -819,7 +820,7 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
                             if pathlib.Path(filename).exists():
                                 _, ext = os.path.splitext(filename)
                                 dim_ = str(float(prod_nr_['coef']) * 100) + '%'
-                                if ext == '.xxx':  # was '.svg'
+                                if ext == '.svg':  # was '.svg'
                                     i_filename = os.path.join(fields_abs_dir, '.' + p3_d['pictures'][prod_nr]['file'])
                                     if not pathlib.Path(i_filename).exists():
                                         strip_readable_svg_file_for_insert(filename, i_filename)
