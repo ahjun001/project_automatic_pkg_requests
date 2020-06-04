@@ -11,7 +11,7 @@ import p3_select_specific_fields as p3
 
 
 def run_full_demo_for_a_selection_of_contracts(save = False):
-    tests_l = ['A000001-001', 'A006043-001', 'A011001-022', 'A006045-001', 'A911008-008']
+    tests_l = ['A000001-start', 'A000001-final', 'A006043-001', 'A006045-001','A011001-022', 'A911008-008']
     for test_contract_nr in tests_l:
         step_1__select_a_contract_选择合同号(test_contract_nr = test_contract_nr)
         run_full_demo_with_selected_or_default_values_运行完整演示()
@@ -67,11 +67,13 @@ def save_selected_contract():
         for dr in drs:
             from_abs_dr = os.path.join(p1.p1_cntrct_abs_dir, dr)
             to_abs_dr = os.path.join(to_main_dir, dr)
+            if not os.path.exists(to_abs_dr):
+                os.mkdir(to_abs_dr)
             filename = os.path.join(from_abs_dr, 'template-info.json')
             if os.path.exists(filename):
                 shutil.copy(filename, to_abs_dr)
             filename = os.path.join(from_abs_dr, 'label_template.svg')
-            shutil.copy(filename, os.path.join(to_main_dir, dr))
+            shutil.copy(filename, to_abs_dr)
             _, sub_dirs, _ = next(os.walk(from_abs_dr))
             for sub_dir in sub_dirs:
                 from_dir = os.path.join(from_abs_dr, sub_dir)

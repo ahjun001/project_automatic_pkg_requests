@@ -229,7 +229,7 @@ def step_1__select_a_contract_选择合同号(test_contract_nr = ''):
     # check extension indeed is '.xls'
     if ext == '.xls':
         # extract contract_nr
-        s = re.match(r'\w+-\d+', filename).group()
+        s = re.match(r'\w+-\w+', filename).group()
         if s:
             print(f"Processing {s}")
             p1_d['cntrct_nr'] = s

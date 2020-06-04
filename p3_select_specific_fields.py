@@ -46,30 +46,19 @@ def p3_d_load_o_create():
                 p3_d = json.load(f)  # loads selected_fields, template_header, header_height, barcode_d
 
         # or populate missing fields with default information relative to the directory
-        if 'selected_fields' not in p3_d:
-            p3_d['selected_fields'] = ['xl_prod_spec', 'u_parc']
-
-        if 'header_height' not in p3_d.keys():
-            p3_d['header_height'] = 7
-
-        if 'template_header' not in p3_d.keys():
-            p3_d['template_header'] = p1.p1_d['fields_rel_dir'][p1.p1_d['fields_rel_dir'].rfind('_') + 1:] + '唛头'
-
-        if 'pics_d' not in p3_d.keys():
-            p3_d['pics_d'] = False
+        if 'pictures' not in p3_d.keys():
+            p3_d['pictures'] = False
         else:
-            if p3_d['pics_d'] is True:
+            if p3_d['pictures'] is True:
                 if not p1.all_products_to_be_processed_set:
                     p1.p1_all_products_to_be_processed_set_load()
-                p3_d['pics_d'] = {}
+                p3_d['pictures'] = {}
                 for prod_nr in list(p1.all_products_to_be_processed_set):
-                    p3_d['pics_d'][prod_nr] = {
-                        'file': 'pic_0.png',
+                    p3_d['pictures'][prod_nr] = {
                         'x': 0,
                         'y': 0,
-                        'coef': 0,
-                        'width': 0,
-                        'height': 0
+                        'coef': 1,
+                        'file': 'pic_0.png'
                     }
 
         if 'barcode_d' not in p3_d.keys():
@@ -100,6 +89,16 @@ def p3_d_load_o_create():
         else:
             if p3_d['partially_populated_fields'] is True:
                 p3_d['partially_populated_fields'] = ['my_partially_populated_field_name']
+
+        if 'selected_fields' not in p3_d:
+            # p3_d['selected_fields'] = ['xl_prod_spec', 'u_parc']
+            p3_d['selected_fields'] = []
+
+        if 'header_height' not in p3_d.keys():
+            p3_d['header_height'] = 7
+
+        if 'template_header' not in p3_d.keys():
+            p3_d['template_header'] = p1.p1_d['fields_rel_dir'][p1.p1_d['fields_rel_dir'].rfind('_') + 1:] + '唛头'
 
         save_template_info_json()
         return True
@@ -797,45 +796,24 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
                     fw.write(r"<g transform = 'translate(" + f"{ox + spacing_w}, {oy + spacing_h})'>\n")
 
                     # link a picture file if there is one to link
-                    if type(p3_d['pics_d']) != 'bool' and p3_d['pics_d']:
+                    if type(p3_d['pictures']) != 'bool' and p3_d['pictures']:
                         prod_nr = p3_selected_fields_values_by_prod_d[str(i)]['prod_n']
-                        if prod_nr in p3_d['pics_d'].keys():
+                        if prod_nr in p3_d['pictures'].keys():
+                            prod_nr_ = p3_d['pictures'][prod_nr]
                             filename = os.path.join(os.path.join(fields_abs_dir, 'pics'),
-                                                    p3_d['pics_d'][prod_nr]['file'])
+                                                    prod_nr_['file'])
 
-                            # filename = os.path.join(fields_abs_dir, p3_d['pics_d'][prod_nr]['file'])
+                            # filename = os.path.join(fields_abs_dir, prod_nr_['file'])
                             if pathlib.Path(filename).exists():
                                 _, ext = os.path.splitext(filename)
-                                if ext == '.xxx':
-                                    i_filename = os.path.join(fields_abs_dir, '.' + p3_d['pics_d'][prod_nr]['file'])
-                                    if not pathlib.Path(i_filename).exists():
-                                        strip_readable_svg_file_for_insert(filename, i_filename)
-                                    with open(i_filename, encoding = 'utf8') as f:
-                                        fw.write(  # todo: change into a list
-                                            f"<g transform = 'matrix("
-                                            f"{p3_d['pics_d'][prod_nr]['coef']},0,0,{p3_d['pics_d'][prod_nr]['coef']},"
-                                            f"{p3_d['pics_d'][prod_nr]['x']},{p3_d['pics_d'][prod_nr]['y']}"
-                                            ")'>\n")
-                                        fw.write(f.read())
-                                        fw.write(
-                                            f"\n</g>\n"
-                                        )
-                                        os.remove(i_filename)
-                                else:
-                                    # pic_filepath_ = os.path.join(os.path.join(
-                                    #     fields_abs_dir, 'pics'), p3_d['pics_d'][prod_nr]['file'])
-                                    dim_ = str(float(p3_d['pics_d'][prod_nr]['coef']) * 100) + '%'
-                                    fw.write(
-                                        f"<svg x='{p3_d['pics_d'][prod_nr]['x']}' "
-                                        f"y='{p3_d['pics_d'][prod_nr]['y']}' "
-                                        f"width='{p3_d['pics_d'][prod_nr]['width']}' "
-                                        f"height='{p3_d['pics_d'][prod_nr]['height']}' >\n"
-                                        f"<image xlink:href='{f'{filename}'}' \n"
-                                        f"x='0' y='0' width='{dim_}' height='{dim_}' \n"
-                                        "preserveAspectRatio='xMidyMid' \n"
-                                        "style='image-rendering:optimizeQuality' />\n"
-                                        f"</svg>\n"
-                                    )
+                                dim_ = str(float(prod_nr_['coef']) * 100) + '%'
+                                fw.write(
+                                    f"<image xlink:href='{f'{filename}'}' \n"
+                                    f"x='{prod_nr_['x']}' y='{prod_nr_['y']}' \n"
+                                    f"width='{dim_}' height='{dim_}' \n"
+                                    "preserveAspectRatio='xMidyMid' \n"
+                                    "style='image-rendering:optimizeQuality' />\n"
+                                )
                             else:
                                 print(
                                     f'|\n| Cannot access {filename}: No such file \n'
@@ -843,17 +821,11 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
                                 )
                                 exit()
 
-                    # create the path to a potential barcode file
+                    # create the path to the barcode file, would it exists
                     barcode_f = os.path.join(
                         os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir']),
                         p3_selected_fields_values_by_prod_d[str(i)]['prod_n'] + '.svg'
                     )
-
-                    # a blank template to write barcodes is systematically in template-info.json
-                    # so check if blank fields have been populated.
-                    # brcd_d = dict(p3_d['barcode_d']) if not math.isclose(  # todo: erase
-                    #     p3_d['barcode_d']['coef'], 0.0, abs_tol = 0.001
-                    # ) else {}
 
                     if 'barcode_d' in p3_d and p3_d['barcode_d']:
                         brcd_d = dict(p3_d['barcode_d'])
@@ -921,6 +893,7 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
                             oy = 0
                         else:
                             oy = - spacing_h
+
             # after last item is written, write the next header if needed
         close_svg_for_output(fw, svg_out)  # close the last file without opening a new one
     else:
@@ -1053,9 +1026,6 @@ def remove_watermarks_n_produce_pdf_deliverable():
     in pull mode, should trigger producing .page_?.pdf, themselves from page_?.pdf (contains marks)
     ! requires a change of directory for pdfunite to work
     """
-    # inputs: all .page_?.pdf in contract directory
-    # output: contract_nr.pdf
-    #
     os.chdir(p1.p1_cntrct_abs_dir)
 
     # Remove all output files that already may exists

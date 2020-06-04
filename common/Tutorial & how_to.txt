@@ -106,3 +106,16 @@ and switch "partially_populated_fields" to true
    Observe that the file template.json has changed: "partially_populated_fields" is now a list of fields that
    can be used in templates, even if their data is only partially populated.
 
+########################################################################################################################
+How to add pictures in some labels
+
+A. Simple option: after performing all other edits, use inskcape to open the final .svg files before exporting them into pdf
+Paste in pictures, save and close.
+In 3.Select_specific_fields  run the function 55.remove_watermarks_and_produce_pdf_deliverables  , Enter 55 Return
+! These edits will not subsist if the program is to be ran again !
+
+B. Program option:
+1. In .../data/A00001-001/a.Outer_box_外箱/template.json switch "pictures" to true
+    Run pre_process again
+    template.json now has a skeleton to insert pictures for all products in the contract.
+
