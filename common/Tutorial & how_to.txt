@@ -115,7 +115,9 @@ In 3.Select_specific_fields  run the function 55.remove_watermarks_and_produce_p
 ! These edits will not subsist if the program is to be ran again !
 
 B. Program option:
-1. In .../data/A00001-001/a.Outer_box_外箱/template.json switch "pictures" to true
+1. For each template, store pictures in a sub-directory to the one of the template named 'pics'
+
+2. In .../data/A00001-001/a.Outer_box_外箱/template.json switch "pictures" to true
     Run pre_process again
     template.json now has a skeleton to insert pictures for all products in the contract.
 

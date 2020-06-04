@@ -640,6 +640,18 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
                 for attribute in element.attrib:
                     element.attrib.pop(attribute)
             if element.tag.split("}")[1] in ['guide', 'namedview']:
+            # if element.tag.split("}")[1] in [
+            #     'type',
+            #     'RDF',
+            #     'format',
+            #     'namedview'
+            #     'Work',
+            #     'text',
+            #     'metadata',
+            #     'rect',
+            #     'defs',
+            # ]:
+                print(f'Removing {element.tag.split("}")[1]}')
                 element.getparent().remove(element)
         tree.write(svg_insertable_file_out)
 
@@ -807,13 +819,29 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
                             if pathlib.Path(filename).exists():
                                 _, ext = os.path.splitext(filename)
                                 dim_ = str(float(prod_nr_['coef']) * 100) + '%'
-                                fw.write(
-                                    f"<image xlink:href='{f'{filename}'}' \n"
-                                    f"x='{prod_nr_['x']}' y='{prod_nr_['y']}' \n"
-                                    f"width='{dim_}' height='{dim_}' \n"
-                                    "preserveAspectRatio='xMidyMid' \n"
-                                    "style='image-rendering:optimizeQuality' />\n"
-                                )
+                                if ext == '.xxx':  # was '.svg'
+                                    i_filename = os.path.join(fields_abs_dir, '.' + p3_d['pictures'][prod_nr]['file'])
+                                    if not pathlib.Path(i_filename).exists():
+                                        strip_readable_svg_file_for_insert(filename, i_filename)
+                                    with open(i_filename, encoding = 'utf8') as f:
+                                        fw.write(  # todo: change into a list
+                                            f"<g transform = 'matrix("
+                                            f"{p3_d['pictures'][prod_nr]['coef']},0,0,{p3_d['pictures'][prod_nr]['coef']},"
+                                            f"{p3_d['pictures'][prod_nr]['x']},{p3_d['pictures'][prod_nr]['y']}"
+                                            ")'>\n")
+                                        fw.write(f.read())
+                                        fw.write(
+                                            f"\n</g>\n"
+                                        )
+                                        # os.remove(i_filename)
+                                else:
+                                    fw.write(
+                                        f"<image xlink:href='{f'{filename}'}' \n"
+                                        f"x='{prod_nr_['x']}' y='{prod_nr_['y']}' \n"
+                                        f"width='{dim_}' height='{dim_}' \n"
+                                        "preserveAspectRatio='xMidyMid' \n"
+                                        "style='image-rendering:optimizeQuality' />\n"
+                                    )
                             else:
                                 print(
                                     f'|\n| Cannot access {filename}: No such file \n'
