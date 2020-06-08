@@ -1,1 +1,8 @@
-{"pictures": {"AA00001": {"x": 0, "y": 0, "coef": 0.8, "file": "simple_path.svg"}}, "barcode_d": false, "pre_processing": false, "partially_populated_fields": false, "selected_fields": [], "header_height": 0, "template_header": ""}
+{
+  "barcode_d": false,
+  "pre_processing": false,
+  "partially_populated_fields": false,
+  "selected_fields": [],
+  "header_height": 0,
+  "template_header": ""
+}

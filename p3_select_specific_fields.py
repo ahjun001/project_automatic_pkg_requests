@@ -42,7 +42,7 @@ def p3_d_load_o_create():
         # either read data,
         p3_f = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir']), 'template-info.json')
         if os.path.exists(p3_f):  # file exists, check that all default value are present, if not print a msg
-            with open(p3_f, encoding = 'utf8') as f:
+            with open(p3_f, encoding='utf8') as f:
                 p3_d = json.load(f)  # loads selected_fields, template_header, header_height, barcode_d
 
         # or populate missing fields with default information relative to the directory
@@ -112,8 +112,8 @@ def save_template_info_json():
     global p3_d
 
     p3_f = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir']), 'template-info.json')
-    with open(p3_f, 'w', encoding = 'utf8') as f:
-        json.dump(p3_d, f, ensure_ascii = False)
+    with open(p3_f, 'w', encoding='utf8') as f:
+        json.dump(p3_d, f, ensure_ascii=False)
 
 
 def reset_globals():
@@ -157,10 +157,7 @@ def prod_n_to_barcode(prod_nr):
         if char.isnumeric():
             temp_s += char
     while len(temp_s) < 12:
-        if (12 - len(temp_s)) % 2 == 1:
-            temp_s = '3' + temp_s
-        else:
-            temp_s = '0' + temp_s
+        temp_s = '3' + temp_s if (12 - len(temp_s)) % 2 == 1 else '0' + temp_s
     return temp_s
 
 
@@ -184,7 +181,7 @@ def fields_from_template():
     template_s = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir']), 'label_template.svg')
     if not os.path.exists(template_s):
         print(f"|\n| Cannot access '{os.path.join(p1.p1_d['fields_rel_dir'], 'label_template.svg')}': no such file\n|")
-    with open(template_s, encoding = 'utf8') as fr:
+    with open(template_s, encoding='utf8') as fr:
         lines = fr.readlines()
     template_fields_set = set()
     for line in lines:
@@ -321,7 +318,7 @@ def edit_fields():
             print(f'{s} is not an option, try again')
 
     save_template_info_json()
-    mako_input_json_load_o_create(force_recreate = True)
+    mako_input_json_load_o_create(force_recreate=True)
 
 
 def edit_a_template():
@@ -441,8 +438,8 @@ def edit_paragraph_headers():
 # process svg_w_watermarks and its utility functions ###################################################################
 def dump_fields_rel_dir():
     prog_info_json_f = os.path.join(m.root_abs_dir, 'program-info.json')
-    with open(prog_info_json_f, 'w', encoding = 'utf8') as fw:
-        json.dump(p1.p1_d, fw, ensure_ascii = False)
+    with open(prog_info_json_f, 'w', encoding='utf8') as fw:
+        json.dump(p1.p1_d, fw, ensure_ascii=False)
 
 
 def check_if_template_requirements_are_met():
@@ -471,7 +468,7 @@ def check_if_template_requirements_are_met():
         # ]).wait()
 
 
-def mako_input_json_load_o_create(force_recreate = False):
+def mako_input_json_load_o_create(force_recreate=False):
     """
     Creates a json file with variables and values necessary to mako rendering
     :return:
@@ -483,7 +480,7 @@ def mako_input_json_load_o_create(force_recreate = False):
     fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir'])
     mako_input_json_s = os.path.join(fields_abs_dir, '.mako_input.json')
     if pathlib.Path(mako_input_json_s).exists() and not force_recreate:
-        with open(mako_input_json_s, encoding = 'utf8') as fr:
+        with open(mako_input_json_s, encoding='utf8') as fr:
             p3_selected_fields_values_by_prod_d = json.load(fr)
     else:
         if not p1.p1b_indics_from_contract_l:
@@ -504,7 +501,7 @@ def mako_input_json_load_o_create(force_recreate = False):
             idx += 1
 
         # prepare to insert translations if needed
-        with open(os.path.join(os.path.join(m.root_abs_dir, 'common'), 'zh_fr.json'), encoding = 'utf8') as f:
+        with open(os.path.join(os.path.join(m.root_abs_dir, 'common'), 'zh_fr.json'), encoding='utf8') as f:
             zh_fr_d = json.load(f)
 
         # prepare to create files of 'pre_processing' data if needed
@@ -556,12 +553,12 @@ def mako_input_json_load_o_create(force_recreate = False):
                     out_field = re.sub(regex, repl, string)
                     p3_selected_fields_values_by_prod_d[k][new_field] = out_field if out_field else default
 
-        with open(mako_input_json_s, 'w', encoding = 'utf8') as f:
-            json.dump(p3_selected_fields_values_by_prod_d, f, ensure_ascii = False)
+        with open(mako_input_json_s, 'w', encoding='utf8') as f:
+            json.dump(p3_selected_fields_values_by_prod_d, f, ensure_ascii=False)
 
 
 def pre_process():
-    mako_input_json_load_o_create(force_recreate = True)
+    mako_input_json_load_o_create(force_recreate=True)
     filename = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir']), '.mako_input.json')
     subprocess.call(['jq', '.', filename])
     # subprocess.call(['/usr/bin/xed', filename])
@@ -571,7 +568,7 @@ def pre_process():
 
 def util_print_svg_tags():
     fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir'])
-    filename = askopenfilename(initialdir = fields_abs_dir)
+    filename = askopenfilename(initialdir=fields_abs_dir)
     if filename:
         tree = etree.parse(filename)
         root = tree.getroot()
@@ -585,7 +582,7 @@ def util_print_svg_tags():
         print('|\n| No file selected\n|')
 
 
-def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod = False):
+def svg_w_watermarks_all_templates_all_products(only_1_temp=False, only_1_prod=False):
     """
 
     """
@@ -640,19 +637,19 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
                 for attribute in element.attrib:
                     element.attrib.pop(attribute)
             if element.tag.split("}")[1] in ['guide', 'namedview']:
-            # if element.tag.split("}")[1] in [
-            #     'type',
-            #     'RDF',
-            #     'format',
-            #     'namedview'
-            #     'Work',
-            #     'text',
-            #     'metadata',
-            #     'rect',
-            #     'defs',
-            # ]:
+                # if element.tag.split("}")[1] in [
+                #     'type',
+                #     'RDF',
+                #     'format',
+                #     'namedview'
+                #     'Work',
+                #     'text',
+                #     'metadata',
+                #     'rect',
+                #     'defs',
+                # ]:
 
-            #     print(f'Removing {element.tag.split("}")[1]}')
+                #     print(f'Removing {element.tag.split("}")[1]}')
                 element.getparent().remove(element)
         tree.write(svg_insertable_file_out)
 
@@ -668,7 +665,7 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
                 svg_out3 = os.path.join(fields_abs_dir, f'.1_template_{page}.svg')
         else:
             svg_out3 = os.path.join(p1.p1_cntrct_abs_dir, f'page_{page}.svg')
-        fw1 = open(svg_out3, 'w', encoding = 'utf8')
+        fw1 = open(svg_out3, 'w', encoding='utf8')
         fw1.write(header)
         fw1.write(f'<rect x="0" y="0"\n'
                   f'width="210" height="297"\n'
@@ -731,9 +728,9 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
 
             create_template_body()
             with open(
-                os.path.join(
-                    os.path.join(m.root_abs_dir, 'common'), '.label_template_header.svg'),
-                encoding = 'utf8') as h:
+                    os.path.join(
+                        os.path.join(m.root_abs_dir, 'common'), '.label_template_header.svg'),
+                    encoding='utf8') as h:
                 header = h.read()
             template_nr += 1
             # loading data previously used with this template
@@ -754,13 +751,13 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
                 fw, svg_out = open_svg_for_output()
 
             # from the editable template, build the 'label_template.svg' that will be used to multiply templates
-            mako_input_json_load_o_create(force_recreate = True)
+            mako_input_json_load_o_create(force_recreate=True)
 
             # read view box values from template_body so as to compute spacings
-            with open(os.path.join(fields_abs_dir, 'label_template.svg'), encoding = 'utf8') as f:
+            with open(os.path.join(fields_abs_dir, 'label_template.svg'), encoding='utf8') as f:
                 mako_template = Template(
-                    filename = os.path.join(fields_abs_dir, '.label_template_body.svg'),
-                    input_encoding = 'utf-8'
+                    filename=os.path.join(fields_abs_dir, '.label_template_body.svg'),
+                    input_encoding='utf-8'
                 )
                 contents = f.read()
                 measures = re.search(r'(?<=viewBox=")(\d) (\d) (\d+.*\d*) (\d+\.*\d*)', contents)
@@ -824,10 +821,11 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
                                     i_filename = os.path.join(fields_abs_dir, '.' + p3_d['pictures'][prod_nr]['file'])
                                     if not pathlib.Path(i_filename).exists():
                                         strip_readable_svg_file_for_insert(filename, i_filename)
-                                    with open(i_filename, encoding = 'utf8') as f:
+                                    with open(i_filename, encoding='utf8') as f:
                                         fw.write(  # todo: change into a list
                                             f"<g transform = 'matrix("
-                                            f"{p3_d['pictures'][prod_nr]['coef']},0,0,{p3_d['pictures'][prod_nr]['coef']},"
+                                            f"{p3_d['pictures'][prod_nr]['coef']},0,0,"
+                                            f"{p3_d['pictures'][prod_nr]['coef']}, "
                                             f"{p3_d['pictures'][prod_nr]['x']},{p3_d['pictures'][prod_nr]['y']}"
                                             ")'>\n")
                                         fw.write(f.read())
@@ -863,9 +861,9 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
 
                     if brcd_d:
                         if pathlib.Path(create_barcode_file(
-                            p3_selected_fields_values_by_prod_d[str(i)]['prod_n']
+                                p3_selected_fields_values_by_prod_d[str(i)]['prod_n']
                         )).exists():
-                            with open(barcode_f, encoding = 'utf8') as f:
+                            with open(barcode_f, encoding='utf8') as f:
                                 fw.write(  # todo: change into a list
                                     f"<g transform = 'matrix("
                                     f"{brcd_d['coef']},0,0,{brcd_d['coef']},"
@@ -899,8 +897,8 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp = False, only_1_prod
                     # print()
 
                     fw.write(mako_template.render(
-                        contract_n = p1.p1_d["cntrct_nr"],
-                        t = template_nr,
+                        contract_n=p1.p1_d["cntrct_nr"],
+                        t=template_nr,
                         **p3_selected_fields_values_by_prod_d[str(i)])
                     )
                     fw.write('\n</g>\n')
@@ -941,7 +939,7 @@ def svg_w_watermarks_1_template_1_product_n_cover_page():
         dump_fields_rel_dir()
 
     # generate a svg with mako rendering on the first product
-    svg_w_watermarks_all_templates_all_products(only_1_temp = True, only_1_prod = True)
+    svg_w_watermarks_all_templates_all_products(only_1_temp=True, only_1_prod=True)
 
     # if the cover page has been set and if this is the first template in the list then also create a cover page
     if p1.doc_setup_d['cover_page'] and p1.p1_d['fields_rel_dir'] == cvr_pg_dir:
@@ -958,7 +956,7 @@ def svg_w_watermarks_1_template_1_product_n_cover_page():
         fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir'])
         svg_in = os.path.join(fields_abs_dir, '.1_product.svg')
         if svg_in:
-            with open(svg_in, encoding = 'utf8') as fr:
+            with open(svg_in, encoding='utf8') as fr:
                 lines = fr.readlines()
             balance = 0
             keep_l = []
@@ -981,10 +979,10 @@ def svg_w_watermarks_1_template_1_product_n_cover_page():
                 if 'label="label"' in line:
                     good_n = i
             with open(os.path.join(os.path.join(m.root_abs_dir, 'common'), '.cover_page_template.svg'),
-                      encoding = 'utf8') as fr:
+                      encoding='utf8') as fr:
                 lines = fr.readlines()
             svg_out = os.path.join(p1.p1_cntrct_abs_dir, '.cover_page_template.svg')
-            with open(svg_out, 'w', encoding = 'utf8') as fw:
+            with open(svg_out, 'w', encoding='utf8') as fw:
                 for i in range(len(lines) - 1):
                     fw.writelines(lines[i])
                 fw.write('<g transform="matrix(1,0,0,1,15,45)">\n')
@@ -1001,16 +999,16 @@ def svg_w_watermarks_1_template_1_product_n_cover_page():
 
             # run mako.template.Template
             mako_template = Template(
-                filename = svg_out,
-                input_encoding = 'utf-8'
+                filename=svg_out,
+                input_encoding='utf-8'
             )
 
             if not p3_selected_fields_values_by_prod_d:
                 mako_input_json_load_o_create()
             cover_s = os.path.join(p1.p1_cntrct_abs_dir, 'page_0.svg')
-            with open(cover_s, 'w', encoding = 'utf8') as fw:
+            with open(cover_s, 'w', encoding='utf8') as fw:
                 fw.write(mako_template.render(
-                    contract_n = p1.p1_d["cntrct_nr"],
+                    contract_n=p1.p1_d["cntrct_nr"],
                     **p3_selected_fields_values_by_prod_d['0']
                 ))
             browser = 'firefox' if os.name == 'posix' else "C:\\Program Files (x86)\\Mozilla Firefox\\firefox.exe %s"
@@ -1023,7 +1021,7 @@ def svg_w_watermarks_1_template_all_products():
     if not p1.p1_d['fields_rel_dir']:
         drs = p2.read_dirs(p1.p1_cntrct_abs_dir)
         p1.p1_d['fields_rel_dir'] = drs[0]
-    svg_w_watermarks_all_templates_all_products(only_1_temp = True)
+    svg_w_watermarks_all_templates_all_products(only_1_temp=True)
 
 
 def produce_all_svg_n_print():
@@ -1058,31 +1056,26 @@ def remove_watermarks_n_produce_pdf_deliverable():
     os.chdir(p1.p1_cntrct_abs_dir)
 
     # Remove all output files that already may exists
-    filtered_files = [f for f in os.listdir(p1.p1_cntrct_abs_dir) if os.path.isfile(f)
-                      and f.endswith('pdf')
-                      ]
+    filtered_files = [f for f in os.listdir(p1.p1_cntrct_abs_dir) if os.path.isfile(f) and f.endswith('pdf')]
     for file in filtered_files:
         os.remove(os.path.join(p1.p1_cntrct_abs_dir, file))
 
-    filtered_files = [f for f in os.listdir(p1.p1_cntrct_abs_dir) if os.path.isfile(f)
-                      and f.endswith('.svg')
-                      and f[0] == '.']
+    filtered_files = [f for f in os.listdir(p1.p1_cntrct_abs_dir) if os.path.isfile(f) and f.endswith(
+        '.svg') and f[0] == '.']
     for file in filtered_files:
         os.remove(os.path.join(p1.p1_cntrct_abs_dir, file))
 
     # Produce new ones
-    print_svg_l = [f for f in os.listdir(p1.p1_cntrct_abs_dir) if os.path.isfile(f)
-                   and f.endswith('.svg')
-                   and f[0] != '.']
+    print_svg_l = [f for f in os.listdir(p1.p1_cntrct_abs_dir) if os.path.isfile(f) and f.endswith(
+        '.svg') and f[0] != '.']
 
     for file in print_svg_l:
-        with open(file, encoding = 'utf8') as fr, open('.' + file, 'w', encoding = 'utf8') as fw:
+        with open(file, encoding='utf8') as fr, open('.' + file, 'w', encoding='utf8') as fw:
             for line in fr:
                 fw.write(line.replace('fuchsia', 'none').replace('#ff00ff', 'none'))
 
-    print_clean_svg_l = [f for f in os.listdir(p1.p1_cntrct_abs_dir) if os.path.isfile(f)
-                         and f.endswith('.svg')
-                         and f[0] == '.']
+    print_clean_svg_l = [f for f in os.listdir(p1.p1_cntrct_abs_dir) if os.path.isfile(f) and f.endswith(
+        '.svg') and f[0] == '.']
 
     for file in print_clean_svg_l:
         filename, _ = os.path.splitext(file)
@@ -1106,6 +1099,7 @@ def remove_watermarks_n_produce_pdf_deliverable():
 
 
 # Shell interface data & functions #####################################################################################
+# noinspection PyPep8Naming,NonAsciiCharacters
 def step_3__select_fields_to_print_for_each_template_选择每种标签类型的资料():
     def scrap_template_for_fields():
         template_fields = fields_from_template()
@@ -1118,7 +1112,7 @@ def step_3__select_fields_to_print_for_each_template_选择每种标签类型的
         print(f'Template scrapped, selected_fields: {p3_d["selected_fields"]}')
         save_template_info_json()
 
-    def select_specific_fields_context_func(prompt = True):
+    def select_specific_fields_context_func(prompt=True):
         print('~~~ Step 3: Selecting fields to print for each template ~~~\n')
         display_specific_fields_for_all_products()
         print('~~~ Now processing contract #: ', p1.p1_d["cntrct_nr"] if p1.p1_d["cntrct_nr"] else None)

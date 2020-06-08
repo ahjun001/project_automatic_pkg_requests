@@ -114,6 +114,7 @@ Paste in pictures, save and close.
 In 3.Select_specific_fields  run the function 55.remove_watermarks_and_produce_pdf_deliverables  , Enter 55 Return
 ! These edits will not subsist if the program is to be ran again !
 
+
 B. Program option:
 1. For each template, store pictures in a sub-directory to the one of the template named 'pics'
 

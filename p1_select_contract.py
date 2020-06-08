@@ -47,7 +47,7 @@ def program_info_d_load_o_create():
     if pathlib.Path(prog_info_json_f).exists():
         # then load the info from (i) the repository
         # or (ii) re-create it from the initial file
-        with open(prog_info_json_f, encoding = 'utf8') as f:
+        with open(prog_info_json_f, encoding='utf8') as f:
             p1_d = json.load(f)
         if 'cntrct_nr' in p1_d.keys():
             p1_cntrct_abs_dir = os.path.join(os.path.join(m.root_abs_dir, 'data'), f'{p1_d["cntrct_nr"]}')
@@ -125,7 +125,7 @@ def contract_info_d_load():
         if not p1_cntrct_abs_dir or 'cntrct_nr' not in p1_d.keys():
             process_selected_contract()
     with open(os.path.join(p1_cntrct_abs_dir, '.' + p1_d['cntrct_nr'] + '_contract-info.json'),
-              encoding = 'utf8') as fi:
+              encoding='utf8') as fi:
         p1_cntrct_info_d = json.load(fi)
     return True
 
@@ -136,7 +136,7 @@ def p1_all_products_to_be_processed_set_load():
     global all_products_to_be_processed_set
     if not p1_cntrct_info_d:
         p1_cntrct_info_f = os.path.join(os.path.join(p1_cntrct_abs_dir, p1_d['cntrct_nr']), '_contract-info.json')
-        with open(p1_cntrct_info_f, encoding = 'utf8') as f1:
+        with open(p1_cntrct_info_f, encoding='utf8') as f1:
             p1_cntrct_info_d = json.load(f1)
 
     all_products_to_be_processed_set = sorted(p1_cntrct_info_d['all_products_to_be_processed_set'])
@@ -148,11 +148,10 @@ def p1_all_products_to_be_processed_set_load():
 def p1b_indics_from_contract_l_load():
     global p1b_indics_from_contract_l
     global p1_cntrct_info_d
-    if not p1_cntrct_info_d:
-        if not contract_info_d_load():
-            print('p1 has not run successfully')
+    if not (p1_cntrct_info_d or contract_info_d_load()):
+        print('p1 has not run successfully')
     filename = p1_cntrct_info_d['p1b_indics_from_contract_l']
-    with open(os.path.join(p1_cntrct_abs_dir, filename), encoding = 'utf8') as f1b:
+    with open(os.path.join(p1_cntrct_abs_dir, filename), encoding='utf8') as f1b:
         p1b_indics_from_contract_l = json.load(f1b)
         return True
 
@@ -160,11 +159,10 @@ def p1b_indics_from_contract_l_load():
 def p1e_specific_fields_d_of_d_n_p3_needed_vars_load():
     global p1e_specific_fields_d_of_d
     global p1_cntrct_info_d
-    if not p1_cntrct_info_d:
-        if not contract_info_d_load():
-            print('p1 has not run successfully')
+    if not (p1_cntrct_info_d or contract_info_d_load()):
+        print('p1 has not run successfully')
     filename = p1_cntrct_info_d['p1e_extract_specifics']
-    with open(os.path.join(p1_cntrct_abs_dir, filename), encoding = 'utf8') as f1e:
+    with open(os.path.join(p1_cntrct_abs_dir, filename), encoding='utf8') as f1e:
         p1e_specific_fields_d_of_d = json.load(f1e)
     if p1e_specific_fields_d_of_d:
         return True
@@ -177,15 +175,15 @@ def doc_set_up_load_o_create():
 
     filename = os.path.join(p1_cntrct_abs_dir, p1_d['cntrct_nr'] + '_doc_setup.json')
     if pathlib.Path(filename).exists():
-        with open(filename, encoding = 'utf8') as f:
+        with open(filename, encoding='utf8') as f:
             doc_setup_d = json.load(f)
     else:
         doc_setup_d['margin_w'] = 15
         doc_setup_d['margin_h'] = 15
         doc_setup_d['cover_page'] = True
         doc_setup_d['page_1_vert_offset'] = 0
-        with open(filename, 'w', encoding = 'utf8') as f:
-            json.dump(doc_setup_d, f, ensure_ascii = False)
+        with open(filename, 'w', encoding='utf8') as f:
+            json.dump(doc_setup_d, f, ensure_ascii=False)
 
 
 def dump_contract_info_json(key, filename):
@@ -194,12 +192,12 @@ def dump_contract_info_json(key, filename):
     global p1_cntrct_abs_dir
     p1_cntrct_info_d[key] = filename
     f = os.path.join(p1_cntrct_abs_dir, p1_cntrct_info_f)
-    with open(f, 'w', encoding = 'utf8') as fi:
-        json.dump(p1_cntrct_info_d, fi, ensure_ascii = False)
+    with open(f, 'w', encoding='utf8') as fi:
+        json.dump(p1_cntrct_info_d, fi, ensure_ascii=False)
 
 
-# on the menu ##########################################################################################################
-def step_1__select_a_contract_选择合同号(test_contract_nr = ''):
+# noinspection PyPep8Naming,NonAsciiCharacters
+def step_1__select_a_contract_选择合同号(test_contract_nr=''):
     """ Help function to build program-info_d"""
     global p1_cntrct_abs_dir
     global p1_d
@@ -219,7 +217,7 @@ def step_1__select_a_contract_选择合同号(test_contract_nr = ''):
                 ini_xls = os.path.join(os.path.join('contract_samples', test_contract_nr), file)
         pass
     else:
-        ini_xls = askopenfilename(initialdir = 'contract_samples')
+        ini_xls = askopenfilename(initialdir='contract_samples')
     if not ini_xls:
         return False
     # split path and filename
@@ -246,9 +244,9 @@ def step_1__select_a_contract_选择合同号(test_contract_nr = ''):
                 shutil.copy(p1_d['fpath_init_xls'], p1_cntrct_abs_dir)
 
             # document the info in program-info.json
-            with open(prog_info_json_f, 'w', encoding = 'utf8') as fw:
+            with open(prog_info_json_f, 'w', encoding='utf8') as fw:
                 # json.dump(p1_d, fw, ensure_ascii = False).encode('utf8')
-                json.dump(p1_d, fw, ensure_ascii = False)
+                json.dump(p1_d, fw, ensure_ascii=False)
 
             # copy setup file if exists
             stpf_rel_f = p1_d['cntrct_nr'] + '_doc_setup.json'
@@ -299,7 +297,7 @@ def process_selected_contract():
     p1_cntrct_info_f = '.' + p1_d['cntrct_nr'] + '_contract-info.json'
     filename = os.path.join(p1_cntrct_abs_dir, p1_cntrct_info_f)
     if pathlib.Path(filename).exists():
-        with open(filename, encoding = 'utf8') as fi:
+        with open(filename, encoding='utf8') as fi:
             p1_cntrct_info_d = json.load(fi)
     else:
         p1_cntrct_info_d = {}
@@ -346,8 +344,8 @@ def process_selected_contract():
         p1a_contract_json_d['l_i'].append(dict(tmp_dict))
         row += 3
 
-    with open(os.path.join(p1_cntrct_abs_dir, rel_path_contract_json_f), 'w', encoding = 'utf8') as fc:
-        json.dump(p1a_contract_json_d, fc, ensure_ascii = False)
+    with open(os.path.join(p1_cntrct_abs_dir, rel_path_contract_json_f), 'w', encoding='utf8') as fc:
+        json.dump(p1a_contract_json_d, fc, ensure_ascii=False)
 
     # also write into a text file to validate regex in www.regex101.com
     contract_long_list = ""
@@ -363,9 +361,9 @@ def process_selected_contract():
     p1_cntrct_info_d['p1a_contract_json'] = rel_path_contract_json_f
 
     with open(
-        os.path.join(
             os.path.join(
-                m.root_abs_dir, 'common'), 'regular_expressions.json'), encoding = 'utf8'
+                os.path.join(
+                    m.root_abs_dir, 'common'), 'regular_expressions.json'), encoding='utf8'
     ) as f:
         p1_search_reg_ex_l = json.load(f)
 
@@ -405,15 +403,15 @@ def process_selected_contract():
                                 'prod_nr': prod["01.TST_prod_#-需方产品编号"],  # 1050205001#
                             }
                             p1b_indics_from_contract_l.append(tmp_dct)
-        p1b_indics_from_contract_l.sort(key = lambda item: item['prod_nr'])
+        p1b_indics_from_contract_l.sort(key=lambda item: item['prod_nr'])
         file_indics = '.p1b_' + p1_d['cntrct_nr'] + '_indics_from_contract_l.json'
 
         # register in file and object
         dump_contract_info_json('p1b_indics_from_contract_l', file_indics)
 
         f = os.path.join(p1_cntrct_abs_dir, file_indics)
-        with open(f, 'w', encoding = 'utf8') as f:
-            json.dump(p1b_indics_from_contract_l, f, ensure_ascii = False)
+        with open(f, 'w', encoding='utf8') as f:
+            json.dump(p1b_indics_from_contract_l, f, ensure_ascii=False)
 
         # p1c_prods_w_same_key_set: dictionary with key= info, value = sets of prods with that key
         # organize data from p1b_indics_from_contract_l into memory: p1c_all_relevant_data
@@ -427,10 +425,10 @@ def process_selected_contract():
             # document in all_relevant_data_json
     p1c_file_out_f = '.p1c_' + p1_d['cntrct_nr'] + '_all_relevant_data.txt'
     f = os.path.join(p1_cntrct_abs_dir, p1c_file_out_f)
-    with open(f, 'w', encoding = 'utf8') as f1c:
+    with open(f, 'w', encoding='utf8') as f1c:
         # json.dump(p1c_prods_w_same_key_set, f1c, ensure_ascii = False) won't work
         # f1c.write(p1c_prods_w_same_key_set.__str__()) doesn't look pretty
-        pprint.PrettyPrinter(indent = 2, stream = f1c).pprint(p1c_prods_w_same_key_set)
+        pprint.PrettyPrinter(indent=2, stream=f1c).pprint(p1c_prods_w_same_key_set)
 
     dump_contract_info_json('p1c_all_relevant_data', p1c_file_out_f)
 
@@ -469,16 +467,16 @@ def process_selected_contract():
     # indicators common to all products: write to file
     filename = '.p1d_' + p1_d['cntrct_nr'] + '_extract_common.json'
     f = os.path.join(p1_cntrct_abs_dir, filename)
-    with open(f, 'w', encoding = 'utf8') as p1d_f:
-        json.dump(p1d_common_indics_l, p1d_f, ensure_ascii = False)
+    with open(f, 'w', encoding='utf8') as p1d_f:
+        json.dump(p1d_common_indics_l, p1d_f, ensure_ascii=False)
 
     dump_contract_info_json('p1d_extract_common', filename)
 
     # indicators specific to one or more products, but not to all: print p1e_specific_fields_d_of_d
     filename = '.p1e_' + p1_d['cntrct_nr'] + '_extract_specifics.json'
     f = os.path.join(p1_cntrct_abs_dir, filename)
-    with open(f, 'w', encoding = 'utf8') as p1e_f:
-        json.dump(p1e_specific_fields_d_of_d, p1e_f, ensure_ascii = False)
+    with open(f, 'w', encoding='utf8') as p1e_f:
+        json.dump(p1e_specific_fields_d_of_d, p1e_f, ensure_ascii=False)
 
     dump_contract_info_json('p1e_extract_specifics', filename)
 
@@ -487,8 +485,8 @@ def process_selected_contract():
 
     # document in A1234-456_contract-info.json
     filename = os.path.join(p1_cntrct_abs_dir, p1_cntrct_info_f)
-    with open(filename, 'w', encoding = 'utf8') as fi:
-        json.dump(p1_cntrct_info_d, fi, ensure_ascii = False)
+    with open(filename, 'w', encoding='utf8') as fi:
+        json.dump(p1_cntrct_info_d, fi, ensure_ascii=False)
 
 
 # Shell interface data & functions #####################################################################################

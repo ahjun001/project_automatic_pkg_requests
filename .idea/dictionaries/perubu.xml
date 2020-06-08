@@ -2,6 +2,7 @@
   <dictionary name="perubu">
     <words>
       <w>acier</w>
+      <w>adir</w>
       <w>barcodes</w>
       <w>brcd</w>
       <w>cntrct</w>
@@ -11,42 +12,52 @@
       <w>detoplus</w>
       <w>dirname</w>
       <w>doesn</w>
+      <w>dolore</w>
       <w>filepath</w>
       <w>fpath</w>
       <w>indc</w>
       <w>indcs</w>
       <w>indctrs</w>
+      <w>indic</w>
+      <w>indics</w>
       <w>infos</w>
       <w>inkex</w>
       <w>inkscape</w>
       <w>insertable</w>
       <w>isclose</w>
       <w>isoplane</w>
+      <w>iterrows</w>
       <w>konfort</w>
       <w>largeur</w>
       <w>lgth</w>
       <w>lngth</w>
       <w>lxml</w>
+      <w>mako</w>
       <w>midy</w>
       <w>namedview</w>
       <w>noir</w>
       <w>pathlib</w>
       <w>pdfunite</w>
+      <w>plstc</w>
       <w>poil</w>
+      <w>popen</w>
       <w>preproc</w>
       <w>prfx</w>
+      <w>proc</w>
       <w>prog</w>
       <w>pylint</w>
       <w>pytest</w>
       <w>readlines</w>
       <w>repl</w>
       <w>shutil</w>
+      <w>srch</w>
       <w>stpf</w>
       <w>templ</w>
       <w>tmplt</w>
       <w>tspan</w>
       <w>tuitos</w>
       <w>venv</w>
+      <w>vert</w>
       <w>webbrowser</w>
       <w>xlink</w>
       <w>xreader</w>

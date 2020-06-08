@@ -7,6 +7,7 @@ menus = main_menus = mod_lev_1_menus = {}
 root_abs_dir = os.path.dirname(os.path.abspath(__file__))
 
 
+# noinspection PyPep8Naming,NonAsciiCharacters
 def back_后退():
     global menu
     global mod_lev_1_menu
@@ -15,6 +16,7 @@ def back_后退():
     menu = mod_lev_1_menu
 
 
+# noinspection PyPep8Naming,NonAsciiCharacters
 def back_to_main_退到主程序():  # just there to have a selection in the menu, the function won't be executed
     global menu, main_menu
     global menus, main_menus
@@ -33,6 +35,7 @@ def debug():
     menu = 'debug'
 
 
+# noinspection PyPep8Naming,NonAsciiCharacters
 def normal_exit_正常出口():
     print('~~~ Regular program exit ~~~')
     sys.exit(0)

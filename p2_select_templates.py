@@ -37,7 +37,7 @@ def add_templates_from_list(list_l, ask_questions):
         candidates_l = list(list_l)
 
     if ask_questions:
-        select_templates_context_func(prompt = False)
+        select_templates_context_func(prompt=False)
         print('>>> Select # in front of the template name to be added:\n')
         for i in range(len(candidates_l)):
             print(str(i) + '. ' + candidates_l[i][2:])
@@ -87,7 +87,7 @@ def add_templates_from_list(list_l, ask_questions):
 def load_or_create_templates():
     drs = read_dirs(p1.p1_cntrct_abs_dir)
     if not drs:
-        add_templates_from_list(p2_default_templates_l, ask_questions = False)
+        add_templates_from_list(p2_default_templates_l, ask_questions=False)
 
 
 def read_dirs(walk_abs_dir):
@@ -122,7 +122,7 @@ def p2_load_templates_info_l():  # used in p3
 
 
 def add_new_template():
-    add_templates_from_list(p2_templates_l, ask_questions = True)
+    add_templates_from_list(p2_templates_l, ask_questions=True)
 
 
 def delete_existing_template():
@@ -153,10 +153,10 @@ def delete_existing_template():
 def create_template_dir(dr):
     lbl_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, dr)
     if not pathlib.Path(lbl_abs_dir).exists():
-        os.mkdir(lbl_abs_dir, mode = 0o700)
+        os.mkdir(lbl_abs_dir, mode=0o700)
 
 
-def select_templates_context_func(prompt = True):
+def select_templates_context_func(prompt=True):
     print('~~~ Step 2: Selecting templates to print ~~~')
     print('Editing contract #: ', p1.p1_d["cntrct_nr"] if p1.p1_d["cntrct_nr"] else None)
     print('\nTemplates already added:')
@@ -173,6 +173,7 @@ context_func_d = {
 }
 
 
+# noinspection PyPep8Naming,NonAsciiCharacters
 def step_2__select_templates_to_print_选择_编辑标签类型():
     # make sure p1 has been run
     if not p1.contract_info_d_load():

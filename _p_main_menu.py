@@ -10,19 +10,20 @@ import p2_select_templates as p2
 import p3_select_specific_fields as p3
 
 
-def run_full_demo_for_a_selection_of_contracts(save = False):
-    tests_l = ['A000001-start', 'A000001-final', 'A006043-001', 'A006045-001','A011001-022', 'A911008-008']
+def run_full_demo_for_a_selection_of_contracts(save=False):
+    tests_l = ['A000001-start', 'A000001-final', 'A006043-001', 'A006045-001', 'A011001-022', 'A911008-008']
     for test_contract_nr in tests_l:
-        step_1__select_a_contract_选择合同号(test_contract_nr = test_contract_nr)
+        step_1__select_a_contract_选择合同号(test_contract_nr=test_contract_nr)
         run_full_demo_with_selected_or_default_values_运行完整演示()
         if save:
             save_selected_contract()  # use when a new field has been added to template-info.json
 
 
 def run_full_demo_and_save_a_selection_of_contracts():
-    run_full_demo_for_a_selection_of_contracts(save = True)
+    run_full_demo_for_a_selection_of_contracts(save=True)
 
 
+# noinspection NonAsciiCharacters,PyPep8Naming
 def run_full_demo_with_selected_or_default_values_运行完整演示():
     p1.process_selected_contract()
     p2.load_or_create_templates()
@@ -78,10 +79,11 @@ def save_selected_contract():
             for sub_dir in sub_dirs:
                 from_dir = os.path.join(from_abs_dr, sub_dir)
                 to_dir = os.path.join(to_abs_dr, sub_dir)
-                shutil.copytree(from_dir, to_dir, dirs_exist_ok = True)
+                shutil.copytree(from_dir, to_dir, dirs_exist_ok=True)
 
 
-def step_1__select_a_contract_选择合同号(test_contract_nr = ''):
+# noinspection NonAsciiCharacters,PyPep8Naming
+def step_1__select_a_contract_选择合同号(test_contract_nr=''):
     # p1.reset_globals()
     p3.reset_globals()
     p1.step_1__select_a_contract_选择合同号(test_contract_nr)
@@ -127,7 +129,7 @@ def init():
     # If the data directory does not exist, process_selected_contract it
     data_adir = os.path.join(m.root_abs_dir, 'data')
     if not pathlib.Path(data_adir).exists():
-        os.mkdir(data_adir, mode = 0o700)
+        os.mkdir(data_adir, mode=0o700)
 
 
 def main():
