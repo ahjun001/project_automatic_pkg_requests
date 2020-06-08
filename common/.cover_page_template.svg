@@ -7,141 +7,141 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="210mm"
-   height="297mm"
-   viewBox="0 0 210 297"
-   version="1.1"
-   id="svg8"
+   sodipodi:docname=".cover_page_template.svg"
    inkscape:version="1.1-dev (1:0.92.0+devel+202005110039+9ce7266)"
-   sodipodi:docname=".cover_page_template.svg">
+   id="svg8"
+   version="1.1"
+   viewBox="0 0 210 297"
+   height="297mm"
+   width="210mm">
   <defs
      id="defs2">
     <clipPath
-       id="clipPath312"
-       clipPathUnits="userSpaceOnUse">
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath312">
       <path
-         inkscape:connector-curvature="0"
+         d="M 0,0 V 1121.4399 H 792.64001 V 0 Z"
+         clip-rule="evenodd"
          id="path310"
-         clip-rule="evenodd"
-         d="M 0,0 V 1121.4399 H 792.64001 V 0 Z" />
+         inkscape:connector-curvature="0" />
     </clipPath>
     <clipPath
-       id="clipPath200"
-       clipPathUnits="userSpaceOnUse">
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath200">
       <path
-         inkscape:connector-curvature="0"
+         d="M 0,0 V 1121.4399 H 792.64001 V 0 Z"
+         clip-rule="evenodd"
          id="path198"
-         clip-rule="evenodd"
-         d="M 0,0 V 1121.4399 H 792.64001 V 0 Z" />
+         inkscape:connector-curvature="0" />
     </clipPath>
     <clipPath
-       id="clipPath160"
+       clipPathUnits="userSpaceOnUse"
+       id="clipPath160">
+      <path
+         d="M 0,0 V 1121.4399 H 792.64001 V 0 Z"
+         clip-rule="evenodd"
+         id="path158"
+         inkscape:connector-curvature="0" />
+    </clipPath>
+    <clipPath
+       id="clipPath312-4"
        clipPathUnits="userSpaceOnUse">
       <path
          inkscape:connector-curvature="0"
-         id="path158"
+         id="path310-4"
          clip-rule="evenodd"
          d="M 0,0 V 1121.4399 H 792.64001 V 0 Z" />
     </clipPath>
     <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath312-4">
+       id="clipPath312-9"
+       clipPathUnits="userSpaceOnUse">
       <path
-         d="M 0,0 V 1121.4399 H 792.64001 V 0 Z"
-         clip-rule="evenodd"
-         id="path310-4"
-         inkscape:connector-curvature="0" />
-    </clipPath>
-    <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath312-9">
-      <path
-         d="M 0,0 V 1121.4399 H 792.64001 V 0 Z"
-         clip-rule="evenodd"
+         inkscape:connector-curvature="0"
          id="path310-1"
-         inkscape:connector-curvature="0" />
+         clip-rule="evenodd"
+         d="M 0,0 V 1121.4399 H 792.64001 V 0 Z" />
     </clipPath>
     <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath312-3">
+       id="clipPath312-3"
+       clipPathUnits="userSpaceOnUse">
       <path
-         d="M 0,0 V 1121.4399 H 792.64001 V 0 Z"
-         clip-rule="evenodd"
+         inkscape:connector-curvature="0"
          id="path310-9"
-         inkscape:connector-curvature="0" />
+         clip-rule="evenodd"
+         d="M 0,0 V 1121.4399 H 792.64001 V 0 Z" />
     </clipPath>
     <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath312-6">
+       id="clipPath312-6"
+       clipPathUnits="userSpaceOnUse">
       <path
-         d="M 0,0 V 1121.4399 H 792.64001 V 0 Z"
-         clip-rule="evenodd"
+         inkscape:connector-curvature="0"
          id="path310-6"
-         inkscape:connector-curvature="0" />
+         clip-rule="evenodd"
+         d="M 0,0 V 1121.4399 H 792.64001 V 0 Z" />
     </clipPath>
     <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath312-8">
+       id="clipPath312-8"
+       clipPathUnits="userSpaceOnUse">
       <path
-         d="M 0,0 V 1121.4399 H 792.64001 V 0 Z"
-         clip-rule="evenodd"
+         inkscape:connector-curvature="0"
          id="path310-7"
-         inkscape:connector-curvature="0" />
+         clip-rule="evenodd"
+         d="M 0,0 V 1121.4399 H 792.64001 V 0 Z" />
     </clipPath>
     <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath312-32">
+       id="clipPath312-32"
+       clipPathUnits="userSpaceOnUse">
       <path
-         d="M 0,0 V 1121.4399 H 792.64001 V 0 Z"
-         clip-rule="evenodd"
+         inkscape:connector-curvature="0"
          id="path310-48"
-         inkscape:connector-curvature="0" />
+         clip-rule="evenodd"
+         d="M 0,0 V 1121.4399 H 792.64001 V 0 Z" />
     </clipPath>
     <clipPath
-       clipPathUnits="userSpaceOnUse"
-       id="clipPath312-38">
+       id="clipPath312-38"
+       clipPathUnits="userSpaceOnUse">
       <path
-         d="M 0,0 V 1121.4399 H 792.64001 V 0 Z"
-         clip-rule="evenodd"
+         inkscape:connector-curvature="0"
          id="path310-0"
-         inkscape:connector-curvature="0" />
+         clip-rule="evenodd"
+         d="M 0,0 V 1121.4399 H 792.64001 V 0 Z" />
     </clipPath>
   </defs>
   <sodipodi:namedview
-     id="base"
-     pagecolor="#ffffff"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:zoom="1.7851681"
-     inkscape:cx="188.70224"
-     inkscape:cy="177.77359"
-     inkscape:document-units="mm"
-     inkscape:current-layer="layer1"
-     inkscape:document-rotation="0"
-     showgrid="false"
-     inkscape:window-width="1920"
-     inkscape:window-height="1015"
-     inkscape:window-x="0"
+     inkscape:window-maximized="1"
      inkscape:window-y="40"
-     inkscape:window-maximized="1">
+     inkscape:window-x="0"
+     inkscape:window-height="1015"
+     inkscape:window-width="1920"
+     showgrid="false"
+     inkscape:document-rotation="0"
+     inkscape:current-layer="layer1"
+     inkscape:document-units="mm"
+     inkscape:cy="177.77359"
+     inkscape:cx="188.70224"
+     inkscape:zoom="1.7851681"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     borderopacity="1.0"
+     bordercolor="#666666"
+     pagecolor="#ffffff"
+     id="base">
     <sodipodi:guide
-       position="0,297"
+       id="guide1089"
        orientation="0,793.70079"
-       id="guide1089" />
+       position="0,297" />
     <sodipodi:guide
-       position="193.07778,-11.924354"
+       id="guide1091"
        orientation="1122.5197,0"
-       id="guide1091" />
+       position="193.07778,-11.924354" />
     <sodipodi:guide
-       position="210,0"
+       id="guide1093"
        orientation="0,-793.70079"
-       id="guide1093" />
+       position="210,0" />
     <sodipodi:guide
-       position="0,0"
+       id="guide1095"
        orientation="-1122.5197,0"
-       id="guide1095" />
+       position="0,0" />
   </sodipodi:namedview>
   <metadata
      id="metadata5">
@@ -155,574 +155,574 @@
     </rdf:RDF>
   </metadata>
   <g
-     inkscape:label="Layer 1"
+     id="layer1"
      inkscape:groupmode="layer"
-     id="layer1">
+     inkscape:label="Layer 1">
     <g
-       id="g286-5"
-       transform="matrix(0.8303615,0.93743128,-0.8303615,0.93743128,32.203953,37.046324)"
-       inkscape:transform-center-x="-8.5435166"
+       style="stroke-width:0.80146"
        inkscape:transform-center-y="1.4442969"
-       style="stroke-width:0.80146">
+       inkscape:transform-center-x="-8.5435166"
+       transform="matrix(0.8303615,0.93743128,-0.8303615,0.93743128,32.203953,37.046324)"
+       id="g286-5">
       <g
-         id="g273-6"
+         style="stroke:#ff0000;stroke-width:0.80146;stroke-opacity:1"
          transform="matrix(0.26458333,0,0,0.26458333,-10.578007,-14.037984)"
-         style="stroke:#ff0000;stroke-width:0.80146;stroke-opacity:1">
+         id="g273-6">
         <path
-           d="m 398.88,315.84 h 40.16001 v 1.44 H 398.88 Z"
-           style="fill:#ee2d29;fill-opacity:1;fill-rule:nonzero;stroke:#ff0000;stroke-width:0.80146;stroke-opacity:1"
+           inkscape:connector-curvature="0"
            id="path271-6"
-           inkscape:connector-curvature="0" />
+           style="fill:#ee2d29;fill-opacity:1;fill-rule:nonzero;stroke:#ff0000;stroke-width:0.80146;stroke-opacity:1"
+           d="m 398.88,315.84 h 40.16001 v 1.44 H 398.88 Z" />
       </g>
       <g
-         id="g279-4"
+         style="stroke:#ff0000;stroke-width:0.80146;stroke-opacity:1"
          transform="matrix(0.26458333,0,0,0.26458333,-10.578007,-14.037984)"
-         style="stroke:#ff0000;stroke-width:0.80146;stroke-opacity:1">
+         id="g279-4">
         <g
-           id="g277-0"
+           style="stroke:#ff0000;stroke-width:0.80146;stroke-opacity:1"
            clip-path="url(#clipPath312-38)"
-           style="stroke:#ff0000;stroke-width:0.80146;stroke-opacity:1">
+           id="g277-0">
           <path
-             d="m 389.60001,316.48001 13.27999,-5.44 -3.20001,5.44 3.20001,5.44 z"
-             style="fill:#ee2d29;fill-opacity:1;fill-rule:nonzero;stroke:#ff0000;stroke-width:0.80146;stroke-opacity:1"
+             inkscape:connector-curvature="0"
              id="path275-0"
-             inkscape:connector-curvature="0" />
+             style="fill:#ee2d29;fill-opacity:1;fill-rule:nonzero;stroke:#ff0000;stroke-width:0.80146;stroke-opacity:1"
+             d="m 389.60001,316.48001 13.27999,-5.44 -3.20001,5.44 3.20001,5.44 z" />
         </g>
       </g>
     </g>
     <g
-       transform="matrix(0.26458333,0,0,0.26458333,0.53449354,0.24951905)"
-       id="g154">
+       id="g154"
+       transform="matrix(0.26458333,0,0,0.26458333,0.53449354,0.24951905)">
       <g
-         clip-path="url(#clipPath160)"
-         id="g156">
+         id="g156"
+         clip-path="url(#clipPath160)">
         <g
-           transform="translate(217.92,730.56)"
-           id="g162">
+           id="g162"
+           transform="translate(217.92,730.56)">
           <path
-             inkscape:connector-curvature="0"
-             id="path164"
+             d="M 0,0 V -0.64 H -173.75999 V -98.080002 H -0.8 V 0 H 0 V -0.64 0 H 0.64 V -99.360001 H -175.03999 V 0.64 H 0.64 V 0 Z"
              style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
-             d="M 0,0 V -0.64 H -173.75999 V -98.080002 H -0.8 V 0 H 0 V -0.64 0 H 0.64 V -99.360001 H -175.03999 V 0.64 H 0.64 V 0 Z" />
+             id="path164"
+             inkscape:connector-curvature="0" />
         </g>
         <g
-           transform="translate(43.360001,631.52002)"
-           id="g166">
+           id="g166"
+           transform="translate(43.360001,631.52002)">
           <path
-             inkscape:connector-curvature="0"
-             id="path168"
+             d="M 0,0 25.6,-35.200001 H 190.24 L 173.11999,1.76 258.56,-41.119999 V 40 l -84.48,58.400002 0.8,1.119995 L 260,40.639999 v -83.84 L 175.84,-1.12 192.32001,-36.48 H 24.959999 L -1.12,-0.8 Z"
              style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
-             d="M 0,0 25.6,-35.200001 H 190.24 L 173.11999,1.76 258.56,-41.119999 V 40 l -84.48,58.400002 0.8,1.119995 L 260,40.639999 v -83.84 L 175.84,-1.12 192.32001,-36.48 H 24.959999 L -1.12,-0.8 Z" />
+             id="path168"
+             inkscape:connector-curvature="0" />
         </g>
         <g
            id="g174" />
       </g>
     </g>
     <g
-       transform="matrix(0.26458333,0,0,0.26458333,0.53449354,0.24951905)"
-       id="g194">
+       id="g194"
+       transform="matrix(0.26458333,0,0,0.26458333,0.53449354,0.24951905)">
       <g
-         clip-path="url(#clipPath200)"
-         id="g196">
+         id="g196"
+         clip-path="url(#clipPath200)">
         <g
-           transform="translate(207.84,588.32001)"
-           id="g202">
+           id="g202"
+           transform="translate(207.84,588.32001)">
           <path
-             inkscape:connector-curvature="0"
+             d="m 0,0 -24.32,6.72 h -49.279998 l 16,-6.24 -7.680001,-6.08 H 64.639999 L 89.120003,0.16 8.96,0 -59.360001,-0.16 V 1.12 L 8.96,1.28 94.879997,1.6 95.040001,0.16 64.800003,-6.88 H -69.120003 L -60.32,0.16 -77.440002,6.72 -77.120003,8 H -24.16 L 0.32,1.28 Z"
+             style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
              id="path204"
-             style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
-             d="m 0,0 -24.32,6.72 h -49.279998 l 16,-6.24 -7.680001,-6.08 H 64.639999 L 89.120003,0.16 8.96,0 -59.360001,-0.16 V 1.12 L 8.96,1.28 94.879997,1.6 95.040001,0.16 64.800003,-6.88 H -69.120003 L -60.32,0.16 -77.440002,6.72 -77.120003,8 H -24.16 L 0.32,1.28 Z" />
+             inkscape:connector-curvature="0" />
         </g>
         <g
-           transform="translate(641.44,687.52002)"
-           id="g206">
+           id="g206"
+           transform="translate(641.44,687.52002)">
           <path
-             inkscape:connector-curvature="0"
+             d="M 0,0 V -0.48 H -153.60001 V -86.720001 H -0.64 V 0 H 0 V -0.48 0 H 0.48 V -87.68 H -154.56 V 0.48 H 0.48 V 0 Z"
+             style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
              id="path208"
-             style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
-             d="M 0,0 V -0.48 H -153.60001 V -86.720001 H -0.64 V 0 H 0 V -0.48 0 H 0.48 V -87.68 H -154.56 V 0.48 H 0.48 V 0 Z" />
+             inkscape:connector-curvature="0" />
         </g>
         <g
-           transform="translate(676.64001,579.35998)"
-           id="g210">
+           id="g210"
+           transform="translate(676.64001,579.35998)">
           <path
-             inkscape:connector-curvature="0"
-             id="path212"
+             d="m 0,0 -35.52,20.48 0.479999,0.960001 L 28.48,-15.04 27.360001,57.759998 -35.52,107.68 -34.880001,108.64 28.48,58.240002 29.6,-16.959999 -35.52,20.48 -35.040001,21.440001 0.64,0.96 Z"
              style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
-             d="m 0,0 -35.52,20.48 0.479999,0.960001 L 28.48,-15.04 27.360001,57.759998 -35.52,107.68 -34.880001,108.64 28.48,58.240002 29.6,-16.959999 -35.52,20.48 -35.040001,21.440001 0.64,0.96 Z" />
+             id="path212"
+             inkscape:connector-curvature="0" />
         </g>
         <g
            id="g214">
           <path
-             inkscape:connector-curvature="0"
+             d="M 487.51999,600.79999 564.47998,563.20001 705.76001,564 v -1.12 l -141.44,-0.79998 -77.28,37.76001 z"
+             style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
              id="path216"
-             style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
-             d="M 487.51999,600.79999 564.47998,563.20001 705.76001,564 v -1.12 l -141.44,-0.79998 -77.28,37.76001 z" />
+             inkscape:connector-curvature="0" />
         </g>
         <g
-           transform="translate(592.79999,562.08002)"
-           id="g218">
+           id="g218"
+           transform="translate(592.79999,562.08002)">
           <path
-             inkscape:connector-curvature="0"
+             d="M 0,0 -66.559998,37.919998 V 125.92 h 4.479996 L -61.759998,38.560001 4,1.12 3.52,0.16 l -66.400001,37.759998 -0.32,87.040002 h -2.240001 V 38.560001 L 0.48,0.96 Z"
+             style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
              id="path220"
-             style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
-             d="M 0,0 -66.559998,37.919998 V 125.92 h 4.479996 L -61.759998,38.560001 4,1.12 3.52,0.16 l -66.400001,37.759998 -0.32,87.040002 h -2.240001 V 38.560001 L 0.48,0.96 Z" />
+             inkscape:connector-curvature="0" />
         </g>
         <g
-           transform="translate(514.71997,587.67999)"
-           id="g222">
+           id="g222"
+           transform="translate(514.71997,587.67999)">
           <path
-             inkscape:connector-curvature="0"
+             d="m 0,0 146.24,0.96 0.48,82.080001 -2.08,1.760002 L 144.8,1.92 -5.12,1.44 v 1.12 l 148.79999,0.48 -0.15999,84.159997 4.15999,-3.68 L 147.2,-0.16 0,-0.96 Z"
+             style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
              id="path224"
-             style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
-             d="m 0,0 146.24,0.96 0.48,82.080001 -2.08,1.760002 L 144.8,1.92 -5.12,1.44 v 1.12 l 148.79999,0.48 -0.15999,84.159997 4.15999,-3.68 L 147.2,-0.16 0,-0.96 Z" />
+             inkscape:connector-curvature="0" />
         </g>
         <g
-           transform="translate(664.32001,563.67999)"
-           id="g226">
+           id="g226"
+           transform="translate(664.32001,563.67999)">
           <path
-             inkscape:connector-curvature="0"
+             d="M 0,0 -64.959999,36.959999 V 124.96 h 4.32 L -60.32,37.599998 5.28,0.96 4.64,0 -61.439999,36.959999 -61.759998,123.84 H -64 V 37.599998 L 0.64,0.96 Z"
+             style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
              id="path228"
-             style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
-             d="M 0,0 -64.959999,36.959999 V 124.96 h 4.32 L -60.32,37.599998 5.28,0.96 4.64,0 -61.439999,36.959999 -61.759998,123.84 H -64 V 37.599998 L 0.64,0.96 Z" />
+             inkscape:connector-curvature="0" />
         </g>
         <g
-           transform="translate(545.76001,573.12)"
-           id="g230">
+           id="g230"
+           transform="translate(545.76001,573.12)">
           <path
-             inkscape:connector-curvature="0"
-             id="path232"
+             d="m 0,0 146.24,0.8 0.48,72.320003 -1.92,1.599998 L 144.96001,1.92 -4.96,1.28 V 2.4 L 143.84,3.04 143.67999,76.959999 147.84,73.760002 147.36,-0.16 0.16,-1.12 Z"
              style="fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
-             d="m 0,0 146.24,0.8 0.48,72.320003 -1.92,1.599998 L 144.96001,1.92 -4.96,1.28 V 2.4 L 143.84,3.04 143.67999,76.959999 147.84,73.760002 147.36,-0.16 0.16,-1.12 Z" />
+             id="path232"
+             inkscape:connector-curvature="0" />
         </g>
       </g>
     </g>
     <g
-       transform="matrix(0.26458333,0,0,0.26458333,-75.061921,52.282943)"
-       id="g282">
+       id="g282"
+       transform="matrix(0.26458333,0,0,0.26458333,-75.061921,52.282943)">
       <text
-         id="text286"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:29.3333px;font-family:'WenQuanYi Micro Hei';-inkscape-font-specification:'WenQuanYi Micro Hei';writing-mode:lr-tb;inline-size:232.041;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         xml:space="preserve"
          transform="translate(326.23999,643.67999)"
-         xml:space="preserve"><tspan
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:29.3333px;font-family:'WenQuanYi Micro Hei';-inkscape-font-specification:'WenQuanYi Micro Hei';writing-mode:lr-tb;inline-size:232.041;fill:#000000;fill-opacity:1;fill-rule:nonzero;stroke:none"
+         id="text286"><tspan
            x="0"
            y="0"><tspan>外箱印刷示意图</tspan></tspan></text>
     </g>
     <g
-       transform="matrix(0.26458333,0,0,0.26458333,2.1219936,0.24951905)"
-       id="g580" />
+       id="g580"
+       transform="matrix(0.26458333,0,0,0.26458333,2.1219936,0.24951905)" />
     <g
-       transform="matrix(0.26458333,0,0,0.26458333,0.53449354,0.24951905)"
-       id="g700" />
+       id="g700"
+       transform="matrix(0.26458333,0,0,0.26458333,0.53449354,0.24951905)" />
     <g
-       transform="matrix(0.26458333,0,0,0.26458333,0.53449354,0.24951905)"
-       id="g840" />
+       id="g840"
+       transform="matrix(0.26458333,0,0,0.26458333,0.53449354,0.24951905)" />
     <text
-       id="text513"
-       y="17.353191"
-       x="37.176365"
+       xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:7.05556px;line-height:1.25;font-family:'WenQuanYi Micro Hei';-inkscape-font-specification:'WenQuanYi Micro Hei, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;stroke-width:0.264583"
-       xml:space="preserve"><tspan
-         y="17.353191"
-         x="37.176365"
+       x="37.176365"
+       y="17.353191"
+       id="text513"><tspan
+         sodipodi:role="line"
          id="tspan277"
-         sodipodi:role="line">合同<tspan
-   id="tspan145"
-   style="fill:#ff0000">${contract_n}</tspan>双一字槽瓦楞钉 包装资料</tspan></text>
+         x="37.176365"
+         y="17.353191">合同<tspan
+   style="fill:#ff0000"
+   id="tspan145">${contract_n}</tspan>双一字槽瓦楞钉 包装资料</tspan></text>
     <text
-       xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.58611px;line-height:1.25;font-family:Sans;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;inline-size:172.256;stroke-width:0.264583"
-       x="10.781866"
+       id="text513-8"
        y="38.23962"
-       id="text513-8" />
-    <text
-       id="text1470"
-       y="253.21329"
-       x="11.710494"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;line-height:1.25;font-family:'WenQuanYi Micro Hei';-inkscape-font-specification:'WenQuanYi Micro Hei Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;stroke-width:0.264583"
-       xml:space="preserve"><tspan
-         style="fill:#ff0000"
-         y="253.21329"
-         x="11.710494"
-         id="tspan1508"
-         sodipodi:role="line">1、Arial字体，搜有字大小一致；数字和单位之间1个空格；乘号用小写 &quot; x &quot;，前后各留一个空格；</tspan><tspan
-         style="fill:#ff0000"
-         y="258.50494"
-         x="11.710494"
-         id="tspan1510"
-         sodipodi:role="line">2、冒号前后都需有1个空格，小数点用逗号 &quot;，&quot;，不是点。</tspan><tspan
-         style="fill:#ff0000"
-         y="263.7966"
-         x="11.710494"
-         id="tspan1512"
-         sodipodi:role="line">3、外面方框是不要的，印刷时候参考示意图；</tspan><tspan
-         style="fill:#ff0000"
-         y="269.08829"
-         x="11.710494"
-         id="tspan1514"
-         sodipodi:role="line">4、根据汉语提示，检查所填信息是否正确，若有不对的地方，及时和我们联系。</tspan><tspan
-         style="fill:#ff0000"
-         y="274.37994"
-         x="11.710494"
-         id="tspan1516"
-         sodipodi:role="line">5、信息填写完整后，必须发我司确认，否则印刷错误，将有贵公司承担相应的责任，谢谢合作！</tspan><tspan
-         y="279.6716"
-         x="11.710494"
-         id="tspan1518"
-         sodipodi:role="line">      <tspan
-   id="tspan1520"
-   style="fill:#0000ff">也可将需填信息内容发给我，我填写完整后再发给你们。</tspan></tspan></text>
-    <text
-       id="text2606"
-       y="188.7637"
-       x="129.82852"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;line-height:1.25;font-family:'WenQuanYi Micro Hei';-inkscape-font-specification:'WenQuanYi Micro Hei Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;stroke-width:0.264583"
-       xml:space="preserve"><tspan
-         y="188.7637"
-         x="129.82852"
-         id="tspan2668"
-         sodipodi:role="line">外箱的捆扎方式<tspan
-   id="tspan2672"
-   style="fill:#ff0000">需要</tspan>如上图所示：</tspan><tspan
-         y="194.05536"
-         x="129.82852"
-         id="tspan2670"
-         sodipodi:role="line">俯视呈“井”字形。</tspan></text>
+       x="10.781866"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.58611px;line-height:1.25;font-family:Sans;-inkscape-font-specification:'Sans, Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;inline-size:172.256;stroke-width:0.264583"
+       xml:space="preserve" />
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;line-height:1.25;font-family:'WenQuanYi Micro Hei';-inkscape-font-specification:'WenQuanYi Micro Hei Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;fill:#ff0000;stroke-width:0.264583"
-       x="64.429291"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;line-height:1.25;font-family:'WenQuanYi Micro Hei';-inkscape-font-specification:'WenQuanYi Micro Hei Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;stroke-width:0.264583"
+       x="11.710494"
+       y="253.21329"
+       id="text1470"><tspan
+         sodipodi:role="line"
+         id="tspan1508"
+         x="11.710494"
+         y="253.21329"
+         style="fill:#ff0000">1、Arial字体，搜有字大小一致；数字和单位之间1个空格；乘号用小写 &quot; x &quot;，前后各留一个空格；</tspan><tspan
+         sodipodi:role="line"
+         id="tspan1510"
+         x="11.710494"
+         y="258.50494"
+         style="fill:#ff0000">2、冒号前后都需有1个空格，小数点用逗号 &quot;，&quot;，不是点。</tspan><tspan
+         sodipodi:role="line"
+         id="tspan1512"
+         x="11.710494"
+         y="263.7966"
+         style="fill:#ff0000">3、外面方框是不要的，印刷时候参考示意图；</tspan><tspan
+         sodipodi:role="line"
+         id="tspan1514"
+         x="11.710494"
+         y="269.08829"
+         style="fill:#ff0000">4、根据汉语提示，检查所填信息是否正确，若有不对的地方，及时和我们联系。</tspan><tspan
+         sodipodi:role="line"
+         id="tspan1516"
+         x="11.710494"
+         y="274.37994"
+         style="fill:#ff0000">5、信息填写完整后，必须发我司确认，否则印刷错误，将有贵公司承担相应的责任，谢谢合作！</tspan><tspan
+         sodipodi:role="line"
+         id="tspan1518"
+         x="11.710494"
+         y="279.6716">      <tspan
+   style="fill:#0000ff"
+   id="tspan1520">也可将需填信息内容发给我，我填写完整后再发给你们。</tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;line-height:1.25;font-family:'WenQuanYi Micro Hei';-inkscape-font-specification:'WenQuanYi Micro Hei Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;stroke-width:0.264583"
+       x="129.82852"
+       y="188.7637"
+       id="text2606"><tspan
+         sodipodi:role="line"
+         id="tspan2668"
+         x="129.82852"
+         y="188.7637">外箱的捆扎方式<tspan
+   style="fill:#ff0000"
+   id="tspan2672">需要</tspan>如上图所示：</tspan><tspan
+         sodipodi:role="line"
+         id="tspan2670"
+         x="129.82852"
+         y="194.05536">俯视呈“井”字形。</tspan></text>
+    <text
+       id="text244"
        y="201.06506"
-       id="text244"><tspan
-         y="201.06506"
-         x="64.429291"
+       x="64.429291"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;line-height:1.25;font-family:'WenQuanYi Micro Hei';-inkscape-font-specification:'WenQuanYi Micro Hei Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;fill:#ff0000;stroke-width:0.264583"
+       xml:space="preserve"><tspan
+         sodipodi:role="line"
          id="tspan248"
-         sodipodi:role="line">印刷（贴）在正唛中间</tspan><tspan
-         y="206.35672"
          x="64.429291"
+         y="201.06506">印刷（贴）在正唛中间</tspan><tspan
+         sodipodi:role="line"
          id="tspan250"
-         sodipodi:role="line">对称的两面都要印刷</tspan></text>
+         x="64.429291"
+         y="206.35672">对称的两面都要印刷</tspan></text>
     <text
-       transform="rotate(-30)"
-       id="text337"
-       y="81.724693"
-       x="-8.3046436"
+       xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.12283px;line-height:1.25;font-family:'WenQuanYi Micro Hei';-inkscape-font-specification:'WenQuanYi Micro Hei Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;fill:#ff0000;stroke-width:0.264583"
-       xml:space="preserve"><tspan
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.12283px;font-family:'WenQuanYi Micro Hei';-inkscape-font-specification:'WenQuanYi Micro Hei Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#ff0000;stroke-width:0.264583"
-         y="81.724693"
-         x="-8.3046436"
+       x="-9.6445103"
+       y="104.04513"
+       id="text337"
+       transform="rotate(-30)"><tspan
+         sodipodi:role="line"
          id="tspan335"
-         sodipodi:role="line">模板 SPECIMEN</tspan></text>
+         x="-9.6445103"
+         y="104.04513"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:5.12283px;font-family:'WenQuanYi Micro Hei';-inkscape-font-specification:'WenQuanYi Micro Hei Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;fill:#ff0000;stroke-width:0.264583">模板 SPECIMEN</tspan></text>
     <text
-       id="text254"
-       y="142.40636"
-       x="26.701632"
+       xml:space="preserve"
        style="font-weight:bold;font-size:4.23333px;line-height:1.25;font-family:'WenQuanYi Micro Hei';-inkscape-font-specification:'WenQuanYi Micro Hei Bold';letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;stroke-width:0.264583"
-       xml:space="preserve"><tspan
-         style="fill:#ff0000;stroke-width:0.264583"
-         y="142.40636"
-         x="26.701632"
+       x="26.701632"
+       y="142.40636"
+       id="text254"><tspan
+         sodipodi:role="line"
          id="tspan252"
-         sodipodi:role="line">要左对齐</tspan></text>
+         x="26.701632"
+         y="142.40636"
+         style="fill:#ff0000;stroke-width:0.264583">要左对齐</tspan></text>
     <g
-       transform="rotate(90,28.434526,65.72829)"
-       id="g286">
+       id="g286"
+       transform="rotate(90,28.434526,65.72829)">
       <g
-         style="stroke:#ff0000;stroke-opacity:1"
+         id="g273"
          transform="matrix(0.26458333,0,0,0.26458333,-10.578007,-14.037984)"
-         id="g273">
-        <path
-           inkscape:connector-curvature="0"
-           id="path271"
-           style="fill:#ee2d29;fill-opacity:1;fill-rule:nonzero;stroke:#ff0000;stroke-opacity:1"
-           d="m 398.88,315.84 h 40.16001 v 1.44 H 398.88 Z" />
-      </g>
-      <g
-         style="stroke:#ff0000;stroke-opacity:1"
-         transform="matrix(0.26458333,0,0,0.26458333,-10.578007,-14.037984)"
-         id="g279">
-        <g
-           style="stroke:#ff0000;stroke-opacity:1"
-           clip-path="url(#clipPath312)"
-           id="g277">
-          <path
-             inkscape:connector-curvature="0"
-             id="path275"
-             style="fill:#ee2d29;fill-opacity:1;fill-rule:nonzero;stroke:#ff0000;stroke-opacity:1"
-             d="m 389.60001,316.48001 13.27999,-5.44 -3.20001,5.44 3.20001,5.44 z" />
-        </g>
-      </g>
-    </g>
-    <g
-       transform="translate(0,2.1166667)"
-       id="g471">
-      <g
-         id="g302"
-         transform="matrix(0.26458333,0,0,0.26458333,-2.7901539,-9.076287)"
          style="stroke:#ff0000;stroke-opacity:1">
         <path
            d="m 398.88,315.84 h 40.16001 v 1.44 H 398.88 Z"
            style="fill:#ee2d29;fill-opacity:1;fill-rule:nonzero;stroke:#ff0000;stroke-opacity:1"
-           id="path304"
+           id="path271"
            inkscape:connector-curvature="0" />
       </g>
       <g
-         id="g306"
-         transform="matrix(0.26458333,0,0,0.26458333,-2.7901539,-9.076287)"
+         id="g279"
+         transform="matrix(0.26458333,0,0,0.26458333,-10.578007,-14.037984)"
          style="stroke:#ff0000;stroke-opacity:1">
         <g
-           id="g308"
+           id="g277"
            clip-path="url(#clipPath312)"
            style="stroke:#ff0000;stroke-opacity:1">
           <path
              d="m 389.60001,316.48001 13.27999,-5.44 -3.20001,5.44 3.20001,5.44 z"
              style="fill:#ee2d29;fill-opacity:1;fill-rule:nonzero;stroke:#ff0000;stroke-opacity:1"
-             id="path314"
+             id="path275"
              inkscape:connector-curvature="0" />
+        </g>
+      </g>
+    </g>
+    <g
+       id="g471"
+       transform="translate(0,2.1166667)">
+      <g
+         style="stroke:#ff0000;stroke-opacity:1"
+         transform="matrix(0.26458333,0,0,0.26458333,-2.7901539,-9.076287)"
+         id="g302">
+        <path
+           inkscape:connector-curvature="0"
+           id="path304"
+           style="fill:#ee2d29;fill-opacity:1;fill-rule:nonzero;stroke:#ff0000;stroke-opacity:1"
+           d="m 398.88,315.84 h 40.16001 v 1.44 H 398.88 Z" />
+      </g>
+      <g
+         style="stroke:#ff0000;stroke-opacity:1"
+         transform="matrix(0.26458333,0,0,0.26458333,-2.7901539,-9.076287)"
+         id="g306">
+        <g
+           style="stroke:#ff0000;stroke-opacity:1"
+           clip-path="url(#clipPath312)"
+           id="g308">
+          <path
+             inkscape:connector-curvature="0"
+             id="path314"
+             style="fill:#ee2d29;fill-opacity:1;fill-rule:nonzero;stroke:#ff0000;stroke-opacity:1"
+             d="m 389.60001,316.48001 13.27999,-5.44 -3.20001,5.44 3.20001,5.44 z" />
         </g>
       </g>
       <text
-         xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;line-height:1.35;font-family:'WenQuanYi Micro Hei';-inkscape-font-specification:'WenQuanYi Micro Hei Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;stroke-width:0.264583"
-         x="116.63917"
+         id="text1695"
          y="76.088928"
-         id="text1695"><tspan
-           sodipodi:role="line"
+         x="116.63917"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;line-height:1.35;font-family:'WenQuanYi Micro Hei';-inkscape-font-specification:'WenQuanYi Micro Hei Normal';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;stroke-width:0.264583"
+         xml:space="preserve"><tspan
+           y="76.088928"
+           x="116.63917"
            id="tspan1697"
+           sodipodi:role="line">经仓编号</tspan><tspan
+           y="81.803925"
            x="116.63917"
-           y="76.088928">经仓编号</tspan><tspan
-           sodipodi:role="line"
            id="tspan1699"
+           sodipodi:role="line" /><tspan
+           y="87.518921"
            x="116.63917"
-           y="81.803925" /><tspan
-           sodipodi:role="line"
            id="tspan1701"
-           x="116.63917"
-           y="87.518921">品名</tspan><tspan
-           sodipodi:role="line"
-           id="tspan1703"
-           x="116.63917"
+           sodipodi:role="line">品名</tspan><tspan
+           style="fill:#ff0000"
            y="93.233917"
-           style="fill:#ff0000">产品规格</tspan><tspan
-           sodipodi:role="line"
-           id="tspan1705"
            x="116.63917"
+           id="tspan1703"
+           sodipodi:role="line">产品规格</tspan><tspan
+           style="fill:#ff0000"
            y="98.948906"
-           style="fill:#ff0000" /><tspan
-           sodipodi:role="line"
-           id="tspan1707"
            x="116.63917"
+           id="tspan1705"
+           sodipodi:role="line" /><tspan
+           style="fill:#ff0000"
            y="104.6639"
-           style="fill:#ff0000">货号</tspan><tspan
-           sodipodi:role="line"
+           x="116.63917"
+           id="tspan1707"
+           sodipodi:role="line">货号</tspan><tspan
+           y="110.3789"
+           x="116.63917"
            id="tspan1709"
-           x="116.63917"
-           y="110.3789">颜色： 本色</tspan><tspan
-           sodipodi:role="line"
-           id="tspan1711"
-           x="116.63917"
+           sodipodi:role="line">颜色： 本色</tspan><tspan
+           style="fill:#ff0000"
            y="116.09389"
-           style="fill:#ff0000">外箱装的数量： 箱内装的盒数 x 外盒装的个数</tspan><tspan
-           sodipodi:role="line"
-           id="tspan1713"
            x="116.63917"
+           id="tspan1711"
+           sodipodi:role="line">外箱装的数量： 箱内装的盒数 x 外盒装的个数</tspan><tspan
+           style="fill:#ff0000"
            y="121.80889"
-           style="fill:#ff0000">每箱装的盒数</tspan></text>
+           x="116.63917"
+           id="tspan1713"
+           sodipodi:role="line">每箱装的盒数</tspan></text>
       <g
-         transform="translate(-3.3246474,1.8881887)"
-         id="g2460-9">
+         id="g2460-9"
+         transform="translate(-3.3246474,1.8881887)">
         <g
-           id="g302-3"
+           style="stroke:#ff0000;stroke-opacity:1"
            transform="matrix(0.26458333,0,0,0.26458333,0.53449354,0.24951905)"
-           style="stroke:#ff0000;stroke-opacity:1">
+           id="g302-3">
           <path
-             d="m 398.88,315.84 h 40.16001 v 1.44 H 398.88 Z"
-             style="fill:#ee2d29;fill-opacity:1;fill-rule:nonzero;stroke:#ff0000;stroke-opacity:1"
+             inkscape:connector-curvature="0"
              id="path304-8"
-             inkscape:connector-curvature="0" />
+             style="fill:#ee2d29;fill-opacity:1;fill-rule:nonzero;stroke:#ff0000;stroke-opacity:1"
+             d="m 398.88,315.84 h 40.16001 v 1.44 H 398.88 Z" />
         </g>
         <g
-           id="g306-8"
+           style="stroke:#ff0000;stroke-opacity:1"
            transform="matrix(0.26458333,0,0,0.26458333,0.53449354,0.24951905)"
-           style="stroke:#ff0000;stroke-opacity:1">
+           id="g306-8">
           <g
-             id="g308-8"
+             style="stroke:#ff0000;stroke-opacity:1"
              clip-path="url(#clipPath312-4)"
-             style="stroke:#ff0000;stroke-opacity:1">
+             id="g308-8">
             <path
-               d="m 389.60001,316.48001 13.27999,-5.44 -3.20001,5.44 3.20001,5.44 z"
-               style="fill:#ee2d29;fill-opacity:1;fill-rule:nonzero;stroke:#ff0000;stroke-opacity:1"
+               inkscape:connector-curvature="0"
                id="path314-7"
-               inkscape:connector-curvature="0" />
+               style="fill:#ee2d29;fill-opacity:1;fill-rule:nonzero;stroke:#ff0000;stroke-opacity:1"
+               d="m 389.60001,316.48001 13.27999,-5.44 -3.20001,5.44 3.20001,5.44 z" />
           </g>
         </g>
       </g>
       <g
-         transform="translate(-3.3246474,7.8105043)"
-         id="g2460-6">
+         id="g2460-6"
+         transform="translate(-3.3246474,7.8105043)">
         <g
-           id="g302-9"
+           style="stroke:#ff0000;stroke-opacity:1"
            transform="matrix(0.26458333,0,0,0.26458333,0.53449354,0.24951905)"
-           style="stroke:#ff0000;stroke-opacity:1">
+           id="g302-9">
           <path
-             d="m 398.88,315.84 h 40.16001 v 1.44 H 398.88 Z"
-             style="fill:#ee2d29;fill-opacity:1;fill-rule:nonzero;stroke:#ff0000;stroke-opacity:1"
+             inkscape:connector-curvature="0"
              id="path304-80"
-             inkscape:connector-curvature="0" />
+             style="fill:#ee2d29;fill-opacity:1;fill-rule:nonzero;stroke:#ff0000;stroke-opacity:1"
+             d="m 398.88,315.84 h 40.16001 v 1.44 H 398.88 Z" />
         </g>
         <g
-           id="g306-9"
+           style="stroke:#ff0000;stroke-opacity:1"
            transform="matrix(0.26458333,0,0,0.26458333,0.53449354,0.24951905)"
-           style="stroke:#ff0000;stroke-opacity:1">
+           id="g306-9">
           <g
-             id="g308-2"
+             style="stroke:#ff0000;stroke-opacity:1"
              clip-path="url(#clipPath312-9)"
-             style="stroke:#ff0000;stroke-opacity:1">
+             id="g308-2">
             <path
-               d="m 389.60001,316.48001 13.27999,-5.44 -3.20001,5.44 3.20001,5.44 z"
-               style="fill:#ee2d29;fill-opacity:1;fill-rule:nonzero;stroke:#ff0000;stroke-opacity:1"
+               inkscape:connector-curvature="0"
                id="path314-9"
-               inkscape:connector-curvature="0" />
+               style="fill:#ee2d29;fill-opacity:1;fill-rule:nonzero;stroke:#ff0000;stroke-opacity:1"
+               d="m 389.60001,316.48001 13.27999,-5.44 -3.20001,5.44 3.20001,5.44 z" />
           </g>
         </g>
       </g>
       <g
-         transform="translate(-3.3246474,19.553664)"
-         id="g2460-99">
+         id="g2460-99"
+         transform="translate(-3.3246474,19.553664)">
         <g
-           id="g302-7"
+           style="stroke:#ff0000;stroke-opacity:1"
            transform="matrix(0.26458333,0,0,0.26458333,0.53449354,0.24951905)"
-           style="stroke:#ff0000;stroke-opacity:1">
+           id="g302-7">
           <path
-             d="m 398.88,315.84 h 40.16001 v 1.44 H 398.88 Z"
-             style="fill:#ee2d29;fill-opacity:1;fill-rule:nonzero;stroke:#ff0000;stroke-opacity:1"
+             inkscape:connector-curvature="0"
              id="path304-9"
-             inkscape:connector-curvature="0" />
+             style="fill:#ee2d29;fill-opacity:1;fill-rule:nonzero;stroke:#ff0000;stroke-opacity:1"
+             d="m 398.88,315.84 h 40.16001 v 1.44 H 398.88 Z" />
         </g>
         <g
-           id="g306-6"
+           style="stroke:#ff0000;stroke-opacity:1"
            transform="matrix(0.26458333,0,0,0.26458333,0.53449354,0.24951905)"
-           style="stroke:#ff0000;stroke-opacity:1">
+           id="g306-6">
           <g
-             id="g308-3"
+             style="stroke:#ff0000;stroke-opacity:1"
              clip-path="url(#clipPath312-3)"
-             style="stroke:#ff0000;stroke-opacity:1">
+             id="g308-3">
             <path
-               d="m 389.60001,316.48001 13.27999,-5.44 -3.20001,5.44 3.20001,5.44 z"
-               style="fill:#ee2d29;fill-opacity:1;fill-rule:nonzero;stroke:#ff0000;stroke-opacity:1"
+               inkscape:connector-curvature="0"
                id="path314-0"
-               inkscape:connector-curvature="0" />
+               style="fill:#ee2d29;fill-opacity:1;fill-rule:nonzero;stroke:#ff0000;stroke-opacity:1"
+               d="m 389.60001,316.48001 13.27999,-5.44 -3.20001,5.44 3.20001,5.44 z" />
           </g>
         </g>
       </g>
       <g
-         transform="translate(-3.3246474,24.815461)"
-         id="g2460-8">
+         id="g2460-8"
+         transform="translate(-3.3246474,24.815461)">
         <g
-           id="g302-33"
+           style="stroke:#ff0000;stroke-opacity:1"
            transform="matrix(0.26458333,0,0,0.26458333,0.53449354,0.24951905)"
-           style="stroke:#ff0000;stroke-opacity:1">
+           id="g302-33">
           <path
-             d="m 398.88,315.84 h 40.16001 v 1.44 H 398.88 Z"
-             style="fill:#ee2d29;fill-opacity:1;fill-rule:nonzero;stroke:#ff0000;stroke-opacity:1"
+             inkscape:connector-curvature="0"
              id="path304-5"
-             inkscape:connector-curvature="0" />
+             style="fill:#ee2d29;fill-opacity:1;fill-rule:nonzero;stroke:#ff0000;stroke-opacity:1"
+             d="m 398.88,315.84 h 40.16001 v 1.44 H 398.88 Z" />
         </g>
         <g
-           id="g306-7"
+           style="stroke:#ff0000;stroke-opacity:1"
            transform="matrix(0.26458333,0,0,0.26458333,0.53449354,0.24951905)"
-           style="stroke:#ff0000;stroke-opacity:1">
+           id="g306-7">
           <g
-             id="g308-20"
+             style="stroke:#ff0000;stroke-opacity:1"
              clip-path="url(#clipPath312-6)"
-             style="stroke:#ff0000;stroke-opacity:1">
+             id="g308-20">
             <path
-               d="m 389.60001,316.48001 13.27999,-5.44 -3.20001,5.44 3.20001,5.44 z"
-               style="fill:#ee2d29;fill-opacity:1;fill-rule:nonzero;stroke:#ff0000;stroke-opacity:1"
+               inkscape:connector-curvature="0"
                id="path314-73"
-               inkscape:connector-curvature="0" />
+               style="fill:#ee2d29;fill-opacity:1;fill-rule:nonzero;stroke:#ff0000;stroke-opacity:1"
+               d="m 389.60001,316.48001 13.27999,-5.44 -3.20001,5.44 3.20001,5.44 z" />
           </g>
         </g>
       </g>
       <g
-         transform="translate(-3.3246474,30.86913)"
-         id="g2460-2">
+         id="g2460-2"
+         transform="translate(-3.3246474,30.86913)">
         <g
-           id="g302-1"
+           style="stroke:#ff0000;stroke-opacity:1"
            transform="matrix(0.26458333,0,0,0.26458333,0.53449354,0.24951905)"
-           style="stroke:#ff0000;stroke-opacity:1">
+           id="g302-1">
           <path
-             d="m 398.88,315.84 h 40.16001 v 1.44 H 398.88 Z"
-             style="fill:#ee2d29;fill-opacity:1;fill-rule:nonzero;stroke:#ff0000;stroke-opacity:1"
+             inkscape:connector-curvature="0"
              id="path304-3"
-             inkscape:connector-curvature="0" />
+             style="fill:#ee2d29;fill-opacity:1;fill-rule:nonzero;stroke:#ff0000;stroke-opacity:1"
+             d="m 398.88,315.84 h 40.16001 v 1.44 H 398.88 Z" />
         </g>
         <g
-           id="g306-3"
+           style="stroke:#ff0000;stroke-opacity:1"
            transform="matrix(0.26458333,0,0,0.26458333,0.53449354,0.24951905)"
-           style="stroke:#ff0000;stroke-opacity:1">
+           id="g306-3">
           <g
-             id="g308-9"
+             style="stroke:#ff0000;stroke-opacity:1"
              clip-path="url(#clipPath312-8)"
-             style="stroke:#ff0000;stroke-opacity:1">
+             id="g308-9">
             <path
-               d="m 389.60001,316.48001 13.27999,-5.44 -3.20001,5.44 3.20001,5.44 z"
-               style="fill:#ee2d29;fill-opacity:1;fill-rule:nonzero;stroke:#ff0000;stroke-opacity:1"
+               inkscape:connector-curvature="0"
                id="path314-5"
-               inkscape:connector-curvature="0" />
+               style="fill:#ee2d29;fill-opacity:1;fill-rule:nonzero;stroke:#ff0000;stroke-opacity:1"
+               d="m 389.60001,316.48001 13.27999,-5.44 -3.20001,5.44 3.20001,5.44 z" />
           </g>
         </g>
       </g>
       <g
-         transform="translate(-3.3246474,36.262281)"
-         id="g2460-3">
+         id="g2460-3"
+         transform="translate(-3.3246474,36.262281)">
         <g
-           id="g302-5"
+           style="stroke:#ff0000;stroke-opacity:1"
            transform="matrix(0.26458333,0,0,0.26458333,0.53449354,0.24951905)"
-           style="stroke:#ff0000;stroke-opacity:1">
+           id="g302-5">
           <path
-             d="m 398.88,315.84 h 40.16001 v 1.44 H 398.88 Z"
-             style="fill:#ee2d29;fill-opacity:1;fill-rule:nonzero;stroke:#ff0000;stroke-opacity:1"
+             inkscape:connector-curvature="0"
              id="path304-92"
-             inkscape:connector-curvature="0" />
+             style="fill:#ee2d29;fill-opacity:1;fill-rule:nonzero;stroke:#ff0000;stroke-opacity:1"
+             d="m 398.88,315.84 h 40.16001 v 1.44 H 398.88 Z" />
         </g>
         <g
-           id="g306-67"
+           style="stroke:#ff0000;stroke-opacity:1"
            transform="matrix(0.26458333,0,0,0.26458333,0.53449354,0.24951905)"
-           style="stroke:#ff0000;stroke-opacity:1">
+           id="g306-67">
           <g
-             id="g308-5"
+             style="stroke:#ff0000;stroke-opacity:1"
              clip-path="url(#clipPath312-32)"
-             style="stroke:#ff0000;stroke-opacity:1">
+             id="g308-5">
             <path
-               d="m 389.60001,316.48001 13.27999,-5.44 -3.20001,5.44 3.20001,5.44 z"
-               style="fill:#ee2d29;fill-opacity:1;fill-rule:nonzero;stroke:#ff0000;stroke-opacity:1"
+               inkscape:connector-curvature="0"
                id="path314-6"
-               inkscape:connector-curvature="0" />
+               style="fill:#ee2d29;fill-opacity:1;fill-rule:nonzero;stroke:#ff0000;stroke-opacity:1"
+               d="m 389.60001,316.48001 13.27999,-5.44 -3.20001,5.44 3.20001,5.44 z" />
           </g>
         </g>
       </g>
     </g>
     <text
-       xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;line-height:1;font-family:'WenQuanYi Micro Hei';-inkscape-font-specification:'WenQuanYi Micro Hei';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;stroke:none;stroke-width:0.499999;stroke-miterlimit:10;stop-color:#000000"
-       x="11.379766"
+       id="text270"
        y="41.239998"
-       id="text270"><tspan
-         sodipodi:role="line"
-         style="font-size:4.23333px;text-align:start;text-anchor:start"
-         x="11.379766"
+       x="11.379766"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333px;line-height:1;font-family:'WenQuanYi Micro Hei';-inkscape-font-specification:'WenQuanYi Micro Hei';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-east-asian:normal;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-color:#000000;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;stroke:none;stroke-width:0.499999;stroke-miterlimit:10;stop-color:#000000"
+       xml:space="preserve"><tspan
+         id="tspan1097"
          y="41.239998"
-         id="tspan1097">1.1 以我司产品编号<tspan
-   style="fill:#ff0000"
-   id="tspan1103">${prod_n} ${xl_prod_spec}</tspan> 双一字槽瓦楞钉包装资料外箱</tspan><tspan
-         sodipodi:role="line"
-         style="font-size:4.23333px;text-align:start;text-anchor:start"
          x="11.379766"
+         style="font-size:4.23333px;text-align:start;text-anchor:start"
+         sodipodi:role="line">1.1 以我司产品编号<tspan
+   id="tspan1103"
+   style="fill:#ff0000">${prod_n} ${xl_prod_spec}</tspan> 双一字槽瓦楞钉包装资料外箱</tspan><tspan
+         id="tspan1101"
          y="45.473328"
-         id="tspan1101">上的不干胶尺寸：<tspan
-   style="fill:#ff0000"
-   id="tspan1105">8 x 5 cm</tspan>。红色边框是裁切线，不印刷。</tspan></text>
+         x="11.379766"
+         style="font-size:4.23333px;text-align:start;text-anchor:start"
+         sodipodi:role="line">上的不干胶尺寸：<tspan
+   id="tspan1105"
+   style="fill:#ff0000">8 x 5 cm</tspan>。红色边框是裁切线，不印刷。</tspan></text>
   </g>
 </svg>

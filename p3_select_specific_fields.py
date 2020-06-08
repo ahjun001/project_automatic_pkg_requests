@@ -636,20 +636,7 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp=False, only_1_prod=F
             if element.tag.split("}")[1] == 'svg':
                 for attribute in element.attrib:
                     element.attrib.pop(attribute)
-            if element.tag.split("}")[1] in ['guide', 'namedview']:
-                # if element.tag.split("}")[1] in [
-                #     'type',
-                #     'RDF',
-                #     'format',
-                #     'namedview'
-                #     'Work',
-                #     'text',
-                #     'metadata',
-                #     'rect',
-                #     'defs',
-                # ]:
-
-                #     print(f'Removing {element.tag.split("}")[1]}')
+            if element.tag.split("}")[1] in ['guide', 'namedview', 'metadata']:
                 element.getparent().remove(element)
         tree.write(svg_insertable_file_out)
 
@@ -817,30 +804,36 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp=False, only_1_prod=F
                                 if pathlib.Path(filename).exists():
                                     _, ext = os.path.splitext(filename)
                                     dim_ = str(float(prod_nr_l[j]['coef']) * 100) + '%'
-                                    if ext == '.svg':  # was '.svg'
+                                    if ext == '.svg':
                                         i_filename = os.path.join(
                                             fields_abs_dir, '.' + prod_nr_l[j]['file'])
                                         if not pathlib.Path(i_filename).exists():
                                             strip_readable_svg_file_for_insert(filename, i_filename)
                                         with open(i_filename, encoding='utf8') as f:
-                                            fw.write(  # todo: change into a list
+                                            fw.write(
                                                 f"<g transform = 'matrix("
                                                 f"{prod_nr_l[j]['coef']},0,0,"
                                                 f"{prod_nr_l[j]['coef']}, "
                                                 f"{prod_nr_l[j]['x']},{prod_nr_l[j]['y']}"
-                                                ")'>\n")
+                                                ")'>\n"
+                                                "<svg>\n"
+                                            )
+
                                             fw.write(f.read())
                                             fw.write(
-                                                f"\n</g>\n"
+                                                "</svg>\n"
+                                                "</g>\n"
                                             )
-                                            os.remove(i_filename)
+                                            # os.remove(i_filename)
                                     else:
                                         fw.write(
+                                            "<g>\n<svg>\n"
                                             f"<image xlink:href='{f'{filename}'}' \n"
                                             f"x='{prod_nr_l[j]['x']}' y='{prod_nr_l[j]['y']}' \n"
                                             f"width='{dim_}' height='{dim_}' \n"
                                             "preserveAspectRatio='xMidyMid' \n"
                                             "style='image-rendering:optimizeQuality' />\n"
+                                            "</svg>\n</g>\n"
                                         )
                                 else:
                                     print(
