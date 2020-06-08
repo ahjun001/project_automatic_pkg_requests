@@ -54,12 +54,12 @@ def p3_d_load_o_create():
                     p1.p1_all_products_to_be_processed_set_load()
                 p3_d['pictures'] = {}
                 for prod_nr in list(p1.all_products_to_be_processed_set):
-                    p3_d['pictures'][prod_nr] = {
+                    p3_d['pictures'][prod_nr] = [{
                         'x': 0,
                         'y': 0,
                         'coef': 1,
                         'file': 'pic_0.png'
-                    }
+                    }]
 
         if 'barcode_d' not in p3_d.keys():
             p3_d['barcode_d'] = False
@@ -809,44 +809,45 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp=False, only_1_prod=F
                     if type(p3_d['pictures']) != 'bool' and p3_d['pictures']:
                         prod_nr = p3_selected_fields_values_by_prod_d[str(i)]['prod_n']
                         if prod_nr in p3_d['pictures'].keys():
-                            prod_nr_ = p3_d['pictures'][prod_nr]
-                            filename = os.path.join(os.path.join(fields_abs_dir, 'pics'),
-                                                    prod_nr_['file'])
+                            prod_nr_l = p3_d['pictures'][prod_nr]
+                            for j in range(len(prod_nr_l)):
+                                filename = os.path.join(os.path.join(fields_abs_dir, 'pics'), prod_nr_l[j]['file'])
 
-                            # filename = os.path.join(fields_abs_dir, prod_nr_['file'])
-                            if pathlib.Path(filename).exists():
-                                _, ext = os.path.splitext(filename)
-                                dim_ = str(float(prod_nr_['coef']) * 100) + '%'
-                                if ext == '.svg':  # was '.svg'
-                                    i_filename = os.path.join(fields_abs_dir, '.' + p3_d['pictures'][prod_nr]['file'])
-                                    if not pathlib.Path(i_filename).exists():
-                                        strip_readable_svg_file_for_insert(filename, i_filename)
-                                    with open(i_filename, encoding='utf8') as f:
-                                        fw.write(  # todo: change into a list
-                                            f"<g transform = 'matrix("
-                                            f"{p3_d['pictures'][prod_nr]['coef']},0,0,"
-                                            f"{p3_d['pictures'][prod_nr]['coef']}, "
-                                            f"{p3_d['pictures'][prod_nr]['x']},{p3_d['pictures'][prod_nr]['y']}"
-                                            ")'>\n")
-                                        fw.write(f.read())
+                                # filename = os.path.join(fields_abs_dir, prod_nr_l[j]['file'])
+                                if pathlib.Path(filename).exists():
+                                    _, ext = os.path.splitext(filename)
+                                    dim_ = str(float(prod_nr_l[j]['coef']) * 100) + '%'
+                                    if ext == '.svg':  # was '.svg'
+                                        i_filename = os.path.join(
+                                            fields_abs_dir, '.' + prod_nr_l[j]['file'])
+                                        if not pathlib.Path(i_filename).exists():
+                                            strip_readable_svg_file_for_insert(filename, i_filename)
+                                        with open(i_filename, encoding='utf8') as f:
+                                            fw.write(  # todo: change into a list
+                                                f"<g transform = 'matrix("
+                                                f"{prod_nr_l[j]['coef']},0,0,"
+                                                f"{prod_nr_l[j]['coef']}, "
+                                                f"{prod_nr_l[j]['x']},{prod_nr_l[j]['y']}"
+                                                ")'>\n")
+                                            fw.write(f.read())
+                                            fw.write(
+                                                f"\n</g>\n"
+                                            )
+                                            os.remove(i_filename)
+                                    else:
                                         fw.write(
-                                            f"\n</g>\n"
+                                            f"<image xlink:href='{f'{filename}'}' \n"
+                                            f"x='{prod_nr_l[j]['x']}' y='{prod_nr_l[j]['y']}' \n"
+                                            f"width='{dim_}' height='{dim_}' \n"
+                                            "preserveAspectRatio='xMidyMid' \n"
+                                            "style='image-rendering:optimizeQuality' />\n"
                                         )
-                                        # os.remove(i_filename)
                                 else:
-                                    fw.write(
-                                        f"<image xlink:href='{f'{filename}'}' \n"
-                                        f"x='{prod_nr_['x']}' y='{prod_nr_['y']}' \n"
-                                        f"width='{dim_}' height='{dim_}' \n"
-                                        "preserveAspectRatio='xMidyMid' \n"
-                                        "style='image-rendering:optimizeQuality' />\n"
+                                    print(
+                                        f'|\n| Cannot access {filename}: No such file \n'
+                                        '| Make sure it exists as indicated by template-info.json\n|'
                                     )
-                            else:
-                                print(
-                                    f'|\n| Cannot access {filename}: No such file \n'
-                                    '| Make sure it exists as indicated by template-info.json\n|'
-                                )
-                                exit()
+                                    exit()
 
                     # create the path to the barcode file, would it exists
                     barcode_f = os.path.join(
