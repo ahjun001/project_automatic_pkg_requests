@@ -1,1 +1,1 @@
-{"pictures": false, "barcode_d": false, "selected_fields": ["xl_prod_spec", "parc", "u_parc"], "pre_processing": false, "partially_populated_fields": false, "header_height": 7, "template_header": "外箱唛头"}
+{"pictures": false, "barcode_d": false, "selected_fields": ["xl_prod_spec", "parc", "u_parc"], "pre_processing": false, "partially_populated_fields": false, "header_height": 7, "template_header": "外箱唛头", "barcode_l": false}

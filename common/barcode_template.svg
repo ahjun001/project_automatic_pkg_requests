@@ -7,13 +7,13 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="30.862085mm"
-   height="7.7611113mm"
-   inkscape:version="1.1-dev (1:0.92.0+devel+202003231341+310bff5)"
-   sodipodi:docname="drawing.svg"
-   version="1.1"
+   id="svg3"
    viewBox="0 0 30.862086 7.761111"
-   id="svg3">
+   version="1.1"
+   sodipodi:docname="barcode_template.svg"
+   inkscape:version="1.1-dev (1:0.92.0+devel+202005110039+9ce7266)"
+   height="7.7611113mm"
+   width="30.862085mm">
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -29,28 +29,28 @@
   <defs
      id="defs5" />
   <sodipodi:namedview
-     id="base"
-     bordercolor="#666666"
-     borderopacity="1.0"
-     inkscape:current-layer="svg3"
-     inkscape:cx="13.886173"
-     inkscape:cy="-0.42388662"
-     inkscape:document-units="mm"
-     inkscape:pageopacity="0.0"
-     inkscape:pageshadow="2"
-     inkscape:window-height="1015"
-     inkscape:window-maximized="1"
-     inkscape:window-width="1920"
-     inkscape:window-x="0"
-     inkscape:window-y="40"
-     inkscape:zoom="5.6568542"
+     showgrid="false"
      pagecolor="#ffffff"
-     showgrid="false" />
+     inkscape:zoom="5.6568542"
+     inkscape:window-y="40"
+     inkscape:window-x="0"
+     inkscape:window-width="1920"
+     inkscape:window-maximized="1"
+     inkscape:window-height="1015"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:document-units="mm"
+     inkscape:cy="-0.42388662"
+     inkscape:cx="13.886173"
+     inkscape:current-layer="svg3"
+     borderopacity="1.0"
+     bordercolor="#666666"
+     id="base" />
   <rect
-     y="0"
-     x="0"
-     height="7.7611113"
-     width="30.862085"
+     style="fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#ff00ff;stroke-width:0.2;stroke-opacity:1;stop-color:#000000;stroke-miterlimit:4;stroke-dasharray:none"
      id="rect48"
-     style="fill:#ff00ff;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:0.499996;stroke-opacity:1;stop-color:#000000" />
+     width="30.862085"
+     height="7.7611113"
+     x="0"
+     y="0" />
 </svg>

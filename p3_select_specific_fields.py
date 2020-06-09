@@ -43,7 +43,7 @@ def p3_d_load_o_create():
         p3_f = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir']), 'template-info.json')
         if os.path.exists(p3_f):  # file exists, check that all default value are present, if not print a msg
             with open(p3_f, encoding='utf8') as f:
-                p3_d = json.load(f)  # loads selected_fields, template_header, header_height, barcode_d
+                p3_d = json.load(f)  # loads selected_fields, template_header, header_height, barcode_l
 
         # or populate missing fields with default information relative to the directory
         if 'pictures' not in p3_d.keys():
@@ -57,19 +57,15 @@ def p3_d_load_o_create():
                     p3_d['pictures'][prod_nr] = [{
                         'x': 0,
                         'y': 0,
-                        'coef': 1,
+                        'coef': 1.0,
                         'file': 'pic_0.png'
                     }]
 
-        if 'barcode_d' not in p3_d.keys():
-            p3_d['barcode_d'] = False
+        if 'barcode_l' not in p3_d.keys():
+            p3_d['barcode_l'] = False
         else:
-            if p3_d['barcode_d'] is True:
-                p3_d['barcode_d'] = {
-                    "coef": 0.0,
-                    "x1": 0, "y1": 0,
-                    "x2": 0, "y2": 0
-                }
+            if p3_d['barcode_l'] is True:
+                p3_d['barcode_l'] = [{"coef": 1.0, "x": 0, "y": 0}]
 
         if 'pre_processing' not in p3_d.keys():
             p3_d['pre_processing'] = False
@@ -165,7 +161,10 @@ def create_barcode_file(prod_n):
     brcd_tmplt = os.path.join(os.path.join(m.root_abs_dir, 'common'), 'barcode_template.svg')
 
     # put a directory for barcodes
-    brcd_f = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir']), prod_n + '.svg')
+    brcd_dir = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir']), 'bcode')
+    if not os.path.exists(brcd_dir):
+        os.mkdir(brcd_dir)
+    brcd_f = os.path.join(brcd_dir, prod_n + '.svg')
     command = f"./render_barcode.py " + \
               f"-t='Ean13' " + \
               f"-d='{prod_n_to_barcode(prod_n)}' " + \
@@ -605,9 +604,8 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp=False, only_1_prod=F
         global page_view_box_w
 
         n_of_templates_per_row = int(page_view_box_w // template_view_box_w)
-        result = (page_view_box_w - n_of_templates_per_row * template_view_box_w - (
-            n_of_templates_per_row - 1) * spacing_w) / 2
-        return result
+        return (page_view_box_w - n_of_templates_per_row * template_view_box_w - (n_of_templates_per_row - 1
+                                                                                  ) * spacing_w) / 2
 
     def create_template_body():
         """
@@ -824,7 +822,7 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp=False, only_1_prod=F
                                                 "</svg>\n"
                                                 "</g>\n"
                                             )
-                                            # os.remove(i_filename)
+                                            os.remove(i_filename)
                                     else:
                                         fw.write(
                                             "<g>\n<svg>\n"
@@ -844,35 +842,31 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp=False, only_1_prod=F
 
                     # create the path to the barcode file, would it exists
                     barcode_f = os.path.join(
-                        os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir']),
-                        p3_selected_fields_values_by_prod_d[str(i)]['prod_n'] + '.svg'
+                        os.path.join(
+                            os.path.join(
+                                p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir']
+                            ), 'bcode'
+                        ), p3_selected_fields_values_by_prod_d[str(i)]['prod_n'] + '.svg'
                     )
 
-                    if 'barcode_d' in p3_d and p3_d['barcode_d']:
-                        brcd_d = dict(p3_d['barcode_d'])
+                    if 'barcode_l' in p3_d and p3_d['barcode_l']:
+                        brcd_l = list(p3_d['barcode_l'])
                     else:
-                        brcd_d = {}
+                        brcd_l = []
 
-                    if brcd_d:
-                        if pathlib.Path(create_barcode_file(
-                                p3_selected_fields_values_by_prod_d[str(i)]['prod_n']
-                        )).exists():
-                            with open(barcode_f, encoding='utf8') as f:
-                                fw.write(  # todo: change into a list
-                                    f"<g transform = 'matrix("
-                                    f"{brcd_d['coef']},0,0,{brcd_d['coef']},"
-                                    f"{brcd_d['x1']},{brcd_d['y1']}"
-                                    ")'>\n")
-                                fw.write(f.read())
-                                fw.write(
-                                    "\n</g>\n"
-                                    f"<g transform = 'matrix("
-                                    f"{brcd_d['coef']},0,0,{brcd_d['coef']},"
-                                    f"{brcd_d['x2']},{brcd_d['y2']}"
-                                    f")'>\n"
-                                )
-                                fw.write(f.read())
-                                fw.write("\n</g>\n")
+                    if brcd_l:
+                        for k in range(len(brcd_l)):
+                            if pathlib.Path(create_barcode_file(
+                                    p3_selected_fields_values_by_prod_d[str(i)]['prod_n']
+                            )).exists():
+                                with open(barcode_f, encoding='utf8') as f:
+                                    fw.write(
+                                        f"<g transform = 'matrix("
+                                        f"{brcd_l[k]['coef']},0,0,{brcd_l[k]['coef']},"
+                                        f"{brcd_l[k]['x']},{brcd_l[k]['y']}"
+                                        ")'>\n<svg>\n")
+                                    fw.write(f.read())
+                                    fw.write("\n</svg>\n</g>\n")
 
                     # print(  # for debug purposes
                     #     f'{p1.p1_d["fields_rel_dir"]} page: {page} ',
