@@ -1,1 +1,27 @@
-{"selected_fields": ["xl_prod_spec", "u_parc", "mat2_zh", "plstc_bg"], "template_header": "内盒唛头", "header_height": 7, "barcode_l": [{"coef": 0.14, "x": 38, "y": 18}, {"coef": 0.14, "x": 38, "y": 56}], "pics_d": false, "mako_pre_proc_d": false, "partially_populated_fields": false, "pre_processing": false, "pictures": false}
+{
+    "selected_fields": [
+        "xl_prod_spec",
+        "u_parc",
+        "mat2_zh",
+        "plstc_bg"
+    ],
+    "template_header": "内盒唛头",
+    "header_height": 7,
+    "barcode_l": [
+        {
+            "coef": 0.14,
+            "x": 38,
+            "y": 18
+        },
+        {
+            "coef": 0.14,
+            "x": 38,
+            "y": 56
+        }
+    ],
+    "pics_d": false,
+    "mako_pre_proc_d": false,
+    "partially_populated_fields": false,
+    "pre_processing": false,
+    "pictures": false
+}

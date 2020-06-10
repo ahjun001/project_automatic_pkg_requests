@@ -2,9 +2,6 @@
   { "what": "pack", "how": "(?<=外包数：)\\d+\\.\\d+" },
   { "what": "parc", "how": "(?<=总件数：)\\d+\\b" },
   { "what": "u_parc", "how": "(?<=\\d\\.\\d\\d/)\\d+\\b" },
-  { "what": "u_parc", "how": "(?<=\\d\\d\\.\\d\\d/)\\d+\\b" },
-  { "what": "u_parc", "how": "(?<=\\d\\\\d\\d.\\d\\d/)\\d+\\b" },
-  { "what": "u_parc", "how": "(?<=\\d\\\\d\\d/)\\d+\\b" },
   { "what": "plstc_bg", "how": "\\d+(?=个/牢固透明塑料袋)" },
   { "what": "plstc_bg", "how": "\\d+(?=PCS/透明牢固尼龙袋)" },
   { "what": "bg_pr_crgtd_bx", "how": "\\d+(?=袋/瓦楞盒)" },
@@ -24,8 +21,6 @@
   { "what": "prot_lev", "how": "(?<=防护等级：).+(?=\\n)" },
   { "what": "serv_lif", "how": "(?<=使用寿命：).+(?=\\n)" },
   { "what": "q_ass", "how": ".+(?=品质保证\\n)" },
-  { "what": "mat1_zh", "how": "\\w+(?=材料)" },
-  { "what": "mat1_zh", "how": "\\w*钢" },
   { "what": "mat2_zh", "how": "表*面*镀*白*锌" },
   { "what": "mat2_zh", "how": "发黑" },
   { "what": "mat2_zh", "how": "本色" },
@@ -54,6 +49,5 @@
   { "what": "ray_trsprt_zh", "how": "条纹(?=钢化玻璃)" },
   { "what": "ray_trsprt_zh", "how": "(?<=钢化)透明(?=玻璃)" },
   { "what": "ray_trsprt_zh", "how": "透明(?=钢化玻璃)" },
-  { "what": "glss_thck", "how": "\\d(?=\\smm\\w+玻璃)" },
-  { "what": "color_zh", "how": "\\w(?=颜色)"}
+  { "what": "glss_thck", "how": "\\d(?=\\smm\\w+玻璃)" }
 ]

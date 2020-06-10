@@ -109,7 +109,7 @@ def save_template_info_json():
 
     p3_f = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir']), 'template-info.json')
     with open(p3_f, 'w', encoding='utf8') as f:
-        json.dump(p3_d, f, ensure_ascii=False)
+        json.dump(p3_d, f, ensure_ascii=False, indent = 4)
 
 
 def reset_globals():
@@ -438,7 +438,7 @@ def edit_paragraph_headers():
 def dump_fields_rel_dir():
     prog_info_json_f = os.path.join(m.root_abs_dir, 'program-info.json')
     with open(prog_info_json_f, 'w', encoding='utf8') as fw:
-        json.dump(p1.p1_d, fw, ensure_ascii=False)
+        json.dump(p1.p1_d, fw, ensure_ascii=False, indent = 4)
 
 
 def check_if_template_requirements_are_met():
@@ -538,7 +538,7 @@ def mako_input_json_load_o_create(force_recreate=False):
         # mako_pre_proc_json_s = os.path.join(p1.p1_cntrct_abs_dir + '/' + p1.p1_d['fields_rel_dir'],
         # '.mako_preproc.json')
         # with open(mako_pre_proc_json_s, 'w', encoding='utf8') as f:
-        #     json.dump(p3_selected_fields_values_by_prod_d, f, ensure_ascii = False)
+        #     json.dump(p3_selected_fields_values_by_prod_d, f, ensure_ascii = False, indent = 4)
 
         # adding new fields being derived from existing ones, as defined in template-info.json
         if 'pre_processing' in p3_d and p3_d['pre_processing']:  # case True or dic()
@@ -553,7 +553,7 @@ def mako_input_json_load_o_create(force_recreate=False):
                     p3_selected_fields_values_by_prod_d[k][new_field] = out_field if out_field else default
 
         with open(mako_input_json_s, 'w', encoding='utf8') as f:
-            json.dump(p3_selected_fields_values_by_prod_d, f, ensure_ascii=False)
+            json.dump(p3_selected_fields_values_by_prod_d, f, ensure_ascii=False, indent = 4)
 
 
 def pre_process():

@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import json
 import os
 import pathlib
 import shutil
@@ -8,19 +9,6 @@ import m_menus as m
 import p1_select_contract as p1
 import p2_select_templates as p2
 import p3_select_specific_fields as p3
-
-
-def run_full_demo_for_a_selection_of_contracts(save=False):
-    tests_l = ['A000001-start', 'A000001-final', 'A006043-001', 'A006045-001', 'A011001-022', 'A911008-008']
-    for test_contract_nr in tests_l:
-        step_1__select_a_contract_选择合同号(test_contract_nr=test_contract_nr)
-        run_full_demo_with_selected_or_default_values_运行完整演示()
-        if save:
-            save_selected_contract()  # use when a new field has been added to template-info.json
-
-
-def run_full_demo_and_save_a_selection_of_contracts():
-    run_full_demo_for_a_selection_of_contracts(save=True)
 
 
 # noinspection NonAsciiCharacters,PyPep8Naming
@@ -82,6 +70,39 @@ def save_selected_contract():
                 shutil.copytree(from_dir, to_dir, dirs_exist_ok=True)
 
 
+tests_l = ['A000001-start', 'A000001-final', 'A006043-001', 'A006045-001', 'A011001-022', 'A911008-008']
+
+
+def merge_all_p1a_xxx_final_contract_json_files_in_one():
+    with open(os.path.join('data', '.p1a_all-final-contract.txt'), 'w') as fw:
+        prod_nr = 0
+        for contract_nr in tests_l:
+            rel_path_contract_json_f = os.path.join(
+                os.path.join(
+                    'data', contract_nr), '.p1a_' + contract_nr + '-contract.json')
+            if os.path.exists(rel_path_contract_json_f):
+                with open(rel_path_contract_json_f) as fr:
+                    tmp_struct = json.load(fr)
+                    fr.seek(0)
+                    prod_nr += len(tmp_struct['l_i'])
+                    fw.write(fr.read())
+                    fw.write('\n')
+        fw.write(f'Total: {prod_nr} products')
+
+
+def run_full_demo_for_a_selection_of_contracts(save=False):
+    for test_contract_nr in tests_l:
+        step_1__select_a_contract_选择合同号(test_contract_nr=test_contract_nr)
+        run_full_demo_with_selected_or_default_values_运行完整演示()
+        if save:
+            save_selected_contract()  # use when a new field has been added to template-info.json
+    merge_all_p1a_xxx_final_contract_json_files_in_one()
+
+
+def run_full_demo_and_save_a_selection_of_contracts():
+    run_full_demo_for_a_selection_of_contracts(save=True)
+
+
 # noinspection NonAsciiCharacters,PyPep8Naming
 def step_1__select_a_contract_选择合同号(test_contract_nr=''):
     # p1.reset_globals()
@@ -100,6 +121,7 @@ def init():
         m.main_menu = m.menu
     m.menus = {
         m.menu: {
+            '000': merge_all_p1a_xxx_final_contract_json_files_in_one,
             '00': run_full_demo_for_a_selection_of_contracts,
             '0': run_full_demo_with_selected_or_default_values_运行完整演示,
             '1': step_1__select_a_contract_选择合同号,
