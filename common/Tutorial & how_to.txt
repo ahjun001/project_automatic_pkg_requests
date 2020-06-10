@@ -1,15 +1,19 @@
 Tutorial: Make a packaging request
-1. Copy & edit or Create template svg files with mock data and without fields
+1. Copy & edit, or Create template svg files with mock data.
 2. Add ${fields} that have been searched with RegEx
-3. Add photos & barcodes if necessary
+3. Add photos, barcodes, or fields edit if necessary
 
 ########################################################################################################################
 How to select a field from the xls contract file and insert it as a field in a label template
+
+As an example, this shows how to insert the field 'plstc_bg' in the template so that it can be populated with the data
+from the xls file contract.
+
 1. Run _p_main_menu.py
 
 2. Run  "1. step_1__select_a_contract_选择合同号": enter 1 Return
-     Double click A000001-001
-     Double click A000001-001.xls
+     Double click A000001-wip
+     Double click A000001-wip.xls
 
     Status of the selection should appear on line 'Step 1 select a contract:' above the next menu
 
@@ -26,7 +30,7 @@ How to select a field from the xls contract file and insert it as a field in a l
     Verify that 'plstc_bg' is in the list of selected fields to far
 
     c. If the desired field does not appear in the matrix, for example a field 'color_zh' that would capt the '颜色' info
-    Copy all contract's contents from the file .../data/A000001-001/.p1a_A000001-001-contract.txt into
+    Copy all contract's contents from the file .../data/A000001-wip/.p1a_A000001-wip-contract.txt into
           the https://regex101.com  TEST STRING box
 
     In regex101.com check Flavor as Python  (Python should appear as bold characters and followed by a check sign)
@@ -40,11 +44,12 @@ How to select a field from the xls contract file and insert it as a field in a l
     If this line is the last one, there should not be a comma at the end
 
     Back in _p_main_menu, run '5. process_selected_contract'
-    Go to '3. step_3__select_fields_to_print_for_each_template_选择每种标签类型的资料", check that the matrix has now a field 'color_zh'
+    Go to '3. step_3__select_fields_to_print_for_each_template_选择每种标签类型的资料", check that the matrix has now
+    a field 'color_zh'
     Process as in 3.b precedently
 
 
-4. In the .../data/A000001-001/a.Outer_box_外箱 directory, open the label_template.svg file with inkscape
+4. In the .../data/A000001-wip/a.Outer_box_外箱 directory, open the label_template.svg file with inkscape
    Create a text field that will include ${plstc_bg}
    Save
 
@@ -52,6 +57,14 @@ How to select a field from the xls contract file and insert it as a field in a l
     1 Return , to check the first product prints correctly
     2 Return ,  to check all products print correctly
 
+NB: Some fields, independent from the template but necessary for the page format, are not inserted as specific fields in
+template-info.json.  They are as follows:
+ ${contract_n}, the contract number
+ ${t}, the rank of the template being printed
+ ${i}, the rank of the product being printed
+These can be directly used, particularly in the template heading, as is done in A000001-final/f.Prod_sticker_塑料上不干胶
+note that, in this directory, the list of 'selected_fields' is empty, but the information on ${contract_n}, ${t}, ${i} is 
+still provided to build the packaging request.
 
 ########################################################################################################################
 How to insert a field in French as translation of a Chinese field
@@ -71,9 +84,9 @@ Do the search, replace as necessary, close and print.
 B. Do these edits in SAP and generate a new xls contract file. These edits will remain.
 
 C. Program option
-1. In .../data/A00001-001/a.Outer_box_外箱/template.json switch "pre_processing" to true
+1. In .../data/A00001-wip/a.Outer_box_外箱/template.json switch "pre_processing" to true
 
-2. Run _p_main_menu.py 1 to select A000001-001, 3 to select the template
+2. Run _p_main_menu.py 1 to select A000001-wip, 3 to select the template
    Observe that the file template.json has changed: "pre_processing" is now a list of new fields that
    can be used in templates, their data being derived from existing selected fields as replacements 'repl' according to a regular expression 'regex'
 
@@ -81,7 +94,7 @@ C. Program option
     Replace 'new_field' with the name of the field you wish to create
     Fill the 'field' name that will be the source of data for 'new_field'
     Run pre_process again
-    In .../data/A00001-001/a.Outer_box_外箱, a new file named 'field'.txt now exists. It contains this field data for all products in the contract.
+    In .../data/A00001-wip/a.Outer_box_外箱, a new file named 'field'.txt now exists. It contains this field data for all products in the contract.
 
 4. Use a text editor to copy information from 'field'.txt, paste into www.regex101.com TEST STRING window
     In regex101.com check Flavor as Python  (Python should appear as bold characters and followed by a check sign)
@@ -99,10 +112,10 @@ A. Simple option: consistenly fill the information for each product in SAP and i
 If some information is not necessary for all, it can be mentionned as blank ''.
 
 B. Program option
-1. In .../data/A00001-001/a.Outer_box_外箱/template.json  add the field name in the "selected_fields" list
+1. In .../data/A00001-wip/a.Outer_box_外箱/template.json  add the field name in the "selected_fields" list
 and switch "partially_populated_fields" to true
 
-2. Run _p_main_menu.py 1 to select A000001-001, 3 to select the template
+2. Run _p_main_menu.py 1 to select A000001-wip, 3 to select the template
    Observe that the file template.json has changed: "partially_populated_fields" is now a list of fields that
    can be used in templates, even if their data is only partially populated.
 
@@ -118,7 +131,7 @@ In 3.Select_specific_fields  run the function 55.remove_watermarks_and_produce_p
 B. Program option:
 1. For each template, store pictures in a sub-directory to the one of the template named 'pics'
 
-2. In .../data/A00001-001/a.Outer_box_外箱/template.json switch "pictures" to true
+2. In .../data/A00001-wip/a.Outer_box_外箱/template.json switch "pictures" to true
     Run pre_process again
     template.json now has a skeleton to insert pictures for all products in the contract.
 
