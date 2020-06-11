@@ -32,20 +32,20 @@ class Barcode(inkex.GenerateExtension):
     """
 
     def add_arguments(self, pars):
-        pars.add_argument("-l", "--height", type = int, default = 20, help = "Barcode Height")
-        pars.add_argument("-t", "--type", default = '', help = "Barcode Type")
-        pars.add_argument("-d", "--text", default = '', help = "Text to print on barcode")
+        pars.add_argument("-l", "--height", type=int, default=20, help="Barcode Height")
+        pars.add_argument("-t", "--type", default='', help="Barcode Type")
+        pars.add_argument("-d", "--text", default='', help="Text to print on barcode")
 
     def generate(self):
         (pos_x, pos_y) = self.svg.namedview.center
 
         return get_barcode(
             self.options.type,
-            text = self.options.text,
-            height = self.options.height,
-            document = self.document,
-            x = pos_x, y = pos_y,
-            scale = self.svg.unittouu('1px'),
+            text=self.options.text,
+            height=self.options.height,
+            document=self.document,
+            x=pos_x, y=pos_y,
+            scale=self.svg.unittouu('1px'),
         ).generate()
 
 

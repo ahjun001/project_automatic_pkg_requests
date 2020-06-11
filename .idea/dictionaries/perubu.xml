@@ -2,20 +2,36 @@
   <dictionary name="perubu">
     <words>
       <w>acier</w>
+      <w>adipiscing</w>
       <w>adir</w>
+      <w>aliqua</w>
+      <w>aliquip</w>
+      <w>amet</w>
+      <w>aute</w>
       <w>barcodes</w>
       <w>bcode</w>
       <w>brcd</w>
+      <w>cillum</w>
       <w>cntrct</w>
       <w>coef</w>
+      <w>commodo</w>
+      <w>consectetur</w>
+      <w>consequat</w>
       <w>dest</w>
       <w>deto</w>
       <w>detoplus</w>
       <w>dirname</w>
       <w>doesn</w>
       <w>dolore</w>
+      <w>duis</w>
+      <w>eiusmod</w>
+      <w>elit</w>
+      <w>enim</w>
+      <w>esse</w>
+      <w>exercitation</w>
       <w>filepath</w>
       <w>fpath</w>
+      <w>incididunt</w>
       <w>indc</w>
       <w>indcs</w>
       <w>indctrs</w>
@@ -25,18 +41,25 @@
       <w>inkex</w>
       <w>inkscape</w>
       <w>insertable</w>
+      <w>ipsum</w>
+      <w>irure</w>
       <w>isclose</w>
       <w>isoplane</w>
       <w>iterrows</w>
       <w>konfort</w>
+      <w>labore</w>
+      <w>laboris</w>
       <w>largeur</w>
       <w>lgth</w>
       <w>lngth</w>
       <w>lxml</w>
+      <w>magna</w>
       <w>mako</w>
       <w>midy</w>
       <w>namedview</w>
+      <w>nisi</w>
       <w>noir</w>
+      <w>nostrud</w>
       <w>pathlib</w>
       <w>pdfunite</w>
       <w>plstc</w>
@@ -48,17 +71,24 @@
       <w>prog</w>
       <w>pylint</w>
       <w>pytest</w>
+      <w>quis</w>
       <w>readlines</w>
       <w>repl</w>
+      <w>reprehenderit</w>
       <w>shutil</w>
       <w>srch</w>
       <w>stpf</w>
       <w>templ</w>
+      <w>tempor</w>
       <w>tmplt</w>
       <w>tspan</w>
       <w>tuitos</w>
+      <w>ullamco</w>
+      <w>velit</w>
+      <w>veniam</w>
       <w>venv</w>
       <w>vert</w>
+      <w>voluptate</w>
       <w>webbrowser</w>
       <w>xlink</w>
       <w>xreader</w>

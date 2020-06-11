@@ -183,7 +183,7 @@ def doc_set_up_load_o_create():
         doc_setup_d['cover_page'] = True
         doc_setup_d['page_1_vert_offset'] = 0
         with open(filename, 'w', encoding='utf8') as f:
-            json.dump(doc_setup_d, f, ensure_ascii=False, indent = 4)
+            json.dump(doc_setup_d, f, ensure_ascii=False, indent=4)
 
 
 def dump_contract_info_json(key, filename):
@@ -193,7 +193,7 @@ def dump_contract_info_json(key, filename):
     p1_cntrct_info_d[key] = filename
     f = os.path.join(p1_cntrct_abs_dir, p1_cntrct_info_f)
     with open(f, 'w', encoding='utf8') as fi:
-        json.dump(p1_cntrct_info_d, fi, ensure_ascii=False, indent = 4)
+        json.dump(p1_cntrct_info_d, fi, ensure_ascii=False, indent=4)
 
 
 # noinspection PyPep8Naming,NonAsciiCharacters
@@ -246,7 +246,7 @@ def step_1__select_a_contract_选择合同号(test_contract_nr=''):
             # document the info in program-info.json
             with open(prog_info_json_f, 'w', encoding='utf8') as fw:
                 # json.dump(p1_d, fw, ensure_ascii = False).encode('utf8', indent = 4)
-                json.dump(p1_d, fw, ensure_ascii=False, indent = 4)
+                json.dump(p1_d, fw, ensure_ascii=False, indent=4)
 
             # copy setup file if exists
             stpf_rel_f = p1_d['cntrct_nr'] + '_doc_setup.json'
@@ -345,7 +345,7 @@ def process_selected_contract():
         row += 3
 
     with open(os.path.join(p1_cntrct_abs_dir, rel_path_contract_json_f), 'w', encoding='utf8') as fc:
-        json.dump(p1a_contract_json_d, fc, indent = 4, ensure_ascii=False)
+        json.dump(p1a_contract_json_d, fc, indent=4, ensure_ascii=False)
 
     # also write into a text file to validate regex in www.regex101.com
     contract_long_list = ""
@@ -411,7 +411,7 @@ def process_selected_contract():
 
         f = os.path.join(p1_cntrct_abs_dir, file_indics)
         with open(f, 'w', encoding='utf8') as f:
-            json.dump(p1b_indics_from_contract_l, f, ensure_ascii=False, indent = 4)
+            json.dump(p1b_indics_from_contract_l, f, ensure_ascii=False, indent=4)
 
         # p1c_prods_w_same_key_set: dictionary with key= info, value = sets of prods with that key
         # organize data from p1b_indics_from_contract_l into memory: p1c_all_relevant_data
@@ -468,7 +468,7 @@ def process_selected_contract():
     filename = '.p1d_' + p1_d['cntrct_nr'] + '_extract_common.json'
     f = os.path.join(p1_cntrct_abs_dir, filename)
     with open(f, 'w', encoding='utf8') as p1d_f:
-        json.dump(p1d_common_indics_l, p1d_f, ensure_ascii=False, indent = 4)
+        json.dump(p1d_common_indics_l, p1d_f, ensure_ascii=False, indent=4)
 
     dump_contract_info_json('p1d_extract_common', filename)
 
@@ -476,7 +476,7 @@ def process_selected_contract():
     filename = '.p1e_' + p1_d['cntrct_nr'] + '_extract_specifics.json'
     f = os.path.join(p1_cntrct_abs_dir, filename)
     with open(f, 'w', encoding='utf8') as p1e_f:
-        json.dump(p1e_specific_fields_d_of_d, p1e_f, ensure_ascii=False, indent = 4)
+        json.dump(p1e_specific_fields_d_of_d, p1e_f, ensure_ascii=False, indent=4)
 
     dump_contract_info_json('p1e_extract_specifics', filename)
 
@@ -486,7 +486,7 @@ def process_selected_contract():
     # document in A1234-456_contract-info.json
     filename = os.path.join(p1_cntrct_abs_dir, p1_cntrct_info_f)
     with open(filename, 'w', encoding='utf8') as fi:
-        json.dump(p1_cntrct_info_d, fi, ensure_ascii=False, indent = 4)
+        json.dump(p1_cntrct_info_d, fi, ensure_ascii=False, indent=4)
 
 
 # Shell interface data & functions #####################################################################################
