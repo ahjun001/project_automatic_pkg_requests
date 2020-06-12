@@ -354,7 +354,7 @@ def process_selected_contract():
             # contract_long_list += (str(value)).strip()
             # contract_long_list += (str(value)).replace(r'\r\n', r'\n')
             contract_long_list += (str(value)).replace('\r', '')
-    with open(os.path.join(p1_cntrct_abs_dir, '.p1a_' + p1_d['cntrct_nr'] + '-contract.txt'), 'w') as fw:
+    with open(os.path.join(p1_cntrct_abs_dir, '.p1a_' + p1_d['cntrct_nr'] + '-contract.txt'), 'w', encoding='utf8') as fw:
         fw.write(contract_long_list)
 
     # populate p1_cntrct_info_d: a structure to store template information, and its corresponding json file
