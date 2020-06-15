@@ -7,6 +7,7 @@ import shutil
 import subprocess
 import webbrowser
 from tkinter.filedialog import askopenfilename
+import render_barcode as rb
 
 from lxml import etree
 from mako.template import Template
@@ -165,13 +166,13 @@ def create_barcode_file(prod_n):
     if not os.path.exists(brcd_dir):
         os.mkdir(brcd_dir)
     brcd_f = os.path.join(brcd_dir, prod_n + '.svg')
-    command = f"./render_barcode.py " + \
-              f"-t='Ean13' " + \
-              f"-d='{prod_n_to_barcode(prod_n)}' " + \
-              f"-l='20' " + \
-              f"--output='{brcd_f}' " + \
-              f"'{brcd_tmplt}' "
-    os.system(command)
+    rb.Barcode().run(args=[
+        "-t=Ean13",
+        f"-d={prod_n_to_barcode(prod_n)} ",
+        f"-l=20 ",
+        f"--output={brcd_f}",
+        f"{brcd_tmplt} "
+    ])
     return brcd_f
 
 
@@ -671,8 +672,13 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp=False, only_1_prod=F
     def close_svg_for_output(fw2, svg_out2):
         fw2.write('</g>\n</svg>\n')
         fw2.close()
-        browser = 'firefox' if os.name == 'posix' else "C:\\Program Files (x86)\\Mozilla Firefox\\firefox.exe %s"
-        webbrowser.get(browser).open_new_tab(svg_out2)
+        firefox_path = 'firefox' if os.name == 'posix' else r'"c:\Program Files (x86)\Mozilla Firefox\firefox.exe"'
+        # webbrowser.register('firefox', None, webbrowser.BackgroundBrowser(firefox_path))
+        webbrowser.register('firefox', None, webbrowser.BackgroundBrowser('firefox'))
+        # webbrowser.get('firefox').open_new_tab(svg_out2)
+
+        # webbrowser.get('firefox').open_new("http://stackoverflow.com")
+        webbrowser.get('firefox').open_new('http://stackoverflow.com')
         # subprocess.Popen(['inkscape', svg_out])
 
     # def extract_svg_for_inserting(inkscape_filename, insert_filename):
