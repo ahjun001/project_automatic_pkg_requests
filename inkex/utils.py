@@ -34,7 +34,7 @@ from argparse import ArgumentTypeError
 # from tempfile import TemporaryDirectory
 
 # All the names that get added to the inkex API itself.
-__all__ = ('AbortExtension', 'DependencyError', 'Boolean', 'errormsg', 'addNS', 'NSS')
+__all__ = ('AbortExtension', 'DependencyError', 'boolean', 'errormsg', 'add_ns', 'NSS')
 
 ABORT_STATUS = -5
 
@@ -75,7 +75,7 @@ class KeyDict(dict):
 class TemporaryDirectory(object):  # pylint: disable=too-few-public-methods
     """Tiny replacement for python3's version."""
 
-    def __init__(self, suffix = "", prefix = "tmp"):
+    def __init__(self, suffix="", prefix="tmp"):
         self.suffix = suffix
         self.prefix = prefix
         self.path = None
@@ -90,7 +90,7 @@ class TemporaryDirectory(object):  # pylint: disable=too-few-public-methods
             shutil.rmtree(self.path)
 
 
-def Boolean(value):
+def boolean(value):
     """ArgParser function to turn a boolean string into a python boolean"""
     if value.upper() == 'TRUE':
         return True
@@ -142,7 +142,7 @@ def errormsg(msg):
 class AbortExtension(Exception):
     """Raised to print a message to the user without backtrace"""
 
-    def __init__(self, message = ""):
+    def __init__(self, message=""):
         self.message = message
 
     def write(self):
@@ -163,9 +163,10 @@ class InitSubClassPy3(type):
     """Provide a poly-fill for python3 __init_subclass__()"""
 
     def __init__(cls, name, bases, dct):
-        if '__metaclass__' not in cls.__dict__:
-            if hasattr(cls, '__init_subclass__'):
-                cls.__init_subclass__()
+        if '__metaclass__' not in cls.__dict__ and hasattr(
+                cls, '__init_subclass__'
+        ):
+            cls.__init_subclass__()
         super(InitSubClassPy3, cls).__init__(name, bases, dct)
 
 
@@ -183,15 +184,15 @@ def to(kind):  # pylint: disable=invalid-name
     return _inner
 
 
-def strargs(string, kind = float):
+def strargs(string, kind=float):
     """Returns a list of floats from a string with commas or space separators"""
     return [kind(val) for val in string.replace(',', ' ').split()]
 
 
-def addNS(tag, ns = None):  # pylint: disable=invalid-name
+def add_ns(tag, ns=None):  # pylint: disable=invalid-name
     """Add a known namespace to a name for use with lxml"""
     if tag.startswith('{') and ns:
-        _, tag = removeNS(tag)
+        _, tag = remove_ns(tag)
     if not tag.startswith('{'):
         tag = tag.replace('__', ':')
         if ':' in tag:
@@ -203,7 +204,7 @@ def addNS(tag, ns = None):  # pylint: disable=invalid-name
     return tag
 
 
-def removeNS(name, url = False):  # pylint: disable=invalid-name
+def remove_ns(name, url=False):  # pylint: disable=invalid-name
     """The reverse of addNS, finds any namespace and returns tuple (ns, tag)"""
     if name:
         if name[0] == '{':
@@ -215,7 +216,7 @@ def removeNS(name, url = False):  # pylint: disable=invalid-name
     return (NSS['svg'], name) if url else ('svg', name)
 
 
-class classproperty(object):  # pylint: disable=invalid-name, too-few-public-methods
+class ClassProperty(object):  # pylint: disable=invalid-name, too-few-public-methods
     """Combine classmethod and property decorators"""
 
     def __init__(self, func):
@@ -233,8 +234,8 @@ def filename_arg(name):
     return filename
 
 
-def pairwise(iterable, start = True):
-    "Iterate over a list with overlapping pairs (see itertools recipes)"
+def pairwise(iterable, start=True):
+    """Iterate over a list with overlapping pairs (see itertools recipes)"""
     first, then = tee(iterable)
     starter = [(None, next(then, None))]
     if not start:
@@ -255,14 +256,14 @@ class CloningVat(object):
         self.tracks = defaultdict(set)
         self.set_ids = defaultdict(list)
 
-    def track(self, elem, parent, set_id = None, **kwargs):
+    def track(self, elem, parent, set_id=None, **kwargs):
         """Track the element and connected parent"""
         elem_id = elem.get('id')
         parent_id = parent.get('id')
         self.tracks[elem_id].add(parent_id)
         self.set_ids[elem_id].append((set_id, kwargs))
 
-    def process(self, process, types = (), make_clones = True, **kwargs):
+    def process(self, process, types=(), make_clones=True, **kwargs):
         """
         Process each tracked item if the backlinks match the parents
 
@@ -271,7 +272,7 @@ class CloningVat(object):
         for elem_id in list(self.tracks):
             parents = self.tracks[elem_id]
             elem = self.svg.getElementById(elem_id)
-            backlinks = set([blk.get('id') for blk in elem.backlinks(*types)])
+            backlinks = {blk.get('id') for blk in elem.backlinks(*types)}
             if backlinks == parents:
                 # No need to clone, we're processing on-behalf of all parents
                 process(elem, **kwargs)

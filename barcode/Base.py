@@ -23,11 +23,17 @@ Base module for rendering barcodes for Inkscape.
 import itertools
 import sys
 
-from inkex.elements import Group, TextElement, Rectangle
+import inkex
 
 (TEXT_POS_BOTTOM, TEXT_POS_TOP) = range(2)
 (WHITE_BAR, BLACK_BAR, TALL_BAR) = range(3)
 TEXT_TEMPLATE = 'font-size:%dpx;text-align:center;text-anchor:middle;'
+
+
+def graphical_array(code):
+    """Converts black and white markets into a space array"""
+    return [(x, len(list(y))) for x, y in itertools.groupby(code)]
+
 
 class Barcode(object):
     """Provide a base class for all barcode renderers"""
@@ -38,7 +44,7 @@ class Barcode(object):
     def error(self, text, msg):
         """Cause an error to be reported"""
         sys.stderr.write(
-                "Error encoding '{}' as {} barcode: {}\n".format(text, self.name, msg))
+            "Error encoding '{}' as {} barcode: {}\n".format(text, self.name, msg))
         return "ERROR"
 
     def encode(self, text):
@@ -94,7 +100,7 @@ class Barcode(object):
         name = self.get_id('barcode')
 
         # use an svg group element to contain the barcode
-        barcode = Group()
+        barcode = inkex.elements.Group()
         barcode.set('id', name)
         barcode.set('style', 'fill: black;')
 
@@ -106,7 +112,7 @@ class Barcode(object):
         bar_offset = 0
         tops = set()
 
-        for datum in self.graphical_array(string):
+        for datum in graphical_array(string):
             # Datum 0 tells us what style of bar is to come next
             style = self.get_style(int(datum[0]))
             # Datum 1 tells us what width in units,
@@ -115,7 +121,7 @@ class Barcode(object):
 
             if style['write']:
                 tops.add(style['top'])
-                rect = Rectangle()
+                rect = inkex.elements.Rectangle()
                 rect.set('x', str(bar_offset))
                 rect.set('y', str(style['top']))
                 if self.pos_text == TEXT_POS_TOP:
@@ -133,7 +139,8 @@ class Barcode(object):
 
         bar_width = bar_offset
         # Add text at the bottom of the barcode
-        text = TextElement()
+        # text = inkex.elements.TextElement()
+        text = inkex.elements.TextElement()
         text.set('x', str(int(bar_width / 2)))
         text.set('y', str(min(tops) + self.font_size - 1))
         if self.pos_text == TEXT_POS_BOTTOM:
@@ -144,10 +151,6 @@ class Barcode(object):
         text.text = str(self.text)
         barcode.append(text)
         return barcode
-
-    def graphical_array(self, code):
-        """Converts black and white markets into a space array"""
-        return [(x, len(list(y))) for x, y in itertools.groupby(code)]
 
     def get_style(self, index):
         """Returns the styles that should be applied to each bar"""

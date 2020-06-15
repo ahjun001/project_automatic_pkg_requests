@@ -22,7 +22,9 @@
 Basic color controls
 """
 
-from .utils import PY3
+import sys
+
+PY3 = sys.version_info[0] == 3
 
 # All the names that get added to the inkex API itself.
 __all__ = ('Color',)
@@ -224,7 +226,7 @@ class Color(list):
     lightness = property(lambda self: self.to_hsl()[2])
     lightness = lightness.setter(lambda self, value: self._set(2, value, ('hsl',)))
 
-    def __init__(self, color = None, space = 'rgb'):
+    def __init__(self, color=None, space='rgb'):
         super(Color, self).__init__()
         if isinstance(color, Color):
             space, color = color.space, list(color)
@@ -251,12 +253,12 @@ class Color(list):
         except ValueError:
             raise ColorError("Bad color list")
 
-    def _set(self, index, value, spaces = ('rgb', 'rgba')):
+    def _set(self, index, value, spaces=('rgb', 'rgba')):
         """Set the color value in place, limits setter to specific color space"""
         # Named colors are just rgb, so dump name memory
         if self.space == 'named':
             self.space = 'rgb'
-        if not self.space in spaces:
+        if self.space not in spaces:
             if index == 3 and self.space == 'rgb':
                 # Special, add alpha, don't convert back to rgb
                 self.space = 'rgba'
@@ -276,11 +278,7 @@ class Color(list):
 
         if isinstance(val, (unicode, str)):
             val = val.strip()
-            if val.endswith('%'):
-                val = float(val.strip('%')) / 100
-            else:
-                val = float(val)
-
+            val = float(val.strip('%')) / 100 if val.endswith('%') else float(val)
         end_type = int
         if len(self) == 3:  # Alpha value
             val = min([1.0, val])
@@ -383,7 +381,7 @@ class Color(list):
         if self.space == 'hsl':
             return self
         elif self.space == 'rgb':
-            return Color(rgb_to_hsl(*self.to_floats()), space = 'hsl')
+            return Color(rgb_to_hsl(*self.to_floats()), space='hsl')
         raise ColorError("Unknown color conversion {}->hsl".format(self.space))
 
     def to_rgb(self):
@@ -393,12 +391,12 @@ class Color(list):
         if self.space == 'rgb':
             return self
         if self.space in ('rgba', 'named'):
-            return Color(self[:3], space = 'rgb')
+            return Color(self[:3], space='rgb')
         elif self.space == 'hsl':
-            return Color(hsl_to_rgb(*self.to_floats()), space = 'rgb')
+            return Color(hsl_to_rgb(*self.to_floats()), space='rgb')
         raise ColorError("Unknown color conversion {}->rgb".format(self.space))
 
-    def to_rgba(self, alpha = 1.0):
+    def to_rgba(self, alpha=1.0):
         """Turn this color isn't an RGB with Alpha colour space"""
         if self.space == 'rgba':
             return self
@@ -441,10 +439,7 @@ def hsl_to_rgb(hue, sat, light):
     if sat == 0:
         return [light, light, light]  # Gray
 
-    if light < 0.5:
-        val2 = light * (1 + sat)
-    else:
-        val2 = light + sat - light * sat
+    val2 = light * (1 + sat) if light < 0.5 else light + sat - light * sat
     val1 = 2 * light - val2
     return [_hue_to_rgb(val1, val2, hue * 6 + 2.0),
             _hue_to_rgb(val1, val2, hue * 6),

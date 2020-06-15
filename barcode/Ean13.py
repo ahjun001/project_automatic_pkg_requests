@@ -38,6 +38,6 @@ class Ean13(EanBarcode):
         if guide:
             self.text = self.text[:-4] + '>'
         return self.enclose(
-                self.encode_interleaved(num[0], num[1:7]),
-                self.encode_right(num[7:])
+            self.encode_interleaved(num[0], num[1:7]),
+            self.encode_right(num[7:])
         )

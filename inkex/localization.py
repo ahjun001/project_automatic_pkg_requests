@@ -33,7 +33,7 @@ GETTEXT_DIRECTORY = os.environ.get('INKEX_GETTEXT_DIRECTORY')
 INKSCAPE_LOCALEDIR = os.environ.get('INKSCAPE_LOCALEDIR')
 
 
-def localize(domain = GETTEXT_DOMAIN, localedir = GETTEXT_DIRECTORY):
+def localize(domain=GETTEXT_DOMAIN, localedir=GETTEXT_DIRECTORY):
     """Configure gettext and install _() function into builtins namespace for easy access"""
 
     # Do not enable translation if GETTEXT_DOMAIN is unset.
@@ -47,7 +47,7 @@ def localize(domain = GETTEXT_DOMAIN, localedir = GETTEXT_DIRECTORY):
     # but prefer LANGUAGE environment variable (which is set by Inkscape according to UI language)
     languages = None
 
-    trans = gettext.translation(domain, localedir, languages, fallback = True)
+    trans = gettext.translation(domain, localedir, languages, fallback=True)
     trans.install()
 
 
@@ -61,7 +61,7 @@ def inkex_localize():
     localedir = INKSCAPE_LOCALEDIR
     languages = None
 
-    return gettext.translation(domain, localedir, languages, fallback = True)
+    return gettext.translation(domain, localedir, languages, fallback=True)
 
 
 inkex_gettext = inkex_localize().gettext  # pylint: disable=invalid-name

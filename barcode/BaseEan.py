@@ -35,6 +35,11 @@ FAMILIES = ('000000', '001011', '001101', '001110', '010011',
             '011001', '011100', '010101', '010110', '011010')
 
 
+def encode_left(number):
+    """Encode the left side of the barcode, non-interleaved"""
+    return [MAPPING[0][num] for num in number]
+
+
 class EanBarcode(Barcode):
     """Simple base class for all EAN type barcodes"""
     lengths = None
@@ -45,7 +50,8 @@ class EanBarcode(Barcode):
     guard_bar = '202'
     center_bar = '02020'
 
-    def intarray(self, number):
+    @staticmethod
+    def intarray(number):
         """Convert a string of digits into an array of ints"""
         return [int(i) for i in number]
 
@@ -58,7 +64,8 @@ class EanBarcode(Barcode):
             result.append(thismap[number[i]])
         return result
 
-    def encode_right(self, number):
+    @staticmethod
+    def encode_right(number):
         """Encode the right side of the barcode, non-interleaved"""
         result = []
         for num in number:
@@ -66,14 +73,8 @@ class EanBarcode(Barcode):
             result.append(MAPPING[1][num][::-1])
         return result
 
-    def encode_left(self, number):
-        """Encode the left side of the barcode, non-interleaved"""
-        result = []
-        for num in number:
-            result.append(MAPPING[0][num])
-        return result
-
-    def space(self, *spacing):
+    @staticmethod
+    def space(*spacing):
         """Space out an array of numbers"""
         result = ''
         for space in spacing:
@@ -111,7 +112,11 @@ class EanBarcode(Barcode):
                     code = code[:sep]
 
         if len(code) not in lengths:
-            return self.error(code, 'Wrong size {:d}, must be {} digits'.format(len(code), ', '.join([str(length) for length in lengths])))
+            return self.error(
+                code,
+                'Wrong size {:d}, must be {} digits'.format(len(code),
+                                                            ', '.join([str(length) for length in lengths]))
+            )
 
         if self.checks:
             if len(code) not in self.checks:
@@ -137,7 +142,7 @@ class EanBarcode(Barcode):
     def get_checksum(self, num):
         """Generate a UPCA/EAN13/EAN8 Checksum"""
         # Left to right,checksum based on first digits.
-        total = sum([int(n) * (3, 1)[x % 2] for x, n in enumerate(num[::-1])])
+        total = sum(int(n) * (3, 1)[x % 2] for x, n in enumerate(num[::-1]))
         # Modulous result to a single digit checksum
         checksum = self.magic - (total % self.magic)
         if checksum < 0 or checksum >= self.magic:

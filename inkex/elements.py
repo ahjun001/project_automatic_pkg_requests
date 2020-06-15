@@ -30,10 +30,11 @@ from collections import defaultdict
 from copy import deepcopy
 from lxml import etree
 
+# from . import unicode
 from .paths import Path
 from .styles import Style, AttrFallbackStyle, StyleSheet, Classes
 from .transforms import BoundingBox, Transform, ImmutableVector2d, Vector2d
-from .utils import PY3, NSS, addNS, removeNS, InitSubClassPy3, FragmentError
+from .utils import PY3, NSS, add_ns, remove_ns, InitSubClassPy3, FragmentError
 from .units import convert_unit
 
 try:
@@ -54,12 +55,12 @@ class NodeBasedLookup(etree.PythonElementClassLookup):
 
     @classmethod
     def register_class(cls, klass):
-        cls.lookup_table[removeNS(klass.tag_name, url=True)].append(klass)
+        cls.lookup_table[remove_ns(klass.tag_name, url=True)].append(klass)
 
     def lookup(self, doc, element):
 
         try:
-            for cls in reversed(self.lookup_table[removeNS(element.tag, url=True)]):
+            for cls in reversed(self.lookup_table[remove_ns(element.tag, url=True)]):
                 if cls._is_class_element(element):
                     return cls
         except TypeError:
@@ -102,7 +103,7 @@ class BaseElement(etree.ElementBase):
     def TAG(self): # pylint: disable=invalid-name
         """Return the tag_name without NS"""
         assert self.tag_name
-        return removeNS(self.tag_name)[-1]
+        return remove_ns(self.tag_name)[-1]
 
     @classmethod
     def new(cls, *children, **attrs):
@@ -111,7 +112,7 @@ class BaseElement(etree.ElementBase):
         obj.update(**attrs)
         return obj
 
-    NAMESPACE = property(lambda self: removeNS(self.tag_name, url=True)[0])
+    NAMESPACE = property(lambda self: remove_ns(self.tag_name, url=True)[0])
     PARSER = SVG_PARSER
     WRAPPED_ATTRS = (
         # (prop_name, [optional: attr_name], cls)
@@ -177,7 +178,7 @@ class BaseElement(etree.ElementBase):
             # transformations and style attributes are equiv to not-existing
             ret = str(value) if value else (default or None)
             return ret
-        return super(BaseElement, self).get(addNS(attr), default)
+        return super(BaseElement, self).get(add_ns(attr), default)
 
     def set(self, attr, value):
         """Set element attribute named, with addNS support"""
@@ -189,10 +190,10 @@ class BaseElement(etree.ElementBase):
             if not value:
                 return
         if value is None:
-            self.attrib.pop(addNS(attr), None) # pylint: disable=no-member
+            self.attrib.pop(add_ns(attr), None) # pylint: disable=no-member
         else:
-            value = str(value) if PY3 else unicode(value) # pylint: disable=undefined-variable
-            super(BaseElement, self).set(addNS(attr), value)
+            value = str(value) if PY3 else value
+            super(BaseElement, self).set(add_ns(attr), value)
 
     def update(self, **kwargs):
         """
@@ -216,7 +217,7 @@ class BaseElement(etree.ElementBase):
             value = getattr(self, prop)
             setattr(self, prop, cls(None))
             return value
-        return self.attrib.pop(addNS(attr), default) # pylint: disable=no-member
+        return self.attrib.pop(add_ns(attr), default) # pylint: disable=no-member
 
     def add(self, *children):
         """
@@ -503,7 +504,7 @@ class Filter(BaseElement):
 
     def add_primitive(self, fe_type, **args):
         """Create a filter primitive with the given arguments"""
-        elem = etree.SubElement(self, addNS(fe_type, 'svg'))
+        elem = etree.SubElement(self, add_ns(fe_type, 'svg'))
         elem.update(**args)
         return elem
 
@@ -611,7 +612,7 @@ class Layer(Group):
 
     @classmethod
     def _is_class_element(cls, el):  # type: (etree.Element) -> bool
-        return el.attrib.get(addNS('inkscape:groupmode'), None) == "layer"
+        return el.attrib.get(add_ns('inkscape:groupmode'), None) == "layer"
 
 
 class Anchor(GroupBase):
@@ -649,7 +650,7 @@ class PathElementBase(ShapeElement):
 
     @original_path.setter
     def original_path(self, path):
-        if addNS('inkscape:original-d') in self.attrib:
+        if add_ns('inkscape:original-d') in self.attrib:
             self.set('inkscape:original-d', str(Path(path)))
         else:
             self.path = path
@@ -949,9 +950,8 @@ class Guide(BaseElement):
         Or a pair of numbers (tuple) which will be set as the orientation directly.
         """
         self.set('position', "{:g},{:g}".format(float(pos_x), float(pos_y)))
-        if isinstance(angle, str):
-            if ',' not in angle:
-                angle = float(angle)
+        if isinstance(angle, str) and ',' not in angle:
+            angle = float(angle)
 
         if isinstance(angle, (float, int)):
             # Generate orientation from angle

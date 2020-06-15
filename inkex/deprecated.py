@@ -103,7 +103,7 @@ class DeprecatedEffect(object):
                 'string': str,
                 'int': int,
                 'float': float,
-                'inkbool': inkex.utils.Boolean,
+                'inkbool': inkex.utils.boolean,
             }.get(kw['type'])
         if kw.get('action', None) == 'store':
             # Default store action not required, removed.
@@ -117,14 +117,14 @@ class DeprecatedEffect(object):
 
     @property
     def current_layer(self):
-        self._deprecated('current_layer',\
-            _('{} is now a method in the svg. Use `self.svg.get_current_layer()` instead.'))
+        self._deprecated('current_layer',
+                         _('{} is now a method in the svg. Use `self.svg.get_current_layer()` instead.'))
         return self.svg.get_current_layer()
 
     @property
     def view_center(self):
-        self._deprecated('view_center',\
-            _('{} is now a method in the svg. Use `self.svg.namedview.center` instead.'))
+        self._deprecated('view_center',
+                         _('{} is now a method in the svg. Use `self.svg.namedview.center` instead.'))
         return self.svg.namedview.center
 
     @property
@@ -149,8 +149,8 @@ class DeprecatedEffect(object):
         self._deprecated('getselected', _('{} has been removed'))
 
     def getElementById(self, eid):
-        self._deprecated('getElementById',\
-            _('{} is now a method in the svg. Use `self.svg.getElementById(eid)` instead.'))
+        self._deprecated('getElementById',
+                         _('{} is now a method in the svg. Use `self.svg.getElementById(eid)` instead.'))
         return self.svg.getElementById(eid)
 
     def xpathSingle(self, xpath):
@@ -159,18 +159,18 @@ class DeprecatedEffect(object):
         return self.svg.getElement(xpath)
 
     def getParentNode(self, node):
-        self._deprecated('getParentNode',\
-            _('{} is no longer in use. Use the lxml .getparent() method instead.'))
+        self._deprecated('getParentNode',
+                         _('{} is no longer in use. Use the lxml .getparent() method instead.'))
         return node.getparent()
 
     def getNamedView(self):
-        self._deprecated('getNamedView',\
-            _('{} is now a property of the svg. Use `self.svg.namedview` to access this element'))
+        self._deprecated('getNamedView',
+                         _('{} is now a property of the svg. Use `self.svg.namedview` to access this element'))
         return self.svg.namedview
 
     def createGuide(self, posX, posY, angle):
-        self._deprecated('createGuide',\
-            _('{} is now a method of the namedview element object. '
+        self._deprecated('createGuide',
+                         _('{} is now a method of the namedview element object. '
               'Use `self.svg.namedview.add(Guide().move_to(x, y, a))` instead'))
         return self.svg.namedview.add(Guide().move_to(posX, posY, angle))
 

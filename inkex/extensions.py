@@ -29,7 +29,7 @@ import sys
 import types
 from abc import ABC
 
-from .utils import errormsg, Boolean, CloningVat, PY3
+from .utils import errormsg, boolean, CloningVat, PY3
 from .colors import Color, ColorIdError, ColorError
 from .elements import load_svg, BaseElement, ShapeElement, Group, Layer, Grid, \
     TextElement, FlowPara, FlowDiv
@@ -152,7 +152,7 @@ class GenerateExtension(EffectExtension):
             pos_x = 0
         if pos_y is None:
             pos_y = 0
-        return Transform(translate = (pos_x, pos_y))
+        return Transform(translate=(pos_x, pos_y))
 
     def effect(self):
         layer = self.svg.get_current_layer()
@@ -183,18 +183,19 @@ class TemplateExtension(EffectExtension):
     def __init__(self):
         super(TemplateExtension, self).__init__()
         # Arguments added on after add_arguments so it can be overloaded cleanly.
-        self.arg_parser.add_argument("--size", type = self.arg_size(), dest = "size")
-        self.arg_parser.add_argument("--width", type = int, default = 800)
-        self.arg_parser.add_argument("--height", type = int, default = 600)
-        self.arg_parser.add_argument("--orientation", default = None)
-        self.arg_parser.add_argument("--unit", default = "px")
-        self.arg_parser.add_argument("--grid", type = Boolean)
+        self.svg = self.document.getroot()
+        self.arg_parser.add_argument("--size", type=self.arg_size(), dest="size")
+        self.arg_parser.add_argument("--width", type=int, default=800)
+        self.arg_parser.add_argument("--height", type=int, default=600)
+        self.arg_parser.add_argument("--orientation", default=None)
+        self.arg_parser.add_argument("--unit", default="px")
+        self.arg_parser.add_argument("--grid", type=boolean)
 
     def get_template(self):
         """Can be over-ridden with custom svg loading here"""
         return self.document
 
-    def arg_size(self, unit = 'px'):
+    def arg_size(self, unit='px'):
         """Argument is a string of the form X[unit]xY[unit], default units apply when missing"""
 
         def _inner(value):
@@ -214,11 +215,11 @@ class TemplateExtension(EffectExtension):
     def get_size(self):
         """Get the size of the new template (defaults to size options)"""
         size = self.options.size
-        if self.options.size is None:
+        if size is None:
             size = (self.options.width, self.options.unit,
                     self.options.height, self.options.unit)
         if self.options.orientation == "horizontal" and size[0] < size[2] \
-            or self.options.orientation == "vertical" and size[0] > size[2]:
+                or self.options.orientation == "vertical" and size[0] > size[2]:
             size = size[2:4] + size[0:2]
         return size
 
@@ -229,7 +230,6 @@ class TemplateExtension(EffectExtension):
         height_px = int(self.svg.uutounit(height, 'px'))
 
         self.document = self.get_template()
-        self.svg = self.document.getroot()
         self.svg.set("id", self.template_id)
         self.svg.set("width", str(width) + width_unit)
         self.svg.set("height", str(height) + height_unit)
@@ -244,7 +244,7 @@ class TemplateExtension(EffectExtension):
         self.svg.namedview.set('inkscape:cy', str(height / 2.0))
         if self.options.grid:
             self.svg.namedview.set('showgrid', "true")
-            self.svg.namedview.add(Grid(type = "xygrid"))
+            self.svg.namedview.add(Grid(type="xygrid"))
 
 
 class ColorExtension(EffectExtension):
@@ -252,23 +252,26 @@ class ColorExtension(EffectExtension):
     A standard way to modify colours in an svg document.
     """
 
+    def __init__(self):
+        super().__init__()
+        self._renamed = {}
+
     def effect(self):
         # Limiting to shapes ignores Gradients (and other things) from the select_all
         # this prevents defs from being processed twice.
-        self._renamed = {}
         gradients = CloningVat(self.svg)
         for elem in self.svg.get_selected_or_all(ShapeElement):
             self.process_element(elem, gradients)
-        gradients.process(self.process_elements, types = (ShapeElement,))
+        gradients.process(self.process_elements, types=(ShapeElement,))
 
     def process_elements(self, elem):
         """Process multiple elements (gradients)"""
         for child in elem.descendants():
             self.process_element(child)
 
-    def process_element(self, elem, gradients = None):
+    def process_element(self, elem, gradients=None):
         """Process one of the selected elements"""
-        style = elem.fallback_style(move = False)
+        style = elem.fallback_style(move=False)
         # Colours first
         for name in elem.style.color_props:
             value = style.get(name)
@@ -277,22 +280,22 @@ class ColorExtension(EffectExtension):
                     style[name] = self.modify_color(name, Color(value))
                 except ColorIdError:
                     gradient = self.svg.getElementById(value)
-                    gradients.track(gradient, elem, self._ref_cloned, style = style, name = name)
+                    gradients.track(gradient, elem, self._ref_cloned, style=style, name=name)
                     if gradient.href is not None:
-                        gradients.track(gradient.href, elem, self._xlink_cloned, linker = gradient)
+                        gradients.track(gradient.href, elem, self._xlink_cloned, linker=gradient)
                 except ColorError:
                     pass  # bad color value, don't touch.
         # Then opacities (usually does nothing)
         for name in elem.style.opacity_props:
             value = style.get(name)
             if value is not None:
-                style[name] = self.modify_opacity(name, value)
+                style[name] = self.modify_opacity(value)
 
     def _ref_cloned(self, old_id, new_id, style, name):
         self._renamed[old_id] = new_id
         style[name] = "url(#{})".format(new_id)
 
-    def _xlink_cloned(self, old_id, new_id, linker):
+    def _xlink_cloned(self, new_id, linker):
         lid = linker.get('id')
         linker = self.svg.getElementById(self._renamed.get(lid, lid))
         linker.set('xlink:href', '#' + new_id)
@@ -301,7 +304,8 @@ class ColorExtension(EffectExtension):
         """Replace this method with your colour modifier method"""
         raise NotImplementedError("Provide a modify_color method.")
 
-    def modify_opacity(self, name, opacity):
+    @staticmethod
+    def modify_opacity(opacity):
         """Optional opacity modification"""
         return opacity
 

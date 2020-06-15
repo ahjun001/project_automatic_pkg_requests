@@ -50,7 +50,8 @@ class NoBarcode(object):
         """Encode the text into a barcode pattern"""
         raise ValueError("No barcode encoder: {}".format(self.msg))
 
-    def generate(self):
+    @staticmethod
+    def generate():
         """Generate actual svg from the barcode pattern"""
         return None
 

@@ -26,7 +26,7 @@ import copy
 from math import atan2, cos, pi, sin, sqrt, acos, tan
 
 from .transforms import Transform, BoundingBox, Vector2d
-from .utils import classproperty, strargs
+from .utils import ClassProperty, strargs
 
 if False:  # pylint: disable=using-constant-test
     from typing import Type, Dict, Optional, Union, Tuple, List, Iterator  # pylint: disable=unused-import
@@ -54,14 +54,14 @@ class PathCommand(object):
     nargs = -1
 
     # The full name of the segment (i.e. Line, Arc, etc)
-    name = classproperty(lambda cls: cls.__name__)
+    name = ClassProperty(lambda cls: cls.__name__)
 
     # The single letter representation of this command (i.e. L, A, etc)
-    letter = classproperty(lambda cls: cls.name[0])
+    letter = ClassProperty(lambda cls: cls.name[0])
 
     # The implicit next command. This is for automatic chains where the next command
     # isn't given, just a bunch on numbers which we automatically parse.
-    @classproperty
+    @ClassProperty
     def next_command(self):
         return self
 
@@ -514,16 +514,20 @@ class Curve(AbsolutePathCommand):
         x1, x2, x3, x4 = last_two_points[-1].x, self.x2, self.x3, self.x4
         y1, y2, y3, y4 = last_two_points[-1].y, self.y2, self.y3, self.y4
 
-        if not (x1 in bbox.x and
-                x2 in bbox.x and
-                x3 in bbox.x and
-                x4 in bbox.x):
+        if (
+            x1 not in bbox.x
+            or x2 not in bbox.x
+            or x3 not in bbox.x
+            or x4 not in bbox.x
+        ):
             bbox.x += cubic_extrema(x1, x2, x3, x4)
 
-        if not (y1 in bbox.y and
-                y2 in bbox.y and
-                y3 in bbox.y and
-                y4 in bbox.y):
+        if (
+            y1 not in bbox.y
+            or y2 not in bbox.y
+            or y3 not in bbox.y
+            or y4 not in bbox.y
+        ):
             bbox.y += cubic_extrema(y1, y2, y3, y4)
 
     def transform(self, transform):  # type: (T, Transform) -> T
@@ -680,14 +684,10 @@ class Quadratic(AbsolutePathCommand):
         x1, x2, x3 = last_two_points[-1].x, self.x2, self.x3
         y1, y2, y3 = last_two_points[-1].y, self.y2, self.y3
 
-        if not (x1 in bbox.x and
-                x2 in bbox.x and
-                x3 in bbox.x):
+        if x1 not in bbox.x or x2 not in bbox.x or x3 not in bbox.x:
             bbox.x += quadratic_extrema(x1, x2, x3)
 
-        if not (y1 in bbox.y and
-                y2 in bbox.y and
-                y3 in bbox.y):
+        if y1 not in bbox.y or y2 not in bbox.y or y3 not in bbox.y:
             bbox.y += quadratic_extrema(y1, y2, y3)
 
     def control_points(self, first, prev, prev_prev):  # type: (Vector2d, Vector2d, Vector2d) -> List[Vector2d]
@@ -1072,10 +1072,7 @@ class Path(list):
         if center is None:
             # Default center is center of bbox
             bbox = self.bounding_box()
-            if bbox:
-                center = bbox.center
-            else:
-                center = Vector2d()
+            center = bbox.center if bbox else Vector2d()
         center = Vector2d(center)
         return self.transform(Transform(rotate = (deg, center.x, center.y)), inplace = inplace)
 
@@ -1295,9 +1292,9 @@ class CubicSuperPath(list):
         if not isinstance(item, list):
             raise ValueError("Unknown super curve item type: {}".format(item))
 
-        if len(item) != 3 or not all([len(bit) == 2 for bit in item]):
+        if len(item) != 3 or any(len(bit) != 2 for bit in item):
             # The item is already a subpath (usually from some other process)
-            if len(item[0]) == 3 and all([len(bit) == 2 for bit in item[0]]):
+            if len(item[0]) == 3 and all(len(bit) == 2 for bit in item[0]):
                 super(CubicSuperPath, self).append(self._clean(item))
                 self._prev_prev = Vector2d(self[-1][-1][0])
                 self._prev = Vector2d(self[-1][-1][1])

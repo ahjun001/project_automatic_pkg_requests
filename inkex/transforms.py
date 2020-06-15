@@ -26,7 +26,6 @@ Provide transformation parsing to extensions
 """
 
 import re
-import sys
 from decimal import Decimal
 from math import cos, radians, sin, sqrt, tan, fabs, atan2, hypot, pi, isnan
 

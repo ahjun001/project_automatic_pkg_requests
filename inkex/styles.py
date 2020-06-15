@@ -138,10 +138,10 @@ class Style(OrderedDict):
         """Not equals, prefer to overload 'in' but that doesn't seem possible"""
         if not isinstance(other, Style):
             other = Style(other)
-        for arg in set(self) | set(other):
-            if self.get(arg, None) != other.get(arg, None):
-                return False
-        return True
+        return all(
+            self.get(arg, None) == other.get(arg, None)
+            for arg in set(self) | set(other)
+        )
 
     __ne__ = lambda self, other: not self.__eq__(other)
 
@@ -187,8 +187,7 @@ class AttrFallbackStyle(object):
     # have a list of known styles to check attribs for.
     def __init__(self, elem, move = False):
         self.elem = elem
-        self.styles = [elem.style]
-        self.styles.extend(elem.root.stylesheets.lookup(elem.get('id')))
+        self.styles = [elem.style, *elem.root.stylesheets.lookup(elem.get('id'))]
         self.move = move
 
     def __getitem__(self, name):
@@ -248,8 +247,7 @@ class StyleSheets(list):
         if svg is None:
             svg = self.svg
         for sheet in self:
-            for style in sheet.lookup(element_id, svg = svg):
-                yield style
+            yield from sheet.lookup(element_id, svg = svg)
 
 
 class StyleSheet(list):
@@ -332,12 +330,12 @@ class ConditionalRule(object):
         (re.compile(r'\[(\w+)\^=([^\]]+)\]'), r'[starts-with(@\1,\2)]'),  # Starts With
         (re.compile(r'\[(\w+)\$=([^\]]+)\]'), r'[ends-with(@\1,\2)]'),  # Ends With
         (re.compile(r'\[(\w+)\*=([^\]]+)\]'), r'[contains(@\1,\2)]'),  # Contains
-        (re.compile(r'\[([^@\(\)\]]+)\]'), r'[@\1]'),  # Attribute (start)
+        (re.compile(r'\[([^@()\]]+)\]'), r'[@\1]'),  # Attribute (start)
         (re.compile(r'#(\w+)'), r"[@id='\1']"),  # Id Match
-        (re.compile(r'\s*>\s*([^\s>~\+]+)'), r'/\1'),  # Direct child match
+        (re.compile(r'\s*>\s*([^\s>~+]+)'), r'/\1'),  # Direct child match
         # (re.compile(r'\s*~\s*([^\s>~\+]+)'), r'/following-sibling::\1'),
         # (re.compile(r'\s*\+\s*([^\s>~\+]+)'), r'/following-sibling::\1[1]'),
-        (re.compile(r'\s*([^\s>~\+]+)'), r'//\1'),  # Decendant match
+        (re.compile(r'\s*([^\s>~+]+)'), r'//\1'),  # Decendant match
         (re.compile(r'\.(\w+)'), r"[contains(concat(' ', normalize-space(@class), ' '), ' \1 ')]"),
         (re.compile(r'//\['), r'//*['),  # Attribute only match
         (re.compile(r'//(\w+)'), r'//svg:\1'),  # SVG namespace addition

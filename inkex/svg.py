@@ -29,15 +29,13 @@ Provide a way to load lxml attributes with an svg API on top.
 
 import random
 from collections import OrderedDict
+
 from lxml import etree
 
-from .units import discover_unit, convert_unit, render_unit
-from .transforms import BoundingBox, Vector2d
 from .elements import BaseElement, StyleElement, NamedView, Defs
 from .styles import StyleSheets
-
-if False:  # pylint: disable=using-constant-test
-    import typing  # pylint: disable=unused-import
+from .transforms import BoundingBox
+from .units import discover_unit, convert_unit, render_unit
 
 
 class SvgDocumentElement(BaseElement):  # pylint: disable=too-many-public-methods
@@ -133,7 +131,7 @@ class SvgDocumentElement(BaseElement):  # pylint: disable=too-many-public-method
         When no object is selected or when the object's location cannot be
         determined (e.g. empty group or layer), all coordinates will be None.
         """
-        return sum([node.bounding_box() for node in self.selected.values()], None)
+        return sum((node.bounding_box() for node in self.selected.values()), None)
 
     def get_page_bbox(self):
         """Gets the page dimensions as a bbox"""

@@ -21,17 +21,15 @@ The ultimate base functionality for every inkscape extension.
 """
 from __future__ import absolute_import, print_function, unicode_literals
 
-import os
-import sys
 import copy
+import os
 import shutil
-
+import sys
 from argparse import ArgumentParser
-from lxml import etree
 
-from .utils import PY3, filename_arg, AbortExtension, ABORT_STATUS, errormsg
 from .elements import load_svg
 from .localization import localize
+from .utils import PY3, filename_arg, AbortExtension, ABORT_STATUS, errormsg
 
 stdout = sys.stdout
 if PY3:
@@ -123,6 +121,7 @@ class InkscapeExtension(object):
 
             self.load_raw()
             self.save_raw(self.effect())
+            print(args)
         except AbortExtension as err:
             err.write()
             sys.exit(ABORT_STATUS)
@@ -297,8 +296,8 @@ class SvgThroughMixin(SvgInputMixin, SvgOutputMixin):
     Combine the input and output svg document handling (usually for effects.
     """
 
-    def has_changed(self, ret):  # pylint: disable=unused-argument
-        """Return true if the svg document has changed"""
-        original = etree.tostring(self.original_document)
-        result = etree.tostring(self.document)
-        return original != result
+    # def has_changed(self, ret):  # pylint: disable=unused-argument
+    #     """Return true if the svg document has changed"""
+    #     original = etree.tostring(self.original_document)
+    #     result = etree.tostring(self.document)
+    #     return original != result
