@@ -454,7 +454,7 @@ def check_if_template_requirements_are_met():
         for f in template_fields_set:
             if f not in p3_d['selected_fields']:
                 missing_in_template_l.append(f)
-        # print('The template requires the following fields but those\n'
+        # print('The template requires the following fields but those\n'  # todo: manage the 'better_spec' case
         #       'were not found in the data requisition list: ', missing_in_template_l)
     else:
         pass
@@ -474,7 +474,7 @@ def mako_input_json_load_o_create(force_recreate=False):
     """
     global p3_selected_fields_values_by_prod_d
 
-    check_if_template_requirements_are_met()
+    check_if_template_requirements_are_met()  # todo: inspect this function
     # make sure global variables are initialized in all situations, outside the loop to do it once only
     fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir'])
     mako_input_json_s = os.path.join(fields_abs_dir, '.mako_input.json')
