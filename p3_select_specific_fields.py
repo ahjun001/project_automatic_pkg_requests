@@ -829,7 +829,7 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp=False, only_1_prod=F
                                                 "</svg>\n"
                                                 "</g>\n"
                                             )
-                                            os.remove(i_filename)
+                                        os.remove(i_filename)
                                     else:
                                         fw.write(
                                             "<g>\n<svg>\n"
@@ -1006,8 +1006,7 @@ def svg_w_watermarks_1_template_1_product_n_cover_page():
                     contract_n=p1.p1_d["cntrct_nr"],
                     **p3_selected_fields_values_by_prod_d['0']
                 ))
-            browser = 'firefox' if os.name == 'posix' else "C:\\Program Files (x86)\\Mozilla Firefox\\firefox.exe %s"
-            webbrowser.get(browser).open_new_tab(cover_s)
+            webbrowser.get('firefox').open_new_tab(cover_s)
         else:
             print(f'{svg_in}: no such file, should be build before cover page')
 
