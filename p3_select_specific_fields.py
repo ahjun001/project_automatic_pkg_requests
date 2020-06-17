@@ -16,6 +16,12 @@ import m_menus as m
 import p1_select_contract as p1
 import p2_select_templates as p2
 
+google_chrome_path = r'/usr/bin/google-chrome' if os.name == 'posix' else r'C:\Program Files (' \
+                                                                          r'x86)\Google\Chrome\application\chrome.exe '
+firefox_path = r'/usr/bin/firefox' if os.name == 'posix' else r'C:\Program Files (x86)\Mozilla Firefox\firefox.exe'
+if os.name != 'posix':
+    webbrowser.register('google-chrome', None, webbrowser.BackgroundBrowser(google_chrome_path))
+    webbrowser.register('firefox', None, webbrowser.BackgroundBrowser(firefox_path))
 p3_all_specific_fields_l = []  # list of fields from p1e_specific_fields_d_of_d
 p3_body_svg = ''  # contents of label_template_body.svg
 # p3_default_fields_l = ['xl_prod_spec', 'u_parc']
@@ -672,14 +678,8 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp=False, only_1_prod=F
     def close_svg_for_output(fw2, svg_out2):
         fw2.write('</g>\n</svg>\n')
         fw2.close()
-        firefox_path = 'firefox' if os.name == 'posix' else r'"c:\Program Files (x86)\Mozilla Firefox\firefox.exe"'
-        # webbrowser.register('firefox', None, webbrowser.BackgroundBrowser(firefox_path))
-        webbrowser.register('firefox', None, webbrowser.BackgroundBrowser('firefox'))
-        # webbrowser.get('firefox').open_new_tab(svg_out2)
-
-        # webbrowser.get('firefox').open_new("http://stackoverflow.com")
-        webbrowser.get('firefox').open_new('http://stackoverflow.com')
-        # subprocess.Popen(['inkscape', svg_out])
+        webbrowser.get('firefox').open_new_tab(svg_out2)
+        subprocess.Popen(['inkscape', svg_out])
 
     # def extract_svg_for_inserting(inkscape_filename, insert_filename):
     #     with open(inkscape_filename, encoding = 'utf8') as fr, open(insert_filename, 'w', encoding = 'utf8') as fwe:

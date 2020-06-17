@@ -228,6 +228,7 @@ class ClassProperty(object):  # pylint: disable=invalid-name, too-few-public-met
 
 def filename_arg(name):
     """Existing file to read or option used in script arguments"""
+    name = name.strip()
     filename = os.path.abspath(os.path.expanduser(name))
     if not os.path.isfile(filename):
         raise ArgumentTypeError("File not found: {}".format(name))
