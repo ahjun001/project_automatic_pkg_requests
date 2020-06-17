@@ -680,7 +680,7 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp=False, only_1_prod=F
         fw2.write('</g>\n</svg>\n')
         fw2.close()
         webbrowser.get('firefox').open_new_tab(svg_out2)
-        subprocess.Popen(['inkscape', svg_out], executable=inkscape_path)
+        # subprocess.Popen(['inkscape', svg_out], executable=inkscape_path)
 
     # def extract_svg_for_inserting(inkscape_filename, insert_filename):
     #     with open(inkscape_filename, encoding = 'utf8') as fr, open(insert_filename, 'w', encoding = 'utf8') as fwe:
@@ -803,17 +803,17 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp=False, only_1_prod=F
                         if prod_nr in p3_d['pictures'].keys():
                             prod_nr_l = p3_d['pictures'][prod_nr]
                             for j in range(len(prod_nr_l)):
-                                filename = os.path.join(os.path.join(fields_abs_dir, 'pics'), prod_nr_l[j]['file'])
+                                filename_rel = os.path.join('pics', prod_nr_l[j]['file'])
+                                filename_abs = os.path.join(fields_abs_dir, filename_rel)
 
-                                # filename = os.path.join(fields_abs_dir, prod_nr_l[j]['file'])
-                                if pathlib.Path(filename).exists():
-                                    _, ext = os.path.splitext(filename)
+                                if pathlib.Path(filename_abs).exists():
+                                    _, ext = os.path.splitext(filename_abs)
                                     dim_ = str(float(prod_nr_l[j]['coef']) * 100) + '%'
                                     if ext == '.svg':
                                         i_filename = os.path.join(
                                             fields_abs_dir, '.' + prod_nr_l[j]['file'])
                                         if not pathlib.Path(i_filename).exists():
-                                            strip_readable_svg_file_for_insert(filename, i_filename)
+                                            strip_readable_svg_file_for_insert(filename_abs, i_filename)
                                         with open(i_filename, encoding='utf8') as f:
                                             fw.write(
                                                 f"<g transform = 'matrix("
@@ -833,7 +833,7 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp=False, only_1_prod=F
                                     else:
                                         fw.write(
                                             "<g>\n<svg>\n"
-                                            f"<image xlink:href='{f'{filename}'}' \n"
+                                            f"<image xlink:href='{f'{filename_rel}'}' \n"
                                             f"x='{prod_nr_l[j]['x']}' y='{prod_nr_l[j]['y']}' \n"
                                             f"width='{dim_}' height='{dim_}' \n"
                                             "preserveAspectRatio='xMidyMid' \n"
@@ -842,7 +842,7 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp=False, only_1_prod=F
                                         )
                                 else:
                                     print(
-                                        f'|\n| Cannot access {filename}: No such file \n'
+                                        f'|\n| Cannot access {filename_abs}: No such file \n'
                                         '| Make sure it exists as indicated by template-info.json\n|'
                                     )
                                     exit()
