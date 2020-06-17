@@ -1000,7 +1000,14 @@ def svg_w_watermarks_1_template_1_product_n_cover_page():
 
             if not p3_selected_fields_values_by_prod_d:
                 mako_input_json_load_o_create()
+
+            # creating a file for the cover page and possibly linked images
             cover_s = os.path.join(p1.p1_cntrct_abs_dir, 'page_0.svg')
+            pics_fields_path = os.path.join(fields_abs_dir, 'pics')
+            pics_cntrct_path = os.path.join(p1.p1_cntrct_abs_dir, 'pics')
+            if not os.path.exists(pics_cntrct_path):
+                shutil.copytree(pics_fields_path, pics_cntrct_path)
+
             with open(cover_s, 'w', encoding='utf8') as fw:
                 fw.write(mako_template.render(
                     contract_n=p1.p1_d["cntrct_nr"],
@@ -1008,7 +1015,7 @@ def svg_w_watermarks_1_template_1_product_n_cover_page():
                 ))
             webbrowser.get('firefox').open_new_tab(cover_s)
         else:
-            print(f'{svg_in}: no such file, should be build before cover page')
+            print(f'{svg_in}: no such file, it should be built before attempting to build a cover page')
 
 
 def svg_w_watermarks_1_template_all_products():
