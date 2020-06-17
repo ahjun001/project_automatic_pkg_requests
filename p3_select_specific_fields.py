@@ -19,6 +19,7 @@ import p2_select_templates as p2
 google_chrome_path = r'/usr/bin/google-chrome' if os.name == 'posix' else r'C:\Program Files (' \
                                                                           r'x86)\Google\Chrome\application\chrome.exe '
 firefox_path = r'/usr/bin/firefox' if os.name == 'posix' else r'C:\Program Files (x86)\Mozilla Firefox\firefox.exe'
+inkscape_path = r'/usr/bin/inkscape' if os.name == 'posix' else r'C:\Program Files\Inkscape\bin\inkscape.exe'
 if os.name != 'posix':
     webbrowser.register('google-chrome', None, webbrowser.BackgroundBrowser(google_chrome_path))
     webbrowser.register('firefox', None, webbrowser.BackgroundBrowser(firefox_path))
@@ -372,7 +373,7 @@ def edit_label_template_svg():
         os.path.join(
             p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir']), 'label_template.svg')
     if os.path.exists(label_template_file):
-        subprocess.Popen(['inkscape', label_template_file]).wait()
+        subprocess.Popen(['inkscape', label_template_file], executable=inkscape_path).wait()
 
 
 def edit_paragraph_headers():
@@ -679,7 +680,7 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp=False, only_1_prod=F
         fw2.write('</g>\n</svg>\n')
         fw2.close()
         webbrowser.get('firefox').open_new_tab(svg_out2)
-        subprocess.Popen(['inkscape', svg_out])
+        subprocess.Popen(['inkscape', svg_out], executable=inkscape_path)
 
     # def extract_svg_for_inserting(inkscape_filename, insert_filename):
     #     with open(inkscape_filename, encoding = 'utf8') as fr, open(insert_filename, 'w', encoding = 'utf8') as fwe:
@@ -1077,7 +1078,7 @@ def remove_watermarks_n_produce_pdf_deliverable():
             'inkscape',
             f'--export-filename={filename}.pdf',  # f'--export-file={filename}.pdf',
             file,
-        ]).wait()
+        ], executable=inkscape_path).wait()
 
     output_s = p1.p1_d["cntrct_nr"] + '.pdf'
 
