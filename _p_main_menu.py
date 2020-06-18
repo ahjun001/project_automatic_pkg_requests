@@ -29,7 +29,7 @@ def test_environment():
 def main_menu_context_func():
     c_nr = p1.p1_d['cntrct_nr'] if 'cntrct_nr' in p1.p1_d.keys() else ''
     print(f'Step 1 select a contract: ' + f'{c_nr if c_nr else "None"}')
-    templ_l = p2.read_dirs(p1.p1_cntrct_abs_dir)
+    templ_l = p2.p2_load_templates_info_l()
     print(f'Step 2 load or create templates to print: {templ_l}')
     print('Step 3 select fields to print in each template')
     print(60 * '-', '\n\n')
@@ -51,7 +51,7 @@ def save_selected_contract():
 
     shutil.copy(os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['cntrct_nr'] + '_doc_setup.json'), to_main_dir)
 
-    drs = p2.read_dirs(p1.p1_cntrct_abs_dir)
+    drs = p2.p2_load_templates_info_l()
     if drs:
         for dr in drs:
             from_abs_dr = os.path.join(p1.p1_cntrct_abs_dir, dr)

@@ -26,7 +26,7 @@ p2_default_templates_l = [
 def add_templates_from_list(list_l, ask_questions):
     new_temp_abs_dir = ''
     # read existing templates
-    drs = read_dirs(p1.p1_cntrct_abs_dir)
+    drs = p2_load_templates_info_l()
     # make a candidate set of templates to be added
     candidates_l = []
     if drs:
@@ -85,7 +85,7 @@ def add_templates_from_list(list_l, ask_questions):
 
 
 def load_or_create_templates():
-    drs = read_dirs(p1.p1_cntrct_abs_dir)
+    drs = p2_load_templates_info_l()
     if not drs:
         add_templates_from_list(p2_default_templates_l, ask_questions=False)
 
@@ -118,7 +118,10 @@ def p2_load_templates_info_l():  # used in p3
     """
     :return: list of label subdirectories to the main contract directory
     """
-    return read_dirs(p1.p1_cntrct_abs_dir)
+    result_l = read_dirs(p1.p1_cntrct_abs_dir)
+    if  result_l and 'pics' in result_l:
+        result_l.remove('pics')
+    return result_l
 
 
 def add_new_template():
@@ -127,7 +130,7 @@ def add_new_template():
 
 def delete_existing_template():
     print('~~~ Deleting templates non-empty directory data')
-    drs = read_dirs(p1.p1_cntrct_abs_dir)
+    drs = p2_load_templates_info_l()
     if not drs:
         return
     for i in range(len(drs)):

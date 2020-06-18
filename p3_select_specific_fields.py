@@ -336,7 +336,7 @@ def edit_a_template():
 
 
 def select_a_template():
-    drs = p2.read_dirs(p1.p1_cntrct_abs_dir)
+    drs = p2.p2_load_templates_info_l()
     if drs:
         for i in range(len(drs)):
             print(str(i) + '. ' + drs[i][2:])
@@ -378,7 +378,7 @@ def edit_label_template_svg():
 
 def edit_paragraph_headers():
     # list existing directories, each containing a template
-    drs = p2.read_dirs(p1.p1_cntrct_abs_dir)
+    drs = p2.p2_load_templates_info_l()
     if drs:
         # giving a default directory if none has been set before
         if not p1.p1_d['fields_rel_dir']:
@@ -928,7 +928,7 @@ def svg_w_watermarks_1_template_1_product_n_cover_page():
     global p3_selected_fields_values_by_prod_d
 
     # if no template has been selected, select the first one in the list
-    cvr_pg_dir = p2.read_dirs(p1.p1_cntrct_abs_dir)[0]
+    cvr_pg_dir = p2.p2_load_templates_info_l()[0]
     if not p1.p1_d['fields_rel_dir']:
         p1.p1_d['fields_rel_dir'] = cvr_pg_dir
         dump_fields_rel_dir()
@@ -1005,8 +1005,8 @@ def svg_w_watermarks_1_template_1_product_n_cover_page():
             cover_s = os.path.join(p1.p1_cntrct_abs_dir, 'page_0.svg')
             pics_fields_path = os.path.join(fields_abs_dir, 'pics')
             pics_cntrct_path = os.path.join(p1.p1_cntrct_abs_dir, 'pics')
-            if not os.path.exists(pics_cntrct_path):
-                shutil.copytree(pics_fields_path, pics_cntrct_path)
+            if os.path.exists(pics_fields_path):
+                shutil.copytree(pics_fields_path, pics_cntrct_path, dirs_exist_ok=True)
 
             with open(cover_s, 'w', encoding='utf8') as fw:
                 fw.write(mako_template.render(
@@ -1020,7 +1020,7 @@ def svg_w_watermarks_1_template_1_product_n_cover_page():
 
 def svg_w_watermarks_1_template_all_products():
     if not p1.p1_d['fields_rel_dir']:
-        drs = p2.read_dirs(p1.p1_cntrct_abs_dir)
+        drs = p2.p2_load_templates_info_l()
         p1.p1_d['fields_rel_dir'] = drs[0]
     svg_w_watermarks_all_templates_all_products(only_1_temp=True)
 
@@ -1133,11 +1133,11 @@ def step_3__select_fields_to_print_for_each_template_选择每种标签类型的
     # make sure p1 infrastructure is in place
     if not p1.contract_info_d_load():
         print('p1 has not run successfully')
-    if not p2.read_dirs(p1.p1_cntrct_abs_dir):
+    if not p2.p2_load_templates_info_l():
         p2.load_or_create_templates()
     # read existing p3 infrastructure
     if 'fields_rel_dir' not in p1.p1_d or not p1.p1_d['fields_rel_dir']:
-        p1.p1_d['fields_rel_dir'] = p2.read_dirs(p1.p1_cntrct_abs_dir)[0]
+        p1.p1_d['fields_rel_dir'] = p2.p2_load_templates_info_l()[0]
         dump_fields_rel_dir()
     if not p3_d:
         p3_d_load_o_create()
