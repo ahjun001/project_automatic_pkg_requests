@@ -58,16 +58,20 @@ def run():
     global main_menus
 
     # storing last menu to come back_后退 either from module menu to main_menu, or from sub_menu to module menu
-    keep = True
-    while keep:
+    while True:
         print()
         menus_context_func()
         print()
+
         # display_sub_processes_output menu with data from menus dict
         for k, v in menus.get(menu).items():
             # for each menu entry: key to execute, function to be executed (name should be explicit)
             print(f'{k}. {v.__name__}')
+
+        # capture selection
         selection = input("\nEnter selection: ")
+
+        # execute & report
         os.system('clear' if os.name == 'posix' else 'cls')
         print(f'Option {selection} selected')
         # getting the function name from the key entered

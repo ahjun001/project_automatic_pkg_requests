@@ -121,7 +121,6 @@ class InkscapeExtension(object):
 
             self.load_raw()
             self.save_raw(self.effect())
-            print(args)
         except AbortExtension as err:
             err.write()
             sys.exit(ABORT_STATUS)

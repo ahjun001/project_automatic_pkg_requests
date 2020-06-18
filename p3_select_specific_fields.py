@@ -679,9 +679,7 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp=False, only_1_prod=F
     def close_svg_for_output(fw2, svg_out2):
         fw2.write('</g>\n</svg>\n')
         fw2.close()
-        # with open(svg_out2) as fw2:  # waiting for fw2 to close
-        #     assert fw2 == fw2
-        # webbrowser.get('firefox').open_new_tab(svg_out2)
+        webbrowser.get('firefox').open_new_tab(svg_out2)
         # subprocess.Popen(['inkscape', svg_out], executable=inkscape_path)
 
     # def extract_svg_for_inserting(inkscape_filename, insert_filename):
@@ -911,7 +909,6 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp=False, only_1_prod=F
                     # to avoid printing a blank page when no data left
                     if i < (1 if only_1_prod else lngth) or template_nr != len(drs):
                         close_svg_for_output(fw, svg_out)
-                        webbrowser.get('firefox').open_new_tab(svg_out)
                         page += 1
                         fw, svg_out = open_svg_for_output()
                         if i == lngth:  # if at end of a list, then oy = 0
@@ -921,7 +918,6 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp=False, only_1_prod=F
 
             # after last item is written, write the next header if needed
         close_svg_for_output(fw, svg_out)  # close the last file without opening a new one
-        webbrowser.get('firefox').open_new_tab(svg_out)
     else:
         print('No template directory found, go back to general menu and create one or more templates')
 
