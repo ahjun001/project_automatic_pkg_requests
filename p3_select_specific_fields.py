@@ -19,18 +19,31 @@ import p2_select_templates as p2
 
 if os.name == 'posix':
     firefox_path = r'/usr/bin/firefox'
+    google_chrome_path = r'/usr/bin/google-chrome'
     inkscape_path = r'/usr/bin/inkscape'
     qpdf_path = r'/usr/bin/qpdf'
     foxit_path = r'/usr/bin/FoxitReader'
+    xreader_path = r'/usr/bin/xreader'
 elif os.name == 'nt':
     firefox_path = r'C:\Program Files (x86)\Mozilla Firefox\firefox.exe'
+    google_chrome_path = r''
     webbrowser.register('firefox', None, webbrowser.BackgroundBrowser(firefox_path))  # in Windows, when not in path
     inkscape_path = r'C:\Program Files\Inkscape\bin\inkscape.exe'
     qpdf_path = r'C:\Program Files no reg\qpdf-10.0.1\bin\qpdf.exe'
     foxit_path = r'C:\Program Files (x86)\Foxit Software\Foxit Reader\FoxitReader.exe'
+    xreader_path = ''
 else:
     print('|\n| Unsupported OS\n|')
     sys.exit()
+
+browser = 'firefox'
+browser_path = firefox_path
+# browser = 'google-chrome'
+# browser_path = google_chrome_path
+pdf_viewer = 'FoxitReader'
+pdf_viewer_path = foxit_path
+# pdf_viewer = 'xreader'
+# pdf_viewer_path = xreader_path
 
 p3_all_specific_fields_l = []  # list of fields from p1e_specific_fields_d_of_d
 p3_body_svg = ''  # contents of label_template_body.svg
@@ -382,7 +395,11 @@ def edit_label_template_svg():
         os.path.join(
             p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir']), 'label_template.svg')
     if os.path.exists(label_template_file):
-        subprocess.Popen(['inkscape', label_template_file], executable=inkscape_path).wait()
+        subprocess.Popen(
+            ['inkscape', label_template_file],
+            stderr=subprocess.DEVNULL,
+            executable=inkscape_path
+        ).wait()
 
 
 def edit_paragraph_headers():
@@ -476,12 +493,6 @@ def check_if_template_requirements_are_met():
     else:
         pass
         # print('Template fields and requested data match.  The template is operational.')
-
-        # template_f = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir']), 'label_template.svg')
-        # subprocess.Popen([
-        #     'inkscape',
-        #     template_f,
-        # ]).wait()
 
 
 def mako_input_json_load_o_create(force_recreate=False):
@@ -688,7 +699,7 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp=False, only_1_prod=F
     def close_svg_for_output(fw2, svg_out2):
         fw2.write('</g>\n</svg>\n')
         fw2.close()
-        webbrowser.get('firefox').open_new_tab(svg_out2)
+        webbrowser.get(browser).open_new_tab(svg_out2)
         # subprocess.Popen(['inkscape', svg_out], executable=inkscape_path)
 
     # def extract_svg_for_inserting(inkscape_filename, insert_filename):
@@ -1022,7 +1033,7 @@ def svg_w_watermarks_1_template_1_product_n_cover_page():
                     contract_n=p1.p1_d["cntrct_nr"],
                     **p3_selected_fields_values_by_prod_d['0']
                 ))
-            webbrowser.get('firefox').open_new_tab(cover_s)
+            webbrowser.get(browser).open_new_tab(cover_s)
         else:
             print(f'{svg_in}: no such file, it should be built before attempting to build a cover page')
 
@@ -1070,7 +1081,7 @@ def remove_watermarks_n_produce_pdf_deliverable():
     watermarked_svgs = sorted([f for f in files if f.endswith('.svg')])
 
     # remove watermarks, save in .filename.svg
-    printable_pdfs = []
+    dot_pdfs = []
     for file in watermarked_svgs:
         # remove watermarks to make a printable .filename.svg
         printable_svg = os.path.join(p1.p1_cntrct_abs_dir, '.' + file)
@@ -1081,21 +1092,31 @@ def remove_watermarks_n_produce_pdf_deliverable():
                 fw.write(line.replace('fuchsia', 'none').replace('#ff00ff', 'none'))
 
         # export .filename.svg to .filename.pdf
-        dot_pdf = os.path.join(p1.p1_cntrct_abs_dir, bare_filename + '.pdf')
-        subprocess.Popen([
-            'inkscape',
-            f'--export-filename={dot_pdf}',
-            printable_svg,
-        ], executable=inkscape_path).wait()
-        printable_pdfs.append(f'{dot_pdf}')
+        dot_pdf = os.path.join(p1.p1_cntrct_abs_dir, '.' + bare_filename + '.pdf')
+        subprocess.Popen(
+            ['inkscape', f'--export-filename={dot_pdf}', printable_svg, ],
+            executable=inkscape_path,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL
+        ).wait()
+        dot_pdfs.append(f'{dot_pdf}')
 
     # unite all .filename.pdf into deliverable.pdf
-    deliverable_pdf = os.path.join(p1.p1_cntrct_abs_dir ,p1.p1_d["cntrct_nr"] + '.pdf')
-    subprocess.Popen(['qpdf', '--empty', '--pages', *printable_pdfs, '--', deliverable_pdf], executable=qpdf_path)
+    deliverable_pdf = os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d["cntrct_nr"] + '.pdf')
+    subprocess.Popen(
+        [ 'qpdf', '--empty', '--pages', *dot_pdfs, '--', deliverable_pdf],
+        executable=qpdf_path,
+        stdout = subprocess.DEVNULL,
+        stderr = subprocess.DEVNULL
+    )
 
     # display deliverable.pdf
-    with open(os.devnull, 'wb') as DEVNULL:
-        subprocess.Popen(['FoxitReader', deliverable_pdf], executable=foxit_path, stderr=DEVNULL, stdout=None)
+    subprocess.Popen(
+        [pdf_viewer, deliverable_pdf],
+        executable=pdf_viewer_path,
+        stdout = subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL
+    )
 
 
 # Shell interface data & functions #####################################################################################
