@@ -44,7 +44,7 @@ def add_templates_from_list(list_l, ask_questions):
         while True:
             s = input('\nEnter nr of directory to be created, \'b\' to return : ')
             if s == 'b':
-                os.system('clear' if os.name == 'posix' else 'cls')
+                m.clear()
                 break
             else:
                 try:
@@ -139,7 +139,7 @@ def delete_existing_template():
     while True:
         s = input('Enter nr of template to delete, \'b\' to return:\n')
         if s == 'b':
-            os.system('clear' if os.name == 'posix' else 'cls')
+            m.clear()
             break
         else:
             try:

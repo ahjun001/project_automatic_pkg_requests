@@ -1,7 +1,16 @@
 Tutorial: Make a packaging request
+0. Set-up necessary software tools
 1. Copy & edit, or Create template svg files with mock data.
 2. Add ${fields} that have been searched with RegEx
 3. Add photos, barcodes, or fields edit if necessary
+
+########################################################################################################################
+Set-up necessary software tools
+
+qpdf, a tool that merges individual pdf pages into one document, should be downloaded from
+ https://github.com/qpdf/qpdf/releases
+Installation directory should be recorded so that a similar line could be added up to the set-up file.
+
 
 ########################################################################################################################
 How to select a field from the xls contract file and insert it as a field in a label template

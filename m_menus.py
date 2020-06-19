@@ -51,6 +51,15 @@ def menus_context_func():
     context_func_d[menu]()
 
 
+def clear():
+    if os.name == 'posix':
+        func = os.system('clear')
+    elif os.name == 'nt':
+        func = os.system('cls')
+    else:
+        print('|\n| OS not supported\n|')
+
+
 def run():
     global menu
     global menus
@@ -72,7 +81,7 @@ def run():
         selection = input("\nEnter selection: ")
 
         # execute & report
-        os.system('clear' if os.name == 'posix' else 'cls')
+        clear()
         print(f'Option {selection} selected')
         # getting the function name from the key entered
         selection_func_name = menus[menu].get(selection)

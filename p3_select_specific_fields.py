@@ -5,6 +5,7 @@ import pathlib
 import re
 import shutil
 import subprocess
+import sys
 import webbrowser
 from tkinter.filedialog import askopenfilename
 import render_barcode as rb
@@ -16,13 +17,21 @@ import m_menus as m
 import p1_select_contract as p1
 import p2_select_templates as p2
 
-google_chrome_path = r'/usr/bin/google-chrome' if os.name == 'posix' else r'C:\Program Files (' \
-                                                                          r'x86)\Google\Chrome\application\chrome.exe '
-firefox_path = r'/usr/bin/firefox' if os.name == 'posix' else r'C:\Program Files (x86)\Mozilla Firefox\firefox.exe'
-inkscape_path = r'/usr/bin/inkscape' if os.name == 'posix' else r'C:\Program Files\Inkscape\bin\inkscape.exe'
-if os.name != 'posix':
-    webbrowser.register('google-chrome', None, webbrowser.BackgroundBrowser(google_chrome_path))
-    webbrowser.register('firefox', None, webbrowser.BackgroundBrowser(firefox_path))
+if os.name == 'posix':
+    firefox_path = r'/usr/bin/firefox'
+    inkscape_path = r'/usr/bin/inkscape'
+    qpdf_path = r'/usr/bin/qpdf'
+    foxit_path = r'/usr/bin/FoxitReader'
+elif os.name == 'nt':
+    firefox_path = r'C:\Program Files (x86)\Mozilla Firefox\firefox.exe'
+    webbrowser.register('firefox', None, webbrowser.BackgroundBrowser(firefox_path))  # in Windows, when not in path
+    inkscape_path = r'C:\Program Files\Inkscape\bin\inkscape.exe'
+    qpdf_path = r'C:\Program Files no reg\qpdf-10.0.1\bin\qpdf.exe'
+    foxit_path = r'C:\Program Files (x86)\Foxit Software\Foxit Reader\FoxitReader.exe'
+else:
+    print('|\n| Unsupported OS\n|')
+    sys.exit()
+
 p3_all_specific_fields_l = []  # list of fields from p1e_specific_fields_d_of_d
 p3_body_svg = ''  # contents of label_template_body.svg
 # p3_default_fields_l = ['xl_prod_spec', 'u_parc']
@@ -225,7 +234,7 @@ def add_fields():
         print('~~~')
         s = input('Enter nr of indicator to add, \'b\' to return : ')
         if s == 'b':
-            os.system('clear' if os.name == 'posix' else 'cls')
+            m.clear()
             break
         else:
             try:
@@ -250,7 +259,7 @@ def del_fields():
         print(f'~~~')
         s = input('Enter nr of indicator to delete, \'b\' to return : ')
         if s == 'b':
-            os.system('clear' if os.name == 'posix' else 'cls')
+            m.clear()
             break
         else:
             try:
@@ -315,7 +324,7 @@ def edit_fields():
                   '\'b\' to go back_后退\n'
                   '~~~\n')
         if s == 'b':
-            os.system('clear' if os.name == 'posix' else 'cls')
+            m.clear()
             break
         elif s == 'a':
             add_fields()
@@ -343,14 +352,14 @@ def select_a_template():
         while True:
             s = input('\nEnter nr of template to be edited, \'b\' to return : ')
             if s == 'b':
-                os.system('clear' if os.name == 'posix' else 'cls')
+                m.clear()
                 m.menu = m.mod_lev_1_menu
                 break
             else:
                 try:
                     s_i = int(s)
                     if s_i in range(len(drs)):
-                        os.system('clear' if os.name == 'posix' else 'cls')
+                        m.clear()
                         p1.p1_d['fields_rel_dir'] = drs[s_i]
                         dump_fields_rel_dir()
                         # load fields already selected for template as they are on file
@@ -390,13 +399,13 @@ def edit_paragraph_headers():
         while True:
             s = input('\nEnter nr of template to be edited, \'b\' to return : ')
             if s == 'b':
-                os.system('clear' if os.name == 'posix' else 'cls')
+                m.clear()
                 break
             else:
                 try:
                     s_i = int(s)
                     if s_i in range(len(drs)):
-                        os.system('clear' if os.name == 'posix' else 'cls')
+                        m.clear()
                         p1.p1_d['fields_rel_dir'] = drs[s_i]
                         dump_fields_rel_dir()
                         # load fields already selected for template as they are on file
@@ -409,7 +418,7 @@ def edit_paragraph_headers():
                                       '\'b\' to go back_后退\n'
                                       '~~~\n')
                             if s == 'b':
-                                os.system('clear' if os.name == 'posix' else 'cls')
+                                m.clear()
                                 break
                             elif s == 'm':
                                 # multi-lines header
@@ -1050,53 +1059,43 @@ def try_all_processing_options_n_print():
 
 # final process: unite list of 1-page pdf into final deliverable #######################################################
 def remove_watermarks_n_produce_pdf_deliverable():
-    """ perform function: called in push mode when .page_?.pdf are ready
-    in pull mode, should trigger producing .page_?.pdf, themselves from page_?.pdf (contains marks)
-    ! requires a change of directory for pdfunite to work
-    """
-    os.chdir(p1.p1_cntrct_abs_dir)
-
     # Remove all output files that already may exists
-    filtered_files = [f for f in os.listdir(p1.p1_cntrct_abs_dir) if os.path.isfile(f) and f.endswith('pdf')]
-    for file in filtered_files:
+    _, _, files = next(os.walk(p1.p1_cntrct_abs_dir))
+    pdfs = [file for file in files if file.endswith('.pdf') or (file.endswith('.svg') and file[0] == '.')]
+    for file in pdfs:
         os.remove(os.path.join(p1.p1_cntrct_abs_dir, file))
 
-    filtered_files = [f for f in os.listdir(p1.p1_cntrct_abs_dir) if os.path.isfile(f) and f.endswith(
-        '.svg') and f[0] == '.']
-    for file in filtered_files:
-        os.remove(os.path.join(p1.p1_cntrct_abs_dir, file))
+    # Produce new ones: list filename.svg with watermark
+    _, _, files = next(os.walk(p1.p1_cntrct_abs_dir))
+    watermarked_svgs = sorted([f for f in files if f.endswith('.svg')])
 
-    # Produce new ones
-    print_svg_l = [f for f in os.listdir(p1.p1_cntrct_abs_dir) if os.path.isfile(f) and f.endswith(
-        '.svg') and f[0] != '.']
-
-    for file in print_svg_l:
-        with open(file, encoding='utf8') as fr, open('.' + file, 'w', encoding='utf8') as fw:
+    # remove watermarks, save in .filename.svg
+    printable_pdfs = []
+    for file in watermarked_svgs:
+        # remove watermarks to make a printable .filename.svg
+        printable_svg = os.path.join(p1.p1_cntrct_abs_dir, '.' + file)
+        bare_filename, _ = os.path.splitext(file)
+        file = os.path.join(p1.p1_cntrct_abs_dir, file)
+        with open(file, encoding='utf8') as fr, open(printable_svg, 'w', encoding='utf8') as fw:
             for line in fr:
                 fw.write(line.replace('fuchsia', 'none').replace('#ff00ff', 'none'))
 
-    print_clean_svg_l = [f for f in os.listdir(p1.p1_cntrct_abs_dir) if os.path.isfile(f) and f.endswith(
-        '.svg') and f[0] == '.']
-
-    for file in print_clean_svg_l:
-        filename, _ = os.path.splitext(file)
+        # export .filename.svg to .filename.pdf
+        dot_pdf = os.path.join(p1.p1_cntrct_abs_dir, bare_filename + '.pdf')
         subprocess.Popen([
             'inkscape',
-            f'--export-filename={filename}.pdf',  # f'--export-file={filename}.pdf',
-            file,
+            f'--export-filename={dot_pdf}',
+            printable_svg,
         ], executable=inkscape_path).wait()
+        printable_pdfs.append(f'{dot_pdf}')
 
-    output_s = p1.p1_d["cntrct_nr"] + '.pdf'
+    # unite all .filename.pdf into deliverable.pdf
+    deliverable_pdf = p1.p1_d["cntrct_nr"] + '.pdf'
+    subprocess.Popen(['qpdf', '--empty', '--pages', *printable_pdfs, '--', deliverable_pdf], executable=qpdf_path)
 
-    # not workable solution: erase but doesn't create, create but doesn't erase
-    # print_pdf_l = [f for f in os.listdir(p1.p1_cntrct_abs_dir) if os.path.isfile(f) and f.endswith('.pdf')]
-    # if os.path.exists(output_s):
-    #     subprocess.Popen(['rm', output_s, ]).wait()
-    # subprocess.Popen(['pdfunite', *print_pdf_l, output_s, ]).wait()
-
-    os.system('pdfunite .page_?.pdf ' + output_s)
-    subprocess.Popen(['xreader', output_s, ])
-    os.chdir(m.root_abs_dir)
+    # display deliverable.pdf
+    with open(os.devnull, 'wb') as DEVNULL:
+        subprocess.Popen(['FoxitReader', deliverable_pdf], executable=foxit_path, stderr=DEVNULL, stdout=None)
 
 
 # Shell interface data & functions #####################################################################################

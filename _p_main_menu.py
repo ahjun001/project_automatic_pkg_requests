@@ -20,7 +20,7 @@ def run_full_demo_with_selected_or_default_values_运行完整演示():
 
 def test_environment():
     print('Test environment: start')
-    os.system('clear')
+    m.clear()
     print('Test environment: cleared')
     print('TERM = ', os.environ["TERM"])
     print('Test environment: end')
@@ -111,7 +111,7 @@ def step_1__select_a_contract_选择合同号(test_contract_nr=''):
 
 
 def init():
-    os.system('clear' if os.name == 'posix' else 'cls')
+    m.clear()
     # assign a program
     p1.program_info_d_load_o_create()
     # menus
