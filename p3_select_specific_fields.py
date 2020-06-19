@@ -1090,7 +1090,7 @@ def remove_watermarks_n_produce_pdf_deliverable():
         printable_pdfs.append(f'{dot_pdf}')
 
     # unite all .filename.pdf into deliverable.pdf
-    deliverable_pdf = p1.p1_d["cntrct_nr"] + '.pdf'
+    deliverable_pdf = os.path.join(p1.p1_cntrct_abs_dir ,p1.p1_d["cntrct_nr"] + '.pdf')
     subprocess.Popen(['qpdf', '--empty', '--pages', *printable_pdfs, '--', deliverable_pdf], executable=qpdf_path)
 
     # display deliverable.pdf

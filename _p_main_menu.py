@@ -96,7 +96,7 @@ def run_full_demo_for_a_selection_of_contracts(save=False):
         run_full_demo_with_selected_or_default_values_运行完整演示()
         if save:
             save_selected_contract()  # use when a new field has been added to template-info.json
-    merge_all_p1a_xxx_final_contract_json_files_in_one()
+    # merge_all_p1a_xxx_final_contract_json_files_in_one()
 
 
 def run_full_demo_and_save_a_selection_of_contracts():
