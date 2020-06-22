@@ -354,17 +354,20 @@ def process_selected_contract():
             # contract_long_list += (str(value)).strip()
             # contract_long_list += (str(value)).replace(r'\r\n', r'\n')
             contract_long_list += (str(value)).replace('\r', '')
-    with open(os.path.join(p1_cntrct_abs_dir, '.p1a_' + p1_d['cntrct_nr'] + '-contract.txt'), 'w', encoding='utf8') as fw:
+    with open(
+            os.path.join(p1_cntrct_abs_dir, '.p1a_' + p1_d['cntrct_nr'] + '-contract.txt'), 'w', encoding='utf8'
+    ) as fw:
         fw.write(contract_long_list)
 
     # populate p1_cntrct_info_d: a structure to store template information, and its corresponding json file
     p1_cntrct_info_d['p1a_contract_json'] = rel_path_contract_json_f
 
-    with open(
-            os.path.join(
-                os.path.join(
-                    m.root_abs_dir, 'common'), 'regular_expressions_local.json'), encoding='utf8'
-    ) as f:
+    rx_file_local = os.path.join(os.path.join(m.root_abs_dir, 'common'), 'regular_expressions_local.json')
+    rx_file_common = os.path.join(os.path.join(m.root_abs_dir, 'common'), 'regular_expressions_common.json')
+
+    if not os.path.exists(rx_file_local):
+        shutil.copy(rx_file_common, rx_file_local)
+    with open(rx_file_local, encoding='utf8') as f:
         p1_search_reg_ex_l = json.load(f)
 
     # harvesting all indicators possibly available in p1a_contract_json_d
