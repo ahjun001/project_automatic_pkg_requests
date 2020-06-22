@@ -56,7 +56,7 @@ def load_o_create_required_apps_path():
         if 'firefox_path' not in env_d:
             env_d['firefox_path'] = r'C:\Program Files (x86)\Mozilla Firefox\firefox.exe'
         if 'google_chrome_path' not in env_d:
-            env_d['google_chrome_path'] = r''
+            env_d['google_chrome_path'] = r'"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe'
         webbrowser.register('firefox', None,
                             webbrowser.BackgroundBrowser(env_d['firefox_path']))  # in Windows, when not in path
         if 'inkscape_path' not in env_d:
@@ -86,20 +86,45 @@ def load_o_create_required_apps_path():
         json.dump(env_d, fw, ensure_ascii=False, indent=4)
 
 
-def test_environment():
+def test_linux_environment():
     global env_d
-    print('Browser:', 111*'#')
+    print('Browser:', 111 * '#')
     subprocess.Popen([env_d['browser'], '--version'], executable=env_d['browser_path']).wait()
-    print('Inkscape:', 110*'#')
+    print('Inkscape:', 110 * '#')
     subprocess.Popen(['inkscape', '--version'], executable=env_d['inkscape_path']).wait()
-    print('qpdf:', 114*'#')
+    print('qpdf:', 114 * '#')
     subprocess.Popen(['qpdf', '--version'], executable=env_d['qpdf_path']).wait()
-    print('pdf_viewer:', 108*'#')
-    subprocess.Popen( [env_d['pdf_viewer']], executable=env_d['pdf_viewer_path'],
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL
-    )
+    print('pdf_viewer:', 108 * '#')
+    subprocess.Popen([env_d['pdf_viewer']], executable=env_d['pdf_viewer_path'],
+                     stdout=subprocess.DEVNULL,
+                     stderr=subprocess.DEVNULL
+                     )
     print(120 * '#')
+
+
+def test_browser():
+    global env_d
+    subprocess.Popen([env_d['browser']], executable=env_d['browser_path']).wait()
+
+
+def test_inkscape():
+    global env_d
+    subprocess.Popen(['inkscape'], executable=env_d['inkscape_path']).wait()
+
+
+def test_qpdf():
+    global env_d
+    print('qpdf:', 114 * '#')
+    subprocess.Popen(['qpdf', '--version'], executable=env_d['qpdf_path']).wait()
+    print(120 * '#')
+
+
+def test_pdf_reader():
+    global env_d
+    subprocess.Popen([env_d['pdf_viewer']], executable=env_d['pdf_viewer_path'],
+                     stdout=subprocess.DEVNULL,
+                     stderr=subprocess.DEVNULL
+                     )
 
 
 def p3_d_load_o_create():
@@ -1222,7 +1247,11 @@ def step_3__select_fields_to_print_for_each_template_选择每种标签类型的
     # todo: check if template requirements are met
     m.menus = {
         m.menu: {
-            't': test_environment,
+            't': test_linux_environment,
+            'br': test_browser,
+            'in': test_inkscape,
+            'qp': test_qpdf,
+            'pr': test_pdf_reader,
             '0': select_a_template,
             '01': pre_process,
             '02': util_print_svg_tags,
