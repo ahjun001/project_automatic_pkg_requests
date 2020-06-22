@@ -17,36 +17,6 @@ import m_menus as m
 import p1_select_contract as p1
 import p2_select_templates as p2
 
-if os.name == 'posix':
-    firefox_path = r'/usr/bin/firefox'
-    google_chrome_path = r'/usr/bin/google-chrome'
-    inkscape_path = r'/usr/bin/inkscape'
-    qpdf_path = r'/usr/bin/qpdf'
-    foxit_path = r'/usr/bin/FoxitReader'
-    xreader_path = r'/usr/bin/xreader'
-    acroreader_path = ''
-elif os.name == 'nt':
-    firefox_path = r'C:\Program Files (x86)\Mozilla Firefox\firefox.exe'
-    google_chrome_path = r''
-    webbrowser.register('firefox', None, webbrowser.BackgroundBrowser(firefox_path))  # in Windows, when not in path
-    inkscape_path = r'C:\Program Files\Inkscape\bin\inkscape.exe'
-    qpdf_path = r'C:\Program Files no reg\qpdf-10.0.1\bin\qpdf.exe'
-    foxit_path = r'C:\Program Files (x86)\Foxit Software\Foxit Reader\FoxitReader.exe'
-    acroreader_path = f'D:\Program Files\Adobe\Reader 11.0\Reader\acro32.exe'
-    xreader_path = ''
-else:
-    print('|\n| Unsupported OS\n|')
-    sys.exit()
-
-browser = 'firefox'
-browser_path = firefox_path
-# browser = 'google-chrome'
-# browser_path = google_chrome_path
-pdf_viewer = 'FoxitReader'
-pdf_viewer_path = foxit_path
-# pdf_viewer = 'xreader'
-# pdf_viewer_path = xreader_path
-
 p3_all_specific_fields_l = []  # list of fields from p1e_specific_fields_d_of_d
 p3_body_svg = ''  # contents of label_template_body.svg
 # p3_default_fields_l = ['xl_prod_spec', 'u_parc']
@@ -56,9 +26,82 @@ p1.p1_d['fields_rel_dir'] = ''  # currently working fields directory
 p3_selected_fields_values_by_prod_d = {}  # field values as in .mako_input.json
 page_view_box_w = 0
 page_view_box_h = 0
+env_d = {}
 
 
 # Utility functions ####################################################################################################
+def load_o_create_required_apps_path():
+    global env_d
+    # either read existing data
+    env_f = os.path.join(m.root_abs_dir, 'environment.json')
+    if os.path.exists(env_f):
+        with open(env_f, encoding='utf8') as f:
+            env_d = json.load(f)
+
+    # or populate missing fields with default information
+    if os.name == 'posix':
+        if 'firefox_path' not in env_d:
+            env_d['firefox_path'] = r'/usr/bin/firefox'
+        if 'google_chrome_path' not in env_d:
+            env_d['google_chrome_path'] = r'/usr/bin/google-chrome'
+        if 'inkscape_path' not in env_d:
+            env_d['inkscape_path'] = r'/usr/bin/inkscape'
+        if 'qpdf_path' not in env_d:
+            env_d['qpdf_path'] = r'/usr/bin/qpdf'
+        if 'foxit_path' not in env_d:
+            env_d['foxit_path'] = r'/usr/bin/FoxitReader'
+        if 'xreader_path' not in env_d:
+            env_d['xreader_path'] = r'/usr/bin/xreader'
+    elif os.name == 'nt':
+        if 'firefox_path' not in env_d:
+            env_d['firefox_path'] = r'C:\Program Files (x86)\Mozilla Firefox\firefox.exe'
+        if 'google_chrome_path' not in env_d:
+            env_d['google_chrome_path'] = r''
+        webbrowser.register('firefox', None,
+                            webbrowser.BackgroundBrowser(env_d['firefox_path']))  # in Windows, when not in path
+        if 'inkscape_path' not in env_d:
+            env_d['inkscape_path'] = r'C:\Program Files\Inkscape\bin\inkscape.exe'
+        if 'qpdf_path' not in env_d:
+            env_d['qpdf_path'] = r'C:\Program Files no reg\qpdf-10.0.1\bin\qpdf.exe'
+        if 'foxit_path' not in env_d:
+            env_d['foxit_path'] = r'C:\Program Files (x86)\Foxit Software\Foxit Reader\FoxitReader.exe'
+        if 'acroreader_path' not in env_d:
+            env_d['acroreader_path'] = r'D:\Program Files\Adobe\Reader 11.0\Reader\acro32.exe'
+    else:
+        print('|\n| Unsupported OS\n|')
+        sys.exit()
+    if 'browser' not in env_d:
+        env_d['browser'] = 'firefox'
+    if 'browser_path' not in env_d:
+        env_d['browser_path'] = env_d['firefox_path']
+    # browser = 'google-chrome'
+    # browser_path = google_chrome_path
+    if 'pdf_viewer' not in env_d:
+        env_d['pdf_viewer'] = 'FoxitReader'
+    if 'pdf_viewer_path' not in env_d:
+        env_d['pdf_viewer_path'] = env_d['foxit_path']
+    # pdf_viewer = 'xreader'
+    # pdf_viewer_path = xreader_path
+    with open(env_f, 'w', encoding='utf8') as fw:
+        json.dump(env_d, fw, ensure_ascii=False, indent=4)
+
+
+def test_environment():
+    global env_d
+    print('Browser:', 111*'#')
+    subprocess.Popen([env_d['browser'], '--version'], executable=env_d['browser_path']).wait()
+    print('Inkscape:', 110*'#')
+    subprocess.Popen(['inkscape', '--version'], executable=env_d['inkscape_path']).wait()
+    print('qpdf:', 114*'#')
+    subprocess.Popen(['qpdf', '--version'], executable=env_d['qpdf_path']).wait()
+    print('pdf_viewer:', 108*'#')
+    subprocess.Popen( [env_d['pdf_viewer']], executable=env_d['pdf_viewer_path'],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL
+    )
+    print(120 * '#')
+
+
 def p3_d_load_o_create():
     global p3_f
     global p3_d
@@ -387,6 +430,7 @@ def select_a_template():
 
 
 def edit_label_template_svg():
+    global env_d
     body_file = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir']), '.label_template_body.svg')
     if os.path.exists(body_file):
         os.remove(
@@ -400,7 +444,7 @@ def edit_label_template_svg():
         subprocess.Popen(
             ['inkscape', label_template_file],
             stderr=subprocess.DEVNULL,
-            executable=inkscape_path
+            executable=env_d['inkscape_path']
         ).wait()
 
 
@@ -671,6 +715,7 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp=False, only_1_prod=F
     def open_svg_for_output():
         global p3_d
         global page_view_box_h
+        global env_d
 
         # fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir'])
         if only_1_temp:
@@ -701,7 +746,7 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp=False, only_1_prod=F
     def close_svg_for_output(fw2, svg_out2):
         fw2.write('</g>\n</svg>\n')
         fw2.close()
-        webbrowser.get(browser).open_new_tab(svg_out2)
+        webbrowser.get(env_d['browser']).open_new_tab(svg_out2)
         # subprocess.Popen(['inkscape', svg_out], executable=inkscape_path)
 
     # def extract_svg_for_inserting(inkscape_filename, insert_filename):
@@ -948,6 +993,7 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp=False, only_1_prod=F
 def svg_w_watermarks_1_template_1_product_n_cover_page():
     global p3_d
     global p3_selected_fields_values_by_prod_d
+    global env_d
 
     # if no template has been selected, select the first one in the list
     cvr_pg_dir = p2.p2_load_templates_info_l()[0]
@@ -1035,7 +1081,7 @@ def svg_w_watermarks_1_template_1_product_n_cover_page():
                     contract_n=p1.p1_d["cntrct_nr"],
                     **p3_selected_fields_values_by_prod_d['0']
                 ))
-            webbrowser.get(browser).open_new_tab(cover_s)
+            webbrowser.get(env_d['browser']).open_new_tab(cover_s)
         else:
             print(f'{svg_in}: no such file, it should be built before attempting to build a cover page')
 
@@ -1072,6 +1118,7 @@ def try_all_processing_options_n_print():
 
 # final process: unite list of 1-page pdf into final deliverable #######################################################
 def remove_watermarks_n_produce_pdf_deliverable():
+    global env_d
     # Remove all output files that already may exists
     _, _, files = next(os.walk(p1.p1_cntrct_abs_dir))
     pdfs = [file for file in files if file.endswith('.pdf') or (file.endswith('.svg') and file[0] == '.')]
@@ -1097,7 +1144,7 @@ def remove_watermarks_n_produce_pdf_deliverable():
         dot_pdf = os.path.join(p1.p1_cntrct_abs_dir, '.' + bare_filename + '.pdf')
         subprocess.Popen(
             ['inkscape', f'--export-filename={dot_pdf}', printable_svg, ],
-            executable=inkscape_path,
+            executable=env_d['inkscape_path'],
             stdout=subprocess.DEVNULL,
             stderr=subprocess.DEVNULL
         ).wait()
@@ -1106,17 +1153,17 @@ def remove_watermarks_n_produce_pdf_deliverable():
     # unite all .filename.pdf into deliverable.pdf
     deliverable_pdf = os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d["cntrct_nr"] + '.pdf')
     subprocess.Popen(
-        [ 'qpdf', '--empty', '--pages', *dot_pdfs, '--', deliverable_pdf],
-        executable=qpdf_path,
-        stdout = subprocess.DEVNULL,
-        stderr = subprocess.DEVNULL
+        ['qpdf', '--empty', '--pages', *dot_pdfs, '--', deliverable_pdf],
+        executable=env_d['qpdf_path'],
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL
     )
 
     # display deliverable.pdf
     subprocess.Popen(
-        [pdf_viewer, deliverable_pdf],
-        executable=pdf_viewer_path,
-        stdout = subprocess.DEVNULL,
+        [env_d['pdf_viewer'], deliverable_pdf],
+        executable=env_d['pdf_viewer_path'],
+        stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL
     )
 
@@ -1163,6 +1210,8 @@ def step_3__select_fields_to_print_for_each_template_选择每种标签类型的
         dump_fields_rel_dir()
     if not p3_d:
         p3_d_load_o_create()
+    # read path to apps
+    load_o_create_required_apps_path()
 
     # initializing menus last, so that context functions display most recent information
     m.menu = 'select_specific_fields'
@@ -1173,6 +1222,7 @@ def step_3__select_fields_to_print_for_each_template_选择每种标签类型的
     # todo: check if template requirements are met
     m.menus = {
         m.menu: {
+            't': test_environment,
             '0': select_a_template,
             '01': pre_process,
             '02': util_print_svg_tags,
