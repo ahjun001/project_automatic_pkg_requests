@@ -24,6 +24,7 @@ if os.name == 'posix':
     qpdf_path = r'/usr/bin/qpdf'
     foxit_path = r'/usr/bin/FoxitReader'
     xreader_path = r'/usr/bin/xreader'
+    acroreader_path = ''
 elif os.name == 'nt':
     firefox_path = r'C:\Program Files (x86)\Mozilla Firefox\firefox.exe'
     google_chrome_path = r''
@@ -31,6 +32,7 @@ elif os.name == 'nt':
     inkscape_path = r'C:\Program Files\Inkscape\bin\inkscape.exe'
     qpdf_path = r'C:\Program Files no reg\qpdf-10.0.1\bin\qpdf.exe'
     foxit_path = r'C:\Program Files (x86)\Foxit Software\Foxit Reader\FoxitReader.exe'
+    acroreader_path = f'D:\Program Files\Adobe\Reader 11.0\Reader\acro32.exe'
     xreader_path = ''
 else:
     print('|\n| Unsupported OS\n|')
