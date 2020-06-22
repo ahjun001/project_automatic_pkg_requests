@@ -3,6 +3,7 @@ import json
 import os
 import pathlib
 import shutil
+import sys
 from datetime import datetime
 
 import m_menus as m
@@ -22,6 +23,8 @@ def test_environment():
     print('Test environment: start')
     m.clear()
     print('Test environment: cleared')
+    print('os.name = ', os.name)
+    print('sys.platform = ', sys.platform)
     print('TERM = ', os.environ["TERM"])
     print('Test environment: end')
 

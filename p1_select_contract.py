@@ -363,7 +363,7 @@ def process_selected_contract():
     with open(
             os.path.join(
                 os.path.join(
-                    m.root_abs_dir, 'common'), 'regular_expressions.json'), encoding='utf8'
+                    m.root_abs_dir, 'common'), 'regular_expressions_local.json'), encoding='utf8'
     ) as f:
         p1_search_reg_ex_l = json.load(f)
 
@@ -397,7 +397,7 @@ def process_selected_contract():
                             srch.append(s.strip())  # strip the search result
                         for indication in srch:
                             tmp_dct = {
-                                'what': what,  # from regular_expressions.json : pack, kg, mm, 牌, v_Hz, plstc_bg
+                                'what': what,  # from regular_expressions_local.json : pack, kg, mm, 牌, v_Hz, plstc_bg
                                 'where': key,  # xl cell: 10.Tech_spec-技术参数_2
                                 'info': indication,  # 1.00    = indic
                                 'prod_nr': prod["01.TST_prod_#-需方产品编号"],  # 1050205001#
