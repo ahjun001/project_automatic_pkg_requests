@@ -104,23 +104,27 @@ def test_linux_environment():
 
 def test_browser():
     global env_d
-    subprocess.Popen([env_d['browser']], executable=env_d['browser_path']).wait()
+    subprocess.Popen([env_d['browser']], executable=env_d['browser_path'])
 
 
 def test_inkscape():
     global env_d
-    subprocess.Popen(['inkscape'], executable=env_d['inkscape_path']).wait()
+    subprocess.Popen(['inkscape'], executable=env_d['inkscape_path'])
 
 
 def test_qpdf():
     global env_d
     print('qpdf:', 114 * '#')
-    subprocess.Popen(['qpdf', '--version'], executable=env_d['qpdf_path']).wait()
+    subprocess.Popen(['qpdf', '--version'], executable=env_d['qpdf_path'])
     print(120 * '#')
 
 
 def test_pdf_reader():
     global env_d
+    # subprocess.Popen([env_d['pdf_viewer']], executable=env_d['pdf_viewer_path'],
+    #                  stdout=subprocess.DEVNULL,
+    #                  stderr=subprocess.DEVNULL
+    #                  )
     subprocess.Popen([env_d['pdf_viewer']], executable=env_d['pdf_viewer_path'],
                      stdout=subprocess.DEVNULL,
                      stderr=subprocess.DEVNULL
