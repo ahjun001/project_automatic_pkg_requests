@@ -47,8 +47,8 @@ def load_o_create_required_apps_path():
     if os.name == 'posix':
         if 'firefox_path' not in env_d:
             env_d['firefox_path'] = r'/usr/bin/firefox'
-        if 'google_chrome_path' not in env_d:
-            env_d['google_chrome_path'] = r'/usr/bin/google-chrome'
+        if 'chrome_path' not in env_d:
+            env_d['chrome_path'] = r'/usr/bin/google-chrome'
         if 'inkscape_path' not in env_d:
             env_d['inkscape_path'] = r'/usr/bin/inkscape'
         if 'qpdf_path' not in env_d:
@@ -60,10 +60,12 @@ def load_o_create_required_apps_path():
     elif os.name == 'nt':
         if 'firefox_path' not in env_d:
             env_d['firefox_path'] = r'C:\Program Files (x86)\Mozilla Firefox\firefox.exe'
-        if 'google_chrome_path' not in env_d:
-            env_d['google_chrome_path'] = r'"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe'
         webbrowser.register('firefox', None,
                             webbrowser.BackgroundBrowser(env_d['firefox_path']))  # in Windows, when not in path
+        if 'chrome_path' not in env_d:
+            env_d['chrome_path'] = r'C:\Program Files (x86)\Google\Chrome\Application\chrome.exe'
+        webbrowser.register('chrome', None,
+                            webbrowser.BackgroundBrowser(env_d['chrome_path']))  # in Windows, when not in path
         if 'inkscape_path' not in env_d:
             env_d['inkscape_path'] = r'C:\Program Files\Inkscape\bin\inkscape.exe'
         if 'qpdf_path' not in env_d:
@@ -71,7 +73,7 @@ def load_o_create_required_apps_path():
         if 'FoxitReader_path' not in env_d:
             env_d['FoxitReader_path'] = r'C:\Program Files (x86)\Foxit Software\Foxit Reader\FoxitReader.exe'
         if 'acroreader_path' not in env_d:
-            env_d['acroreader_path'] = r'D:\Program Files\Adobe\Reader 11.0\Reader\acro32.exe'
+            env_d['acroreader_path'] = r'D:\Program Files\Adobe\Reader 11.0\Reader\acrord32.exe'
     else:
         print('|\n| Unsupported OS\n|')
         sys.exit()
@@ -81,8 +83,8 @@ def load_o_create_required_apps_path():
         env_d['browser'] = 'firefox'
     if env_d['browser'] in env_d['firefox_path']:
         browser_path = env_d['firefox_path']
-    elif env_d['browser'] in env_d['google_chrome_path']:
-        browser_path = env_d['google_chrome_path']
+    elif env_d['browser'] in env_d['chrome_path']:
+        browser_path = env_d['chrome_path']
     else:
         print("|\n| Could not associate 'browser_path' with 'browser': check 'environment.json'")
 
@@ -122,7 +124,10 @@ def test_linux_environment():
 
 
 def my_webbrowser_open_new_tab(browser, tab):
+    global browser_path
     warnings.simplefilter("ignore", ResourceWarning)
+    print('browser:', browser)
+    print('browserpath:', browser_path)
     webbrowser.get(browser).open_new_tab(tab)
     warnings.simplefilter("default", ResourceWarning)
 
@@ -148,6 +153,8 @@ def test_pdf_reader_no_wait():
     global env_d
     global pdf_viewer_path
     warnings.simplefilter("ignore", ResourceWarning)
+    print('pdf_viewer_path: ', pdf_viewer_path)
+    print('env_d["pdf_viewer"]', env_d['pdf_viewer'])
     subprocess.Popen([env_d['pdf_viewer']], executable=pdf_viewer_path,
                      stdout=subprocess.DEVNULL,
                      stderr=subprocess.DEVNULL
