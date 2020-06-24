@@ -73,7 +73,7 @@ def load_o_create_required_apps_path():
         if 'FoxitReader_path' not in env_d:
             env_d['FoxitReader_path'] = r'C:\Program Files (x86)\Foxit Software\Foxit Reader\FoxitReader.exe'
         if 'acroreader_path' not in env_d:
-            env_d['acroreader_path'] = r'D:\Program Files\Adobe\Reader 11.0\Reader\acrord32.exe'
+            env_d['acroreader_path'] = r'C:\Program Files\Adobe\Reader 11.0\Reader\acrord32.exe'
     else:
         print('|\n| Unsupported OS\n|')
         sys.exit()
@@ -126,8 +126,6 @@ def test_linux_environment():
 def my_webbrowser_open_new_tab(browser, tab):
     global browser_path
     warnings.simplefilter("ignore", ResourceWarning)
-    print('browser:', browser)
-    print('browserpath:', browser_path)
     webbrowser.get(browser).open_new_tab(tab)
     warnings.simplefilter("default", ResourceWarning)
 
@@ -153,8 +151,6 @@ def test_pdf_reader_no_wait():
     global env_d
     global pdf_viewer_path
     warnings.simplefilter("ignore", ResourceWarning)
-    print('pdf_viewer_path: ', pdf_viewer_path)
-    print('env_d["pdf_viewer"]', env_d['pdf_viewer'])
     subprocess.Popen([env_d['pdf_viewer']], executable=pdf_viewer_path,
                      stdout=subprocess.DEVNULL,
                      stderr=subprocess.DEVNULL
