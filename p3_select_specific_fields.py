@@ -1151,6 +1151,7 @@ def produce_all_svg_n_print():
 
 
 def try_all_processing_options_n_print():
+    load_o_create_required_apps_path()
     # read existing templates
     drs_l = p2.p2_load_templates_info_l()
     if drs_l:
@@ -1194,13 +1195,20 @@ def remove_watermarks_n_produce_pdf_deliverable():
 
         # export .filename.svg to .filename.pdf
         dot_pdf = os.path.join(p1.p1_cntrct_abs_dir, '.' + bare_filename + '.pdf')
-        subprocess.run([
+        # subprocess.run([
+        #     'inkscape',
+        #     f'--export-filename={dot_pdf}',
+        #     printable_svg,
+        # ],
+        #     executable=env_d['inkscape_path']
+        # )
+        subprocess.Popen([
             'inkscape',
             f'--export-filename={dot_pdf}',
             printable_svg,
         ],
             executable=env_d['inkscape_path']
-        )
+        ).wait()
         dot_pdfs.append(f'{dot_pdf}')
 
     # unite all .filename.pdf into deliverable.pdf
