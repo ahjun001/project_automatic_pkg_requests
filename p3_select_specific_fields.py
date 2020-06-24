@@ -28,11 +28,15 @@ p3_selected_fields_values_by_prod_d = {}  # field values as in .mako_input.json
 page_view_box_w = 0
 page_view_box_h = 0
 env_d = {}
+browser_path = ''
+pdf_viewer_path = ''
 
 
 # Utility functions ####################################################################################################
 def load_o_create_required_apps_path():
     global env_d
+    global browser_path
+    global pdf_viewer_path
     # either read existing data
     env_f = os.path.join(m.root_abs_dir, 'environment.json')
     if os.path.exists(env_f):
@@ -49,8 +53,8 @@ def load_o_create_required_apps_path():
             env_d['inkscape_path'] = r'/usr/bin/inkscape'
         if 'qpdf_path' not in env_d:
             env_d['qpdf_path'] = r'/usr/bin/qpdf'
-        if 'foxit_path' not in env_d:
-            env_d['foxit_path'] = r'/usr/bin/FoxitReader'
+        if 'FoxitReader_path' not in env_d:
+            env_d['FoxitReader_path'] = r'/usr/bin/FoxitReader'
         if 'xreader_path' not in env_d:
             env_d['xreader_path'] = r'/usr/bin/xreader'
     elif os.name == 'nt':
@@ -64,40 +68,52 @@ def load_o_create_required_apps_path():
             env_d['inkscape_path'] = r'C:\Program Files\Inkscape\bin\inkscape.exe'
         if 'qpdf_path' not in env_d:
             env_d['qpdf_path'] = r'C:\Program Files no reg\qpdf-10.0.1\bin\qpdf.exe'
-        if 'foxit_path' not in env_d:
-            env_d['foxit_path'] = r'C:\Program Files (x86)\Foxit Software\Foxit Reader\FoxitReader.exe'
+        if 'FoxitReader_path' not in env_d:
+            env_d['FoxitReader_path'] = r'C:\Program Files (x86)\Foxit Software\Foxit Reader\FoxitReader.exe'
         if 'acroreader_path' not in env_d:
             env_d['acroreader_path'] = r'D:\Program Files\Adobe\Reader 11.0\Reader\acro32.exe'
     else:
         print('|\n| Unsupported OS\n|')
         sys.exit()
+
+    # associating browser_path to browser chosen in 'environment.json'
     if 'browser' not in env_d:
         env_d['browser'] = 'firefox'
-    if 'browser_path' not in env_d:
-        env_d['browser_path'] = env_d['firefox_path']
-    # browser = 'google-chrome'
-    # browser_path = google_chrome_path
+    if env_d['browser'] in env_d['firefox_path']:
+        browser_path = env_d['firefox_path']
+    elif env_d['browser'] in env_d['google_chrome_path']:
+        browser_path = env_d['google_chrome_path']
+    else:
+        print("|\n| Could not associate 'browser_path' with 'browser': check 'environment.json'")
+
+    # associating pdf_viewer_path to pdf_viewer chosen in 'environment.json'
     if 'pdf_viewer' not in env_d:
         env_d['pdf_viewer'] = 'FoxitReader'
-    if 'pdf_viewer_path' not in env_d:
-        env_d['pdf_viewer_path'] = env_d['foxit_path']
-    # pdf_viewer = 'xreader'
-    # pdf_viewer_path = xreader_path
+    if env_d['pdf_viewer'] in env_d['FoxitReader_path']:
+        pdf_viewer_path = env_d['FoxitReader_path']
+    elif os.name == 'posix' and env_d['pdf_viewer'] in env_d['xreader_path']:
+        pdf_viewer_path = env_d['xreader_path']
+    elif os.name == 'nt' and env_d['pdf_viewer'] in env_d['acroreader_path']:
+        pdf_viewer_path = env_d['acroreader_path']
+    else:
+        print("|\n| Could not associate 'pdf_viewer_path' with 'pdf_viewer': check 'environment.json'")
     with open(env_f, 'w', encoding='utf8') as fw:
         json.dump(env_d, fw, ensure_ascii=False, indent=4)
 
 
 def test_linux_environment():
     global env_d
+    global browser_path
+    global pdf_viewer_path
     print('Browser:', 111 * '#')
-    subprocess.run([env_d['browser'], '--version'], executable=env_d['browser_path'])
+    subprocess.run([env_d['browser'], '--version'], executable=browser_path)
     print('Inkscape:', 110 * '#')
     subprocess.run(['inkscape', '--version'], executable=env_d['inkscape_path'])
     print('qpdf:', 114 * '#')
     subprocess.run(['qpdf', '--version'], executable=env_d['qpdf_path'])
     print('pdf_viewer:', 108 * '#')
     warnings.simplefilter("ignore", ResourceWarning)
-    subprocess.Popen([env_d['pdf_viewer']], executable=env_d['pdf_viewer_path'],
+    subprocess.Popen([env_d['pdf_viewer']], executable=pdf_viewer_path,
                      stdout=subprocess.DEVNULL,
                      stderr=subprocess.DEVNULL
                      )
@@ -113,7 +129,7 @@ def my_webbrowser_open_new_tab(browser, tab):
 
 def test_browser_no_wait():
     global env_d
-    my_webbrowser_open_new_tab(env_d['browser'], 'about:preferences#home')
+    my_webbrowser_open_new_tab(env_d['browser'], 'www.inkscape.org')
 
 
 def test_inkscape_and_wait():
@@ -130,8 +146,9 @@ def test_qpdf_and_wait():
 
 def test_pdf_reader_no_wait():
     global env_d
+    global pdf_viewer_path
     warnings.simplefilter("ignore", ResourceWarning)
-    subprocess.Popen([env_d['pdf_viewer']], executable=env_d['pdf_viewer_path'],
+    subprocess.Popen([env_d['pdf_viewer']], executable=pdf_viewer_path,
                      stdout=subprocess.DEVNULL,
                      stderr=subprocess.DEVNULL
                      )
@@ -1150,6 +1167,7 @@ def try_all_processing_options_n_print():
 # final process: unite list of 1-page pdf into final deliverable #######################################################
 def remove_watermarks_n_produce_pdf_deliverable():
     global env_d
+    global pdf_viewer_path
     # Remove all output files that already may exists
     _, _, files = next(os.walk(p1.p1_cntrct_abs_dir))
     pdfs = [file for file in files if file.endswith('.pdf') or (file.endswith('.svg') and file[0] == '.')]
@@ -1190,7 +1208,7 @@ def remove_watermarks_n_produce_pdf_deliverable():
     warnings.simplefilter("ignore", ResourceWarning)
     subprocess.Popen(
         [env_d['pdf_viewer'], deliverable_pdf],
-        executable=env_d['pdf_viewer_path'],
+        executable=pdf_viewer_path,
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL
     )
