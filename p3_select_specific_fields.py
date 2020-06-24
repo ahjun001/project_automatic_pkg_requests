@@ -6,6 +6,7 @@ import re
 import shutil
 import subprocess
 import sys
+import warnings
 import webbrowser
 from tkinter.filedialog import askopenfilename
 import render_barcode as rb
@@ -89,46 +90,52 @@ def load_o_create_required_apps_path():
 def test_linux_environment():
     global env_d
     print('Browser:', 111 * '#')
-    subprocess.Popen([env_d['browser'], '--version'], executable=env_d['browser_path']).wait()
+    subprocess.run([env_d['browser'], '--version'], executable=env_d['browser_path'])
     print('Inkscape:', 110 * '#')
-    subprocess.Popen(['inkscape', '--version'], executable=env_d['inkscape_path']).wait()
+    subprocess.run(['inkscape', '--version'], executable=env_d['inkscape_path'])
     print('qpdf:', 114 * '#')
-    subprocess.Popen(['qpdf', '--version'], executable=env_d['qpdf_path']).wait()
+    subprocess.run(['qpdf', '--version'], executable=env_d['qpdf_path'])
     print('pdf_viewer:', 108 * '#')
+    warnings.simplefilter("ignore", ResourceWarning)
     subprocess.Popen([env_d['pdf_viewer']], executable=env_d['pdf_viewer_path'],
                      stdout=subprocess.DEVNULL,
                      stderr=subprocess.DEVNULL
                      )
+    warnings.simplefilter("default", ResourceWarning)
     print(120 * '#')
 
 
-def test_browser():
+def my_webbrowser_open_new_tab(browser, tab):
+    warnings.simplefilter("ignore", ResourceWarning)
+    webbrowser.get(browser).open_new_tab(tab)
+    warnings.simplefilter("default", ResourceWarning)
+
+
+def test_browser_no_wait():
     global env_d
-    subprocess.Popen([env_d['browser']], executable=env_d['browser_path'])
+    my_webbrowser_open_new_tab(env_d['browser'], 'about:preferences#home')
 
 
-def test_inkscape():
+def test_inkscape_and_wait():
     global env_d
-    subprocess.Popen(['inkscape'], executable=env_d['inkscape_path'])
+    subprocess.run(['inkscape'], executable=env_d['inkscape_path'])
 
 
-def test_qpdf():
+def test_qpdf_and_wait():
     global env_d
     print('qpdf:', 114 * '#')
-    subprocess.Popen(['qpdf', '--version'], executable=env_d['qpdf_path'])
+    subprocess.run(['qpdf', '--version'], executable=env_d['qpdf_path'])
     print(120 * '#')
 
 
-def test_pdf_reader():
+def test_pdf_reader_no_wait():
     global env_d
-    # subprocess.Popen([env_d['pdf_viewer']], executable=env_d['pdf_viewer_path'],
-    #                  stdout=subprocess.DEVNULL,
-    #                  stderr=subprocess.DEVNULL
-    #                  )
+    warnings.simplefilter("ignore", ResourceWarning)
     subprocess.Popen([env_d['pdf_viewer']], executable=env_d['pdf_viewer_path'],
                      stdout=subprocess.DEVNULL,
                      stderr=subprocess.DEVNULL
                      )
+    warnings.simplefilter("default", ResourceWarning)
 
 
 def p3_d_load_o_create():
@@ -470,11 +477,7 @@ def edit_label_template_svg():
         os.path.join(
             p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir']), 'label_template.svg')
     if os.path.exists(label_template_file):
-        subprocess.Popen(
-            ['inkscape', label_template_file],
-            stderr=subprocess.DEVNULL,
-            executable=env_d['inkscape_path']
-        ).wait()
+        subprocess.run(['inkscape', label_template_file], executable=env_d['inkscape_path'])
 
 
 def edit_paragraph_headers():
@@ -775,8 +778,7 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp=False, only_1_prod=F
     def close_svg_for_output(fw2, svg_out2):
         fw2.write('</g>\n</svg>\n')
         fw2.close()
-        webbrowser.get(env_d['browser']).open_new_tab(svg_out2)
-        # subprocess.Popen(['inkscape', svg_out], executable=inkscape_path)
+        my_webbrowser_open_new_tab(env_d['browser'], svg_out2)
 
     # def extract_svg_for_inserting(inkscape_filename, insert_filename):
     #     with open(inkscape_filename, encoding = 'utf8') as fr, open(insert_filename, 'w', encoding = 'utf8') as fwe:
@@ -1110,7 +1112,7 @@ def svg_w_watermarks_1_template_1_product_n_cover_page():
                     contract_n=p1.p1_d["cntrct_nr"],
                     **p3_selected_fields_values_by_prod_d['0']
                 ))
-            webbrowser.get(env_d['browser']).open_new_tab(cover_s)
+            my_webbrowser_open_new_tab(env_d['browser'], cover_s)
         else:
             print(f'{svg_in}: no such file, it should be built before attempting to build a cover page')
 
@@ -1171,30 +1173,28 @@ def remove_watermarks_n_produce_pdf_deliverable():
 
         # export .filename.svg to .filename.pdf
         dot_pdf = os.path.join(p1.p1_cntrct_abs_dir, '.' + bare_filename + '.pdf')
-        subprocess.Popen(
-            ['inkscape', f'--export-filename={dot_pdf}', printable_svg, ],
-            executable=env_d['inkscape_path'],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL
-        ).wait()
+        subprocess.run([
+            'inkscape',
+            f'--export-filename={dot_pdf}',
+            printable_svg,
+        ],
+            executable=env_d['inkscape_path']
+        )
         dot_pdfs.append(f'{dot_pdf}')
 
     # unite all .filename.pdf into deliverable.pdf
     deliverable_pdf = os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d["cntrct_nr"] + '.pdf')
-    subprocess.Popen(
-        ['qpdf', '--empty', '--pages', *dot_pdfs, '--', deliverable_pdf],
-        executable=env_d['qpdf_path'],
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL
-    )
+    subprocess.run(['qpdf', '--empty', '--pages', *dot_pdfs, '--', deliverable_pdf], executable=env_d['qpdf_path'])
 
     # display deliverable.pdf
+    warnings.simplefilter("ignore", ResourceWarning)
     subprocess.Popen(
         [env_d['pdf_viewer'], deliverable_pdf],
         executable=env_d['pdf_viewer_path'],
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL
     )
+    warnings.simplefilter("default", ResourceWarning)
 
 
 # Shell interface data & functions #####################################################################################
@@ -1252,10 +1252,10 @@ def step_3__select_fields_to_print_for_each_template_选择每种标签类型的
     m.menus = {
         m.menu: {
             't': test_linux_environment,
-            'br': test_browser,
-            'in': test_inkscape,
-            'qp': test_qpdf,
-            'pr': test_pdf_reader,
+            'br': test_browser_no_wait,
+            'in': test_inkscape_and_wait,
+            'qp': test_qpdf_and_wait,
+            'pr': test_pdf_reader_no_wait,
             '0': select_a_template,
             '01': pre_process,
             '02': util_print_svg_tags,
