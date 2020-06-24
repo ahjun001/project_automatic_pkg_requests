@@ -1208,7 +1208,7 @@ def remove_watermarks_n_produce_pdf_deliverable():
             printable_svg,
         ],
             executable=env_d['inkscape_path']
-        ).wait()
+        ).wait(5)
         dot_pdfs.append(f'{dot_pdf}')
 
     # unite all .filename.pdf into deliverable.pdf
