@@ -69,7 +69,7 @@ def program_info_d_load_o_create():
                 else:
                     print(f"|\n| Cannot access '{file_xls}'\n|")
             else:
-                print(f'program-info.json does not contain {p1_cntrct_abs_dir} data')
+                print(f'|\n| program-info.json does not contain {p1_cntrct_abs_dir} data')
             print('| Trying to build from fpath_init_xls file in program-info.json')
             if 'fpath_init_xls' in p1_d.keys():
                 if pathlib.Path(p1_d['fpath_init_xls']).exists():
@@ -99,10 +99,10 @@ def program_info_d_load_o_create():
                     print(
                         f"|\n| Cannot access '{p1_d['fpath_init_xls']}' as in 'program-info.json, no such file'\n|")
             else:
-                print(f"program-info.json does not contain {p1_d['fpath_init_xls']} data")
+                print(f"|\n| program-info.json does not contain {p1_d['fpath_init_xls']} data\n|")
 
         else:
-            print(f'program-info.json does not contain {p1_d["cntrct_nr"]} data')
+            print(f'|\n| program-info.json does not contain {p1_d["cntrct_nr"]} data\n|')
     else:
         print(f'{prog_info_json_f} does not exist, no such file')
     # if select then return true

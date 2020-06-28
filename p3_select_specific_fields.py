@@ -75,6 +75,7 @@ def load_o_create_required_apps_path():
         if 'acroreader_path' not in env_d:
             env_d['acroreader_path'] = r'C:\Program Files\Adobe\Reader 11.0\Reader\acrord32.exe'
     else:
+        m.error = True
         print('|\n| Unsupported OS\n|')
         sys.exit()
 
@@ -86,6 +87,7 @@ def load_o_create_required_apps_path():
     elif env_d['browser'] in env_d['chrome_path']:
         browser_path = env_d['chrome_path']
     else:
+        m.error = True
         print("|\n| Could not associate 'browser_path' with 'browser': check 'environment.json'")
 
     # associating pdf_viewer_path to pdf_viewer chosen in 'environment.json'
@@ -98,6 +100,7 @@ def load_o_create_required_apps_path():
     elif os.name == 'nt' and env_d['pdf_viewer'] in env_d['acroreader_path']:
         pdf_viewer_path = env_d['acroreader_path']
     else:
+        m.error = True
         print("|\n| Could not associate 'pdf_viewer_path' with 'pdf_viewer': check 'environment.json'")
     with open(env_f, 'w', encoding='utf8') as fw:
         json.dump(env_d, fw, ensure_ascii=False, indent=4)
@@ -174,7 +177,7 @@ def p3_d_load_o_create():
         p3_f = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir']), 'template-info.json')
         if os.path.exists(p3_f):  # file exists, check that all default value are present, if not print a msg
             with open(p3_f, encoding='utf8') as f:
-                p3_d = json.load(f)  # loads selected_fields, template_header, header_height, barcode_l
+                p3_d = json.load(f)  # loads selected_fields, template_header, header_height, barcodes
 
         # or populate missing fields with default information relative to the directory
         if 'pictures' not in p3_d.keys():
@@ -192,11 +195,11 @@ def p3_d_load_o_create():
                         'file': 'pic_0.png'
                     }]
 
-        if 'barcode_l' not in p3_d.keys():
-            p3_d['barcode_l'] = False
+        if 'barcodes' not in p3_d.keys():
+            p3_d['barcodes'] = False
         else:
-            if p3_d['barcode_l'] is True:
-                p3_d['barcode_l'] = [{"coef": 1.0, "x": 0, "y": 0}]
+            if p3_d['barcodes'] is True:
+                p3_d['barcodes'] = [{"coef": 1.0, "x": 0, "y": 0}]
 
         if 'pre_processing' not in p3_d.keys():
             p3_d['pre_processing'] = False
@@ -230,6 +233,7 @@ def p3_d_load_o_create():
         save_template_info_json()
         return True
     else:
+        m.error = True
         print('|\n| The contract directory does not contain subdirectories: cannot load or create labels\n|')
         return False
 
@@ -310,6 +314,7 @@ def create_barcode_file(prod_n):
 def fields_from_template():
     template_s = os.path.join(os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir']), 'label_template.svg')
     if not os.path.exists(template_s):
+        m.error = True
         print(f"|\n| Cannot access '{os.path.join(p1.p1_d['fields_rel_dir'], 'label_template.svg')}': no such file\n|")
     with open(template_s, encoding='utf8') as fr:
         lines = fr.readlines()
@@ -338,14 +343,14 @@ def add_fields():
     p3_all_specific_fields_l = list(next(iter(p1.p1e_specific_fields_d_of_d.values())))
     # select from p3_all_specific_fields_l and put in p3_d['selected_fields']
     while True:
-        print(f'~~~ Already selected:\n{p3_d["selected_fields"]}\n~~~ Can be added:')
+        print(f'\n~~~ Already selected:\n{p3_d["selected_fields"]}\n\n~~~ Can be added:')
         not_yet_l = []
         for o in p3_all_specific_fields_l:
             if o not in p3_d['selected_fields']:
                 not_yet_l.append(o)
         for i in range(len(not_yet_l)):
             print(str(i) + ' ' + not_yet_l[i])
-        print('~~~')
+        print('\n~~~')
         s = input('Enter nr of indicator to add, \'b\' to return : ')
         if s == 'b':
             m.clear()
@@ -367,10 +372,10 @@ def del_fields():
     global p3_f
 
     while True:
-        print(f'~~~ Already selected:')
+        print(f'\n~~~ Already selected:')
         for i in range(len(p3_d['selected_fields'])):
             print(f'{i}. {p3_d["selected_fields"][i]}')
-        print(f'~~~')
+        print(f'\n~~~')
         s = input('Enter nr of indicator to delete, \'b\' to return : ')
         if s == 'b':
             m.clear()
@@ -432,7 +437,7 @@ def display_specific_fields_for_all_products():
 
 def edit_fields():
     while True:
-        print('~~~ Now working on template: ', p1.p1_d['fields_rel_dir'] if p1.p1_d['fields_rel_dir'] else 'None')
+        print('\n~~~ Now working on template: ', p1.p1_d['fields_rel_dir'] if p1.p1_d['fields_rel_dir'] else 'None')
         s = input('\'a\' to add a field\n'
                   '\'d\' to delete a field\n'
                   '\'b\' to go back_后退\n'
@@ -452,7 +457,7 @@ def edit_fields():
 
 
 def edit_a_template():
-    print('~~~ select a template to edit ~~~')
+    print('\n~~~ select a template to edit ~~~')
     m.mod_lev_1_menu = m.menu
     m.menu = 'edit_a_template'
     select_a_template()
@@ -507,7 +512,7 @@ def edit_paragraph_headers():
         # giving a default directory if none has been set before
         if not p1.p1_d['fields_rel_dir']:
             p1.p1_d['fields_rel_dir'] = drs[0]
-        print(f'~~~ Now processing contract #: {p1.p1_d["cntrct_nr"]}')
+        print(f'\n~~~ Now processing contract #: {p1.p1_d["cntrct_nr"]}')
         print('>>> Select template to edit:\n')
         for i in range(len(drs)):
             print(str(i) + '. ' + drs[i][2:])
@@ -644,7 +649,13 @@ def mako_input_json_load_o_create(force_recreate=False):
                     # with ./common/zh_fr.json
                     if what_zh[-3:] == '_zh':
                         what_fr = what_zh[:-2] + 'fr'
-                        temp_d[indc_d['prod_nr']][what_fr] = zh_fr_d[indc_d['info']]
+                        info_zh = indc_d['info']
+                        if info_zh in zh_fr_d:
+                            temp_d[indc_d['prod_nr']][what_fr] = zh_fr_d[info_zh]
+                        else:
+                            m.error = True
+                            print(f'|\n| {info_zh} not in zh_fr.json\n|\n')
+
 
                     # add fields data for fields that will be later re-processed
                     if pre_proc_data_d and what_zh in pre_proc_data_d:
@@ -670,6 +681,9 @@ def mako_input_json_load_o_create(force_recreate=False):
         if 'pre_processing' in p3_d and p3_d['pre_processing']:  # case True or dic()
             for new_field in p3_d['pre_processing'].keys():
                 new_field_d = p3_d['pre_processing'][new_field]
+                if not (new_field_d['field'] and new_field_d['regex'] and new_field_d['repl']):
+                    print('|\n| Data missing in template-info.json / pre_processing\n|' )
+                    exit()
                 for k in p3_selected_fields_values_by_prod_d.keys():
                     string = p3_selected_fields_values_by_prod_d[k][new_field_d['field']]
                     regex = new_field_d['regex']
@@ -704,6 +718,7 @@ def util_print_svg_tags():
             print(tag)
         print(f'tags: {tags}')
     else:
+        m.error = True
         print('|\n| No file selected\n|')
 
 
@@ -959,8 +974,9 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp=False, only_1_prod=F
                                             "</svg>\n</g>\n"
                                         )
                                 else:
+                                    m.error = True
                                     print(
-                                        f'|\n| Cannot access {filename_abs}: No such file \n'
+                                    f'|\n| Cannot access {filename_abs}: No such file \n'
                                         '| Make sure it exists as indicated by template-info.json\n|'
                                     )
                                     exit()
@@ -974,8 +990,8 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp=False, only_1_prod=F
                         ), p3_selected_fields_values_by_prod_d[str(i)]['prod_n'] + '.svg'
                     )
 
-                    if 'barcode_l' in p3_d and p3_d['barcode_l']:
-                        brcd_l = list(p3_d['barcode_l'])
+                    if 'barcodes' in p3_d and p3_d['barcodes']:
+                        brcd_l = list(p3_d['barcodes'])
                     else:
                         brcd_l = []
 
@@ -1241,15 +1257,18 @@ def step_3__select_fields_to_print_for_each_template_选择每种标签类型的
         save_template_info_json()
 
     def select_specific_fields_context_func(prompt=True):
-        print('~~~ Step 3: Selecting fields to print for each template ~~~\n')
-        display_specific_fields_for_all_products()
-        print('~~~ Now processing contract #: ', p1.p1_d["cntrct_nr"] if p1.p1_d["cntrct_nr"] else None)
-        print('~~~ Now working on template: ', p1.p1_d['fields_rel_dir'] if p1.p1_d['fields_rel_dir'] else 'None '
-                                                                                                           'selected')
-        print('~~~ Specific fields selected so far:', p3_d['selected_fields'])
-        print(60 * '-', '\n\n')
-        if prompt:
-            print('\n>>> Select an action: ')
+        if not m.error:
+            print('~~~ Step 3: Selecting fields to print for each template ~~~\n')
+            display_specific_fields_for_all_products()
+            print('~~~ Now processing contract #: ', p1.p1_d["cntrct_nr"] if p1.p1_d["cntrct_nr"] else None)
+            print('~~~ Now working on template: ', p1.p1_d['fields_rel_dir'] if p1.p1_d['fields_rel_dir'] else 'None '
+                                                                                                               'selected')
+            print('~~~ Specific fields selected so far:', p3_d['selected_fields'])
+            print(60 * '-', '\n\n')
+            if prompt:
+                print('\n>>> Select an action: ')
+        else:
+            m.error = False
 
     context_func_d = {
         'select_specific_fields': select_specific_fields_context_func,

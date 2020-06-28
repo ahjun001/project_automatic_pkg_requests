@@ -1,5 +1,5 @@
 {
-    "barcode_l": [
+    "barcodes": [
         {
             "coef": 0.15,
             "x": 40,
@@ -48,7 +48,8 @@
         "parc",
         "u_parc",
         "color_zh",
-        "gm_zh"
+        "gm_zh",
+        "plstc_bg"
     ],
     "pre_processing": {
         "better_spec": {
