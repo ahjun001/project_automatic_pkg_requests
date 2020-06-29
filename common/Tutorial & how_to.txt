@@ -8,9 +8,52 @@ All processes can be performed in a copy of the .../data/A000001-start project
 After all processes are performed, a version of the resulting package request is in the .../data/A000001-final directory
 
 ########################################################################################################################
+The program 'automatic_pckg' automatically generates packaging requests formatted as pdf, layed out so that they can
+directly be sent to suppliers.
+
+The program aims at reducing manual input errors as well as translation and presentation discrepancies.
+
+For contracts with large numbers of products, producing a reliable and coherent packaging request is noticeably faster
+than other methods, specifically modifying an existing request or starting from scratch with Adobe Illustrator.
+
+Finally, the program allows for more flexibility in the design process, as changes can be instantly propagated to the
+whole set of products without lots of re-work.
+
+The overall process of the program is to get data from SAP in XL format, segregate it into JSON files that will feed SVG
+templates to finally produce PDF or ODG (readable with MSWord) files. As per below:
+
+SAP > XL > JSON
+                > SVG > PDF & ODG
+            SVG
+
+Program inputs are as follows:
+- a SVG template for each level of packaging: outer box, inner box, plastic bag, sticker ...
+This template is built with Inkscape, an open-source program that generates Scalable Vector Graphic, SVG files.
+
+- a list of parameters that allow to customize the template and specifically:
+    . insert data fields to populate information from XL to labels
+    . insert pictures in labels, possibly each specific to their corresponding product, in a variety of
+      formats (preferred format being SVG, as it scales along with the rest of the document)
+    . automatically generate EAN-13 bar codes
+
+This data is entirely human readable. It is stored in a 4 levels directory tree as such:
+- at root level: program-info.json contains data on the contract being edited and the position of the initial .xls data
+    source file.
+- up one level are directories such as:
+    . contract-samples: containing reference finished packaging requests that can be further re-used
+    . common: containing label templates, regular expressions to search for data in excel,Â
+    . data: containing work in process when building a packaging request
+- up the data directory are contract-specific data directories, each directory contains:
+    . a  .../doc_setup.json file with margins, cover page, and vertical offset indications
+    . a directory for each label template that needs to be designed
+- label template directories each contain:
+    . a label_template.svg file, svg graphic template for the label to be printed
+    . a template-info.json file that points to data needed to feed the template
+
+########################################################################################################################
 0. Set-up necessary software tools
 
-All tools can be downloaded from afp://admin@ftp-server.local/业务组文件/automatic_package_requests
+All tools can be installed from afp://admin@ftp-server.local/业务组文件/automatic_package_requests
 
 If necessary, new versions of qpdf, a tool that merges individual pdf pages into one document, are available at:
  https://github.com/qpdf/qpdf/releases

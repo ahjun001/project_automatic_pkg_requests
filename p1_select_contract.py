@@ -37,13 +37,25 @@ def program_info_d_load_o_create():
     global prog_info_json_f
     global p1_d
     global p1_cntrct_abs_dir
+    global p1_cntrct_info_d
+    global p1_cntrct_info_f
+
+    prog_info_json_f = os.path.join(m.root_abs_dir, 'program-info.json')
 
     # If the data directory does not exist, create it
     data_abs_dir = os.path.join(m.root_abs_dir, 'data')
     if not pathlib.Path(data_abs_dir).exists():
         os.mkdir(data_abs_dir)
+        if os.path.exists(prog_info_json_f):
+            os.remove(prog_info_json_f)
 
-    prog_info_json_f = os.path.join(m.root_abs_dir, 'program-info.json')
+        # and immediately select a new contract
+        # p1_d = {}
+        # p1_cntrct_info_d = {}
+        # p1_cntrct_info_f = ''
+        # prog_info_json_f = ''
+        # step_1__select_a_contract_选择合同号()
+
     if pathlib.Path(prog_info_json_f).exists():
         # then load the info from (i) the repository
         # or (ii) re-create it from the initial file
@@ -215,7 +227,6 @@ def step_1__select_a_contract_选择合同号(test_contract_nr=''):
             _, ext = os.path.splitext(file_ext)
             if ext == '.xls':
                 ini_xls = os.path.join(os.path.join('contract_samples', test_contract_nr), file)
-        pass
     else:
         ini_xls = askopenfilename(initialdir='contract_samples')
     if not ini_xls:
@@ -252,11 +263,9 @@ def step_1__select_a_contract_选择合同号(test_contract_nr=''):
             stpf_rel_f = p1_d['cntrct_nr'] + '_doc_setup.json'
             stpf_abs_src = os.path.join(path, stpf_rel_f)
             stpf_abs_dest = os.path.join(p1_cntrct_abs_dir, stpf_rel_f)
-            if pathlib.Path(stpf_abs_src).exists():
-                if not pathlib.Path(stpf_abs_dest).exists():
-                    shutil.copy(stpf_abs_src, p1_cntrct_abs_dir)
+            if pathlib.Path(stpf_abs_src).exists() and not pathlib.Path(stpf_abs_dest).exists():
+                shutil.copy(stpf_abs_src, p1_cntrct_abs_dir)
 
-                # also copy template directories, svg and json files that might exists
             _, dirs, _ = next(os.walk(path))
             if dirs:
                 for some_dir in dirs:
@@ -303,7 +312,7 @@ def process_selected_contract():
         p1_cntrct_info_d = {}
 
     # setting the name of the -contract.json file
-    rel_path_contract_json_f = '.p1a_' + p1_d['cntrct_nr'] + '-contract.json'
+    rel_path_contract_json_f = p1_d['cntrct_nr'] + '-contract.json'
 
     # Creating the json file from the local xls file: opening the xl file
     book = xlrd.open_workbook(
@@ -348,16 +357,14 @@ def process_selected_contract():
         json.dump(p1a_contract_json_d, fc, indent=4, ensure_ascii=False)
 
     # also write into a text file to validate regex in www.regex101.com
-    contract_long_list = ""
-    for product in p1a_contract_json_d['l_i']:
-        for value in product.values():
-            # contract_long_list += (str(value)).strip()
-            # contract_long_list += (str(value)).replace(r'\r\n', r'\n')
-            contract_long_list += (str(value)).replace('\r', '')
-    with open(
-            os.path.join(p1_cntrct_abs_dir, '.p1a_' + p1_d['cntrct_nr'] + '-contract.txt'), 'w', encoding='utf8'
-    ) as fw:
-        fw.write(contract_long_list)
+    # contract_long_list = ""
+    # for product in p1a_contract_json_d['l_i']:
+    #     for value in product.values():
+    #         contract_long_list += (str(value)).replace('\r', '')
+    # with open(
+    #         os.path.join(p1_cntrct_abs_dir, p1_d['cntrct_nr'] + '-contract.txt'), 'w', encoding='utf8'
+    # ) as fw:
+    #     fw.write(contract_long_list)
 
     # populate p1_cntrct_info_d: a structure to store template information, and its corresponding json file
     p1_cntrct_info_d['p1a_contract_json'] = rel_path_contract_json_f
