@@ -566,36 +566,44 @@ def edit_paragraph_headers():
 
         save_template_info_json()
         mako_input_json_load_o_create()
-        svg_w_watermarks_1_template_1_product_n_cover_page()
+        produce_svg_w_watermarks_1_template_1_product_n_cover_page()
     else:
         return
 
 
 # process svg_w_watermarks and its utility functions ###################################################################
 def dump_fields_rel_dir():
+    """ Leaves a trace of the last edited template by saving p1.p1_d in the root directory file 'program-info.json'. """
+    global p3_d
+
     prog_info_json_f = os.path.join(m.root_abs_dir, 'program-info.json')
     with open(prog_info_json_f, 'w', encoding='utf8') as fw:
         json.dump(p1.p1_d, fw, ensure_ascii=False, indent=4)
 
 
 def check_if_template_requirements_are_met():
+    m.hide_context = True
     template_fields_set = fields_from_template()
     for x in ['t', 'i', 'prod_n']:
         if x in template_fields_set:
             template_fields_set.remove(x)
+    for x in template_fields_set.copy():
+        if x[-3:] == '_fr':
+            template_fields_set.remove(x)
+
+    if p3_d['pre_processing']:
+        for x in p3_d['pre_processing']:
+            template_fields_set.remove(x)
+
     # print(f'Template in {p1.p1_d['fields_rel_dir']} uses {template_fields_set}')
     # print(f'Fields selected to feed data are  {p3_d["selected_fields"]}')
     diff_set = template_fields_set - set(p3_d['selected_fields'])
     if diff_set:
-        missing_in_template_l = []
-        for f in template_fields_set:
-            if f not in p3_d['selected_fields']:
-                missing_in_template_l.append(f)
-        # print('The template requires the following fields but those\n'  # todo: manage the 'better_spec' case
-        #       'were not found in the data requisition list: ', missing_in_template_l)
+        missing_in_selected_fields_l = [f for f in template_fields_set if f not in p3_d['selected_fields']]
+        print("The template requires the following fields but those\n"  # todo: manage the 'better_spec' case
+              "were not found in 'template-info.json'/'selected_fields' list: ", missing_in_selected_fields_l)
     else:
-        pass
-        # print('Template fields and requested data match.  The template is operational.')
+        print("'label_template.svg' and 'template-info.json' fields requirements match")
 
 
 def mako_input_json_load_o_create(force_recreate=False):
@@ -648,14 +656,13 @@ def mako_input_json_load_o_create(force_recreate=False):
                     # internal convention: all indics with name finishing with _zh will be translated into French
                     # with ./common/zh_fr.json
                     if what_zh[-3:] == '_zh':
-                        what_fr = what_zh[:-2] + 'fr'
                         info_zh = indc_d['info']
                         if info_zh in zh_fr_d:
+                            what_fr = what_zh[:-2] + 'fr'
                             temp_d[indc_d['prod_nr']][what_fr] = zh_fr_d[info_zh]
                         else:
                             m.error = True
                             print(f'|\n| {info_zh} not in zh_fr.json\n|\n')
-
 
                     # add fields data for fields that will be later re-processed
                     if pre_proc_data_d and what_zh in pre_proc_data_d:
@@ -671,18 +678,12 @@ def mako_input_json_load_o_create(force_recreate=False):
         for v in temp_d.values():
             p3_selected_fields_values_by_prod_d[str(int(v['i']) - 1)] = v
 
-        # save results before adding new fields being derived from existing ones
-        # mako_pre_proc_json_s = os.path.join(p1.p1_cntrct_abs_dir + '/' + p1.p1_d['fields_rel_dir'],
-        # '.mako_preproc.json')
-        # with open(mako_pre_proc_json_s, 'w', encoding='utf8') as f:
-        #     json.dump(p3_selected_fields_values_by_prod_d, f, ensure_ascii = False, indent = 4)
-
         # adding new fields being derived from existing ones, as defined in template-info.json
         if 'pre_processing' in p3_d and p3_d['pre_processing']:  # case True or dic()
             for new_field in p3_d['pre_processing'].keys():
                 new_field_d = p3_d['pre_processing'][new_field]
                 if not (new_field_d['field'] and new_field_d['regex'] and new_field_d['repl']):
-                    print('|\n| Data missing in template-info.json / pre_processing\n|' )
+                    print('|\n| Data missing in template-info.json / pre_processing\n|')
                     exit()
                 for k in p3_selected_fields_values_by_prod_d.keys():
                     string = p3_selected_fields_values_by_prod_d[k][new_field_d['field']]
@@ -722,7 +723,7 @@ def util_print_svg_tags():
         print('|\n| No file selected\n|')
 
 
-def svg_w_watermarks_all_templates_all_products(only_1_temp=False, only_1_prod=False):
+def produce_svg_w_watermarks_all_templates_all_products(only_1_temp=False, only_1_prod=False):
     """
 
     """
@@ -976,7 +977,7 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp=False, only_1_prod=F
                                 else:
                                     m.error = True
                                     print(
-                                    f'|\n| Cannot access {filename_abs}: No such file \n'
+                                        f'|\n| Cannot access {filename_abs}: No such file \n'
                                         '| Make sure it exists as indicated by template-info.json\n|'
                                     )
                                     exit()
@@ -1057,7 +1058,7 @@ def svg_w_watermarks_all_templates_all_products(only_1_temp=False, only_1_prod=F
 
 
 # Aggregate functions ##################################################################################################
-def svg_w_watermarks_1_template_1_product_n_cover_page():
+def produce_svg_w_watermarks_1_template_1_product_n_cover_page():
     global p3_d
     global p3_selected_fields_values_by_prod_d
     global env_d
@@ -1069,7 +1070,7 @@ def svg_w_watermarks_1_template_1_product_n_cover_page():
         dump_fields_rel_dir()
 
     # generate a svg with mako rendering on the first product
-    svg_w_watermarks_all_templates_all_products(only_1_temp=True, only_1_prod=True)
+    produce_svg_w_watermarks_all_templates_all_products(only_1_temp=True, only_1_prod=True)
 
     # if the cover page has been set and if this is the first template in the list then also create a cover page
     if p1.doc_setup_d['cover_page'] and p1.p1_d['fields_rel_dir'] == cvr_pg_dir:
@@ -1153,20 +1154,20 @@ def svg_w_watermarks_1_template_1_product_n_cover_page():
             print(f'{svg_in}: no such file, it should be built before attempting to build a cover page')
 
 
-def svg_w_watermarks_1_template_all_products():
+def produce_svg_w_watermarks_1_template_all_products():
     if not p1.p1_d['fields_rel_dir']:
         drs = p2.p2_load_templates_info_l()
         p1.p1_d['fields_rel_dir'] = drs[0]
-    svg_w_watermarks_all_templates_all_products(only_1_temp=True)
+    produce_svg_w_watermarks_all_templates_all_products(only_1_temp=True)
 
 
 def produce_all_svg_n_print():
-    svg_w_watermarks_1_template_1_product_n_cover_page()
-    svg_w_watermarks_all_templates_all_products()
+    produce_svg_w_watermarks_1_template_1_product_n_cover_page()
+    produce_svg_w_watermarks_all_templates_all_products()
     remove_watermarks_n_produce_pdf_deliverable()
 
 
-def try_all_processing_options_n_print():
+def produce_all_previous_production_options_n_print():
     load_o_create_required_apps_path()
     # read existing templates
     drs_l = p2.p2_load_templates_info_l()
@@ -1177,18 +1178,31 @@ def try_all_processing_options_n_print():
             # use data on disk, if not on disk create with default values
             if p3_d_load_o_create():
                 print('Rendering 1 template, 1 product & cover page')
-                svg_w_watermarks_1_template_1_product_n_cover_page()
+                produce_svg_w_watermarks_1_template_1_product_n_cover_page()
                 print('Rendering 1 template, all products')
-                svg_w_watermarks_1_template_all_products()
+                produce_svg_w_watermarks_1_template_all_products()
     print('Rendering all templates, all products, and print')
     produce_all_svg_n_print()
 
 
 # final process: unite list of 1-page pdf into final deliverable #######################################################
 def remove_watermarks_n_produce_pdf_deliverable():
+    """
+    Remove all output files that may exist in root directory.
+
+    Produce new ones: list filename.svg with watermark.
+
+    remove watermarks, save in .filename.svg.
+
+    use inkscape to export .filename.svg to .filename.pdf.
+
+    unite all .filename.pdf into deliverable.pdf.
+
+    display deliverable.pdf.
+    """
     global env_d
     global pdf_viewer_path
-    # Remove all output files that already may exists
+    # Remove all output files that may exist in root directory
     _, _, files = next(os.walk(p1.p1_cntrct_abs_dir))
     pdfs = [file for file in files if file.endswith('.pdf') or (file.endswith('.svg') and file[0] == '.')]
     for file in pdfs:
@@ -1209,15 +1223,8 @@ def remove_watermarks_n_produce_pdf_deliverable():
             for line in fr:
                 fw.write(line.replace('fuchsia', 'none').replace('#ff00ff', 'none'))
 
-        # export .filename.svg to .filename.pdf
+        # use inkscape to export .filename.svg to .filename.pdf
         dot_pdf = os.path.join(p1.p1_cntrct_abs_dir, '.' + bare_filename + '.pdf')
-        # subprocess.run([
-        #     'inkscape',
-        #     f'--export-filename={dot_pdf}',
-        #     printable_svg,
-        # ],
-        #     executable=env_d['inkscape_path']
-        # )
         subprocess.Popen([
             'inkscape',
             f'--export-filename={dot_pdf}',
@@ -1243,9 +1250,13 @@ def remove_watermarks_n_produce_pdf_deliverable():
 
 
 # Shell interface data & functions #####################################################################################
+def xxxxx_set_up_a_template_and_populate_fields_correctly_xxxxx():
+    pass
+
+
 # noinspection PyPep8Naming,NonAsciiCharacters
 def step_3__select_fields_to_print_for_each_template_选择每种标签类型的资料():
-    def scrap_template_for_fields():
+    def scrap_template_for_fields():  # todo: probably needs to be re-eng with check_if_template_requirements_are_met
         template_fields = fields_from_template()
         for x in ['t', 'i', 'prod_n']:
             if x in template_fields:
@@ -1257,18 +1268,22 @@ def step_3__select_fields_to_print_for_each_template_选择每种标签类型的
         save_template_info_json()
 
     def select_specific_fields_context_func(prompt=True):
-        if not m.error:
+        if not m.error and not m.hide_context:
             print('~~~ Step 3: Selecting fields to print for each template ~~~\n')
             display_specific_fields_for_all_products()
             print('~~~ Now processing contract #: ', p1.p1_d["cntrct_nr"] if p1.p1_d["cntrct_nr"] else None)
-            print('~~~ Now working on template: ', p1.p1_d['fields_rel_dir'] if p1.p1_d['fields_rel_dir'] else 'None '
-                                                                                                               'selected')
+            print(
+                '~~~ Now working on template: ',
+                p1.p1_d['fields_rel_dir']
+                if p1.p1_d['fields_rel_dir'] else 'None selected'
+            )
             print('~~~ Specific fields selected so far:', p3_d['selected_fields'])
             print(60 * '-', '\n\n')
             if prompt:
                 print('\n>>> Select an action: ')
         else:
             m.error = False
+            m.hide_context = False
 
     context_func_d = {
         'select_specific_fields': select_specific_fields_context_func,
@@ -1299,22 +1314,18 @@ def step_3__select_fields_to_print_for_each_template_选择每种标签类型的
     # todo: check if template requirements are met
     m.menus = {
         m.menu: {
-            't': test_linux_environment,
-            'br': test_browser_no_wait,
-            'in': test_inkscape_and_wait,
-            'qp': test_qpdf_and_wait,
-            'pr': test_pdf_reader_no_wait,
+            'xxxxx': xxxxx_set_up_a_template_and_populate_fields_correctly_xxxxx,
             '0': select_a_template,
-            '01': pre_process,
-            '02': util_print_svg_tags,
-            '1': svg_w_watermarks_1_template_1_product_n_cover_page,
-            '2': svg_w_watermarks_1_template_all_products,
-            '3': svg_w_watermarks_all_templates_all_products,
-            '31': check_all_templates_have_correct_fields,
-            '4': produce_all_svg_n_print,
-            '5': try_all_processing_options_n_print,
-            '55': remove_watermarks_n_produce_pdf_deliverable,
             'e': edit_a_template,
+            '01': pre_process,
+            '30': check_if_template_requirements_are_met,
+            '31': check_all_templates_have_correct_fields,
+            '1': produce_svg_w_watermarks_1_template_1_product_n_cover_page,
+            '2': produce_svg_w_watermarks_1_template_all_products,
+            '3': produce_svg_w_watermarks_all_templates_all_products,
+            '4': produce_all_svg_n_print,
+            '5': produce_all_previous_production_options_n_print,
+            '55': remove_watermarks_n_produce_pdf_deliverable,
             'b': m.back_to_main_退到主程序,
             'q': m.normal_exit_正常出口,
             'd': m.debug,
@@ -1330,6 +1341,12 @@ def step_3__select_fields_to_print_for_each_template_选择每种标签类型的
             'q': m.normal_exit_正常出口,
         },
         'debug': {
+            'br': test_browser_no_wait,
+            'in': test_inkscape_and_wait,
+            'qp': test_qpdf_and_wait,
+            'pr': test_pdf_reader_no_wait,
+            't': test_linux_environment,
+            'tags': util_print_svg_tags,
             'b': m.back_后退,
             'q': m.normal_exit_正常出口,
         }

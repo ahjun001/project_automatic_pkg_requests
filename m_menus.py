@@ -6,6 +6,7 @@ menu = main_menu = mod_lev_1_menu = None
 menus = main_menus = mod_lev_1_menus = {}
 root_abs_dir = os.path.dirname(os.path.abspath(__file__))
 error = False
+hide_context = False
 
 
 # noinspection PyPep8Naming,NonAsciiCharacters

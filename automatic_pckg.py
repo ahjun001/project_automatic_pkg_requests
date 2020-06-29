@@ -16,7 +16,7 @@ import p3_select_specific_fields as p3
 def run_full_demo_with_selected_or_default_values_运行完整演示():
     p1.process_selected_contract()
     p2.load_or_create_templates()
-    p3.try_all_processing_options_n_print()
+    p3.produce_all_previous_production_options_n_print()
 
 
 def test_environment():
