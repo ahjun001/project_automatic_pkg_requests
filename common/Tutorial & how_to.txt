@@ -1,5 +1,5 @@
 Tutorial: Make a packaging request
-0. Set-up necessary software tools
+0. Required software tools & Set-up
 1. Copy & edit, or Create template svg files with mock data.
 2. Add ${fields} that have been searched in contract with regular expressions, RegEx
 3. Add photos, barcodes, edit fields'data as necessary
@@ -44,14 +44,18 @@ This data is entirely human readable. It is stored in a 4 levels directory tree 
     . common: containing label templates, regular expressions to search for data in excel,Â
     . data: containing work in process when building a packaging request
 - up the data directory are contract-specific data directories, each directory contains:
-    . a  .../doc_setup.json file with margins, cover page, and vertical offset indications
+    . a  .../doc_setup.json file with margins, cover page, and vertical offset indication
+        margins and vertical offset are mesured in mm
+        margin_w is the width of one horizontal margin, set to 15 by default
+        margin_h is the height of one horizontal margin, set to 15 by default
+        page1_vert_offset is set to 0 by default
     . a directory for each label template that needs to be designed
 - label template directories each contain:
     . a label_template.svg file, svg graphic template for the label to be printed
     . a template-info.json file that points to data needed to feed the template
 
 ########################################################################################################################
-0. Set-up necessary software tools
+0. Required software tools & Set-up
 
 All tools can be installed from afp://admin@ftp-server.local/业务组文件/automatic_package_requests
 
