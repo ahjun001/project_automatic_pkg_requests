@@ -1225,13 +1225,18 @@ def remove_watermarks_n_produce_pdf_deliverable():
 
         # use inkscape to export .filename.svg to .filename.pdf
         dot_pdf = os.path.join(p1.p1_cntrct_abs_dir, '.' + bare_filename + '.pdf')
-        subprocess.Popen([
-            'inkscape',
+        # subprocess.Popen([
+        #     'inkscape',
+        #     f'--export-filename={dot_pdf}',
+        #     printable_svg,
+        # ],
+        #     executable=env_d['inkscape_path']
+        # ).wait()
+        subprocess.run([
+            env_d['inkscape_path'],
             f'--export-filename={dot_pdf}',
             printable_svg,
-        ],
-            executable=env_d['inkscape_path']
-        ).wait(5)
+        ], executable=env_d['inkscape_path'])
         dot_pdfs.append(f'{dot_pdf}')
 
     # unite all .filename.pdf into deliverable.pdf
