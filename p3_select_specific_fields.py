@@ -1250,10 +1250,6 @@ def remove_watermarks_n_produce_pdf_deliverable():
 
 
 # Shell interface data & functions #####################################################################################
-def xxxxx_set_up_a_template_and_populate_fields_correctly_xxxxx():
-    pass
-
-
 # noinspection PyPep8Naming,NonAsciiCharacters
 def step_3__select_fields_to_print_for_each_template_选择每种标签类型的资料():
     def scrap_template_for_fields():  # todo: probably needs to be re-eng with check_if_template_requirements_are_met
@@ -1314,7 +1310,6 @@ def step_3__select_fields_to_print_for_each_template_选择每种标签类型的
     # todo: check if template requirements are met
     m.menus = {
         m.menu: {
-            'xxxxx': xxxxx_set_up_a_template_and_populate_fields_correctly_xxxxx,
             '0': select_a_template,
             'e': edit_a_template,
             '01': pre_process,
