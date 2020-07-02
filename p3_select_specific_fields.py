@@ -682,7 +682,7 @@ def mako_input_json_load_o_create(force_recreate=False):
         if 'pre_processing' in p3_d and p3_d['pre_processing']:  # case True or dic()
             for new_field in p3_d['pre_processing'].keys():
                 new_field_d = p3_d['pre_processing'][new_field]
-                if not (new_field_d['field'] and new_field_d['regex'] and new_field_d['repl']):
+                if not (new_field_d['field'] and new_field_d['regex']):
                     print('|\n| Data missing in template-info.json / pre_processing\n|')
                     exit()
                 for k in p3_selected_fields_values_by_prod_d.keys():
