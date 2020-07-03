@@ -203,6 +203,8 @@ In 3.Select_specific_fields  run the function 55.remove_watermarks_and_produce_p
 
 B. Program option:
 1. For each template, store pictures in a sub-directory to the one of the template named 'pics'
+    As all pictures from all templates will be copied in the same sub-directory, please use explicit names for picture
+    files.  Names like pic1, fig2, photo_n ... should be avoided.
 
 2. In .../data/A00001-start/a.Outer_box_外箱/template-info.json switch "pictures" to true
     Run pre_process again
