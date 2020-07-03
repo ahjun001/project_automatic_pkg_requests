@@ -1225,18 +1225,23 @@ def remove_watermarks_n_produce_pdf_deliverable():
 
         # use inkscape to export .filename.svg to .filename.pdf
         dot_pdf = os.path.join(p1.p1_cntrct_abs_dir, '.' + bare_filename + '.pdf')
-        # subprocess.Popen([
-        #     'inkscape',
-        #     f'--export-filename={dot_pdf}',
-        #     printable_svg,
-        # ],
-        #     executable=env_d['inkscape_path']
-        # ).wait()
-        subprocess.run([
+        p = subprocess.Popen([
             env_d['inkscape_path'],
             f'--export-filename={dot_pdf}',
             printable_svg,
-        ], executable=env_d['inkscape_path'])
+        ],
+            executable=env_d['inkscape_path']
+        )
+        try:
+            outs, errs = p.communicate(timeout=10)
+        except subprocess.TimeoutExpired:
+            print(f'Process {p.pid} timed out before finishing')
+            p.kill()
+        else:
+            print('subprocess.Popen return code', p.returncode)
+            if p.returncode is not None and p.returncode != 0:
+                raise RuntimeError(f"Failed command-line: {errs.decode(sys.stderr.encoding)}")
+                return outs.decode(sys.stdout.encoding)
         dot_pdfs.append(f'{dot_pdf}')
 
     # unite all .filename.pdf into deliverable.pdf
