@@ -1250,7 +1250,7 @@ def remove_watermarks_n_produce_pdf_deliverable():
 
     # display deliverable.pdf
     warnings.simplefilter("ignore", ResourceWarning)
-    subprocess.Popen(
+    subprocess.run(
         [env_d['pdf_viewer'], deliverable_pdf],
         executable=pdf_viewer_path,
         stdout=subprocess.DEVNULL,
