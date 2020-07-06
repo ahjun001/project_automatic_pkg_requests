@@ -154,10 +154,10 @@ def test_pdf_reader_no_wait():
     global env_d
     global pdf_viewer_path
     warnings.simplefilter("ignore", ResourceWarning)
-    subprocess.Popen([env_d['pdf_viewer']], executable=pdf_viewer_path,
-                     stdout=subprocess.DEVNULL,
-                     stderr=subprocess.DEVNULL
-                     )
+    subprocess.run([env_d['pdf_viewer']], executable=pdf_viewer_path,
+                   stdout=subprocess.DEVNULL,
+                   stderr=subprocess.DEVNULL
+                   )
     warnings.simplefilter("default", ResourceWarning)
 
 
@@ -1241,7 +1241,6 @@ def remove_watermarks_n_produce_pdf_deliverable():
             print('subprocess.Popen return code', p.returncode)
             if p.returncode is not None and p.returncode != 0:
                 raise RuntimeError(f"Failed command-line: {errs.decode(sys.stderr.encoding)}")
-                return outs.decode(sys.stdout.encoding)
         dot_pdfs.append(f'{dot_pdf}')
 
     # unite all .filename.pdf into deliverable.pdf
