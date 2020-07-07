@@ -29,14 +29,14 @@ page_view_box_w = 0
 page_view_box_h = 0
 env_d = {}
 browser_path = ''
-pdf_viewer_path = ''
+pdf_reader_path = ''
 
 
 # Utility functions ####################################################################################################
 def load_o_create_required_apps_path():
     global env_d
     global browser_path
-    global pdf_viewer_path
+    global pdf_reader_path
     # either read existing data
     env_f = os.path.join(m.root_abs_dir, 'environment.json')
     if os.path.exists(env_f):
@@ -90,18 +90,18 @@ def load_o_create_required_apps_path():
         m.error = True
         print("|\n| Could not associate 'browser_path' with 'browser': check 'environment.json'")
 
-    # associating pdf_viewer_path to pdf_viewer chosen in 'environment.json'
-    if 'pdf_viewer' not in env_d:
-        env_d['pdf_viewer'] = 'FoxitReader'
-    if env_d['pdf_viewer'] in env_d['FoxitReader_path']:
-        pdf_viewer_path = env_d['FoxitReader_path']
-    elif os.name == 'posix' and env_d['pdf_viewer'] in env_d['xreader_path']:
-        pdf_viewer_path = env_d['xreader_path']
-    elif os.name == 'nt' and env_d['pdf_viewer'] in env_d['acroreader_path']:
-        pdf_viewer_path = env_d['acroreader_path']
+    # associating pdf_reader_path to pdf_reader chosen in 'environment.json'
+    if 'pdf_reader' not in env_d:
+        env_d['pdf_reader'] = 'FoxitReader'
+    if env_d['pdf_reader'] in env_d['FoxitReader_path']:
+        pdf_reader_path = env_d['FoxitReader_path']
+    elif os.name == 'posix' and env_d['pdf_reader'] in env_d['xreader_path']:
+        pdf_reader_path = env_d['xreader_path']
+    elif os.name == 'nt' and env_d['pdf_reader'] in env_d['acroreader_path']:
+        pdf_reader_path = env_d['acroreader_path']
     else:
         m.error = True
-        print("|\n| Could not associate 'pdf_viewer_path' with 'pdf_viewer': check 'environment.json'")
+        print("|\n| Could not associate 'pdf_reader_path' with 'pdf_reader': check 'environment.json'")
     with open(env_f, 'w', encoding='utf8') as fw:
         json.dump(env_d, fw, ensure_ascii=False, indent=4)
 
@@ -109,16 +109,17 @@ def load_o_create_required_apps_path():
 def test_linux_environment():
     global env_d
     global browser_path
-    global pdf_viewer_path
+    global pdf_reader_path
     print('Browser:', 111 * '#')
     subprocess.run([env_d['browser'], '--version'], executable=browser_path)
     print('Inkscape:', 110 * '#')
     subprocess.run(['inkscape', '--version'], executable=env_d['inkscape_path'])
     print('qpdf:', 114 * '#')
     subprocess.run(['qpdf', '--version'], executable=env_d['qpdf_path'])
-    print('pdf_viewer:', 108 * '#')
+    print('pdf_reader:', 108 * '#')
     warnings.simplefilter("ignore", ResourceWarning)
-    subprocess.Popen([env_d['pdf_viewer']], executable=pdf_viewer_path,
+    subprocess.Popen([env_d['pdf_reader']],
+                     executable=pdf_reader_path,
                      stdout=subprocess.DEVNULL,
                      stderr=subprocess.DEVNULL
                      )
@@ -152,9 +153,9 @@ def test_qpdf_and_wait():
 
 def test_pdf_reader_no_wait():
     global env_d
-    global pdf_viewer_path
+    global pdf_reader_path
     warnings.simplefilter("ignore", ResourceWarning)
-    subprocess.run([env_d['pdf_viewer']], executable=pdf_viewer_path,
+    subprocess.run([env_d['pdf_reader']], executable=pdf_reader_path,
                    stdout=subprocess.DEVNULL,
                    stderr=subprocess.DEVNULL
                    )
@@ -331,7 +332,19 @@ def check_all_templates_have_correct_fields():
     for p1.p1_d['fields_rel_dir'] in drs:
         dump_fields_rel_dir()
         p3_d_load_o_create()
-        check_if_template_requirements_are_met()
+        check_if_selected_template_requirements_are_met()
+
+
+def scrap_template_for_fields():  # todo: probably needs to be re-eng with check_if_template_requirements_are_met
+    template_fields = fields_from_template()
+    for x in ['t', 'i', 'prod_n']:
+        if x in template_fields:
+            template_fields.remove(x)
+    for f in template_fields:
+        if f not in p3_d['selected_fields']:
+            p3_d['selected_fields'].append(f)
+    print(f'Template scrapped, selected_fields: {p3_d["selected_fields"]}')
+    save_template_info_json()
 
 
 def add_fields():
@@ -456,7 +469,7 @@ def edit_fields():
     mako_input_json_load_o_create(force_recreate=True)
 
 
-def edit_a_template():
+def edit_a_template_menu():
     print('\n~~~ select a template to edit ~~~')
     m.mod_lev_1_menu = m.menu
     m.menu = 'edit_a_template'
@@ -581,7 +594,7 @@ def dump_fields_rel_dir():
         json.dump(p1.p1_d, fw, ensure_ascii=False, indent=4)
 
 
-def check_if_template_requirements_are_met():
+def check_if_selected_template_requirements_are_met():
     m.hide_context = True
     template_fields_set = fields_from_template()
     for x in ['t', 'i', 'prod_n']:
@@ -613,7 +626,7 @@ def mako_input_json_load_o_create(force_recreate=False):
     """
     global p3_selected_fields_values_by_prod_d
 
-    check_if_template_requirements_are_met()  # todo: inspect this function
+    check_if_selected_template_requirements_are_met()  # todo: inspect this function
     # make sure global variables are initialized in all situations, outside the loop to do it once only
     fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir'])
     mako_input_json_s = os.path.join(fields_abs_dir, '.mako_input.json')
@@ -707,6 +720,7 @@ def pre_process():
 
 
 def util_print_svg_tags():
+    m.hide_context = True
     fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d['fields_rel_dir'])
     filename = askopenfilename(initialdir=fields_abs_dir)
     if filename:
@@ -768,8 +782,11 @@ def produce_svg_w_watermarks_all_templates_all_products(only_1_temp=False, only_
 
         # create label_template_body.svg
         strip_readable_svg_file_for_insert(svg_readable_file_in, svg_insertable_file_out)
+        with open(svg_insertable_file_out) as fr:
+            p3_body_svg = fr.read()
 
     def strip_readable_svg_file_for_insert(svg_readable_file_in, svg_insertable_file_out):
+        m.hide_context = True
         tree = etree.parse(svg_readable_file_in)
         root = tree.getroot()
         for element in root.iter():
@@ -864,13 +881,19 @@ def produce_svg_w_watermarks_all_templates_all_products(only_1_temp=False, only_
 
             # opening a new page, printing header template in 'page_#.svg'
             # printing body template in page_# svg
-            # family = re.search(r'(?<=font-family:)([\w-]+)', p3_body_svg).groups()[0]
-            # size = re.search(r'(?<=font-size:)(\d+\.*\d*\w*)', p3_body_svg).groups()[0]
-            # style = re.search(r'(?<=font-style:)([\w-]+)', p3_body_svg).groups()[0]
-            family = 'sans-serif'
-            size = '3.6px'
-            style = 'normal'
-            # todo: replace with lxml search
+            try:
+                family = re.search(r"(?<=font-family:)'([\w| ]+)'", p3_body_svg).groups()[0]
+            except AttributeError:
+                family = 'sans-serif'
+            # family = re.search(r"(?<=font-family:)'([\w| |-]+)'", p3_body_svg).groups()[0]  produces a warning
+            try:
+                size = re.search(r'(?<=font-size:)(\d+\.*\d*\w*)', p3_body_svg).groups()[0]
+            except AttributeError:
+                size = '3.6px'
+            try:
+                style = re.search(r'(?<=font-style:)([\w-]+)', p3_body_svg).groups()[0]
+            except AttributeError:
+                style = 'normal'
 
             # open the first web page, it will be closed when there is no space left, then a new one will be opened
             if page == 1:
@@ -1201,7 +1224,7 @@ def remove_watermarks_n_produce_pdf_deliverable():
     display deliverable.pdf.
     """
     global env_d
-    global pdf_viewer_path
+    global pdf_reader_path
     # Remove all output files that may exist in root directory
     _, _, files = next(os.walk(p1.p1_cntrct_abs_dir))
     pdfs = [file for file in files if file.endswith('.pdf') or (file.endswith('.svg') and file[0] == '.')]
@@ -1225,7 +1248,7 @@ def remove_watermarks_n_produce_pdf_deliverable():
 
         # use inkscape to export .filename.svg to .filename.pdf
         dot_pdf = os.path.join(p1.p1_cntrct_abs_dir, '.' + bare_filename + '.pdf')
-        p = subprocess.Popen([
+        p = subprocess.Popen([  # here use Popen instead of run to manage inkscape hanging on Chinese Windows 7
             env_d['inkscape_path'],
             f'--export-filename={dot_pdf}',
             printable_svg,
@@ -1233,12 +1256,12 @@ def remove_watermarks_n_produce_pdf_deliverable():
             executable=env_d['inkscape_path']
         )
         try:
-            outs, errs = p.communicate(timeout=10)
+            outs, errs = p.communicate(timeout=10)  # if inkscape has not exited in 10 sec, kill it
         except subprocess.TimeoutExpired:
             print(f'Process {p.pid} timed out before finishing')
             p.kill()
         else:
-            print('subprocess.Popen return code', p.returncode)
+            # print('subprocess.Popen return code', p.returncode)
             if p.returncode is not None and p.returncode != 0:
                 raise RuntimeError(f"Failed command-line: {errs.decode(sys.stderr.encoding)}")
         dot_pdfs.append(f'{dot_pdf}')
@@ -1249,9 +1272,9 @@ def remove_watermarks_n_produce_pdf_deliverable():
 
     # display deliverable.pdf
     warnings.simplefilter("ignore", ResourceWarning)
-    subprocess.run(
-        [env_d['pdf_viewer'], deliverable_pdf],
-        executable=pdf_viewer_path,
+    subprocess.Popen(
+        [env_d['pdf_reader'], deliverable_pdf],
+        executable=pdf_reader_path,
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL
     )
@@ -1261,17 +1284,6 @@ def remove_watermarks_n_produce_pdf_deliverable():
 # Shell interface data & functions #####################################################################################
 # noinspection PyPep8Naming,NonAsciiCharacters
 def step_3__select_fields_to_print_for_each_template_选择每种标签类型的资料():
-    def scrap_template_for_fields():  # todo: probably needs to be re-eng with check_if_template_requirements_are_met
-        template_fields = fields_from_template()
-        for x in ['t', 'i', 'prod_n']:
-            if x in template_fields:
-                template_fields.remove(x)
-        for f in template_fields:
-            if f not in p3_d['selected_fields']:
-                p3_d['selected_fields'].append(f)
-        print(f'Template scrapped, selected_fields: {p3_d["selected_fields"]}')
-        save_template_info_json()
-
     def select_specific_fields_context_func(prompt=True):
         if not m.error and not m.hide_context:
             print('~~~ Step 3: Selecting fields to print for each template ~~~\n')
@@ -1320,16 +1332,16 @@ def step_3__select_fields_to_print_for_each_template_选择每种标签类型的
     m.menus = {
         m.menu: {
             '0': select_a_template,
-            'e': edit_a_template,
-            '01': pre_process,
-            '30': check_if_template_requirements_are_met,
-            '31': check_all_templates_have_correct_fields,
             '1': produce_svg_w_watermarks_1_template_1_product_n_cover_page,
             '2': produce_svg_w_watermarks_1_template_all_products,
             '3': produce_svg_w_watermarks_all_templates_all_products,
             '4': produce_all_svg_n_print,
             '5': produce_all_previous_production_options_n_print,
             '55': remove_watermarks_n_produce_pdf_deliverable,
+            'e': edit_a_template_menu,
+            '11': pre_process,
+            '12': check_if_selected_template_requirements_are_met,
+            '13': check_all_templates_have_correct_fields,
             'b': m.back_to_main_退到主程序,
             'q': m.normal_exit_正常出口,
             'd': m.debug,
@@ -1337,7 +1349,7 @@ def step_3__select_fields_to_print_for_each_template_选择每种标签类型的
         'edit_a_template': {
             '44': edit_label_template_svg,
             '0': scrap_template_for_fields,
-            '1': check_if_template_requirements_are_met,
+            '1': check_if_selected_template_requirements_are_met,
             '2': edit_fields,
             '3': p1.process_selected_contract,
             '4': edit_paragraph_headers,

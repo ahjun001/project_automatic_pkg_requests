@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import json
 import os
 import pathlib
 import shutil
@@ -76,21 +75,21 @@ def save_selected_contract():
 tests_l = ['A000001-start', 'A000001-final', 'A006043-001', 'A006045-001', 'A011001-022', 'A911008-008']
 
 
-def merge_all_p1a_xxx_final_contract_json_files_in_one():
-    with open(os.path.join('data', '.p1a_all-final-contract.txt'), 'w') as fw:
-        prod_nr = 0
-        for contract_nr in tests_l:
-            rel_path_contract_json_f = os.path.join(
-                os.path.join(
-                    'data', contract_nr), '.p1a_' + contract_nr + '-contract.json')
-            if os.path.exists(rel_path_contract_json_f):
-                with open(rel_path_contract_json_f) as fr:
-                    tmp_struct = json.load(fr)
-                    fr.seek(0)
-                    prod_nr += len(tmp_struct['l_i'])
-                    fw.write(fr.read())
-                    fw.write('\n')
-        fw.write(f'Total: {prod_nr} products')
+# def merge_all_p1a_xxx_final_contract_json_files_in_one():
+#     with open(os.path.join('data', '.p1a_all-final-contract.txt'), 'w') as fw:
+#         prod_nr = 0
+#         for contract_nr in tests_l:
+#             rel_path_contract_json_f = os.path.join(
+#                 os.path.join(
+#                     'data', contract_nr), '.p1a_' + contract_nr + '-contract.json')
+#             if os.path.exists(rel_path_contract_json_f):
+#                 with open(rel_path_contract_json_f) as fr:
+#                     tmp_struct = json.load(fr)
+#                     fr.seek(0)
+#                     prod_nr += len(tmp_struct['l_i'])
+#                     fw.write(fr.read())
+#                     fw.write('\n')
+#         fw.write(f'Total: {prod_nr} products')
 
 
 def run_full_demo_for_a_selection_of_contracts(save=False):
@@ -124,7 +123,6 @@ def init():
         m.main_menu = m.menu
     m.menus = {
         m.menu: {
-            '000': merge_all_p1a_xxx_final_contract_json_files_in_one,
             '00': run_full_demo_for_a_selection_of_contracts,
             '0': run_full_demo_with_selected_or_default_values_运行完整演示,
             '1': step_1__select_a_contract_选择合同号,

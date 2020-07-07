@@ -42,6 +42,7 @@
       <w>indic</w>
       <w>indics</w>
       <w>infos</w>
+      <w>initialdir</w>
       <w>inkex</w>
       <w>inkscape</w>
       <w>insertable</w>
@@ -81,7 +82,9 @@
       <w>readlines</w>
       <w>repl</w>
       <w>reprehenderit</w>
+      <w>returncode</w>
       <w>shutil</w>
+      <w>sourceline</w>
       <w>srch</w>
       <w>stpf</w>
       <w>svgs</w>
