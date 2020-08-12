@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="TerminalProjectOptionsProvider">
-    <envs>
-      <env key="TERM" value="xterm-256color" />
-    </envs>
-  </component>
-</project>
