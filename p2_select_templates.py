@@ -119,7 +119,7 @@ def p2_load_templates_info_l():  # used in p3
     :return: list of label subdirectories to the main contract directory
     """
     result_l = read_dirs(p1.p1_cntrct_abs_dir)
-    if  result_l and 'pics' in result_l:
+    if result_l and 'pics' in result_l:
         result_l.remove('pics')
     return result_l
 
