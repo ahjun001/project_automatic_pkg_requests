@@ -1,3 +1,6 @@
 __pycache__/
 data/
 common/*.bkup
+environment.json
+program-info.json
+common/regular_expressions_local.json
