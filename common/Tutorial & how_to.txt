@@ -1,4 +1,5 @@
 Tutorial: Make a packaging request
+
 0. Required software tools & Set-up
 1. Copy & edit, or Create template svg files with mock data.
 2. Add ${fields} that have been searched in contract with regular expressions, RegEx
@@ -6,6 +7,15 @@ Tutorial: Make a packaging request
 
 All processes can be performed in a copy of the .../data/A000001-start project
 After all processes are performed, a version of the resulting package request is in the .../data/A000001-final directory
+
+########################################################################################################################
+Demo
+
+1. Look at a few end products
+
+2. Look at A0000001-final results
+
+3. Look at A0000001-start elements and results
 
 ########################################################################################################################
 The program 'automatic_pckg' automatically generates packaging requests formatted as pdf, layed out so that they can
@@ -65,6 +75,7 @@ If necessary, new versions of qpdf, a tool that merges individual pdf pages into
 
 ########################################################################################################################
 2.  How to select a field from the xls contract file and insert it as a field in a label template
+
     This paragraph shows how to insert two fields: 'plstc_bg' and 'color_zh' in a label template.
     'plstc_bg' is already captured as a field whose data depends on the product it corresponds to.
     'color_zh' data is not captured yet.  This procedure shows how to capture it.
@@ -82,6 +93,7 @@ from the xls file contract.
 
 3. Run "3. step_3__select_fields_to_print_for_each_template_选择每种标签类型的资料": Enter 3 Return
     If ~~~ Now working on template: is not 'a.Outer_box_外箱', then enter 0 Return and select it
+
     a. Check if the desired field is already in the "~~~ Specific fields selected so far" list, then there is nothing
     more to do
 
@@ -95,30 +107,29 @@ from the xls file contract.
     Verify that 'plstc_bg' is in the list of selected fields to far
 
     c. If the desired field does not appear in the matrix, for example a field 'color_zh' that would capt the '颜色' info
+    In a browser, open https://regex101.com
+    Check Flavor as Python  (Python should appear as bold characters and followed by a check sign)
 
-    Copy all contract's contents from the file .../data/A000001-start/.p1a_A000001-start-contract.txt into
+    Copy all contract's contents from the file .../data/A000001-start/A000001-start-contract.json into
           the https://regex101.com  TEST STRING box
-
-    In regex101.com check Flavor as Python  (Python should appear as bold characters and followed by a check sign)
 
     In regular expression, check that \w颜色 has 8 matches (the number of products)
            and that \w(?=颜色) matches 8 times with the color data needed for the field
 
-    In .../data/regular_expression_local.json, add a line formatted as:
+    In .../common/regular_expression_local.json, add a line formatted as:
      { "what": "color_zh", "how": "\\w(?=颜色)"}
     DO MIND the \\ instead of the unique \ in regex101.com
-    If this line is the last one, there should not be a comma at the end. Do check that there is a comma at the end
+    If this line is the last one, there should not be a comma at the end. DO CHECK that there is a comma at the end
     of the line that precedes the one you added.
 
-    Back in automatic_pkg, run '3. process_selected_contract'
+    Back in automatic_pkg, run '5. process_selected_contract'
     Go to '3. step_3__select_fields_to_print_for_each_template_选择每种标签类型的资料", check that the matrix has now
     a field 'color_zh'
     Process as in 3.b precedently
 
 
 4. In the .../data/A000001-start/a.Outer_box_外箱 directory, open the label_template.svg file with inkscape
-   Create a text field that will include ${plstc_bg}
-   Save
+   Create a text field that will include ${plstc_bg} . {plstc_bg} is already created, just precede with a $ and save.
 
 5. In menu ~~~ Step 3: ...     check that the label now includes data from the newly added field:
     1 Return , to check the first product prints correctly
@@ -240,3 +251,5 @@ B. Program option
     Run pre-processing, the new field is available to populate data in the template
 
 ########################################################################################################################
+
+vim:tw=0:
