@@ -79,13 +79,14 @@ def save_selected_contract():
 
 tests_l = [
     "A000001-start",
-    "A000001-final",
     "A006043-001",
     "A006045-001",
-    "A011001-022",
-    "A911008-008",
+    "A011001-022"
 ]
 
+# test to add
+    # "A000001-final",
+    # "A911008-008",
 
 # def merge_all_p1a_xxx_final_contract_json_files_in_one():
 #     with open(os.path.join('data', '.p1a_all-final-contract.txt'), 'w') as fw:
@@ -135,7 +136,6 @@ def init():
         m.main_menu = m.menu
     m.menus = {
         m.menu: {
-            "00": run_full_demo_for_a_selection_of_contracts,
             "0": create_pdf_with_selected_or_default_values_运行完整演示,
             "1": step_1__select_a_contract_选择合同号,
             "2": p2.step_2__select_templates_to_print_选择_编辑标签类型,
@@ -143,6 +143,7 @@ def init():
             "4": save_selected_contract,
             "5": p1.process_selected_contract,
             "s": run_full_demo_and_save_a_selection_of_contracts,
+            "00": run_full_demo_for_a_selection_of_contracts,
             "q": m.normal_exit_正常出口,
             "d": m.debug,
         },
