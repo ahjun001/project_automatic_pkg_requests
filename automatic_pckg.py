@@ -12,7 +12,7 @@ import p3_select_specific_fields as p3
 
 
 # noinspection NonAsciiCharacters,PyPep8Naming
-def run_full_demo_with_selected_or_default_values_运行完整演示():
+def create_pdf_with_selected_or_default_values_运行完整演示():
     p1.process_selected_contract()
     p2.load_or_create_templates()
     p3.produce_all_previous_production_options_n_print()
@@ -107,7 +107,7 @@ tests_l = [
 def run_full_demo_for_a_selection_of_contracts(save=False):
     for test_contract_nr in tests_l:
         step_1__select_a_contract_选择合同号(test_contract_nr=test_contract_nr)
-        run_full_demo_with_selected_or_default_values_运行完整演示()
+        create_pdf_with_selected_or_default_values_运行完整演示()
         if save:
             save_selected_contract()  # use when a new field has been added to template-info.json
     # merge_all_p1a_xxx_final_contract_json_files_in_one()
@@ -136,7 +136,7 @@ def init():
     m.menus = {
         m.menu: {
             "00": run_full_demo_for_a_selection_of_contracts,
-            "0": run_full_demo_with_selected_or_default_values_运行完整演示,
+            "0": create_pdf_with_selected_or_default_values_运行完整演示,
             "1": step_1__select_a_contract_选择合同号,
             "2": p2.step_2__select_templates_to_print_选择_编辑标签类型,
             "3": p3.step_3__select_fields_to_print_for_each_template_选择每种标签类型的资料,
