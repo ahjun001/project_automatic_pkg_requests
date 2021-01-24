@@ -804,7 +804,7 @@ def pre_process():
     #     pprint.pprint(f.read())
 
 
-def util_print_svg_tags():
+def util_print_tags_in_svg_files():
     m.hide_context = True
     fields_abs_dir = os.path.join(p1.p1_cntrct_abs_dir, p1.p1_d["fields_rel_dir"])
     filename = askopenfilename(initialdir=fields_abs_dir)
@@ -1539,7 +1539,7 @@ def step_3__select_fields_to_print_for_each_template_选择每种标签类型的
             "qp": test_qpdf_and_wait,
             "pr": test_pdf_reader_no_wait,
             "t": test_linux_environment,
-            "tags": util_print_svg_tags,
+            "tags": util_print_tags_in_svg_files,
             "b": m.back_后退,
             "q": m.normal_exit_正常出口,
         },
