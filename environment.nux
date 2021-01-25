@@ -1,0 +1,10 @@
+{
+    "firefox_path": "/usr/bin/firefox",
+    "chrome_path": "/usr/bin/google-chrome",
+    "inkscape_path": "/usr/bin/inkscape",
+    "qpdf_path": "/usr/bin/qpdf",
+    "FoxitReader_path": "/usr/bin/FoxitReader",
+    "xreader_path": "/usr/bin/xreader",
+    "browser": "firefox",
+    "pdf_reader": "FoxitReader"
+}
