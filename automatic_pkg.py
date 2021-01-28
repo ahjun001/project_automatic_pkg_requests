@@ -78,10 +78,11 @@ def save_selected_contract():
 
 
 tests_l = [
+    "A000001-final",
     "A000001-start",
     "A006043-001",
     "A006045-001",
-    "A011008-008"
+    "A911008-008"
 ]
 
 # test to add
