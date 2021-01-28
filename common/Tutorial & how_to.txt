@@ -252,4 +252,6 @@ B. Program option
 
 ########################################################################################################################
 
+Create a shortcut on the Desktop pointing to cmd /K "C:\Users\Administrator\2021.01.05_project_automatic_pkg_request\automatic_pkg.bat"
+
 vim:tw=0:

@@ -6,5 +6,5 @@
     "FoxitReader_path": "/usr/bin/FoxitReader",
     "xreader_path": "/usr/bin/xreader",
     "browser": "firefox",
-    "pdf_reader": "FoxitReader"
+    "pdf_reader": "xreader"
 }
