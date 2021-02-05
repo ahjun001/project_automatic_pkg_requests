@@ -1,5 +1,5 @@
 = Automatic_pkg application tutorial
-This tutorial is a step-by-step instruction on how to produce a user-ready package request to be sent to TST supplier factories. As it has been designed to entirely replace in-person training sessions, it is important that each step is understood and acquired before going to the next one.  Please ask PJ if any question arises.  
+This tutorial is a step-by-step instruction on how to produce a user-ready package request to be sent to TST supplier factories. As it has been designed to entirely replace in-person training sessions, it is important that each step is understood and acquired before going to the next one.  Steps 1 to 5 are a series of introductory demonstrations with limited hands-on exercices.  Following steps explains the details of each functions.Please ask PJ if any question arises.  
 version, {version-label}:beta
 // asciidoc attributes
 :version-label: 2021-02-05
@@ -31,7 +31,7 @@ The first 3 lines, terminated with ----------
 .Selected contract and templates to create packaging labels
 image::area_1.png[area_1 missing]
 +
-In Figure 1, we will use data from contract A911008-008 to produce labels based on 'a.Outer_box_外相' and 'b.Inner_box_內盒' templates
+In Figure 1, we will use data from contract A911001-022 to produce labels based on 'a.Outer_box_外相' and 'b.Inner_box_內盒' templates
 
 * Area 2 -- "Menu":
 One paragraph, headed with >>>, presenting a series of menu options. +
@@ -70,8 +70,6 @@ If you exit the program, but still have the DOS window open.  The command prompt
  
 or
 
-`&gt; a &#11134;`
-
 `&gt; a` image:tab.png[Tab]
 
 If the DOS prompt is not preceded with <venv3.8>, then exit this window and start again from the beginning.
@@ -82,7 +80,7 @@ Having completed this step, you should be able to enter the program, understand 
 elements have been selected, navigate menus, and exit. +
 See PJ if any questions.
 
-== Discovering what the program can do
+== Overviewing the program and how it uses external applications
 This step describes how to get acquainted with automatic_pkg capabilities. 
 
 * From the >>> Main Menu: , enter kbd:[1]kbd:[Enter 回车]
@@ -126,7 +124,12 @@ SVG stands for Scalable Vector Graphics, an open format that allows files to be 
 * Now take a look at `A011001-022.pdf`, the package request document. +
 One might say that information is there, but the presentation could be more compact: margins are too wide.
 
-* Open `link:[../data/A011001-022/A0111001-022_doc_setup.json]` with a text editor.
+* Open `link:../data/A011001-022/A011001-022_doc_setup.json[../data/A011001-022/A011001-022_doc_setup.json]` with a text editor.
+
+A way to do this follows:
+
+ Right-click the link / Save link as ...
+ Open 记事本-Notepad / Ctrl-O  & Paste
 
 .Editing a contract document setup file
 image:无标题_1.png[无标题_1.png is missing]
@@ -148,10 +151,47 @@ Margins have been corrected, cover page is now not included, and a space of 100 
 This step has demonstrated the overall architecture of the program: using external browsers, pdf viewers, inkscape Scalable Vector Graphic editor, and text editor to rapidly produce a simple package labels request.
 
 
+== Presenting how the program re-uses existing work
+This step shows how existing templates can be easily modified to produce new labels.
+
+* Labels that have been successfully produced are stored in the link:../contract_samples[../contract_samples] repository
+
+* In the previous step, when we selected a contract to be processed, the program made a copy of the link:../contract_samples/A011001-022[../contract_samples/A011001-022] directory into the link:../data[../data] directory, so as to create a working environment to modify elements without loosing past realisations.
+
+* Using the automatic_pkg, open a new sample contract: A911008-008
+** Start automatic_pkg
+** kbd:[1] to select a contract
+** Select A911008-008 folder and then double-click on the only ...xls file present in this directory
+** In the Reporting part of the screen, we observe that some Processing has been effected on this file. In fact, information from the .xls file has been extracted so that it can feed the Inkscape templates. +
++
+.Correctly rocessing xls data before feeding it to the templates is only indicated with one line
+image:processing.png[processing.png is missing]
+* kbd:[0] to create the pdf package labels request
+* Close all browser windows, as we don't need them at this point.
+* Observe the pdf package request for A911008-008 contract: very similar to the one for A011001-022 contract.  Here is how to go from the existing one to the new one.
+
+[WARNING]
+====
+* Open an Inkscape window and open link:../data/A011001-022/a.Outer_box_外箱/label_template.svg[../data/A011001-022/a.Outer_box_外箱/label_template.svg]
+* Open a separate Inkscape window and open link:../data/A911008-008/a.Outer_box_外箱/label_template.svg[../data/A911008-008/a.Outer_box_外箱/label_template.svg]
+* The two templates differs in:
+** Product designation in French & English
+** PI number
+** Product picture
+* All other variable data, extracted from the corresponding xls contract files, will be automatically processed using the same name variables, such as ${xl_prod_specs}, ${prod_n}, ${mat2_fr} and so on.
+* Observe the purple-Fuchsia-FF00FFF color box around the drawing & text.  This box tells the program the space to reserve for a label. As text comes from the XL file, it cannot be measured ahead to position labels on the page and the program will reserve the place corresponding to this box. +
+Keep in mind that this box and everything Fuchsia or of the same FF00FF color will be erased from the file before producing the final pdf.
+====
+
+[.lead]
+This steps introduces the ../data directory, where work is performed, and an overall description of a label's template.
+
+== Showing how pictures are automatically inserted
 
 
+== Demonstrating how data is extracted from the xls contract file
 
-
+== Building your own package request: from A000001-start to A000001-final -- Overview
 
 
 
