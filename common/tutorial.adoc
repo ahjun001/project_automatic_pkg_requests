@@ -2,7 +2,7 @@
 This tutorial is a step-by-step instruction on how to produce a user-ready package request to be sent to TST supplier factories. As it has been designed to entirely replace in-person training sessions, it is important that each step is understood and acquired before going to the next one.  Please ask PJ if any question arises.  
 version, {version-label}:beta
 // asciidoc attributes
-:version-label: 2021-01-28
+:version-label: 2021-02-05
 :reproducible: // so that this document publishes a version date that corresponds to automatic_pkg sofremarktware version and not of the present day 
 :experimental: // to get kbd:[F11] or kbd:[Ctrl+T] to work
 :toc: left
@@ -129,15 +129,34 @@ One might say that information is there, but the presentation could be more comp
 * Open `link:[../data/A011001-022/A0111001-022_doc_setup.json]` with a text editor.
 
 .Editing a contract document setup file
-image:无标题.png[无标题.png is missing]
+image:无标题_1.png[无标题_1.png is missing]
 
 * Modify both margins width & height (`margin_w` & `margin_h`) from `25` to `15`.
 * This is an opportunity to turn off having a cover page and to create an offset on the first page, so let's try this:
 ** Modify `cover_page` from `true` to `false`
 ** Modify `page_1_vert_offset` from `0` to `100`
+
+.Editing a contract document setup file
+image:无标题_2.png[无标题_2.png is missing]
+
 * Save the file and get back to the DOS command `automatic_pkg.bat` window
 * Close all browser files, all pdf files and enter kbd:[0] to run again.
-* 
+
+Margins have been corrected, cover page is now not included, and a space of 100 is now available as header on the first page.
+
+[.lead]
+This step has demonstrated the overall architecture of the program: using external browsers, pdf viewers, inkscape Scalable Vector Graphic editor, and text editor to rapidly produce a simple package labels request.
+
+
+
+
+
+
+
+
+
+
+
 
 
 
