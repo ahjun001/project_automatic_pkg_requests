@@ -1,0 +1,60 @@
+= automatic_pkg application tutorial: Generating package requests from SAP system output Pierre-Jean Périé (c) 2020 TST Version 0.3, 2021年1月31日
+
+// :icons: font
+:toc2:
+:toclevels: 3
+:toc-title: Learning steps
+:sectnums:
+:sectnumlevels: 6
+
+
+// :iconsdir: .images/icons
+// :icontype: svg
+// :stylesdir: .images/css
+// :stylesheet: extra.css
+// :iconsfont: glyphicons
+
+
+// :noc:
+//:repoducible:
+//:source-highlighter: coderay
+//:listing-caption: Listing
+//:pdf-page-size: A4
+//:docinfo: private-head
+//:idprefix:
+//:idseparator: -
+//:sectanchors:
+//:sectlinks:
+//:quick-uri: http://asciidoctor.org/docs/asciidoc-syntax-quick-reference/
+// :admonition:
+//     font-family: Noto San
+//     font-style: italic
+
+// a summary of the title
+// Something else again
+
+// :ui:
+//   supplemental_files: './supplemental-ui'
+//   bundle:
+//     url: ./supplemental-ui/ui-bundle.zip
+//     snapshot: true
+
+
+NOTE: a note
+
+TIP: a tip
+
+WARNING: a warning
+
+CAUTION: a caution
+
+IMPORTANT: something important
+
+PRIMARY: something primary
+
+== VIM user manual (as it comes with :h users-manual)
+Something else:  This is some other text
+Something else again
+
+
+=== About the manuals -- user_01.txt
