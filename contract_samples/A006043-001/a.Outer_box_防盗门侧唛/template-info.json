@@ -29,7 +29,6 @@
         }
     },
     "pics_d": false,
-    "barcode_d": false,
-    "pictures": false,
-    "barcode_l": false
+    "barcodes": false,
+    "pictures": false
 }

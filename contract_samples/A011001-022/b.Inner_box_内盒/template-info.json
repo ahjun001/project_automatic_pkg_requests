@@ -7,7 +7,7 @@
     ],
     "template_header": "内盒唛头",
     "header_height": 7,
-    "barcode_l": [
+    "barcodes_l": [
         {
             "coef": 0.14,
             "x": 38,

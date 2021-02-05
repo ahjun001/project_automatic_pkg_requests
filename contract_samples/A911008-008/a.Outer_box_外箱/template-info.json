@@ -74,10 +74,9 @@
             "height": 10
         }
     },
-    "barcode_d": false,
+    "barcodes": false,
     "mako_pre_proc_d": false,
     "partially_populated_fields": false,
     "pre_processing": false,
-    "pictures": false,
-    "barcode_l": false
+    "pictures": false
 }
