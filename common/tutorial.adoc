@@ -1,60 +1,187 @@
-= automatic_pkg application tutorial: Generating package requests from SAP system output Pierre-Jean Périé (c) 2020 TST Version 0.3, 2021年1月31日
-
-// :icons: font
-:toc2:
+= Automatic_pkg application tutorial
+This tutorial is a step-by-step instruction on how to produce a user-ready package request to be sent to TST supplier factories. As it has been designed to entirely replace in-person training sessions, it is important that each step is understood and acquired before going to the next one.  Please ask PJ if any question arises.  
+version, {version-label}:beta
+// asciidoc attributes
+:version-label: 2021-01-28
+:reproducible: // so that this document publishes a version date that corresponds to automatic_pkg sofremarktware version and not of the present day 
+:experimental: // to get kbd:[F11] or kbd:[Ctrl+T] to work
+:toc: left
 :toclevels: 3
 :toc-title: Learning steps
 :sectnums:
 :sectnumlevels: 6
+:icons: font
+:imagesdir: .//.tutorial.resources
+// == checking // to be commented out
+// [%hardbreaks]
+// version: {version-label}
+// kbd:[F11], kbd:[Ctrl+T]
+
+== Starting the program
+[.lead]
+This step describes starting the program and getting familiar with its environment.
+
+On your PC 桌面-Desktop, double-click image:start_icon.png[icon file is missing, 50, 50] , a link to the automatic_pkg.bat batch file.
+
+This should open a DOS window with 3 general areas, as follows:
+
+* Area 1 -- "Current selections": +
+The first 3 lines, terminated with ---------- 
++
+.Selected contract and templates to create packaging labels
+image::area_1.png[area_1 missing]
++
+In Figure 1, we will use data from contract A911008-008 to produce labels based on 'a.Outer_box_外相' and 'b.Inner_box_內盒' templates
+
+* Area 2 -- "Menu":
+One paragraph, headed with >>>, presenting a series of menu options. +
+Each entry starts with a single or double key stroke to perform the indicated action. 
++
+.Menu
+image::area_2.png[area_2 missing] 
+
+* Area 3 -- "Key-in": +
+Key-in your command and press kbd:[Enter回车]
++
+.Key-in area
+image::area_3.png[area_3 missing]
+
+[IMPORTANT]
+====
+NOW TRY THIS:
+
+* kbd:[3] kbd:[Enter]
+* The first two lines are a confirmation of the selection that you have made: at this point, it should read the following:
+
+ Option 3 selected
+ ~~~ Step 3: Selecting fields to print for each template ~~~
+
+* Observe how, right below these first two lines, Area 1 -- "Current selections" has changed
+* Keep reading on, check the sub-menu
+* You may choose kbd:[b] to come back to the preceeding menu, or kbd:[d] to check if external programs have been set properly
+* kbd:[b] will get you back one menu level, kbd:[q] will exit the program, have a try!
+====
+
+[NOTE]
+====
+If you exit the program, but still have the DOS window open.  The command prompt being preceeded with <venv3.8>, you can start again with:
+
+`> a[utomatic_pkg.bat]`
+ 
+or
+
+`&gt; a &#11134;`
+
+`&gt; a` image:tab.png[Tab]
+
+If the DOS prompt is not preceded with <venv3.8>, then exit this window and start again from the beginning.
+====
+
+[.lead]
+Having completed this step, you should be able to enter the program, understand which 
+elements have been selected, navigate menus, and exit. +
+See PJ if any questions.
+
+== Discovering what the program can do
+This step describes how to get acquainted with automatic_pkg capabilities. 
+
+* From the >>> Main Menu: , enter kbd:[1]kbd:[Enter 回车]
+
+[WARNING]
+====
+2 windows open: `tk` & `打开` +
+If not, the windows may be hidden below.
+====
+
+* Open `打开 / A011001-022 / A011001-022 哈特惠 DIN58+DIN934 Feb. 26, 2020 TY.xls`
+* Once this is done `tk` can be closed or minimised.
+
+[WARNING]
+====
+Check that the selected contract is now A011001-022. +
+If not, run again. +
+Two templates have been selected: `a.Outer_box_外箱`， and `b.Inner_box_內盒`
+====
+
+* Enter kbd:[0] to create a pdf package request with values selected as indicated +
+A series of browser windows and a pdf file will open. +
+Browser windows contain the following:
+** a single copy of templates, populated with contract data
+** multiple copies of templates, self-arranged on the same page, populated with contract data
+** The header page, using copies of the first template in the list
+** Finally, assembled pages of the package request
+
+[WARNING]
+====
+Each browser page opens a link that points to a .svg file:  `'file:///C:/Users/Admninistrator/...'`.
+
+SVG stands for Scalable Vector Graphics, an open format that allows files to be modified with a text editor or with Inkscape if needed.
+====
+
+* Close all the browser files.  A quick way to do this is as follows:
+
+ Right-click on `Task bar / Browser's icon` 
+ Left-click `关闭所有窗口`
+
+* Now take a look at `A011001-022.pdf`, the package request document. +
+One might say that information is there, but the presentation could be more compact: margins are too wide.
+
+* Open `link:[../data/A011001-022/A0111001-022_doc_setup.json]` with a text editor.
+
+.Editing a contract document setup file
+image:无标题.png[无标题.png is missing]
+
+* Modify both margins width & height (`margin_w` & `margin_h`) from `25` to `15`.
+* This is an opportunity to turn off having a cover page and to create an offset on the first page, so let's try this:
+** Modify `cover_page` from `true` to `false`
+** Modify `page_1_vert_offset` from `0` to `100`
+* Save the file and get back to the DOS command `automatic_pkg.bat` window
+* Close all browser files, all pdf files and enter kbd:[0] to run again.
+* 
 
 
-// :iconsdir: .images/icons
-// :icontype: svg
-// :stylesdir: .images/css
-// :stylesheet: extra.css
-// :iconsfont: glyphicons
 
 
-// :noc:
-//:repoducible:
-//:source-highlighter: coderay
-//:listing-caption: Listing
-//:pdf-page-size: A4
-//:docinfo: private-head
-//:idprefix:
-//:idseparator: -
-//:sectanchors:
-//:sectlinks:
-//:quick-uri: http://asciidoctor.org/docs/asciidoc-syntax-quick-reference/
-// :admonition:
-//     font-family: Noto San
-//     font-style: italic
-
-// a summary of the title
-// Something else again
-
-// :ui:
-//   supplemental_files: './supplemental-ui'
-//   bundle:
-//     url: ./supplemental-ui/ui-bundle.zip
-//     snapshot: true
 
 
-NOTE: a note
-
-TIP: a tip
-
-WARNING: a warning
-
-CAUTION: a caution
-
-IMPORTANT: something important
-
-PRIMARY: something primary
-
-== VIM user manual (as it comes with :h users-manual)
-Something else:  This is some other text
-Something else again
 
 
-=== About the manuals -- user_01.txt
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
