@@ -174,20 +174,29 @@ image:processing.png[processing.png is missing]
 ====
 * Open an Inkscape window and open link:../data/A011001-022/a.Outer_box_外箱/label_template.svg[../data/A011001-022/a.Outer_box_外箱/label_template.svg]
 * Open a separate Inkscape window and open link:../data/A911008-008/a.Outer_box_外箱/label_template.svg[../data/A911008-008/a.Outer_box_外箱/label_template.svg]
-* The two templates differs in:
+* The two templates only differs in:
 ** Product designation in French & English
 ** PI number
 ** Product picture
 * All other variable data, extracted from the corresponding xls contract files, will be automatically processed using the same name variables, such as ${xl_prod_specs}, ${prod_n}, ${mat2_fr} and so on.
+====
+
+[IMPORTANT]
+====
 * Observe the purple-Fuchsia-FF00FFF color box around the drawing & text.  This box tells the program the space to reserve for a label. As text comes from the XL file, it cannot be measured ahead to position labels on the page and the program will reserve the place corresponding to this box. +
 Keep in mind that this box and everything Fuchsia or of the same FF00FF color will be erased from the file before producing the final pdf.
 ====
 
 [.lead]
-This steps introduces the ../data directory, where work is performed, and an overall description of a label's template.
+This steps introduced the ../data directory, where work is performed, and an overall description of a label's template.
 
-== Showing how pictures are automatically inserted
-
+== Showing data extraction mechanism and adding pictures to labels
+* Select the A006045-001 contract
+* Having checked that data processing has normally completed, create the pdf deliverable.
+* This request has one template. To each product correspond a picture.
+* Pictures are stored in a sub-directory of the template definition link:../data/A006045-001/a.Outer_box_外箱/pics[../data/A006045-001/a.Outer_box_外箱/pics]
+* Pictures are linked to product in the file link:../data/A006045-001/a.Outer_box_外箱/template-info.json[../data/A006045-001/a.Outer_box_外箱/template-info.json]. Each product listed has a svg picture file, the (x, y) coordinates to position the upper left angle of the picture in the label, and a coefficient to size the picture.
+* Similar files in previous packages don't have pictures, such as link:../data/A011001-022/a.Outer_box_外箱/template-info.json[../data/A011001-022/a.Outer_box_外箱/template-info.json]
 
 == Demonstrating how data is extracted from the xls contract file
 
