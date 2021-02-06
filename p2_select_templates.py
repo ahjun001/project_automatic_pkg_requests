@@ -18,8 +18,6 @@ p2_templates_l = [
 ]
 
 p2_default_templates_l = [
-    "a.Outer_box_外箱",
-    "f.Prod_sticker_塑料上不干胶",
 ]
 
 
