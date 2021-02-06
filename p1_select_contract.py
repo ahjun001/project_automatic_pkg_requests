@@ -122,15 +122,29 @@ def program_info_d_load_o_create():
                     _, dirs, _ = next(os.walk(path))
                     if dirs:
                         for some_dir in dirs:
-                            shutil.copytree(
-                                os.path.join(path, some_dir),
-                                os.path.join(p1_cntrct_abs_dir, some_dir),
-                            )
+                            # only copy dirs that start with a lower-letter case
+                            if some_dir[0].islower():
+                                shutil.copytree(
+                                    os.path.join(path, some_dir),
+                                    os.path.join(p1_cntrct_abs_dir, some_dir),
+                                )
                     doc_setup_f_ini = os.path.join(
                         path, p1_d["cntrct_nr"] + "_doc_setup.json"
                     )
                     if pathlib.Path(doc_setup_f_ini).exists():
                         shutil.copy(doc_setup_f_ini, p1_cntrct_abs_dir)
+                    else:
+                        filename = os.path.join(
+                            p1_cntrct_abs_dir, p1_d["cntrct_nr"] + "_doc_setup.json"
+                        )
+                        vanilla_doc_setup_d = {"margin_w": 15,
+                                               "margin_h": 15,
+                                               "cover_page": True,
+                                               "page_1_vert_offset": 0
+                                               }
+                        with open(filename, "w", encoding="utf8") as f:
+                            json.dump(vanilla_doc_setup_d, f, ensure_ascii=False, indent=4)
+
                     process_selected_contract()
                     return True  # (ii) re-create from initial file as per contract-info.json
                 else:
@@ -319,7 +333,8 @@ def step_1__select_a_contract_选择合同号(test_contract_nr=""):
             if dirs:
                 for some_dir in dirs:
                     dest_dir = os.path.join(p1_cntrct_abs_dir, some_dir)
-                    if not pathlib.Path(dest_dir).exists():
+                    # only copy dirs that start with a lower-letter case
+                    if not pathlib.Path(dest_dir).exists() and some_dir[0].islower():
                         shutil.copytree(os.path.join(path, some_dir), dest_dir)
             process_selected_contract()
             return True
