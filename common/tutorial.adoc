@@ -2,7 +2,7 @@
 This tutorial is a step-by-step instruction on how to produce a user-ready package request to be sent to TST supplier factories. As it has been designed to entirely replace in-person training sessions, it is important that each step is understood and acquired before going to the next one.  Steps 1 to 5 are a series of introductory demonstrations with limited hands-on exercices.  Following steps explains the details of each functions.Please ask PJ if any question arises.  
 version, {version-label}:beta
 // asciidoc attributes
-:version-label: 2021-02-05
+:version-label: 2021-02-07
 :reproducible: // so that this document publishes a version date that corresponds to automatic_pkg sofremarktware version and not of the present day 
 :experimental: // to get kbd:[F11] or kbd:[Ctrl+T] to work
 :toc: left
@@ -25,7 +25,7 @@ On your PC 桌面-Desktop, double-click image:start_icon.png[icon file is missin
 
 This should open a DOS window with 3 general areas, as follows:
 
-* Area 1 -- "Current selections": +
+* Area 1 -- "Information": +
 The first 3 lines, terminated with ---------- 
 +
 .Selected contract and templates to create packaging labels
@@ -56,7 +56,7 @@ NOW TRY THIS:
  Option 3 selected
  ~~~ Step 3: Selecting fields to print for each template ~~~
 
-* Observe how, right below these first two lines, Area 1 -- "Current selections" has changed
+* Observe how, right below these first two lines, Area 1 -- "Information" has changed
 * Keep reading on, check the sub-menu
 * You may choose kbd:[b] to come back to the preceeding menu, or kbd:[d] to check if external programs have been set properly
 * kbd:[b] will get you back one menu level, kbd:[q] will exit the program, have a try!
@@ -190,7 +190,9 @@ Keep in mind that this box and everything Fuchsia or of the same FF00FF color wi
 [.lead]
 This steps introduced the ../data directory, where work is performed, and an overall description of a label's template.
 
-== Showing data extraction mechanism and adding pictures to labels
+== Demoing adding pictures, barcodes; reformatting extracted data, dealing with data that is not available for all products
+This step presents functions that complete automatization of the tasks necessary for a delivery ready label request.
+
 * Select the A006045-001 contract
 * Having checked that data processing has normally completed, create the pdf deliverable.
 * This request has one template. To each product correspond a picture.
@@ -198,14 +200,59 @@ This steps introduced the ../data directory, where work is performed, and an ove
 * Pictures are linked to product in the file link:../data/A006045-001/a.Outer_box_外箱/template-info.json[../data/A006045-001/a.Outer_box_外箱/template-info.json]. Each product listed has a svg picture file, the (x, y) coordinates to position the upper left angle of the picture in the label, and a coefficient to size the picture.
 * Similar files in previous packages don't have pictures, such as link:../data/A011001-022/a.Outer_box_外箱/template-info.json[../data/A011001-022/a.Outer_box_外箱/template-info.json]
 
+....
+To be continued
+....
+
 == Demonstrating how data is extracted from the xls contract file
 
+....
+To be continued
+....
+
 == Building your own package request: from A000001-start to A000001-final -- Overview
+This proposes a progressive elaboration of a conceptual yet realistic package label request, using a new capability of the program at each step.
+
+* In automatic_pkg, select A000001-start
+* Using the internet browser, `right-click Open in a New window link:../data/A000001-start[../data/A000001-start]`
+* In the root page, click on link:../data/A000001-start/A000001-start_doc_setup.json[../data/A000001-start/A000001-start_doc_setup.json]
+to check global setup for the final document.  This was introduced in <<Overviewing the program and how it uses external applications>>
+* Still in the root page, click on link:../data/A000001-start/A000001-start-contract.json[../data/A000001-start/A000001-start-contract.json].  Check that all data from the xls contract file has been extracted and reformated in JSON format in this file.
+
+* Still using the internet browser, `right-click Open in a New window link:../data/A000001-start/a.Outer_box_外箱[../data/A000001-start/a.Outer_box_外箱]`
+* Click on `link:../data/A000001-start/a.Outer_box_外箱/template-info.json[../data/A000001-start/a.Outer_box_外箱/template-info.json]`. +
+All fields indicated in this file are modifiable in a text editor if needed. Fields can be added to the "selected_fields" list, "template_header" can be edited +
+Fields set to `false` will be further filled with default values after being turned to 'true' and processed by the program.
+* Come back to the template directory and click `link:../data/A000001-start/a.Outer_box_外箱/label_template.svg[../data/A000001-start/a.Outer_box_外箱/label_template.svg]` to view the label template. +
+3 fields -- xl_prod_spec, u_parc, and parc,  from the "selected_fields" list from template_info.json are being used in a ${field} format +
+Other fields such as ${t}, ${i}, ${prod_n} are not in template_info.json.  These are common to all package requests and don't need to be specified each time +
+${t} is the number of the template in the order used in the final document. Typically 1, 2, or 3. +
+${i} is the rank of the product label being printed.  In this case from 1 to 8 as there are 8 products.
+${prod_n} is the product number. Here, from `AA00001` to `AA00008`
+
+* in automatic_pkg, run kbd:[0]
+* a series of .svg files have been created and show in browser pages and a .pdf
+* `link:../data/A000001-start/a.Outer_box_外箱/.1_product.svg[../data/A000001-start/a.Outer_box_外箱/.1_product.svg]` shows how data from the first product in the xls contract file is processed into a label. +
+This page shows that all automatic information -- ${t}, ${i}, ${prod_n} was inserted correctly, and that the selected data -- ${xl_prod_spec}, ${u_parc}, and ${parc} also was correct.  Close this browser page.
+* in automatic_pkg, run kbd:[3] and then kbd:[1] +
+The page that we just closed has been created again.  Also created is a cover page using this first page as label examples. +
+These two browser pages can be closed.
+
+* `link:../data/A000001-start/a.Outer_box_外箱/.1_template_1.svg[../data/A000001-start/a.Outer_box_外箱/.1_template_1.svg]` and +
+ `link:../data/A000001-start/a.Outer_box_外箱/.1_template_2.svg[../data/A000001-start/a.Outer_box_外箱/.1_template_2.svg]` +
+ show how all product labels are positionned on one page +
+ Watermarks, of color Fuchsia-FF00FF, are the ones defined in the label_template.svg file, are the guides that determine pagination.  These should be edited in the label_template.svg file if needed. +
+ These two browser pages can be closed.
+
+[.header]
+This steps has described the important files to be edited:
+- ....doc_setup.json at the document level
+- template-info.json and label_template.svg at the template level.
 
 == Building your own package request from scratch
 
 [.lead]
-Step 1 select a contract
+*Step 1 select a contract*
 
 * In automatic_pkg, select a xls contract file.
 * Open your file browser to the link:../data[../data] directory, tune it so that hidden files cannot be seen
@@ -223,39 +270,48 @@ Then, a new xls file exported from SAP and selected from automatic_pkg to replac
 ** A `Axxxxxx-xxx-contract.json` file that contains the information from the xls contract file, in a format that allows to be further processed.
 
 [.lead]
-Step 2 load or create templates to print
+*Step 2 load or create templates to print*
 
 * Either use the program to select a template directory from link:../common[../common]
-* Or use the file browser to select an existing template and copy into the `../data/Axxxxxx-xxx` directory.
+* Or use the file browser to select an existing template directory to copy into the `../data/Axxxxxx-xxx` directory.
+* Edit files in this new copied directory
+** Use Inkscape to edit label_template.svg
+*** Insert all necessary information as static data
+*** Identify data that should be dynamic, typically the one unique to each product.
 
+[.lead]
+*Step 3 select fields to print for each template*
 
+* Check in the top 'Information' area for a column that contains the information needed
+* In label_template.svg replace static data with column heading, using ${field_name} as a format
 
+Getting a new column of data in the top 'Information' area
 
+* With 记事本-Notepad, or any other text editor, open `..\data\Axxxxxx-xxx\Axxxxxx-xxx-contract.json`, copy the entire content of the file
+* Open link:https://regex101.com[https://regex101.com]. Check Flavor as `*Python 2.7*`  (*Python 2.7* should appear as bold characters and followed by a check sign)
+* Open link:../common/regular_expressions_local.json[../common/regular_expressions_local.json], identify data headings such as the ones in the first rows: 'pack', 'parc' (for parcel), 'u_parc' (for under parcel), or others that are already in the 'Information' area of the program.
+* For example, for 'pack', copy the `how` part of the search -- (?<=外包数：)\\d+\\.\\d+ and paste this in `regex101.com` / REGULAR EXPRESSION
+* In that windows change every backslash '\\' into a single one '\' +
+A small green message should appear right on top of the REGULAR EXPRESSION, indicating the number of match for this search, which typically should be the number of product in the contract. +
+The right part of `regex101.com` shows `EXPLANATION` -- how this search reaches its match, `MATCH INFORMATION` -- content and character positionning for each match, and `QUICK REFERENCE` -- which shows how the regular expressions can be formulated. Once again, for this to work, make sure that `*Python 2.7*` has been checked. 
+* Using these examples and explanation, create a search -- `"what"` and `"how"` that you will further add as a new line to link:../common/regular_expressions_local.json[../common/regular_expressions_local.json]
+* If this information is in Chinese in the xls contract file, but should show up in French on labels, then give a name to this new information that ends with `_zh`.  The program will look for translation and make it available as a comparable name ending with '_fr' in `label_template.svg` files.
 
+....
+Information showing on the label request is important and should be clearly identifiable in the contract. +
+Tidying up the information within SAP is also a way to ease this information extraction.
+....
 
+* Before saving link:../common/regular_expressions_local.json[../common/regular_expressions_local.json], make sure that every search line is separated from the others with a comma `,` and that the last line does not end with a comma `,` 
+ 
+== Adding French terms to be used as dynamic data in labels
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+* As for example, colors are specified in Chinese in the xls contract file -- `红，黄，黑， ...` and should appear in French -- `rouge, jaune, noir, ...` in the labels.
+* Extract the information in Chinese with a variable ending in `_zh`, as for `color_zh` that appear in link:../common/regular_expressions_local.json[../common/regular_expressions_local.json]
+* Then, the same variable name ending in `_fr`, as `color_fr` can be readily used as a label in `label_template.svg`, as in link:../data/A000001-start/a.Outer_box_外箱/label_template.svg[../data/A000001-start/a.Outer_box_外箱/label_template.svg]
+* Translations are stored in link:../common/zh_fr.json[../common/zh_fr.json], add new translations as needed using the same formats.
+* As for other JSON files, make sure each record is separated from others with a `,` comma, and that the last one is not followed by any `,` comma.
+* Another example, less easily described but as pertinent, is shown in link:../data/A006045-001/a.Outer_box_外箱/label_template.svg[../data/A006045-001/a.Outer_box_外箱/label_template.svg], where `${ens_prt_zh}` identifies products for the supplier factory, and `${ens_prt_fr}` identifies products for French speaking customers.
 
 
 
