@@ -202,6 +202,24 @@ This steps introduced the ../data directory, where work is performed, and an ove
 
 == Building your own package request: from A000001-start to A000001-final -- Overview
 
+== Building your own package request from scratch
+
+* In automatic_pkg, select a xls contract file.
+* Open your file browser to the link:../data[../data] directory, tune it so that hidden files cannot be seen
+* Check that a new directory, typically name with the `Axxxxxx-xxx` contract ID number has been created
+* Move to that directory and check the following elements:
+** A copy of the initial xls contract file. +
++
+Information missing from the contract should be replaced in SAP +
+Then, a new xls file exported from SAP and selected from automatic_pkg to replace this one. 
+** A `Axxxxxx-xxx_doc_setup.json` contract that could be modified to:
+*** Change final document margins
+*** Toggle standard cover page
+*** Set a vertical offset on the first page so that, using Inkscape, specific recommandations to the supplier can be inserted.
+*** See <<Overviewing the program and how it uses external applications>> for more information about modifying these.
+** A `Axxxxxx-xxx-contract.json` file that contains the information from the xls contract file, in a format that allows to be further processed.
+
+
 
 
 
