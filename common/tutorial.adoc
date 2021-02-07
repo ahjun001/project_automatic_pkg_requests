@@ -18,8 +18,10 @@ version, {version-label}:beta
 // kbd:[F11], kbd:[Ctrl+T]
 
 == Starting the program
-[.lead]
+
+****
 This step describes starting the program and getting familiar with its environment.
+****
 
 On your PC 桌面-Desktop, double-click image:start_icon.png[icon file is missing, 50, 50] , a link to the automatic_pkg.bat batch file.
 
@@ -75,13 +77,17 @@ or
 If the DOS prompt is not preceded with <venv3.8>, then exit this window and start again from the beginning.
 ====
 
-[.lead]
+****
 Having completed this step, you should be able to enter the program, understand which 
 elements have been selected, navigate menus, and exit. +
 See PJ if any questions.
+****
 
 == Demo: overviewing the program and how it uses external applications
+
+****
 This step describes how to get acquainted with automatic_pkg capabilities. 
+****
 
 * From the >>> Main Menu: , enter kbd:[1]kbd:[Enter 回车]
 
@@ -147,12 +153,16 @@ image:无标题_2.png[无标题_2.png is missing]
 
 Margins have been corrected, cover page is now not included, and a space of 100 is now available as header on the first page.
 
-[.lead]
+****
 This step has demonstrated the overall architecture of the program: using external browsers, pdf viewers, inkscape Scalable Vector Graphic editor, and text editor to rapidly produce a simple package labels request.
+****
 
 
 == Demo: presenting how the program re-uses existing work
+
+****
 This step shows how existing templates can be easily modified to produce new labels.
+****
 
 * Labels that have been successfully produced are stored in the `link:../contract_samples[../contract_samples]` repository
 
@@ -187,11 +197,15 @@ image:processing.png[processing.png is missing]
 Keep in mind that this box and everything Fuchsia or of the same FF00FF color will be erased from the file before producing the final pdf.
 ====
 
-[.lead]
+****
 This steps introduced the ../data directory, where work is performed, and an overall description of a label's template.
+****
 
 == Demo: adding pictures, barcodes; reformatting extracted data, dealing with data that is not available for all products
+
+****
 This step presents functions that complete automatization of the tasks necessary for a delivery ready label request.
+****
 
 * Select the A006045-001 contract
 * Having checked that data processing has normally completed, create the pdf deliverable.
@@ -211,12 +225,15 @@ To be continued
 ....
 
 == Tutorial: building your own package request: from A000001-start to A000001-final -- Overview
+
+****
 This proposes a progressive elaboration of a conceptual yet realistic package label request, using a new capability of the program at each step.
+****
 
 * In automatic_pkg, select A000001-start
 * Using the internet browser, `right-click Open in a New window `link:../data/A000001-start[../data/A000001-start]`
 * In the root page, click on `link:../data/A000001-start/A000001-start_doc_setup.json[../data/A000001-start/A000001-start_doc_setup.json]`.
-to check global setup for the final document.  This was introduced in <<Overviewing the program and how it uses external applications>>
+to check global setup for the final document.  This was introduced in <<Demo: overviewing the program and how it uses external applications>>
 * Still in the root page, click on `link:../data/A000001-start/A000001-start-contract.json[../data/A000001-start/A000001-start-contract.json]`.  Check that all data from the xls contract file has been extracted and reformated in JSON format in this file.
 
 * Still using the internet browser, `right-click Open in a New window `link:../data/A000001-start/a.Outer_box_外箱[../data/A000001-start/a.Outer_box_外箱]`
@@ -244,10 +261,11 @@ These two browser pages can be closed.
  Watermarks, of color Fuchsia-FF00FF, are the ones defined in the label_template.svg file, are the guides that determine pagination.  These should be edited in the label_template.svg file if needed. +
  These two browser pages can be closed.
 
-[.lead]
+****
 This steps has described the important files to be edited:
 - ....doc_setup.json at the document level
 - template-info.json and label_template.svg at the template level.
+****
 
 == How to: add a new field
 
@@ -280,7 +298,6 @@ To be continued
 
 == Tutorial: building your own package request from scratch
 
-[.lead]
 *Step 1 select a contract*
 
 * In automatic_pkg, select a xls contract file.
@@ -295,10 +312,9 @@ Then, a new xls file exported from SAP and selected from automatic_pkg to replac
 *** Change final document margins
 *** Toggle standard cover page
 *** Set a vertical offset on the first page so that, using Inkscape, specific recommandations to the supplier can be inserted.
-*** See <<Overviewing the program and how it uses external applications>> for more information about modifying these.
+*** See <<Demo: overviewing the program and how it uses external applications>> for more information about modifying these.
 ** A `Axxxxxx-xxx-contract.json` file that contains the information from the xls contract file, in a format that allows to be further processed.
 
-[.lead]
 *Step 2 load or create templates to print*
 
 * Either use the program to select a template directory from `link:../common[../common]`
@@ -308,7 +324,6 @@ Then, a new xls file exported from SAP and selected from automatic_pkg to replac
 *** Insert all necessary information as static data
 *** Identify data that should be dynamic, typically the one unique to each product.
 
-[.lead]
 *Step 3 select fields to print for each template*
 
 * Check in the top 'Information' area for a column that contains the information needed
