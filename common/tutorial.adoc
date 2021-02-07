@@ -164,7 +164,7 @@ This step shows how existing templates can be easily modified to produce new lab
 ** Select A911008-008 folder and then double-click on the only ...xls file present in this directory
 ** In the Reporting part of the screen, we observe that some Processing has been effected on this file. In fact, information from the .xls file has been extracted so that it can feed the Inkscape templates. +
 +
-.Correctly rocessing xls data before feeding it to the templates is only indicated with one line
+.Correctly processing xls data before feeding it to the templates is only indicated with one line
 image:processing.png[processing.png is missing]
 * kbd:[0] to create the pdf package labels request
 * Close all browser windows, as we don't need them at this point.

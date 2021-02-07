@@ -1,0 +1,10 @@
+{
+    "firefox_path": "C:\\Program Files\\Mozilla Firefox\\firefox.exe",
+    "chrome_path": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    "inkscape_path": "C:\\Program Files\\Inkscape\\bin\\inkscape.exe",
+    "qpdf_path": "C:\\Program Files no reg\\qpdf-10.1.0\\bin\\qpdf.exe",
+    "FoxitReader_path": "C:\\Program Files\\Foxit Software\\Foxit Reader\\FoxitReader.exe",
+    "acroreader_path": "C:\\Program Files\\Adobe\\Acrobat 9.0\\Acrobat\\Acrobat.exe",
+    "browser": "chrome",
+    "pdf_reader": "Acrobat"
+}
