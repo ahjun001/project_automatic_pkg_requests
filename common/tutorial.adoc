@@ -280,6 +280,8 @@ TIP: It would also be easy to fix this directly from the contract data in SAP, p
 
 == Demo: extracting data from the xls contract file
 
+This shows an example of the successive transformations of data from the xls contract file up to the pdf package label request.
+
 ....
 To be continued
 ....
