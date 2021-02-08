@@ -12,10 +12,6 @@ version, {version-label}:beta
 :sectnumlevels: 6
 :icons: font
 :imagesdir: .//.tutorial.resources
-// == checking // to be commented out
-// [%hardbreaks]
-// version: {version-label}
-// kbd:[F11], kbd:[Ctrl+T]
 
 == Starting the program
 
@@ -201,22 +197,86 @@ Keep in mind that this box and everything Fuchsia or of the same FF00FF color wi
 This steps introduced the ../data directory, where work is performed, and an overall description of a label's template.
 ****
 
-== Demo: adding pictures, barcodes; reformatting extracted data, dealing with data that is not available for all products
+== Demo specifics
 
 ****
-This step presents functions that complete automatization of the tasks necessary for a delivery ready label request.
+This step presents functions that complete automatization of the tasks necessary for a delivery ready label request. +
+These features all come from turning the corresponding field name from `false` to `true` in template files `template-info.json`, such as link:../data/A000001-start/a.Outer_box_外箱/template-info.json[../data/A000001-start/a.Outer_box_外箱/template-info.json]
 ****
 
-* Select the A006045-001 contract
+=== Adding pictures
+* Select the A006045-001 contract.
 * Having checked that data processing has normally completed, create the pdf deliverable.
-* This request has one template. To each product correspond a picture.
-* Pictures are stored in a sub-directory of the template definition `link:../data/A006045-001/a.Outer_box_外箱/pics[../data/A006045-001/a.Outer_box_外箱/pics]`
-* Pictures are linked to product in the file `link:../data/A006045-001/a.Outer_box_外箱/template-info.json[../data/A006045-001/a.Outer_box_外箱/template-info.json]`. Each product listed has a svg picture file, the (x, y) coordinates to position the upper left angle of the picture in the label, and a coefficient to size the picture.
-* Similar files in previous packages don't have pictures, such as `link:../data/A011001-022/a.Outer_box_外箱/template-info.json[../data/A011001-022/a.Outer_box_外箱/template-info.json]`
+* Open link:../data/A006045-001/[../data/A006045-001/]
+* Check that this request uses one template `a.Outer_box_外箱`.
+* Ctrl+click on `A006045-001.pdf`, check that to each label corresponds a picture.
+* Pictures are stored in a sub-directory of the template definition, see `link:../data/A006045-001/a.Outer_box_外箱/pics[../data/A006045-001/a.Outer_box_外箱/pics]`.
+* Pictures are linked to product in the file `link:../data/A006045-001/a.Outer_box_外箱/template-info.json[../data/A006045-001/a.Outer_box_外箱/template-info.json]`.
+* Each product listed has the following:
+** a svg picture file, 
+** the (x, y) coordinates to position the upper left angle of the picture in the label,
+** a coefficient to size the picture.
+* If none of the label need pictures, the field is just turned to `false` in `template-info.json`.  This is the case in `link:../data/A011001-022/a.Outer_box_外箱/template-info.json[../data/A011001-022/a.Outer_box_外箱/template-info.json]`. Check `"pictures:  false"`.
 
-....
-To be continued
-....
+=== Adding barcodes
+
+
+=== Automatic French translations
+Most data in xls contract files is in Chinese.  Some fields should show up in French on labels. As, for example, in contract `A006043-001`:
+
+* `label_template.svg` publishes data in Chinese, with field names end in _zh, such as `${field_name_zh}`. Using the corresponding field `${field_name_fr}` data will be automatically replaced with their French equivalent.
++
+[cols="1,1",frame=none,grid=none]
+|===
+a|.`label_template.svg` extract
+image::template_with_zh_n_fr.png[template_with_zh_n_fr.png is missing]
+a|.`label request` extract
+image::zh_fr_deliverable.png[zh_fr_deliverable.png is missing]
+|===
++
+Translations are stored in link:../common/zh_fr.json[../common/zh_fr.json].
+
+=== Reformatting extracted data
+Some of the data that already exists in xls contract files is not correctly formatted for package labels requests. For example, for contract `A006045-001`:
+* In the xls contract file, `Product specification-产品规格` is formatted as `2050x820 mm`, `2050x920 mm`, and so on. 
++
+.`A006043-001 美信 防盗门 Mar. 24, 2020 TY.xls` extract
+image::Prod_spec-产品规格.png[Prod_spec-产品规格.png is missing]
+* This information was extracted in `A006043-001-contract.json` in the same format.
++
+.`A006043-001-contract.json extract`
+image::A006043-001-contract.json.png[A006043-001-contract.json.png is missing]
+
+* However, the desired format is `H. 2050 x l. 820 mm`, `H. 2050 x l. 920 mm`, and so on, as seen on the deliverable.
++
+.`A006043-001.pdf` extract
+image::A006043-001.pdf.png[A006043-001.pdf.png is missing]
+* So as to re-format the `"03.Prod_spec-产品规格"` data, pre-processing is specified in `template-info.json`, creating a new field named `width`
++
+.`a.Outer_box_防盗门侧唛/template-info.json` extract
+image::pre_processing.png[pre_processing.png is missing]
+and then all products specifications can be correctly formatted. 
++
+* Then the newly created `width` field can be readily used in `label_template.svg`
++
+.Using `width` in `label_template.svg`
+image::width_in_label_template.svg.png[width_in_label_template.svg.png is missing]
++
+====
+TIP: It would also be easy to fix this directly from the contract data in SAP, writing specifications under the desired format for each product.
+====
+
+=== Dealing with data that is not available for all products
+Some contracts have product specifications that do not consistently appear in all products of the xls contract file. +
+So as to differentiate product data that is missing by mistake and product data that is not populated by design, these data fields are specified in `template_info.json`
+* In `A006043-001` contract the "亚光-mat" and "亮光-brillant" is not present in all products, but when it is, it is important that it should be on the product label.
+* This information is passed on to the program simply by mentionning `gm_zh`, the 'gloss-mat' field in the `template-info.json` / `"partially_populated_fields"` list.
++
+.`label_template.svg` extract
+image::partially_populated.png[partially_populated.png is missing]
+====
+TIP: It would also be easy to fix this directly from the contract data in SAP, populating all specifications fields for each product.
+====
 
 == Demo: extracting data from the xls contract file
 

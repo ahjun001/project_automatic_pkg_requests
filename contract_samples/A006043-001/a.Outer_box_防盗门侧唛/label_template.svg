@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -9,8 +12,19 @@
    viewBox="0 0 89.999998 85"
    version="1.1"
    id="svg945"
-   inkscape:version="1.1-dev (1:0.92.0+devel+202005110039+9ce7266)"
+   inkscape:version="1.0.2 (1.0.2+r75+1)"
    sodipodi:docname="label_template.svg">
+  <metadata
+     id="metadata37">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
   <defs
      id="defs941" />
   <sodipodi:namedview
@@ -30,7 +44,8 @@
      inkscape:window-height="1015"
      inkscape:window-x="0"
      inkscape:window-y="40"
-     inkscape:window-maximized="1" />
+     inkscape:window-maximized="1"
+     inkscape:document-rotation="0" />
   <g
      inkscape:label="label"
      inkscape:groupmode="layer"
@@ -198,7 +213,7 @@
          sodipodi:role="line"
          style="stroke-width:0"><tspan
    id="tspan57"
-   style="fill:#000000;stroke:#ffffff;stroke-width:0">2.${i}.货号</tspan>${prod_n} <tspan
+   style="fill:#000000;stroke:#ffffff;stroke-width:0">${t}.${i}.货号</tspan>${prod_n} <tspan
    style="fill:#000000;fill-opacity:1;stroke-width:0"
    id="tspan1504">${clr_zh}, ${gm_zh}, ${io_zh}, ${lr_zh}, ${spec_zh}</tspan></tspan></text>
     <rect
